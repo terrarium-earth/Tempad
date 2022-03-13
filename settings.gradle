@@ -9,8 +9,11 @@ pluginManagement {
             name = 'Sponge Snapshots'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
+        maven {
+            url = "https://ladysnake.jfrog.io/artifactory/mods"
+        }
     }
 }
 
-rootProject.name = 'MultiLoader'
+rootProject.name = 'Tempad'
 include("Common", "Fabric", "Forge")

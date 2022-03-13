@@ -1,12 +1,12 @@
 {
     "schemaVersion": 1,
-    "id": "modid",
+    "id": "tempad",
     "version": "${version}",
   
-    "name": "Example Mod",
-    "description": "This is an example description! Tell everyone what your mod is about!",
+    "name": "Tempad",
+    "description": "Create a portal to anywhere from anywhere!",
     "authors": [
-      "Me!"
+      "CodexAdrian"
     ],
     "contact": {
       "homepage": "https://fabricmc.net/",
@@ -15,25 +15,32 @@
   
     "license": "CC0-1.0",
     "icon": "assets/modid/icon.png",
-  
+    "accessWidener": "tempad.accesswidener",
     "environment": "*",
     "entrypoints": {
       "main": [
-        "com.example.examplemod.ExampleMod"
+        "me.codexadrian.tempad.FabricTempad"
+      ],
+      "client": [
+        "me.codexadrian.tempad.FabricTempadClient"
+      ],
+      "cardinal-components-entity": [
+        "me.codexadrian.tempad.TempadComponents"
       ]
     },
     "mixins": [
-      "modid.mixins.json"
+      "tempad.mixins.json"
     ],
-  
+    "custom": {
+      "cardinal-components": [
+        "tempad:tempad_color_data"
+      ]
+    },
     "depends": {
       "fabricloader": ">=0.13",
       "fabric": "*",
       "minecraft": "1.18.x",
       "java": ">=17"
-    },
-    "suggests": {
-      "another-mod": "*"
     }
   }
   

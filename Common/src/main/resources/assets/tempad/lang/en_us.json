@@ -1,0 +1,16 @@
+{
+  "gui.tempad.header_line_1": "ACTION LIST ////",
+  "gui.tempad.header_line_2": "SELECT PROGRAM",
+  "gui.tempad.options": "1. OPTIONS",
+  "gui.tempad.run_program": "2. RUN PROGRAM",
+  "gui.tempad.wiki": "3. WIKI",
+  "gui.tempad.textfield": "Name:",
+  "gui.tempad.new_location": "(+) New Location",
+  "gui.tempad.add_location": "Add Location",
+  "gui.tempad.select_location": "Select Location:",
+  "gui.tempad.teleport": "Teleport",
+  "gui.tempad.delete": "Delete Location",
+  "gui.tempad.options_header": "Select a Color:",
+  "gui.tempad.timedoor": "Timedoor",
+  "item.tempad.tempad": "Tempad"
+}
