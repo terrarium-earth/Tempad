@@ -11,12 +11,11 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
 }
 
 loom {
-    accessWidenerPath.set(project(":Common").file("src/main/resources/${mod_id}.accesswidener"))
+    accessWidenerPath.set(project(":Fabric").file("src/main/resources/${mod_id}.accesswidener"))
     runs {
         client {
             client()
@@ -40,6 +39,10 @@ processResources {
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version
+    }
+
+    filesMatching('*.mixins.json') {
+        expand "refmap_target": "${archivesBaseName}-"
     }
 }
 
