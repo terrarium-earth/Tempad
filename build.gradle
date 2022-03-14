@@ -41,6 +41,10 @@ subprojects {
         }
 
     }
+
+    dependencies {
+        compileOnly 'org.jetbrains:annotations:22.0.0'
+    }
     
 
     tasks.withType(JavaCompile).configureEach {

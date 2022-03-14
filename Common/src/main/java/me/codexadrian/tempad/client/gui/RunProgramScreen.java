@@ -5,8 +5,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
-import me.codexadrian.tempad.network.DeleteLocationPacket;
-import me.codexadrian.tempad.network.SummonTimedoorPacket;
+import me.codexadrian.tempad.network.messages.DeleteLocationPacket;
+import me.codexadrian.tempad.network.messages.SummonTimedoorPacket;
 import me.codexadrian.tempad.platform.Services;
 import me.codexadrian.tempad.tempad.LocationData;
 import me.codexadrian.tempad.tempad.TempadComponent;
@@ -103,7 +103,7 @@ public class RunProgramScreen extends Screen {
         var teleportText = new TranslatableComponent("gui." + Constants.MODID + ".teleport");
         TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) ->{
             Minecraft.getInstance().setScreen(null);
-            Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand));
+            Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
         });
         var deleteText = new TranslatableComponent("gui." + Constants.MODID + ".delete");
         TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(deleteText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 13,12, deleteText, color, (button2) ->{

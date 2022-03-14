@@ -23,19 +23,11 @@
       ],
       "client": [
         "me.codexadrian.tempad.FabricTempadClient"
-      ],
-      "cardinal-components-entity": [
-        "me.codexadrian.tempad.TempadComponents"
       ]
     },
     "mixins": [
       "tempad.mixins.json"
     ],
-    "custom": {
-      "cardinal-components": [
-        "tempad:tempad_color_data"
-      ]
-    },
     "depends": {
       "fabricloader": ">=0.13",
       "fabric": "*",

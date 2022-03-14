@@ -7,6 +7,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.io.File;
+import java.nio.file.Path;
+
 public interface IPlatformHelper {
 
     /**
@@ -32,4 +35,6 @@ public interface IPlatformHelper {
     boolean isDevelopmentEnvironment();
 
     void teleportEntity(ServerLevel destinationLevel, BlockPos pos, Vec3 deltaMovement, Entity entity);
+
+    Path getConfigDir();
 }

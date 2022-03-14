@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.platform;
 
 import io.netty.buffer.Unpooled;
-import me.codexadrian.tempad.network.handlers.IMessageHandler;
+import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
 import me.codexadrian.tempad.platform.services.INetworkHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -18,7 +18,11 @@ public class FabricNetworkHelper implements INetworkHelper {
     }
 
     @Override
-    public <T> void registerClientToServerPacket(ResourceLocation location, IMessageHandler<T> handler, Class<T> tClass) {
-        ServerPlayNetworking.registerGlobalReceiver(location, (server, player, handler1, buf, responseSender) -> handler.handle(handler.decode(buf), server, player));
+    public <T> void registerClientToServerPacket(ResourceLocation location, IPacketHandler<T> handler, Class<T> tClass) {
+
+        ServerPlayNetworking.registerGlobalReceiver(location, (server, player, handler1, buf, responseSender) -> {
+            T decode = handler.decode(buf);
+            server.execute(() -> handler.handle(decode).accept(server, player));
+        });
     }
 }

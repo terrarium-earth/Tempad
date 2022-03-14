@@ -3,6 +3,7 @@ package me.codexadrian.tempad.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
@@ -19,7 +21,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
     }
 
     @Override
-    public void render(TimedoorEntity entity, float yaw, float deltaTime, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
+    public void render(TimedoorEntity entity, float yaw, float deltaTime, @NotNull PoseStack poseStack, @NotNull MultiBufferSource multiBufferSource, int light) {
         float width = 1.4F;
         float height = 2.3F;
         float depth = .4F;
@@ -59,8 +61,8 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(TimedoorEntity entity) {
-        return null;
+    public @NotNull ResourceLocation getTextureLocation(@NotNull TimedoorEntity entity) {
+        return new ResourceLocation(Constants.MODID, "");
     }
 
     public void makeBoxBasedOnPlayerBecauseAshSaidSo(Matrix4f model, MultiBufferSource multiBufferSource, float width, float height, float depth, int i, int color) {
@@ -110,8 +112,10 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         buffer.vertex(model, xBound, yBound, zBound).color(red, green, blue, alpha).uv(1, 0).uv2(i).endVertex();
     }
 
+
     @Override
-    public boolean shouldRender(TimedoorEntity entity, Frustum frustum, double d, double e, double f) {
-        return false;
+    public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
+        return Services.PLATFORM.getPlatformName().equals("Forge") && super.shouldRender(entity, frustum, d, e, f);
     }
+
 }

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
-import me.codexadrian.tempad.network.AddLocationPacket;
+import me.codexadrian.tempad.network.messages.AddLocationPacket;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -44,7 +44,8 @@ public class NewLocationScreen extends Screen {
             if (!nameFieldText.equals("")) {
                 Services.NETWORK.sendToServer(new AddLocationPacket(nameFieldText, hand));
             }
-            Minecraft.getInstance().setScreen(new RunProgramScreen(color, hand));
+            Minecraft.getInstance().setScreen(null);
+
         }));
         textField.setTextColor(color);
         addRenderableWidget(timeDoorSprite);

@@ -2,9 +2,9 @@ package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.codexadrian.CommonClient;
+import me.codexadrian.tempad.ColorConfig;
 import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.network.SetColorPacket;
-import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -12,8 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-
-import static me.codexadrian.tempad.Constants.COLORS;
 
 public class OptionsScreen extends Screen {
     private static final ResourceLocation GRID = new ResourceLocation(Constants.MODID, "textures/widget/tempad_grid.png");
@@ -39,14 +37,16 @@ public class OptionsScreen extends Screen {
         int startY = (height - HEIGHT) / 2 + 16 * 5 + 2;
         int x = 0;
         int y = 0;
-        for (int i = 0; i < COLORS.length; i++) {
+        int[] colors = CommonClient.getClientConfig().getColorOptions();
+        for (int i = 0; i < colors.length; i++) {
             //Create button here
             //Set it's colors and stuff
             //Set it's position
             int finalI = i;
-            ColorButton button = new ColorButton(x + startX, y + startY, scale, COLORS[i] | 0xFF000000, (button1) -> {
-                this.color = COLORS[finalI];
-                Services.NETWORK.sendToServer(new SetColorPacket(color));
+            ColorButton button = new ColorButton(x + startX, y + startY, scale, colors[i] | 0xFF000000, (button1) -> {
+                this.color = colors[finalI];
+                CommonClient.getClientConfig().setColor(color);
+                ColorConfig.saveConfig(CommonClient.getClientConfig());
             });
             addRenderableWidget(button);
             x += scale + margin;

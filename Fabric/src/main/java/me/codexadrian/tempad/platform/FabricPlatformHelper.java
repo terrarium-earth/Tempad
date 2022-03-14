@@ -9,6 +9,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.Vec3;
 
+import java.nio.file.Path;
+
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -34,4 +36,8 @@ public class FabricPlatformHelper implements IPlatformHelper {
         FabricDimensions.teleport(entity, destinationLevel, new PortalInfo(new Vec3(pos.getX(), pos.getY(), pos.getZ()), deltaMovement, entity.getYRot(), entity.getXRot()));
     }
 
+    @Override
+    public Path getConfigDir() {
+        return FabricLoader.getInstance().getConfigDir();
+    }
 }

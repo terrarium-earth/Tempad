@@ -1,6 +1,6 @@
-package me.codexadrian.tempad.network;
+package me.codexadrian.tempad.network.messages;
 
-import me.codexadrian.tempad.network.handlers.IMessageHandler;
+import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
 import me.codexadrian.tempad.tempad.LocationData;
 import me.codexadrian.tempad.tempad.TempadComponent;
@@ -10,6 +10,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.function.BiConsumer;
 
 import static me.codexadrian.tempad.Constants.MODID;
 
@@ -23,11 +25,11 @@ public record AddLocationPacket(String name, InteractionHand hand) implements IP
     }
 
     @Override
-    public IMessageHandler<AddLocationPacket> getHandler() {
+    public IPacketHandler<AddLocationPacket> getHandler() {
         return HANDLER;
     }
 
-    private static class Handler implements IMessageHandler<AddLocationPacket> {
+    private static class Handler implements IPacketHandler<AddLocationPacket> {
 
         @Override
         public void encode(AddLocationPacket message, FriendlyByteBuf buffer) {
@@ -41,14 +43,13 @@ public record AddLocationPacket(String name, InteractionHand hand) implements IP
         }
 
         @Override
-        public boolean handle(AddLocationPacket message, MinecraftServer server, Player player) {
-            server.execute(() -> {
+        public BiConsumer<MinecraftServer, Player> handle(AddLocationPacket message) {
+            return (server, player) -> {
                 ItemStack stack = player.getItemInHand(message.hand);
                 var tempadLocation = new LocationData(message.name, player.level.dimension(), player.blockPosition());
 
                 TempadComponent.addStackLocation(stack, tempadLocation);
-            });
-            return true;
+            };
         }
     }
 

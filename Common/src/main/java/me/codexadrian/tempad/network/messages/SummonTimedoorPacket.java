@@ -1,6 +1,6 @@
-package me.codexadrian.tempad.network;
+package me.codexadrian.tempad.network.messages;
 
-import me.codexadrian.tempad.network.handlers.IMessageHandler;
+import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
 import me.codexadrian.tempad.tempad.LocationData;
 import me.codexadrian.tempad.tempad.TempadItem;
@@ -13,9 +13,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.function.BiConsumer;
+
 import static me.codexadrian.tempad.Constants.MODID;
 
-public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, InteractionHand hand) implements IPacket<SummonTimedoorPacket> {
+public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, InteractionHand hand, int color) implements IPacket<SummonTimedoorPacket> {
     public static Handler HANDLER = new Handler();
     public static final ResourceLocation ID = new ResourceLocation(MODID, "timedoor");
 
@@ -25,28 +27,31 @@ public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, 
     }
 
     @Override
-    public IMessageHandler<SummonTimedoorPacket> getHandler() {
+    public IPacketHandler<SummonTimedoorPacket> getHandler() {
         return HANDLER;
     }
 
-    private static class Handler implements IMessageHandler<SummonTimedoorPacket> {
+    private static class Handler implements IPacketHandler<SummonTimedoorPacket> {
 
         @Override
         public void encode(SummonTimedoorPacket message, FriendlyByteBuf buffer) {
             buffer.writeResourceLocation(message.dimensionKey);
             buffer.writeBlockPos(message.pos);
             buffer.writeEnum(message.hand);
+            buffer.writeVarInt(message.color);
         }
 
         @Override
         public SummonTimedoorPacket decode(FriendlyByteBuf buffer) {
-            return new SummonTimedoorPacket(buffer.readResourceLocation(), buffer.readBlockPos(), buffer.readEnum(InteractionHand.class));
+            return new SummonTimedoorPacket(buffer.readResourceLocation(), buffer.readBlockPos(), buffer.readEnum(InteractionHand.class), buffer.readVarInt());
         }
 
         @Override
-        public boolean handle(SummonTimedoorPacket message, MinecraftServer server, Player player) {
-            server.execute(() -> TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registry.DIMENSION_REGISTRY, message.dimensionKey), message.pos), player));
-            return true;
+        public BiConsumer<MinecraftServer, Player> handle(SummonTimedoorPacket message) {
+            return (server, player) -> {
+                player.getCooldowns().addCooldown(player.getItemInHand(message.hand).getItem(), 3600);
+                TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registry.DIMENSION_REGISTRY, message.dimensionKey), message.pos), player, message.color);
+            };
         }
     }
 }

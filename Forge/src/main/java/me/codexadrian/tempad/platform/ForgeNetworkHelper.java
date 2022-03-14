@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.platform;
 
 import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.network.handlers.IMessageHandler;
+import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
 import me.codexadrian.tempad.platform.services.INetworkHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -25,10 +25,12 @@ public class ForgeNetworkHelper implements INetworkHelper {
     }
 
     @Override
-    public <T> void registerClientToServerPacket(ResourceLocation location, IMessageHandler<T> handler, Class<T> tClass) {
+    public <T> void registerClientToServerPacket(ResourceLocation location, IPacketHandler<T> handler, Class<T> tClass) {
         INSTANCE.registerMessage(++id, tClass, handler::encode, handler::decode, (t, context) -> {
             ServerPlayer sender = context.get().getSender();
-            if(sender != null) handler.handle(t, sender.server, sender);
+            if(sender != null) {
+                context.get().enqueueWork(() -> handler.handle(t).accept(sender.server, sender));
+            }
             context.get().setPacketHandled(true);
         });
     }

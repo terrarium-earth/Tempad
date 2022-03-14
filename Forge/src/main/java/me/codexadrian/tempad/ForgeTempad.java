@@ -32,7 +32,6 @@ import static me.codexadrian.tempad.Constants.MODID;
 
 @Mod(MODID)
 public class ForgeTempad {
-    public static Capability<ColorData> INSTANCE = CapabilityManager.get(new CapabilityToken<>(){});
     public static final ResourceLocation CAPABILITY_KEY = new ResourceLocation(MODID, "tempad_color");
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
@@ -46,31 +45,6 @@ public class ForgeTempad {
         NetworkHandler.register();
         bus.addListener(ForgeTempad::onClientSetup);
         MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @SubscribeEvent
-    public void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(ColorData.class);
-    }
-
-    @SubscribeEvent
-    public void onAttachCapabilityToPlayer(AttachCapabilitiesEvent<Entity> event) {
-        if(event.getObject() instanceof Player) event.addCapability(CAPABILITY_KEY, new ColorDataProvider());
-    }
-
-    @SubscribeEvent
-    public void onPlayerClone(PlayerEvent.Clone event) {
-        if(event.isWasDeath()) {
-            event.getOriginal().reviveCaps();
-            Optional<ColorData> oldColorData = event.getOriginal().getCapability(INSTANCE).resolve();
-            Optional<ColorData> newColorData = event.getPlayer().getCapability(INSTANCE).resolve();
-            event.getOriginal().invalidateCaps();
-            if(oldColorData.isPresent() && newColorData.isPresent()) {
-                ColorData oldColor = oldColorData.get();
-                ColorData newColor = newColorData.get();
-                newColor.color = oldColor.color;
-            }
-        }
     }
 
     public static void onClientSetup(FMLClientSetupEvent event) {

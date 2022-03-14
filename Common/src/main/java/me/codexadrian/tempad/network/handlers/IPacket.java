@@ -4,5 +4,5 @@ import net.minecraft.resources.ResourceLocation;
 
 public interface IPacket<T> {
     ResourceLocation getID();
-    IMessageHandler<T> getHandler();
+    IPacketHandler<T> getHandler();
 }

@@ -2,6 +2,7 @@ package me.codexadrian.tempad;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import me.codexadrian.CommonClient;
 import me.codexadrian.tempad.client.render.TimedoorRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -11,6 +12,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.server.packs.PackType;
 
+import java.awt.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+
 public class FabricTempadClient implements ClientModInitializer {
     public static ShaderInstance timedoorShader;
     public static ShaderInstance timedoorWhiteShader;
@@ -18,6 +23,7 @@ public class FabricTempadClient implements ClientModInitializer {
     public static final FabricBlurReloader INSTANCE = new FabricBlurReloader();
     @Override
     public void onInitializeClient() {
+        CommonClient.init();
         EntityRendererRegistry.register(FabricTempad.TIMEDOOR_ENTITY_ENTITY_TYPE, TimedoorRenderer::new);
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(INSTANCE);
     }

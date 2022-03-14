@@ -1,6 +1,6 @@
-package me.codexadrian.tempad.network;
+package me.codexadrian.tempad.network.messages;
 
-import me.codexadrian.tempad.network.handlers.IMessageHandler;
+import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
 import me.codexadrian.tempad.tempad.TempadComponent;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import static me.codexadrian.tempad.Constants.MODID;
 
@@ -24,11 +25,11 @@ public record DeleteLocationPacket(UUID location, InteractionHand hand) implemen
     }
 
     @Override
-    public IMessageHandler<DeleteLocationPacket> getHandler() {
+    public IPacketHandler<DeleteLocationPacket> getHandler() {
         return HANDLER;
     }
 
-    private static class Handler implements IMessageHandler<DeleteLocationPacket> {
+    private static class Handler implements IPacketHandler<DeleteLocationPacket> {
 
         @Override
         public void encode(DeleteLocationPacket message, FriendlyByteBuf buffer) {
@@ -42,10 +43,8 @@ public record DeleteLocationPacket(UUID location, InteractionHand hand) implemen
         }
 
         @Override
-        public boolean handle(DeleteLocationPacket message, MinecraftServer server, Player player) {
-            ItemStack stack = player.getItemInHand(message.hand);
-            server.execute(() -> TempadComponent.deleteStackLocation(stack, message.location));
-            return true;
+        public BiConsumer<MinecraftServer, Player> handle(DeleteLocationPacket message) {
+            return (server, player) -> TempadComponent.deleteStackLocation(player.getItemInHand(message.hand), message.location);
         }
     }
 }
