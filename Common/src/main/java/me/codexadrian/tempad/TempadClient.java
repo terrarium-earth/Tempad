@@ -1,6 +1,5 @@
-package me.codexadrian;
+package me.codexadrian.tempad;
 
-import me.codexadrian.tempad.ColorConfig;
 import me.codexadrian.tempad.client.gui.TempadScreen;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.Minecraft;
@@ -8,7 +7,7 @@ import net.minecraft.world.InteractionHand;
 
 import java.io.IOException;
 
-public class CommonClient {
+public class TempadClient {
     private static ColorConfig clientConfig;
     public static void init() {
         try {
@@ -24,7 +23,7 @@ public class CommonClient {
 
     public static void openScreen(InteractionHand interactionHand) {
         //int color = ColorDataComponent.COLOR_DATA.get(player).getColor();
-        int color = CommonClient.getClientConfig().getColor();
+        int color = TempadClient.getClientConfig().getColor();
         Minecraft.getInstance().setScreen(new TempadScreen(color, interactionHand));
     }
 }

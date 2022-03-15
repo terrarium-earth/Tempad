@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
+import java.time.LocalDateTime;
 import java.util.function.BiConsumer;
 
 import static me.codexadrian.tempad.Constants.MODID;
@@ -49,7 +50,8 @@ public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, 
         @Override
         public BiConsumer<MinecraftServer, Player> handle(SummonTimedoorPacket message) {
             return (server, player) -> {
-                player.getCooldowns().addCooldown(player.getItemInHand(message.hand).getItem(), 3600);
+                //player.getCooldowns().addCooldown(player.getItemInHand(message.hand).getItem(), 3600);
+                player.getItemInHand(message.hand).getOrCreateTag().putString("CooldownTime", LocalDateTime.now().toString());
                 TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registry.DIMENSION_REGISTRY, message.dimensionKey), message.pos), player, message.color);
             };
         }

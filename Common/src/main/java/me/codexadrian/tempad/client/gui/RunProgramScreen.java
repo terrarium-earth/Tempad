@@ -3,6 +3,7 @@ package me.codexadrian.tempad.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.codexadrian.tempad.Constants;
+import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
 import me.codexadrian.tempad.network.messages.DeleteLocationPacket;
@@ -21,6 +22,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,8 +105,23 @@ public class RunProgramScreen extends Screen {
         TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(locationName) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 11,12, new TextComponent(locationName), color, (button1) -> {});
         var teleportText = new TranslatableComponent("gui." + Constants.MODID + ".teleport");
         TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) ->{
-            Minecraft.getInstance().setScreen(null);
-            Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
+            ItemStack itemInHand = minecraft.player.getItemInHand(hand);
+            if(itemInHand.hasTag()) {
+                if(itemInHand.getTag().contains("CooldownTime")) {
+                    String cooldownTimeTag = itemInHand.getTag().getString("CooldownTime");
+                    LocalDateTime cooldownTime = LocalDateTime.parse(cooldownTimeTag);
+                    LocalDateTime timeNow = LocalDateTime.now();
+                    Duration between = Duration.between(cooldownTime, timeNow);
+                    int maxCooldown = Tempad.getTempadConfig().getCooldownTime();
+                    if(between.toSeconds() > maxCooldown) {
+                        Minecraft.getInstance().setScreen(null);
+                        Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
+                    }
+                } else {
+                    Minecraft.getInstance().setScreen(null);
+                    Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
+                }
+            }
         });
         var deleteText = new TranslatableComponent("gui." + Constants.MODID + ".delete");
         TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(deleteText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 13,12, deleteText, color, (button2) ->{

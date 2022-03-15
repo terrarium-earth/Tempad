@@ -1,5 +1,7 @@
 package me.codexadrian.tempad.entity;
 
+import me.codexadrian.tempad.Tempad;
+import me.codexadrian.tempad.TempadConfig;
 import me.codexadrian.tempad.platform.Services;
 import me.codexadrian.tempad.tempad.LocationData;
 import net.minecraft.core.Direction;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -41,7 +44,7 @@ public class TimedoorEntity extends Entity {
 
     @Override
     protected void defineSynchedData() {
-        entityData.define(CLOSING_TIME, 100);
+        entityData.define(CLOSING_TIME, Tempad.getTempadConfig().getTimedoorWait());
         entityData.define(COLOR, ORANGE);
     }
 
@@ -72,7 +75,7 @@ public class TimedoorEntity extends Entity {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public @NotNull Packet<?> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this, this.getType(), this.getDirection().get3DDataValue(), this.blockPosition());
     }
 
@@ -106,16 +109,16 @@ public class TimedoorEntity extends Entity {
                     this.resetClosingTime();
                     if (entity instanceof Player player) {
                         if (player.getUUID().equals(getOwner())) {
-                            this.setClosingTime(this.tickCount + 60);
+                            this.setClosingTime(this.tickCount + Tempad.getTempadConfig().getTimedoorAddWaitTime());
                             if (getLinkedPortalEntity() != null)
-                                this.getLinkedPortalEntity().setClosingTime(getLinkedPortalEntity().tickCount + 40);
+                                this.getLinkedPortalEntity().setClosingTime(getLinkedPortalEntity().tickCount + Tempad.getTempadConfig().getTimedoorAddWaitTime());
                         }
                     }
                 }
                 if (getLinkedPortalEntity() == null) {
                     TimedoorEntity recipientPortal = new TimedoorEntity(Services.REGISTRY.getTimedoor(), destinationLevel);
                     recipientPortal.setOwner(this.getOwner());
-                    recipientPortal.setClosingTime(50);
+                    recipientPortal.setClosingTime(Tempad.getTempadConfig().getTimedoorAddWaitTime());
                     recipientPortal.setLocation(null);
                     recipientPortal.setColor(this.getColor());
                     this.setLinkedPortalId(recipientPortal.getUUID());
@@ -186,7 +189,7 @@ public class TimedoorEntity extends Entity {
 
     public void resetClosingTime() {
         if (getClosingTime() != -1) {
-            this.setClosingTime(this.tickCount + 100);
+            this.setClosingTime(this.tickCount + Tempad.getTempadConfig().getTimedoorWait());
         }
     }
 }

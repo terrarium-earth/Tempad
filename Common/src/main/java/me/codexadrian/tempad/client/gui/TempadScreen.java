@@ -3,6 +3,7 @@ package me.codexadrian.tempad.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.codexadrian.tempad.Constants;
+import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -10,6 +11,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class TempadScreen extends Screen {
     private static final ResourceLocation GRID = new ResourceLocation(Constants.MODID, "textures/widget/tempad_grid.png");
@@ -32,7 +37,9 @@ public class TempadScreen extends Screen {
         int offset = 3;
         addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 8 + offset, 12, new TranslatableComponent("gui." + Constants.MODID + ".options"), color, button -> minecraft.setScreen(new OptionsScreen(color, hand))));
 
-        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 9 + offset, 12, new TranslatableComponent("gui." + Constants.MODID + ".run_program"), color, button -> minecraft.setScreen(new RunProgramScreen(color, this.hand))));
+        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 9 + offset, 12, new TranslatableComponent("gui." + Constants.MODID + ".run_program"), color, button -> {
+            minecraft.setScreen(new RunProgramScreen(color, this.hand));
+        }));
 
         addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 10 + offset, 12, new TranslatableComponent("gui." + Constants.MODID + ".wiki"), color, button -> {
         }));

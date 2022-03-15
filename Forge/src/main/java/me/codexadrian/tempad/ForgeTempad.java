@@ -10,6 +10,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -36,7 +37,7 @@ public class ForgeTempad {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
     public static final RegistryObject<EntityType<TimedoorEntity>> TIMEDOOR = ENTITIES.register("timedoor", () -> EntityType.Builder.of(TimedoorEntity::new, MobCategory.MISC).sized(.4F, 2.3F).build("timedoor"));
-    public static final RegistryObject<TempadItem> TEMPAD = ITEMS.register("tempad", ()-> new TempadItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS)));
+    public static final RegistryObject<TempadItem> TEMPAD = ITEMS.register("tempad", ()-> new TempadItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
 
     public ForgeTempad() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -45,6 +46,7 @@ public class ForgeTempad {
         NetworkHandler.register();
         bus.addListener(ForgeTempad::onClientSetup);
         MinecraftForge.EVENT_BUS.register(this);
+        Tempad.init();
     }
 
     public static void onClientSetup(FMLClientSetupEvent event) {
