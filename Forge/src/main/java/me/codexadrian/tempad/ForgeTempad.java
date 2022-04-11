@@ -33,7 +33,6 @@ import static me.codexadrian.tempad.Constants.MODID;
 
 @Mod(MODID)
 public class ForgeTempad {
-    public static final ResourceLocation CAPABILITY_KEY = new ResourceLocation(MODID, "tempad_color");
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
     public static final RegistryObject<EntityType<TimedoorEntity>> TIMEDOOR = ENTITIES.register("timedoor", () -> EntityType.Builder.of(TimedoorEntity::new, MobCategory.MISC).sized(.4F, 2.3F).build("timedoor"));

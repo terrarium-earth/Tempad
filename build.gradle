@@ -1,6 +1,11 @@
+plugins {
+    id("maven-publish")
+}
+
 subprojects {
 
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     java.withSourcesJar()
@@ -38,6 +43,53 @@ subprojects {
         }
     }
 
+    publishing {
+        publications {
+            mavenJava(MavenPublication){
+                artifactId = "Tempad"
+                version = "${project.version}-${archivesBaseName}"
+                groupId = 'me.codexadrian'
+                from(components.java)
+                pom {
+                    name = 'Tempad'
+                    url = 'https://github.com/Toadstool-Studios/Tempad'
+                    licenses {
+                        license {
+                            name = 'CC0'
+                            url = 'https://github.com/Toadstool-Studios/Tempad/blob/1.18/LICENSE'
+                        }
+                    }
+                    issueManagement {
+                        system = 'github'
+                        url = 'https://github.com/Toadstool-Studios/Tempad/issues'
+                    }
+                    scm {
+                        url = 'https://github.com/Toadstool-Studios/Tempad'
+                        connection = 'scm:git:git://github.com/Toadstool-Studios/Tempad.git'
+                        developerConnection = 'scm:git:git@github.com:Toadstool-Studios/Tempad.git'
+                    }
+                }
+            }
+        }
+
+        repositories {
+            def mavenUsername = project.findProperty('mavenUserName')
+            def mavenPassword = project.findProperty('mavenPassword')
+            if(mavenUsername != null && mavenPassword != null) {
+                maven {
+                    name = 'OnyxStudiosMaven'
+                    url = 'https://upload.onyxstudios.dev/'
+                    credentials {
+                        username = mavenUsername
+                        password = mavenPassword
+                    }
+                    authentication {
+                        basic(BasicAuthentication)
+                    }
+                }
+            }
+        }
+    }
 
     tasks.withType(JavaCompile).configureEach {
 
