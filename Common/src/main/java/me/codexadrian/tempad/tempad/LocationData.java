@@ -7,12 +7,13 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class LocationData {
+public class LocationData implements Comparable<LocationData>{
 
     private final UUID id;
     private final String name;
@@ -73,5 +74,10 @@ public class LocationData {
 
     public BlockPos getBlockPos() {
         return blockPos;
+    }
+
+    @Override
+    public int compareTo(@NotNull LocationData o) {
+        return getName().compareTo(o.getName());
     }
 }

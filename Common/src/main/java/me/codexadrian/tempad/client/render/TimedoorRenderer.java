@@ -68,7 +68,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
     public void makeBoxBasedOnPlayerBecauseAshSaidSo(Matrix4f model, MultiBufferSource multiBufferSource, float width, float height, float depth, int i, int color) {
         float xBound = width * 0.5F;
         float yBound = height * 0.5F - .01F;
-        float zBound = -(depth * 0.5F);
+        float zBound = depth * -0.5F;
         var buffer = multiBufferSource.getBuffer(Services.SHADERS.getTimedoorShaderType());
         //Front
         float red = ((color & 0xFF0000) >> 16) / 255.0f;
@@ -114,6 +114,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return false;
+        return Services.PLATFORM.isModLoaded("imm_ptl_core");
     }
 }

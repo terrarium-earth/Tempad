@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RunProgramScreen extends Screen {
@@ -78,7 +79,6 @@ public class RunProgramScreen extends Screen {
             if(listSize > 12) {
                 for(int i = 0; i < 12; i++) {
                     shownLocationData.add(allLocations.get(i));
-                    System.out.println(i);
                 }
             } else {
                 shownLocationData = allLocations;
@@ -86,6 +86,7 @@ public class RunProgramScreen extends Screen {
 
             int x = (width - WIDTH) / 2 + offset + 16 * 15;
             int y = (height - HEIGHT) / 2 + offset + 16 * 2;
+            Collections.sort(shownLocationData);
             for(LocationData data : shownLocationData) {
                 var locationButton = new TextButton(x, y, 12, new TextComponent(data.getName()), color, (button) -> locationButtonOnPress(data));
                 this.displayedLocations.add(locationButton);

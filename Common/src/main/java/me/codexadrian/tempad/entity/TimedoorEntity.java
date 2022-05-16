@@ -50,11 +50,9 @@ public class TimedoorEntity extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
-        if(compoundTag.contains("location")) {
-            this.setLocation(LocationData.fromTag(compoundTag.getCompound("location")));
-        }
+        if (compoundTag.contains("location")) this.setLocation(LocationData.fromTag(compoundTag.getCompound("location")));
         this.setClosingTime(compoundTag.getInt("closing_time"));
-        this.setOwner(compoundTag.getUUID("owner"));
+        if (compoundTag.hasUUID("owner")) this.setOwner(compoundTag.getUUID("owner"));
         this.setColor(compoundTag.getInt("outline_color"));
         if (compoundTag.contains("linked_portal")) {
             this.setLinkedPortalId(compoundTag.getUUID("linked_portal"));
@@ -63,11 +61,11 @@ public class TimedoorEntity extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
-        if(locationData != null) {
-           compoundTag.put("location", locationData.toTag());
+        if (locationData != null) {
+            compoundTag.put("location", locationData.toTag());
         }
         compoundTag.putInt("closing_time", getClosingTime());
-        compoundTag.putUUID("owner", getOwner());
+        if(owner != null) compoundTag.putUUID("owner", getOwner());
         compoundTag.putInt("outline_color", getColor());
         if (getLinkedPortalId() != null) {
             compoundTag.putUUID("linked_portal", getLinkedPortalId());
@@ -76,7 +74,7 @@ public class TimedoorEntity extends Entity {
 
     @Override
     public @NotNull Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this, this.getType(), this.getDirection().get3DDataValue(), this.blockPosition());
+        return new ClientboundAddEntityPacket(this);
     }
 
     @Override
@@ -92,14 +90,15 @@ public class TimedoorEntity extends Entity {
             List<Entity> entities = this.level.getEntitiesOfClass(Entity.class, box, entity -> !(entity instanceof TimedoorEntity) && entity.canChangeDimensions() && !(entity instanceof FallingBlockEntity) && !(entity instanceof HangingEntity));
             if (!entities.isEmpty() && !level.isClientSide()) {
                 ServerLevel destinationLevel = Objects.requireNonNull(level.getServer()).getLevel(getLocation().getLevelKey());
-                for (Entity entity : entities) {
+                entities.stream().flatMap(entity -> entity.getRootVehicle().getSelfAndPassengers()).distinct().forEach(entity -> {
+                    entity.ejectPassengers();
                     Vec3 deltaMovement = entity.getDeltaMovement();
                     var pos = getLocation().getBlockPos();
-                    if(destinationLevel != null ) {
+                    if (destinationLevel != null) {
                         if (!getLocation().getLevelKey().location().equals(this.level.dimension().location())) {
                             Services.PLATFORM.teleportEntity(destinationLevel, pos, deltaMovement, entity);
                         } else {
-                            entity.teleportToWithTicket(pos.getX(), pos.getY(), pos.getZ());
+                            entity.teleportToWithTicket(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                             entity.setDeltaMovement(deltaMovement);
                             entity.hasImpulse = true;
                             //good code i promise
@@ -114,7 +113,7 @@ public class TimedoorEntity extends Entity {
                                 this.getLinkedPortalEntity().setClosingTime(getLinkedPortalEntity().tickCount + Tempad.getTempadConfig().getTimedoorAddWaitTime());
                         }
                     }
-                }
+                });
                 if (getLinkedPortalEntity() == null) {
                     TimedoorEntity recipientPortal = new TimedoorEntity(Services.REGISTRY.getTimedoor(), destinationLevel);
                     recipientPortal.setOwner(this.getOwner());
@@ -124,17 +123,22 @@ public class TimedoorEntity extends Entity {
                     this.setLinkedPortalId(recipientPortal.getUUID());
                     recipientPortal.setLinkedPortalId(this.getUUID());
                     var position = getLocation().getBlockPos().relative(this.getDirection(), 1);
-                    recipientPortal.setPos(position.getX(), position.getY(), position.getZ());
+                    recipientPortal.setPos(position.getX() + 0.5, position.getY(), position.getZ() + 0.5);
                     recipientPortal.setYRot(this.getYRot());
                     this.level.addFreshEntity(recipientPortal);
                 }
             }
         }
-        if (this.tickCount > getClosingTime() + ANIMATION_LENGTH && getClosingTime() != -1) {
+        if (this.tickCount >
+
+                getClosingTime() + ANIMATION_LENGTH &&
+
+                getClosingTime() != -1) {
             if (this.getLinkedPortalEntity() != null) this.getLinkedPortalEntity().setLinkedPortalId(null);
             this.setLinkedPortalId(null);
             this.discard();
         }
+
     }
 
     public void setLocation(LocationData location) {

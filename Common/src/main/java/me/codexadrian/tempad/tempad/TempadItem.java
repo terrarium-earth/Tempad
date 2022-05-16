@@ -45,12 +45,9 @@ public class TempadItem extends Item {
         timedoor.setColor(color);
         timedoor.setLocation(locationData);
         timedoor.setOwner(player.getUUID());
-        var position = player.blockPosition();
-        double xOffset = player.getX() - position.getX();
-        double yOffset = player.getY() - position.getY();
-        double zOffset = player.getZ() - position.getZ();
-        BlockPos offsetPos = position.relative(dir, Tempad.getTempadConfig().getDistanceFromPlayer());
-        timedoor.setPos(offsetPos.getX() + xOffset, offsetPos.getY() + yOffset, offsetPos.getZ() + zOffset);
+        var position = player.position();
+        var distance = Tempad.getTempadConfig().getDistanceFromPlayer();
+        timedoor.setPos(position.x() + dir.getStepX() * distance, position.y(), position.z() + dir.getStepZ() * distance);
         timedoor.setYRot(dir.getOpposite().toYRot());
         player.level.addFreshEntity(timedoor);
     }
@@ -59,7 +56,7 @@ public class TempadItem extends Item {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> components, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, components, flag);
         MutableComponent componentToAdd = null;
-        if(stack.hasTag() && stack.getTag() != null) { //IntelliJ wouldnt leave me alone
+        if(stack.hasTag()) { //IntelliJ wouldnt leave me alone
             if(stack.getTag().contains(Constants.TIMER_NBT)) {
                 long cooldownTimeTag = stack.getTag().getLong(Constants.TIMER_NBT);
                 Instant time = Instant.ofEpochSecond(cooldownTimeTag);

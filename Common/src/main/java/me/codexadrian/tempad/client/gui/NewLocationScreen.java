@@ -41,10 +41,10 @@ public class NewLocationScreen extends Screen {
         EditBox textField = new EditBox(font, cornerX + 16 * 15, cornerY + 16 * 8 - 4, 16 * 8, 24, new TranslatableComponent("gui." + Constants.MODID + ".textfield"));
         TextButton addLocation = new TextButton(cornerX + 16 * 15, cornerY + 16 * 10, 12, addLocationText, color, (button -> {
             String nameFieldText = textField.getValue();
-            if (!nameFieldText.equals("")) {
+            if (!nameFieldText.isBlank()) {
                 Services.NETWORK.sendToServer(new AddLocationPacket(nameFieldText, hand));
+                Minecraft.getInstance().setScreen(null);
             }
-            Minecraft.getInstance().setScreen(null);
 
         }));
         textField.setTextColor(color);
