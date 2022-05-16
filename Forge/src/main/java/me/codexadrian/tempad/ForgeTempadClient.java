@@ -25,7 +25,6 @@ public class ForgeTempadClient {
         TempadClient.init();
         EntityRenderers.register(ForgeTempad.TIMEDOOR.get(), TimedoorRenderer::new);
         FMLJavaModLoadingContext.get().getModEventBus().register(ForgeTempadClient.class);
-        ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(BLUR_RELOADER);
     }
 
     @SubscribeEvent
@@ -41,5 +40,9 @@ public class ForgeTempadClient {
                 new ResourceLocation("rendertype_timedoor_white"),
                 DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP
         ), shaderInstance -> timedoorWhiteShader = shaderInstance);
+    }
+
+    public static void registerBlurReloader() {
+        ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(BLUR_RELOADER);
     }
 }

@@ -114,6 +114,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return Services.PLATFORM.getPlatformName().equals("Forge") && super.shouldRender(entity, frustum, d, e, f);
+        return false;
     }
 }

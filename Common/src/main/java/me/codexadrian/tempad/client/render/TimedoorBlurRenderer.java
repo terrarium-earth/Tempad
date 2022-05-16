@@ -3,6 +3,7 @@ package me.codexadrian.tempad.client.render;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.shaders.AbstractUniform;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import me.codexadrian.tempad.BlurReloader;
@@ -61,7 +62,7 @@ public class TimedoorBlurRenderer {
             renderTexture.bindWrite(false);
         });
 
-        Services.SHADERS.getBlurReloader().getTimedoorBlur().process(deltaTime);
+        RenderSystem.runAsFancy(() -> Services.SHADERS.getBlurReloader().getTimedoorBlur().process(deltaTime));
         renderTexture.bindWrite(false);
     }
 
