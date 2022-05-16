@@ -3,6 +3,7 @@ package me.codexadrian.tempad;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.network.NetworkHandler;
 import me.codexadrian.tempad.tempad.TempadItem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

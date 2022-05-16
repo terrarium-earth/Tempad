@@ -112,10 +112,8 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         buffer.vertex(model, xBound, yBound, zBound).color(red, green, blue, alpha).uv(1, 0).uv2(i).endVertex();
     }
 
-
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
         return Services.PLATFORM.getPlatformName().equals("Forge") && super.shouldRender(entity, frustum, d, e, f);
     }
-
 }

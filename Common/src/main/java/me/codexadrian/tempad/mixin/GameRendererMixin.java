@@ -20,37 +20,6 @@ import java.util.Map;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 
-    @Shadow
-    @Final
-    private Map<String, ShaderInstance> shaders;
-
-    @Inject(method = "reloadShaders", at = @At("TAIL"))
-    private void reloadShaders(ResourceManager resourceManager, CallbackInfo ci) {
-        try {
-            Services.SHADERS.setTimeDoorShader(new ShaderInstance(resourceManager, "rendertype_timedoor", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
-            Services.SHADERS.setTimedoorWhiteShader(new ShaderInstance(resourceManager, "rendertype_timedoor_white", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
-        } catch (Exception e) {
-            ShaderInstance timedoorShader = Services.SHADERS.getTimedoorShader();
-            ShaderInstance timedoorWhiteShader = Services.SHADERS.getTimedoorWhiteShader();
-
-
-            if (timedoorShader != null) {
-                timedoorShader.close();
-                Services.SHADERS.setTimeDoorShader(null);
-            } if (timedoorWhiteShader != null) {
-                timedoorWhiteShader.close();
-                Services.SHADERS.setTimedoorWhiteShader(null);
-            }
-
-            throw new RuntimeException("could not reload Tempad shaders", e);
-        }
-        ShaderInstance timedoorShader = Services.SHADERS.getTimedoorShader();
-        ShaderInstance timedoorWhiteShader = Services.SHADERS.getTimedoorWhiteShader();
-
-        this.shaders.put(timedoorShader.getName(), timedoorShader);
-        this.shaders.put(timedoorWhiteShader.getName(), timedoorWhiteShader);
-    }
-
     @Inject(method = "resize", at = @At("TAIL"))
     public void resize(int i, int j, CallbackInfo ci) {
         PostChain timedoorBlur = Services.SHADERS.getBlurReloader().getTimedoorBlur();

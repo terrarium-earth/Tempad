@@ -60,11 +60,6 @@ public class TimedoorBlurRenderer {
             bufferSource.endLastBatch();
             renderTexture.bindWrite(false);
         });
-/*
-        GlStateManager._glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, blurRenderTarget.frameBufferId);
-        GlStateManager._glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, renderTexture.frameBufferId);
-        GlStateManager._glBlitFrameBuffer(0, 0, renderTexture.width, renderTexture.height, 0, 0, renderTexture.width/4, renderTexture.height/4, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_NEAREST);
-*/
 
         Services.SHADERS.getBlurReloader().getTimedoorBlur().process(deltaTime);
         renderTexture.bindWrite(false);

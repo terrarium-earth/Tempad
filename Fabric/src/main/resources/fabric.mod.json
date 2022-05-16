@@ -26,7 +26,8 @@
       ]
     },
     "mixins": [
-      "tempad.mixins.json"
+      "tempad.mixins.json",
+      "tempad.fabric.mixins.json"
     ],
     "depends": {
       "fabricloader": ">=0.13",

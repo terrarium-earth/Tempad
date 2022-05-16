@@ -1,5 +1,6 @@
 package me.codexadrian.tempad.tempad;
 
+import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.entity.TimedoorEntity;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -56,26 +58,20 @@ public class TempadItem extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> components, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, components, flag);
-        MutableComponent componentToAdd;
+        MutableComponent componentToAdd = null;
         if(stack.hasTag() && stack.getTag() != null) { //IntelliJ wouldnt leave me alone
-            if(stack.getTag().contains("CooldownTime")) {
-                String cooldownTimeTag = stack.getTag().getString("CooldownTime");
-                LocalDateTime cooldownTime = LocalDateTime.parse(cooldownTimeTag);
-                LocalDateTime timeNow = LocalDateTime.now();
-                Duration between = Duration.between(cooldownTime, timeNow);
-                int maxCooldown = Tempad.getTempadConfig().getCooldownTime();
-                if(between.toSeconds() < maxCooldown) {
-                    between = Duration.of(maxCooldown, ChronoUnit.SECONDS).minus(between);
-                    componentToAdd = new TranslatableComponent("tooltip.tempad.timeleft").append(" " + between.toMinutesPart() + ":" + between.toSecondsPart());
-                } else {
-                    componentToAdd = new TranslatableComponent("tooltip.tempad.fullycharged");
+            if(stack.getTag().contains(Constants.TIMER_NBT)) {
+                long cooldownTimeTag = stack.getTag().getLong(Constants.TIMER_NBT);
+                Instant time = Instant.ofEpochSecond(cooldownTimeTag);
+                if(Instant.now().isBefore(time)) {
+                    Duration between = Duration.of(cooldownTimeTag - Instant.now().getEpochSecond(), ChronoUnit.SECONDS);
+                    String seconds = (between.toSecondsPart() < 9 ? "0" : "") + between.toSecondsPart();
+                    String minutes = (between.toMinutesPart() < 9 ? "0" : "") + between.toMinutesPart();
+                    componentToAdd = new TranslatableComponent("tooltip.tempad.timeleft").append(" " + minutes + ":" + seconds);
                 }
-            } else {
-                componentToAdd = new TranslatableComponent("tooltip.tempad.fullycharged");
             }
-        } else {
-            componentToAdd = new TranslatableComponent("tooltip.tempad.fullycharged");
         }
+        componentToAdd = componentToAdd == null ? new TranslatableComponent("tooltip.tempad.fullycharged") : componentToAdd;
         components.add(componentToAdd.withStyle(ChatFormatting.GRAY));
     }
 }

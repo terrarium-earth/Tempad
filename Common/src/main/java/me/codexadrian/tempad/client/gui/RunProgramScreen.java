@@ -23,6 +23,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,13 +108,11 @@ public class RunProgramScreen extends Screen {
         TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) ->{
             ItemStack itemInHand = minecraft.player.getItemInHand(hand);
             if(itemInHand.hasTag()) {
-                if(itemInHand.getTag().contains("CooldownTime")) {
-                    String cooldownTimeTag = itemInHand.getTag().getString("CooldownTime");
-                    LocalDateTime cooldownTime = LocalDateTime.parse(cooldownTimeTag);
-                    LocalDateTime timeNow = LocalDateTime.now();
-                    Duration between = Duration.between(cooldownTime, timeNow);
-                    int maxCooldown = Tempad.getTempadConfig().getCooldownTime();
-                    if(between.toSeconds() > maxCooldown) {
+                if(itemInHand.getTag().contains(Constants.TIMER_NBT)) {
+                    //FIXME do on server
+                    long cooldownTimeTag = itemInHand.getTag().getLong(Constants.TIMER_NBT);
+                    Instant cooldownTime = Instant.ofEpochSecond(cooldownTimeTag);
+                    if(Instant.now().isAfter(cooldownTime)) {
                         Minecraft.getInstance().setScreen(null);
                         Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
                     }
