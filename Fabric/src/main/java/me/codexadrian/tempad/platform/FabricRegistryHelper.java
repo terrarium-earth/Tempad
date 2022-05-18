@@ -13,6 +13,11 @@ public class FabricRegistryHelper implements IRegistryHelper {
     }
 
     @Override
+    public TempadItem getCreativeItem() {
+        return FabricTempad.TEMPAD;
+    }
+
+    @Override
     public EntityType<TimedoorEntity> getTimedoor() {
         return FabricTempad.TIMEDOOR_ENTITY_ENTITY_TYPE;
     }

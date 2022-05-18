@@ -13,6 +13,11 @@ public class ForgeRegistryHelper implements IRegistryHelper {
     }
 
     @Override
+    public TempadItem getCreativeItem() {
+        return ForgeTempad.CREATIVE_TEMPAD.get();
+    }
+
+    @Override
     public EntityType<TimedoorEntity> getTimedoor() {
         return ForgeTempad.TIMEDOOR.get();
     }

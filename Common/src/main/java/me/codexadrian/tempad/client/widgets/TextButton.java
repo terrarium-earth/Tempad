@@ -1,30 +1,41 @@
 package me.codexadrian.tempad.client.widgets;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.time.Instant;
 
 public class TextButton extends Button {
     private float padding;
     private final int color;
     private OnPress dynamicPress;
     private boolean isCentered;
+    private Instant disabledUntil;
 
     public TextButton(int x, int y, int height, Component component, int color, OnPress onPress) {
-        this(x, y, height, component, color, false, onPress);
+        this(x, y, height, component, color, false, onPress, null);
     }
 
-    public TextButton(int x, int y, int height, Component component, int color, boolean isCentered, OnPress onPress) {
+    public TextButton(int x, int y, int height, Component component, int color, OnPress onPress, @Nullable Instant diabledUntil) {
+        this(x, y, height, component, color, false, onPress, diabledUntil);
+    }
+
+    public TextButton(int x, int y, int height, Component component, int color, boolean isCentered, OnPress onPress, @Nullable Instant disabledUntil) {
         super(x, y, Minecraft.getInstance().font.width(component), Minecraft.getInstance().font.lineHeight, component, onPress);
         this.dynamicPress = onPress;
         this.height = height;
         this.width = (int) (Minecraft.getInstance().font.width(getMessage()) * (getHeight() / 8F));
         this.color = color;
         this.isCentered = isCentered;
+        if(disabledUntil != null) this.disabledUntil = disabledUntil;
     }
 
     @Override
@@ -59,7 +70,8 @@ public class TextButton extends Button {
         matrices.translate(x * (1- height * 2 / 16F), y * (1 - height * 2 / 16F), 0);
         matrices.scale(height * 2 / 16F, height * 2 / 16F, 0);
         matrices.translate(0, padding/2F, 0);
-        int color = isMouseOver(mouseX, mouseY) ? this.color : getOffColor();
+        boolean disabled = disabledUntil == null || Instant.now().isAfter(disabledUntil);
+        int color = isMouseOver(mouseX, mouseY) && disabled ? this.color : getOffColor();
         //drawCenteredString(matrices, font, getMessage(), x + (TempadScreen.this.width - WIDTH) / 2, y + (TempadScreen.this.height - HEIGHT) / 2, color);
         if(isCentered) {
             drawCenteredString(matrices, font, getMessage(), x, y, color);
@@ -67,27 +79,6 @@ public class TextButton extends Button {
             drawString(matrices, font, getMessage(), x, y, color);
         }
         matrices.popPose();
-    }
-
-    public boolean isWithinBounds(int x, int y) {
-        Minecraft minecraft = Minecraft.getInstance();
-        Font font = minecraft.font;
-        if(isCentered) {
-            return x >= this.x - font.width(getMessage()) * .5 && y >= this.y && x < this.x + .5 * font.width(getMessage()) * (getHeight() * 2 / 16F) && y < this.y + this.height;
-        } else {
-            return x >= this.x && y >= this.y && x < this.x + font.width(getMessage()) * (getHeight() * 2F / 16F) && y < this.y + this.height;
-        }
-    }
-
-    public void changePosition(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void refreshContents(Component component, OnPress press) {
-        this.dynamicPress = press;
-        this.setMessage(component);
-        this.width = (int) (Minecraft.getInstance().font.width(component) * (getHeight() / 8F));
     }
 
     @Override
@@ -119,5 +110,10 @@ public class TextButton extends Button {
         return new Color((int) r, (int) g, (int) b, (int) a).getRGB();
     }
 
-
+    @Override
+    public @NotNull Component getMessage() {
+        if(disabledUntil == null) return super.getMessage();
+        if(Instant.now().isBefore(disabledUntil)) return super.getMessage().copy().withStyle(ChatFormatting.STRIKETHROUGH);
+        return super.getMessage();
+    }
 }

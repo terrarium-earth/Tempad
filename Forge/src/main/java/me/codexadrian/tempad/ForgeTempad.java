@@ -3,6 +3,7 @@ package me.codexadrian.tempad;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.network.NetworkHandler;
 import me.codexadrian.tempad.tempad.TempadItem;
+import me.codexadrian.tempad.tempad.TempadOfHeWhoRemainsItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -40,6 +41,7 @@ public class ForgeTempad {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
     public static final RegistryObject<EntityType<TimedoorEntity>> TIMEDOOR = ENTITIES.register("timedoor", () -> EntityType.Builder.of(TimedoorEntity::new, MobCategory.MISC).sized(.4F, 2.3F).build("timedoor"));
     public static final RegistryObject<TempadItem> TEMPAD = ITEMS.register("tempad", ()-> new TempadItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
+    public static final RegistryObject<TempadItem> CREATIVE_TEMPAD = ITEMS.register("he_who_remains_tempad", ()-> new TempadOfHeWhoRemainsItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
 
     public ForgeTempad() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

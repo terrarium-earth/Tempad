@@ -4,6 +4,7 @@ import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
+import me.codexadrian.tempad.platform.Services;
 import me.codexadrian.tempad.tempad.LocationData;
 import me.codexadrian.tempad.tempad.TempadItem;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -53,7 +55,10 @@ public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, 
         @Override
         public BiConsumer<MinecraftServer, Player> handle(SummonTimedoorPacket message) {
             return (server, player) -> {
-                player.getItemInHand(message.hand).getOrCreateTag().putLong(Constants.TIMER_NBT, Instant.now().plusSeconds(Tempad.getTempadConfig().getCooldownTime()).getEpochSecond());
+                ItemStack itemInHand = player.getItemInHand(message.hand);
+                if(itemInHand.getItem() instanceof TempadItem tempadItem) {
+                    tempadItem.handleUsage(itemInHand);
+                }
                 TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registry.DIMENSION_REGISTRY, message.dimensionKey), message.pos), player, message.color);
             };
         }

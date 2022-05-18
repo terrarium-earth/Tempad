@@ -1,0 +1,32 @@
+{
+  "parent": "tempad:tempad",
+  "display": {
+    "icon": {
+      "item": "tempad:he_who_remains_tempad"
+    },
+    "title": {
+      "translate": "advancements.tempad.he_who_remains"
+    },
+    "description": {
+      "translate": "advancements.tempad.he_who_remains.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tempad:he_who_remains_tempad"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

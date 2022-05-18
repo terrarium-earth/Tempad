@@ -11,6 +11,7 @@ import me.codexadrian.tempad.network.messages.SummonTimedoorPacket;
 import me.codexadrian.tempad.platform.Services;
 import me.codexadrian.tempad.tempad.LocationData;
 import me.codexadrian.tempad.tempad.TempadComponent;
+import me.codexadrian.tempad.tempad.TempadItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
@@ -106,33 +107,29 @@ public class RunProgramScreen extends Screen {
         String locationName = data.getBlockPos().toShortString();
         TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(locationName) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 11,12, new TextComponent(locationName), color, (button1) -> {});
         var teleportText = new TranslatableComponent("gui." + Constants.MODID + ".teleport");
-        TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) ->{
-            ItemStack itemInHand = minecraft.player.getItemInHand(hand);
-            if(itemInHand.hasTag()) {
-                if(itemInHand.getTag().contains(Constants.TIMER_NBT)) {
-                    //FIXME do on server
-                    long cooldownTimeTag = itemInHand.getTag().getLong(Constants.TIMER_NBT);
-                    Instant cooldownTime = Instant.ofEpochSecond(cooldownTimeTag);
-                    if(Instant.now().isAfter(cooldownTime)) {
-                        Minecraft.getInstance().setScreen(null);
-                        Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
-                    }
-                } else {
-                    Minecraft.getInstance().setScreen(null);
-                    Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
-                }
-            }
-        });
+        Instant timeUntilUsable = null;
+        ItemStack itemInHand = minecraft.player.getItemInHand(hand);
+        if(itemInHand.hasTag() && itemInHand.getTag().contains(Constants.TIMER_NBT)) timeUntilUsable = Instant.ofEpochSecond(itemInHand.getTag().getLong(Constants.TIMER_NBT));
+        TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) -> teleportAction(data), timeUntilUsable);
         var deleteText = new TranslatableComponent("gui." + Constants.MODID + ".delete");
         TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(deleteText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 13,12, deleteText, color, (button2) ->{
             Minecraft.getInstance().setScreen(null);
             Services.NETWORK.sendToServer(new DeleteLocationPacket(data.getId(), hand));
         });
-
         upNextButtons.add(displayedLocation);
         upNextButtons.add(teleportButton);
         upNextButtons.add(deleteLocationButton);
         this.interfaceNeedsReload = true;
+    }
+
+    private void teleportAction(LocationData data) {
+        ItemStack itemInHand = minecraft.player.getItemInHand(hand);
+        if(itemInHand.hasTag() && itemInHand.getItem() instanceof TempadItem tempadItem) {
+            if(tempadItem.checkIfUsable(itemInHand)) {
+                Minecraft.getInstance().setScreen(null);
+                Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
+            }
+        }
     }
 
     @Override

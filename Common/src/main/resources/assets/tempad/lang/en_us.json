@@ -14,5 +14,11 @@
   "gui.tempad.timedoor": "Timedoor",
   "tooltip.tempad.timeleft": "Time Until Fully Recharged: ",
   "tooltip.tempad.fullycharged": "Fully Charged",
-  "item.tempad.tempad": "Tempad"
+  "item.tempad.tempad": "§6Tempad",
+  "item.tempad.he_who_remains_tempad": "§6Tempad",
+  "item.tempad.he_who_remains_tempad.tooltip": "Property of 'He Who Remains'",
+  "advancements.tempad.tempad": "For All Time. Always.",
+  "advancements.tempad.tempad.description": "Obtain a Tempad",
+  "advancements.tempad.he_who_remains": "The Citadel at the End of Time",
+  "advancements.tempad.he_who_remains.description": "Obtain 'He Who Remains'' Tempad"
 }

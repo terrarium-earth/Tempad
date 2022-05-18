@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,20 +56,33 @@ public class TempadItem extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> components, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, components, flag);
+        appendedText(stack, components);
+    }
+
+    public void appendedText(@NotNull ItemStack stack, @NotNull List<Component> components) {
         MutableComponent componentToAdd = null;
         if(stack.hasTag()) { //IntelliJ wouldnt leave me alone
             if(stack.getTag().contains(Constants.TIMER_NBT)) {
-                long cooldownTimeTag = stack.getTag().getLong(Constants.TIMER_NBT);
-                Instant time = Instant.ofEpochSecond(cooldownTimeTag);
-                if(Instant.now().isBefore(time)) {
-                    Duration between = Duration.of(cooldownTimeTag - Instant.now().getEpochSecond(), ChronoUnit.SECONDS);
-                    String seconds = (between.toSecondsPart() < 9 ? "0" : "") + between.toSecondsPart();
-                    String minutes = (between.toMinutesPart() < 9 ? "0" : "") + between.toMinutesPart();
-                    componentToAdd = new TranslatableComponent("tooltip.tempad.timeleft").append(" " + minutes + ":" + seconds);
+                if(!this.checkIfUsable(stack)) {
+                    long seconds = Instant.now().until(Instant.ofEpochSecond(stack.getTag().getLong(Constants.TIMER_NBT)), ChronoUnit.MILLIS);
+                    componentToAdd = new TranslatableComponent("tooltip.tempad.timeleft").append(DurationFormatUtils.formatDuration(seconds, "mm:ss", true));
                 }
             }
         }
         componentToAdd = componentToAdd == null ? new TranslatableComponent("tooltip.tempad.fullycharged") : componentToAdd;
         components.add(componentToAdd.withStyle(ChatFormatting.GRAY));
+    }
+
+    public void handleUsage(ItemStack tempad) {
+        tempad.getOrCreateTag().putLong(Constants.TIMER_NBT, Instant.now().plusSeconds(Tempad.getTempadConfig().getCooldownTime()).getEpochSecond());
+    }
+
+    public boolean checkIfUsable(ItemStack tempad) {
+        if(tempad.hasTag() && tempad.getTag().contains(Constants.TIMER_NBT)) {
+            long cooldownTimeTag = tempad.getTag().getLong(Constants.TIMER_NBT);
+            Instant cooldownTime = Instant.ofEpochSecond(cooldownTimeTag);
+            return Instant.now().isAfter(cooldownTime);
+        }
+        return true;
     }
 }

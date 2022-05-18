@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tempad:item/tempad_of_he_who_remains"
+  }
+}

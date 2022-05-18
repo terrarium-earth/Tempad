@@ -7,5 +7,7 @@ import net.minecraft.world.entity.EntityType;
 public interface IRegistryHelper {
     TempadItem getItem();
 
+    TempadItem getCreativeItem();
+
     EntityType<TimedoorEntity> getTimedoor();
 }

@@ -1,0 +1,32 @@
+{
+  "parent": "nether/summon_wither",
+  "display": {
+    "icon": {
+      "item": "tempad:tempad"
+    },
+    "title": {
+      "translate": "advancements.tempad.tempad"
+    },
+    "description": {
+      "translate": "advancements.tempad.tempad.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tempad:tempad"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
