@@ -54,6 +54,9 @@ public class ColorConfig {
                 0xEB3860,
     };
 
+    @SerializedName("timedoorFancy")
+    private boolean isFancyTimedoorRendererEnabled = true;
+
     public int getColor() {
         return color;
     }
@@ -64,6 +67,10 @@ public class ColorConfig {
 
     public int[] getColorOptions() {
         return colorOptions;
+    }
+
+    public boolean getIfRenderTimedoor() {
+        return isFancyTimedoorRendererEnabled;
     }
 
     public static ColorConfig loadConfig(Path configFolder) throws IOException {

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import me.codexadrian.tempad.Constants;
+import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -114,6 +115,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return Services.PLATFORM.isModLoaded("imm_ptl_core");
+        return Services.PLATFORM.isModLoaded("imm_ptl_core") || !TempadClient.getClientConfig().getIfRenderTimedoor();
     }
 }
