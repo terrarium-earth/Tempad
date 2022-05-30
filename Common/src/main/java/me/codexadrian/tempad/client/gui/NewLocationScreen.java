@@ -12,8 +12,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
@@ -37,8 +35,8 @@ public class NewLocationScreen extends Screen {
         int cornerX = (width - WIDTH) / 2;
         int cornerY = (height - HEIGHT) / 2;
         TimedoorSprite timeDoorSprite = new TimedoorSprite(cornerX + 16 * 4, cornerY + 16 * 4, color, 128);
-        Component addLocationText = new TranslatableComponent("gui." + Constants.MODID + ".add_location");
-        EditBox textField = new EditBox(font, cornerX + 16 * 15, cornerY + 16 * 8 - 4, 16 * 8, 24, new TranslatableComponent("gui." + Constants.MODID + ".textfield"));
+        Component addLocationText = Component.translatable("gui." + Constants.MODID + ".add_location");
+        EditBox textField = new EditBox(font, cornerX + 16 * 15, cornerY + 16 * 8 - 4, 16 * 8, 24, Component.translatable("gui." + Constants.MODID + ".textfield"));
         TextButton addLocation = new TextButton(cornerX + 16 * 15, cornerY + 16 * 10, 12, addLocationText, color, (button -> {
             String nameFieldText = textField.getValue();
             if (!nameFieldText.isBlank()) {
@@ -73,7 +71,7 @@ public class NewLocationScreen extends Screen {
         matrices.pushPose();
         matrices.translate(x * (-0.5), y * (-0.5), 0);
         matrices.scale(1.5F, 1.5F, 0);
-        drawString(matrices, font, new TextComponent(minecraft.player.blockPosition().toShortString()), x, y, color);
+        drawString(matrices, font, Component.literal(minecraft.player.blockPosition().toShortString()), x, y, color);
         matrices.popPose();
     }
 

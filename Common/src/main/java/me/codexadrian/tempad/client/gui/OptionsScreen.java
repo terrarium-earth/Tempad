@@ -2,14 +2,13 @@ package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.ColorConfig;
 import me.codexadrian.tempad.Constants;
+import me.codexadrian.tempad.TempadClient;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
@@ -88,7 +87,7 @@ public class OptionsScreen extends Screen {
         matrices.pushPose();
         matrices.translate(x * (-1.2), y * (-1.2), 0);
         matrices.scale(2.2F, 2.2F, 0);
-        drawString(matrices, font, new TranslatableComponent("gui." + Constants.MODID + ".options_header"), x, y, color);
+        drawString(matrices, font, Component.translatable("gui." + Constants.MODID + ".options_header"), x, y, color);
         matrices.popPose();
     }
 

@@ -3,7 +3,6 @@ package me.codexadrian.tempad.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
 import me.codexadrian.tempad.network.messages.DeleteLocationPacket;
@@ -17,15 +16,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,14 +84,14 @@ public class RunProgramScreen extends Screen {
             int y = (height - HEIGHT) / 2 + offset + 16 * 2;
             Collections.sort(shownLocationData);
             for(LocationData data : shownLocationData) {
-                var locationButton = new TextButton(x, y, 12, new TextComponent(data.getName()), color, (button) -> locationButtonOnPress(data));
+                var locationButton = new TextButton(x, y, 12, Component.literal(data.getName()), color, (button) -> locationButtonOnPress(data));
                 this.displayedLocations.add(locationButton);
                 addRenderableWidget(locationButton);
                 y+=16;
             }
         }
 
-        TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 15, (height - HEIGHT) / 2 + offset + 16 * 14, 12, new TranslatableComponent("gui." + Constants.MODID + ".new_location"), color, (button)->{
+        TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 15, (height - HEIGHT) / 2 + offset + 16 * 14, 12, Component.translatable("gui." + Constants.MODID + ".new_location"), color, (button)->{
           minecraft.setScreen(new NewLocationScreen(color, hand));
         });
 
@@ -105,13 +100,13 @@ public class RunProgramScreen extends Screen {
 
     private void locationButtonOnPress(LocationData data) {
         String locationName = data.getBlockPos().toShortString();
-        TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(locationName) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 11,12, new TextComponent(locationName), color, (button1) -> {});
-        var teleportText = new TranslatableComponent("gui." + Constants.MODID + ".teleport");
+        TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(locationName) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 11,12, Component.literal(locationName), color, (button1) -> {});
+        var teleportText = Component.translatable("gui." + Constants.MODID + ".teleport");
         Instant timeUntilUsable = null;
         ItemStack itemInHand = minecraft.player.getItemInHand(hand);
         if(itemInHand.hasTag() && itemInHand.getTag().contains(Constants.TIMER_NBT)) timeUntilUsable = Instant.ofEpochSecond(itemInHand.getTag().getLong(Constants.TIMER_NBT));
         TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) -> teleportAction(data), timeUntilUsable);
-        var deleteText = new TranslatableComponent("gui." + Constants.MODID + ".delete");
+        var deleteText = Component.translatable("gui." + Constants.MODID + ".delete");
         TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(deleteText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 13,12, deleteText, color, (button2) ->{
             Minecraft.getInstance().setScreen(null);
             Services.NETWORK.sendToServer(new DeleteLocationPacket(data.getId(), hand));
@@ -156,7 +151,7 @@ public class RunProgramScreen extends Screen {
             int offset = Math.min(mouseMovement, listSize - 12);
             for(int i = offset; i < 12 + offset; i++) {
                 LocationData data = allLocations.get(i);
-                displayedLocations.add(new TextButton(x, y, 12, new TextComponent(data.getName()), color, (button -> locationButtonOnPress(data))));
+                displayedLocations.add(new TextButton(x, y, 12, Component.literal(data.getName()), color, (button -> locationButtonOnPress(data))));
                 y+=16;
             }
             displayedLocations.forEach(this::addRenderableWidget);
@@ -195,7 +190,7 @@ public class RunProgramScreen extends Screen {
         matrices.pushPose();
         matrices.translate(x * (-0.5), y * (-0.5), 0);
         matrices.scale(1.5F, 1.5F, 0);
-        drawString(matrices, font, new TranslatableComponent("gui." + Constants.MODID + ".select_location"), x, y, color);
+        drawString(matrices, font, Component.translatable("gui." + Constants.MODID + ".select_location"), x, y, color);
         matrices.popPose();
     }
 

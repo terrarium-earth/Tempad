@@ -6,10 +6,8 @@ import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -21,9 +19,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -65,11 +61,11 @@ public class TempadItem extends Item {
             if(stack.getTag().contains(Constants.TIMER_NBT)) {
                 if(!this.checkIfUsable(stack)) {
                     long seconds = Instant.now().until(Instant.ofEpochSecond(stack.getTag().getLong(Constants.TIMER_NBT)), ChronoUnit.MILLIS);
-                    componentToAdd = new TranslatableComponent("tooltip.tempad.timeleft").append(DurationFormatUtils.formatDuration(seconds, "mm:ss", true));
+                    componentToAdd = Component.translatable("tooltip.tempad.timeleft").append(DurationFormatUtils.formatDuration(seconds, "mm:ss", true));
                 }
             }
         }
-        componentToAdd = componentToAdd == null ? new TranslatableComponent("tooltip.tempad.fullycharged") : componentToAdd;
+        componentToAdd = componentToAdd == null ? Component.translatable("tooltip.tempad.fullycharged") : componentToAdd;
         components.add(componentToAdd.withStyle(ChatFormatting.GRAY));
     }
 

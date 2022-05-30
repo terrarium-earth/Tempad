@@ -8,7 +8,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import static me.codexadrian.tempad.Constants.MODID;
@@ -45,7 +45,7 @@ public class TimedoorSprite implements Widget, GuiEventListener, NarratableEntry
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         blit(poseStack, x, y, size, size, 0, 0, 16, 16, 16, 16);
         poseStack.popPose();
-        if(age <= 44) age++;
+        if (age <= 44) age++;
     }
 
     @Override
@@ -55,6 +55,6 @@ public class TimedoorSprite implements Widget, GuiEventListener, NarratableEntry
 
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
-        narrationElementOutput.add(NarratedElementType.TITLE, new TranslatableComponent("gui." + MODID + ".timedoor"));
+        narrationElementOutput.add(NarratedElementType.TITLE, Component.translatable("gui." + MODID + ".timedoor"));
     }
 }
