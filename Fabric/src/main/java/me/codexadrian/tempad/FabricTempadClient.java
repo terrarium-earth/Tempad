@@ -14,7 +14,7 @@ import net.minecraft.server.packs.PackType;
 public class FabricTempadClient implements ClientModInitializer {
     public static ShaderInstance timedoorShader;
     public static ShaderInstance timedoorWhiteShader;
-    public static final RenderType timedoorBlurRenderType = RenderType.create("timedoorBlur", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).setCullState(new RenderStateShard.CullStateShard(true)).setShaderState(new RenderStateShard.ShaderStateShard(() -> timedoorWhiteShader)).createCompositeState(false));
+    public static final RenderType timedoorBlurRenderType = RenderType.create("timedoorBlur", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).setCullState(new RenderStateShard.CullStateShard(false)).setShaderState(new RenderStateShard.ShaderStateShard(() -> timedoorWhiteShader)).createCompositeState(false));
     public static final FabricBlurReloader INSTANCE = new FabricBlurReloader();
     @Override
     public void onInitializeClient() {
