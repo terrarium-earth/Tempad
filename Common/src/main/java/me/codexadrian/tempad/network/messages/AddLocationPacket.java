@@ -4,6 +4,7 @@ import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
 import me.codexadrian.tempad.tempad.LocationData;
 import me.codexadrian.tempad.tempad.TempadComponent;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -46,8 +47,7 @@ public record AddLocationPacket(String name, InteractionHand hand) implements IP
         public BiConsumer<MinecraftServer, Player> handle(AddLocationPacket message) {
             return (server, player) -> {
                 ItemStack stack = player.getItemInHand(message.hand);
-                var tempadLocation = new LocationData(message.name, player.level.dimension(), player.blockPosition());
-
+                var tempadLocation = new LocationData(message.name, player.level.dimension(), new BlockPos(player.getX(), Math.ceil(player.getY()), player.getZ()));
                 TempadComponent.addStackLocation(stack, tempadLocation);
             };
         }
