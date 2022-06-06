@@ -10,10 +10,10 @@
     ],
     "contact": {
       "homepage": "https://fabricmc.net/",
-      "sources": "https://github.com/FabricMC/fabric-example-mod"
+      "sources": "https://github.com/terrarium-earth/Tempad"
     },
   
-    "license": "CC0-1.0",
+    "license": "All Rights Reserved",
     "icon": "assets/modid/icon.png",
     "accessWidener": "tempad.accesswidener",
     "environment": "*",

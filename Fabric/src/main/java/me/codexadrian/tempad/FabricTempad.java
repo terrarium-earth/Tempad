@@ -5,7 +5,6 @@ import me.codexadrian.tempad.network.NetworkHandler;
 import me.codexadrian.tempad.tempad.TempadItem;
 import me.codexadrian.tempad.tempad.TempadOfHeWhoRemainsItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
