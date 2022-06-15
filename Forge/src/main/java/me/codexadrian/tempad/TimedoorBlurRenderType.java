@@ -14,8 +14,10 @@ public class TimedoorBlurRenderType extends RenderType {
 
     private static RenderType timedoorShader() {
         RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                .setCullState(new RenderStateShard.CullStateShard(false))
+                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                .setCullState(NO_CULL)
+                .setLightmapState(LIGHTMAP)
+                .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                 .setShaderState(new RenderStateShard.ShaderStateShard(() -> ForgeTempadClient.timedoorWhiteShader))
                 .createCompositeState(false);
 

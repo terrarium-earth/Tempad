@@ -7,6 +7,7 @@ import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -56,7 +57,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         poseStack.mulPose(Vector3f.YP.rotationDegrees(entity.getYRot()));
         poseStack.translate(0, 1.15F, 0);
         var model = poseStack.last().pose();
-        makeBoxBasedOnPlayerBecauseAshSaidSo(model, multiBufferSource, width, height, depth, light, entity.getColor());
+        renderTimedoor(model, multiBufferSource, width, height, depth, light, entity.getColor());
         super.render(entity, yaw, deltaTime, poseStack, multiBufferSource, light);
         poseStack.popPose();
     }
@@ -66,7 +67,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         return new ResourceLocation(Constants.MODID, "");
     }
 
-    public void makeBoxBasedOnPlayerBecauseAshSaidSo(Matrix4f model, MultiBufferSource multiBufferSource, float width, float height, float depth, int i, int color) {
+    public void renderTimedoor(Matrix4f model, MultiBufferSource multiBufferSource, float width, float height, float depth, int i, int color) {
         float xBound = width * 0.5F;
         float yBound = height * 0.5F - .01F;
         float zBound = depth * -0.5F;
@@ -115,6 +116,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return Services.PLATFORM.isModLoaded("imm_ptl_core") || !TempadClient.getClientConfig().getIfRenderTimedoor();
+        return !TempadClient.getClientConfig().renderBlur() || Minecraft.useShaderTransparency();
     }
 }

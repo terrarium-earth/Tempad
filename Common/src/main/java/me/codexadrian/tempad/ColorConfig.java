@@ -2,7 +2,6 @@ package me.codexadrian.tempad;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 import me.codexadrian.tempad.platform.Services;
 
@@ -10,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -69,7 +67,7 @@ public class ColorConfig {
         return colorOptions;
     }
 
-    public boolean getIfRenderTimedoor() {
+    public boolean renderBlur() {
         return isFancyTimedoorRendererEnabled;
     }
 

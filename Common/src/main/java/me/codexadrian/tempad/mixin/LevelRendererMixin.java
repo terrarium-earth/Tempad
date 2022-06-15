@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.client.render.TimedoorBlurRenderer;
-import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -19,7 +19,7 @@ public class LevelRendererMixin {
 
     @Inject(method = "renderLevel", at = @At("TAIL"))
     public void renderBlur(PoseStack poseStack, float deltaTime, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
-        if(!Services.PLATFORM.isModLoaded("imm_ptl_core") && TempadClient.getClientConfig().getIfRenderTimedoor()) {
+        if(TempadClient.getClientConfig().renderBlur() && !Minecraft.useShaderTransparency()) {
             TimedoorBlurRenderer.renderBlur(deltaTime, poseStack, camera);
         }
     }
