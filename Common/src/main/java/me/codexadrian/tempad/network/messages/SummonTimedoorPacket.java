@@ -1,11 +1,8 @@
 package me.codexadrian.tempad.network.messages;
 
-import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
-import me.codexadrian.tempad.platform.Services;
-import me.codexadrian.tempad.tempad.LocationData;
+import me.codexadrian.tempad.data.LocationData;
 import me.codexadrian.tempad.tempad.TempadItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -17,8 +14,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.function.BiConsumer;
 
 import static me.codexadrian.tempad.Constants.MODID;

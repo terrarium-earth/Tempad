@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.tempad;
+package me.codexadrian.tempad.data;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

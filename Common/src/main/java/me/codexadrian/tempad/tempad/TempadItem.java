@@ -3,6 +3,7 @@ package me.codexadrian.tempad.tempad;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.TempadClient;
+import me.codexadrian.tempad.data.LocationData;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.ChatFormatting;

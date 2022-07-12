@@ -1,9 +1,8 @@
 package me.codexadrian.tempad.entity;
 
 import me.codexadrian.tempad.Tempad;
-import me.codexadrian.tempad.TempadConfig;
 import me.codexadrian.tempad.platform.Services;
-import me.codexadrian.tempad.tempad.LocationData;
+import me.codexadrian.tempad.data.LocationData;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;

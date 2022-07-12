@@ -19,7 +19,6 @@ public class FabricNetworkHelper implements INetworkHelper {
 
     @Override
     public <T> void registerClientToServerPacket(ResourceLocation location, IPacketHandler<T> handler, Class<T> tClass) {
-
         ServerPlayNetworking.registerGlobalReceiver(location, (server, player, handler1, buf, responseSender) -> {
             T decode = handler.decode(buf);
             server.execute(() -> handler.handle(decode).accept(server, player));
