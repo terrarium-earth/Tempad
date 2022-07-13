@@ -4,9 +4,13 @@ import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.data.LocationData;
+import me.codexadrian.tempad.data.tempad_options.EnergyOption;
+import me.codexadrian.tempad.data.tempad_options.TempadOption;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
@@ -24,10 +28,17 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class TempadItem extends Item {
+public class TempadItem extends Item implements EnergyItem {
 
-    public TempadItem(Properties properties) {
+    private final TempadOption option;
+
+    public TempadItem(TempadOption option, Properties properties) {
         super(properties);
+        this.option = option;
+    }
+
+    public TempadOption getOption() {
+        return option;
     }
 
     @Override
@@ -52,34 +63,19 @@ public class TempadItem extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> components, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, components, flag);
-        appendedText(stack, components);
+        this.getOption().addToolTip(stack, level, components, flag);
     }
 
-    public void appendedText(@NotNull ItemStack stack, @NotNull List<Component> components) {
-        MutableComponent componentToAdd = null;
-        if(stack.hasTag()) { //IntelliJ wouldnt leave me alone
-            if(stack.getTag().contains(Constants.TIMER_NBT)) {
-                if(!this.checkIfUsable(stack)) {
-                    long seconds = Instant.now().until(Instant.ofEpochSecond(stack.getTag().getLong(Constants.TIMER_NBT)), ChronoUnit.MILLIS);
-                    componentToAdd = Component.translatable("tooltip.tempad.timeleft").append(DurationFormatUtils.formatDuration(seconds, "mm:ss", true));
-                }
-            }
+    @Override
+    public int getBarColor(@NotNull ItemStack $$0) {
+        return TempadClient.getClientConfig().getColor();
+    }
+
+    @Override
+    public int getMaxEnergy() {
+        if(this.option instanceof EnergyOption energy) {
+            return energy.getMaxEnergy();
         }
-        componentToAdd = componentToAdd == null ? Component.translatable("tooltip.tempad.fullycharged") : componentToAdd;
-        components.add(componentToAdd.withStyle(ChatFormatting.GRAY));
-    }
-
-    public void handleUsage(ItemStack tempad) {
-        tempad.getOrCreateTag().putLong(Constants.TIMER_NBT, Instant.now().plusSeconds(Tempad.getTempadConfig().getCooldownTime()).getEpochSecond());
-    }
-
-    public boolean checkIfUsable(ItemStack tempad) {
-        if(tempad.hasTag() && tempad.getTag().contains(Constants.TIMER_NBT)) {
-            long cooldownTimeTag = tempad.getTag().getLong(Constants.TIMER_NBT);
-            Instant cooldownTime = Instant.ofEpochSecond(cooldownTimeTag);
-            return Instant.now().isAfter(cooldownTime);
-        }
-        return true;
+        return 0;
     }
 }

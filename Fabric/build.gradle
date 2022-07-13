@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
 }
@@ -13,6 +13,12 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation("org.jetbrains:annotations:23.0.0")
     implementation project(":Common")
+    include modApi('teamreborn:energy:2.2.0') {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    //include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
+    modImplementation 'RebornCore:RebornCore-1.19:+'
+    modImplementation 'TechReborn:TechReborn-1.19:+'
 }
 
 loom {

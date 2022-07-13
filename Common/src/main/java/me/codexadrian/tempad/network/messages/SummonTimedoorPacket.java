@@ -52,7 +52,7 @@ public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, 
             return (server, player) -> {
                 ItemStack itemInHand = player.getItemInHand(message.hand);
                 if(itemInHand.getItem() instanceof TempadItem tempadItem) {
-                    tempadItem.handleUsage(itemInHand);
+                    tempadItem.getOption().onTimedoorOpen(player, itemInHand);
                 }
                 TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registry.DIMENSION_REGISTRY, message.dimensionKey), message.pos), player, message.color);
             };

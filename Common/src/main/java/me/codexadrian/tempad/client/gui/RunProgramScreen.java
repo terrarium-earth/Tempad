@@ -118,9 +118,10 @@ public class RunProgramScreen extends Screen {
     }
 
     private void teleportAction(LocationData data) {
+        if(minecraft == null || minecraft.player == null) return;
         ItemStack itemInHand = minecraft.player.getItemInHand(hand);
         if(itemInHand.hasTag() && itemInHand.getItem() instanceof TempadItem tempadItem) {
-            if(tempadItem.checkIfUsable(itemInHand)) {
+            if(tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand)) {
                 Minecraft.getInstance().setScreen(null);
                 Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
             }
