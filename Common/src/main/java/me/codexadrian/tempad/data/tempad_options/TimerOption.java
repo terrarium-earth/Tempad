@@ -1,8 +1,8 @@
 package me.codexadrian.tempad.data.tempad_options;
 
 import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.TempadType;
+import me.codexadrian.tempad.utils.ConfigUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -36,7 +36,7 @@ public class TimerOption extends TempadOption {
 
     @Override
     public void onTimedoorOpen(Player player, ItemStack stack) {
-        stack.getOrCreateTag().putLong(Constants.TIMER_NBT, Instant.now().plusSeconds(getType().getOptionConfig().getCooldownTime()).getEpochSecond());
+        stack.getOrCreateTag().putLong(Constants.TIMER_NBT, Instant.now().plusSeconds(ConfigUtils.getOptionConfig(getType()).getCooldownTime()).getEpochSecond());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class TimerOption extends TempadOption {
                 }
             }
         }
-        componentToAdd = componentToAdd == null ? Component.translatable("tooltip.tempad.fullycharged") : componentToAdd;
+        componentToAdd = componentToAdd == null ? Component.translatable("tooltip.tempad.fullycharged", DurationFormatUtils.formatDuration(ConfigUtils.getOptionConfig(getType()).getCooldownTime(), "mm:ss", true)) : componentToAdd;
         components.add(componentToAdd.withStyle(ChatFormatting.GRAY));
     }
 
@@ -61,6 +61,15 @@ public class TimerOption extends TempadOption {
 
     @Override
     public int durabilityBarWidth(ItemStack stack) {
+        return 0;
+    }
+
+    public static long getTimerNBT(ItemStack stack) {
+        if(stack.getTag() != null) {
+            if(stack.getTag().contains(Constants.TIMER_NBT)) {
+                return stack.getTag().getLong(Constants.TIMER_NBT);
+            }
+        }
         return 0;
     }
 }

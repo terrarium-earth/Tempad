@@ -1,8 +1,6 @@
 package me.codexadrian.tempad.tempad;
 
-import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.Tempad;
-import me.codexadrian.tempad.TempadClient;
+import me.codexadrian.tempad.*;
 import me.codexadrian.tempad.data.LocationData;
 import me.codexadrian.tempad.data.tempad_options.EnergyOption;
 import me.codexadrian.tempad.data.tempad_options.TempadOption;
@@ -30,15 +28,15 @@ import java.util.List;
 
 public class TempadItem extends Item implements EnergyItem {
 
-    private final TempadOption option;
+    private final TempadType type;
 
-    public TempadItem(TempadOption option, Properties properties) {
+    public TempadItem(TempadType type, Properties properties) {
         super(properties);
-        this.option = option;
+        this.type = type;
     }
 
     public TempadOption getOption() {
-        return option;
+        return type == TempadType.NORMAL ? Tempad.getTempadConfig().getTempadOption() : Tempad.getTempadConfig().getHeWhoRemainsOption();
     }
 
     @Override
@@ -72,8 +70,18 @@ public class TempadItem extends Item implements EnergyItem {
     }
 
     @Override
+    public boolean isBarVisible(@NotNull ItemStack stack) {
+        return getOption().isDurabilityBarVisible(stack);
+    }
+
+    @Override
+    public int getBarWidth(@NotNull ItemStack stack) {
+        return getOption().durabilityBarWidth(stack);
+    }
+
+    @Override
     public int getMaxEnergy() {
-        if(this.option instanceof EnergyOption energy) {
+        if(this.getOption() instanceof EnergyOption energy) {
             return energy.getMaxEnergy();
         }
         return 0;

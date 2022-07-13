@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.data.tempad_options;
 
-import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.TempadType;
+import me.codexadrian.tempad.utils.ConfigUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -10,27 +10,27 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class ItemOption extends TempadOption {
-    public static final ItemOption NORMAL_INSTANCE = new ItemOption(TempadType.NORMAL);
-    public static final ItemOption ADVANCED_INSTANCE = new ItemOption(TempadType.HE_WHO_REMAINS);
+public class ExperienceLevelOption extends TempadOption {
+    public static final ExperienceLevelOption NORMAL_INSTANCE = new ExperienceLevelOption(TempadType.NORMAL);
+    public static final ExperienceLevelOption ADVANCED_INSTANCE = new ExperienceLevelOption(TempadType.HE_WHO_REMAINS);
 
-    protected ItemOption(TempadType type) {
+    public ExperienceLevelOption(TempadType type) {
         super(type);
     }
 
     @Override
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
-        return !findItemStack(player).isEmpty();
+        return player.experienceLevel >= ConfigUtils.getOptionConfig(getType()).getExperienceLevelCost();
     }
 
     @Override
     public void onTimedoorOpen(Player player, ItemStack stack) {
-        findItemStack(player).shrink(1);
+        player.giveExperienceLevels(-ConfigUtils.getOptionConfig(getType()).getExperienceLevelCost());
     }
 
     @Override
     public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
-        components.add(Component.translatable("tooltip.tempad.item_option_info"));
+        components.add(Component.translatable("tooltip.tempad.experience_level_cost", ConfigUtils.getOptionConfig(getType()).getExperienceLevelCost()));
     }
 
     @Override
@@ -42,13 +42,5 @@ public class ItemOption extends TempadOption {
     public int durabilityBarWidth(ItemStack stack) {
         return 0;
     }
-
-    public ItemStack findItemStack(Player player) {
-        for (ItemStack item : player.getInventory().items) {
-            if(item.is(Tempad.TEMPAD_FUEL_TAG)) {
-                return item;
-            }
-        }
-        return ItemStack.EMPTY;
-    }
 }
+

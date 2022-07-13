@@ -1,8 +1,8 @@
 package me.codexadrian.tempad.data.tempad_options;
 
-import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.TempadType;
 import me.codexadrian.tempad.tempad.EnergyItem;
+import me.codexadrian.tempad.utils.ConfigUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ public class EnergyOption extends TempadOption {
     @Override
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
         if (stack.getItem() instanceof EnergyItem energyItem) {
-            return energyItem.hasEnoughEnergy(stack, getType().getOptionConfig().getTempadEnergyCost());
+            return energyItem.hasEnoughEnergy(stack, ConfigUtils.getOptionConfig(getType()).getEnergyCost());
         }
         return false;
     }
@@ -31,13 +31,16 @@ public class EnergyOption extends TempadOption {
     @Override
     public void onTimedoorOpen(Player player, ItemStack stack) {
         if (stack.getItem() instanceof EnergyItem energyItem) {
-            energyItem.drainEnergy(stack, getType().getOptionConfig().getTempadEnergyCost());
+            energyItem.drainEnergy(stack, ConfigUtils.getOptionConfig(getType()).getEnergyCost());
         }
     }
 
     @Override
     public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
-        //TODO add energy tooltip
+        if(stack.getItem() instanceof EnergyItem energyItem) {
+            components.add(Component.translatable("tooltip.tempad.energy_info", energyItem.getEnergy(stack), energyItem.getMaxEnergy()));
+        }
+        components.add(Component.translatable("tooltip.tempad.energy_cost", ConfigUtils.getOptionConfig(getType()).getEnergyCost()));
     }
 
     @Override
@@ -57,6 +60,6 @@ public class EnergyOption extends TempadOption {
     }
 
     public int getMaxEnergy() {
-        return getType().getOptionConfig().getTempadEnergyCost();
+        return ConfigUtils.getOptionConfig(getType()).getEnergyCapacity();
     }
 }

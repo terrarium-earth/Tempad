@@ -10,4 +10,6 @@ public interface IRegistryHelper {
     TempadItem getCreativeItem();
 
     EntityType<TimedoorEntity> getTimedoor();
+
+
 }

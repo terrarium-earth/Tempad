@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import me.codexadrian.tempad.data.tempad_options.*;
-import me.codexadrian.tempad.platform.Services;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.nio.file.Path;
 
 public class TempadConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-
 
     @SerializedName("timedoorPlacementOffsetInBlocks")
     private int distanceFromPlayer = 3;
@@ -28,20 +26,14 @@ public class TempadConfig {
     @SerializedName("timedoorUsageType")
     private String tempadOption = "TIMER";
 
-    @SerializedName("timedoorUsageType")
+    @SerializedName("kangTimedoorUsageType")
     private String heWhoRemainsTempadOption = "UNLIMITED";
 
-    public int getDistanceFromPlayer() {
-        return distanceFromPlayer;
-    }
+    @SerializedName("configurationOptionsForTempad")
+    private TempadOptionConfig tempadOptions = new TempadOptionConfig(180, 40, 5,4000000, 100000);
 
-    public int getTimedoorAddWaitTime() {
-        return timedoorAddWaitTime;
-    }
-
-    public int getTimedoorWait() {
-        return timedoorWait;
-    }
+    @SerializedName("configurationOptionsForHeWhoRemainsTempad")
+    private TempadOptionConfig heWhoRemainsOptions = new TempadOptionConfig(60, 10, 3, 10000000, 10000);
 
     public static TempadConfig loadConfig(Path configFolder) throws IOException {
         Path configPath = configFolder.resolve(Constants.MODID + ".json");
@@ -59,18 +51,25 @@ public class TempadConfig {
         return GSON.fromJson(new InputStreamReader(Files.newInputStream(configPath)), TempadConfig.class);
     }
 
-    @SerializedName("configurationOptionsForTempad")
-    private TempadOptionConfig tempadOptions = new TempadOptionConfig(180, 40, 4000000, 100000);
+    public int getDistanceFromPlayer() {
+        return distanceFromPlayer;
+    }
 
-    @SerializedName("configurationOptionsForHeWhoRemainsTempad")
-    private TempadOptionConfig heWhoRemainsOptions = new TempadOptionConfig(60, 10, 10000000, 10000);
+    public int getTimedoorAddWaitTime() {
+        return timedoorAddWaitTime;
+    }
+
+    public int getTimedoorWait() {
+        return timedoorWait;
+    }
 
     public TempadOption getTempadOption() {
         return switch (tempadOption) {
             case "ENERGY" -> EnergyOption.NORMAL_INSTANCE;
             case "ITEM" -> ItemOption.NORMAL_INSTANCE;
             case "UNLIMITED" -> UnlimitedOption.NORMAL_INSTANCE;
-            case "EXPERIENCE" -> ExperienceOption.NORMAL_INSTANCE;
+            case "EXP_POINTS" -> ExperiencePointsOption.NORMAL_INSTANCE;
+            case "EXP_LEVELS" -> ExperienceLevelOption.NORMAL_INSTANCE;
             default -> TimerOption.NORMAL_INSTANCE;
         };
     }
@@ -80,7 +79,8 @@ public class TempadConfig {
             case "ENERGY" -> EnergyOption.ADVANCED_INSTANCE;
             case "ITEM" -> ItemOption.ADVANCED_INSTANCE;
             case "UNLIMITED" -> UnlimitedOption.ADVANCED_INSTANCE;
-            case "EXPERIENCE" -> ExperienceOption.ADVANCED_INSTANCE;
+            case "EXP_POINTS" -> ExperiencePointsOption.ADVANCED_INSTANCE;
+            case "EXP_LEVELS" -> ExperienceLevelOption.ADVANCED_INSTANCE;
             default -> TimerOption.ADVANCED_INSTANCE;
         };
     }
@@ -93,40 +93,48 @@ public class TempadConfig {
         return heWhoRemainsOptions;
     }
 
-    public class TempadOptionConfig {
+    public static class TempadOptionConfig {
         @SerializedName("timedoor_cooldown_if_usage_type_is_set_to_TIMER")
-        private final int cooldownTime;
+        private int cooldownTime;
 
-        @SerializedName("timedoor_experience_cost_if_usage_type_is_set_to_EXPERIENCE")
-        private final int tempadExperienceCost;
+        @SerializedName("timedoor_experience_cost_if_usage_type_is_set_to_EXP_POINTS")
+        private int expCost;
+
+        @SerializedName("timedoor_experience_level_cost_if_usage_type_is_set_to_EXP_LEVELs")
+        private int expLevelCost;
 
         @SerializedName("timedoor_energy_capacity_if_usage_type_is_set_to_ENERGY")
-        private final int tempadEnergyCapacity;
+        private int energyCapacity;
 
         @SerializedName("timedoor_energy_cost_if_usage_type_is_set_to_ENERGY")
-        private final int tempadEnergyCost;
+        private int energyCost;
 
-        public TempadOptionConfig(int cooldownTime, int tempadExperienceCost, int tempadEnergyCapacity, int tempadEnergyCost) {
+        public TempadOptionConfig(int cooldownTime, int tempadExperienceCost, int tempadExperienceLevelCost, int tempadEnergyCapacity, int tempadEnergyCost) {
             this.cooldownTime = cooldownTime;
-            this.tempadExperienceCost = tempadExperienceCost;
-            this.tempadEnergyCapacity = tempadEnergyCapacity;
-            this.tempadEnergyCost = tempadEnergyCost;
+            this.expCost = tempadExperienceCost;
+            this.expLevelCost = tempadExperienceLevelCost;
+            this.energyCapacity = tempadEnergyCapacity;
+            this.energyCost = tempadEnergyCost;
         }
 
         public int getCooldownTime() {
             return cooldownTime;
         }
 
-        public int getTempadExperienceCost() {
-            return tempadExperienceCost;
+        public int getExperienceCost() {
+            return expCost;
         }
 
-        public int getTempadEnergyCapacity() {
-            return tempadEnergyCapacity;
+        public int getExperienceLevelCost() {
+            return expLevelCost;
         }
 
-        public int getTempadEnergyCost() {
-            return tempadEnergyCost;
+        public int getEnergyCapacity() {
+            return energyCapacity;
+        }
+
+        public int getEnergyCost() {
+            return energyCost;
         }
     }
 }

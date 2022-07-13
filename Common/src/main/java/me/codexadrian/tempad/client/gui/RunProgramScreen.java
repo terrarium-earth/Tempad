@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
+import me.codexadrian.tempad.data.tempad_options.TimerOption;
 import me.codexadrian.tempad.network.messages.DeleteLocationPacket;
 import me.codexadrian.tempad.network.messages.SummonTimedoorPacket;
 import me.codexadrian.tempad.platform.Services;
@@ -104,7 +105,12 @@ public class RunProgramScreen extends Screen {
         var teleportText = Component.translatable("gui." + Constants.MODID + ".teleport");
         Instant timeUntilUsable = null;
         ItemStack itemInHand = minecraft.player.getItemInHand(hand);
-        if(itemInHand.hasTag() && itemInHand.getTag().contains(Constants.TIMER_NBT)) timeUntilUsable = Instant.ofEpochSecond(itemInHand.getTag().getLong(Constants.TIMER_NBT));
+        if(itemInHand.getItem() instanceof TempadItem item && item.getOption() instanceof TimerOption) {
+            long timerTime = TimerOption.getTimerNBT(itemInHand);
+            if(timerTime > 0) {
+                timeUntilUsable = Instant.now().plusMillis(timerTime);
+            }
+        }
         TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) -> teleportAction(data), timeUntilUsable);
         var deleteText = Component.translatable("gui." + Constants.MODID + ".delete");
         TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(deleteText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 13,12, deleteText, color, (button2) ->{

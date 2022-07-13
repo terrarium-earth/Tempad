@@ -26,8 +26,8 @@ public class ForgeTempad {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
     public static final RegistryObject<EntityType<TimedoorEntity>> TIMEDOOR = ENTITIES.register("timedoor", () -> EntityType.Builder.of(TimedoorEntity::new, MobCategory.MISC).sized(.4F, 2.3F).noSave().build("timedoor"));
-    public static final RegistryObject<TempadItem> TEMPAD = ITEMS.register("tempad", () -> new TempadItem(Tempad.getTempadConfig().getTempadOption(), new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
-    public static final RegistryObject<TempadItem> CREATIVE_TEMPAD = ITEMS.register("he_who_remains_tempad", () -> new TempadItem(Tempad.getTempadConfig().getHeWhoRemainsOption(), new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
+    public static final RegistryObject<TempadItem> TEMPAD = ITEMS.register("tempad", () -> new TempadItem(TempadType.NORMAL, new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
+    public static final RegistryObject<TempadItem> CREATIVE_TEMPAD = ITEMS.register("he_who_remains_tempad", () -> new TempadItem(TempadType.HE_WHO_REMAINS, new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
 
     public ForgeTempad() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

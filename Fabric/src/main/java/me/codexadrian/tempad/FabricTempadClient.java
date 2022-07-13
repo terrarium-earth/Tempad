@@ -19,7 +19,7 @@ public class FabricTempadClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         TempadClient.init();
-        EntityRendererRegistry.register(FabricTempad.TIMEDOOR_ENTITY_ENTITY_TYPE, TimedoorRenderer::new);
+        EntityRendererRegistry.register(FabricTempadRegistry.TIMEDOOR_ENTITY_ENTITY_TYPE, TimedoorRenderer::new);
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(INSTANCE);
     }
 }
