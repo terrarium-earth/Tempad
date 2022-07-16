@@ -14,7 +14,7 @@ public class FabricRegistryHelper implements IRegistryHelper {
 
     @Override
     public TempadItem getCreativeItem() {
-        return FabricTempadRegistry.TEMPAD;
+        return FabricTempadRegistry.CREATIVE_TEMPAD;
     }
 
     @Override

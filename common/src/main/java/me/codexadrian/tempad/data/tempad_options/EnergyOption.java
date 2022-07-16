@@ -3,6 +3,7 @@ package me.codexadrian.tempad.data.tempad_options;
 import me.codexadrian.tempad.TempadType;
 import me.codexadrian.tempad.tempad.EnergyItem;
 import me.codexadrian.tempad.utils.ConfigUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,9 +39,9 @@ public class EnergyOption extends TempadOption {
     @Override
     public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
         if(stack.getItem() instanceof EnergyItem energyItem) {
-            components.add(Component.translatable("tooltip.tempad.energy_info", energyItem.getEnergy(stack), energyItem.getMaxEnergy()));
+            components.add(Component.translatable("tooltip.tempad.energy_info", energyItem.getEnergy(stack), energyItem.getMaxEnergy()).withStyle(ChatFormatting.GRAY));
         }
-        components.add(Component.translatable("tooltip.tempad.energy_cost", ConfigUtils.getOptionConfig(getType()).getEnergyCost()));
+        components.add(Component.translatable("tooltip.tempad.energy_cost", ConfigUtils.getOptionConfig(getType()).getEnergyCost()).withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override

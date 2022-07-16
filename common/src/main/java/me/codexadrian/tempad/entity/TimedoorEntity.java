@@ -128,11 +128,7 @@ public class TimedoorEntity extends Entity {
                 }
             }
         }
-        if (this.tickCount >
-
-                getClosingTime() + ANIMATION_LENGTH &&
-
-                getClosingTime() != -1) {
+        if (this.tickCount > getClosingTime() + ANIMATION_LENGTH && getClosingTime() != -1) {
             if (this.getLinkedPortalEntity() != null) this.getLinkedPortalEntity().setLinkedPortalId(null);
             this.setLinkedPortalId(null);
             this.discard();

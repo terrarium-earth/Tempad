@@ -65,6 +65,7 @@ public class TempadConfig {
 
     public TempadOption getTempadOption() {
         return switch (tempadOption) {
+            case "DURABILITY" -> DurabilityOption.NORMAL_INSTANCE;
             case "ENERGY" -> EnergyOption.NORMAL_INSTANCE;
             case "ITEM" -> ItemOption.NORMAL_INSTANCE;
             case "UNLIMITED" -> UnlimitedOption.NORMAL_INSTANCE;
@@ -76,12 +77,13 @@ public class TempadConfig {
 
     public TempadOption getHeWhoRemainsOption() {
         return switch (heWhoRemainsTempadOption) {
+            case "DURABILITY" -> DurabilityOption.ADVANCED_INSTANCE;
             case "ENERGY" -> EnergyOption.ADVANCED_INSTANCE;
             case "ITEM" -> ItemOption.ADVANCED_INSTANCE;
-            case "UNLIMITED" -> UnlimitedOption.ADVANCED_INSTANCE;
+            case "TIMER" -> TimerOption.ADVANCED_INSTANCE;
             case "EXP_POINTS" -> ExperiencePointsOption.ADVANCED_INSTANCE;
             case "EXP_LEVELS" -> ExperienceLevelOption.ADVANCED_INSTANCE;
-            default -> TimerOption.ADVANCED_INSTANCE;
+            default -> UnlimitedOption.ADVANCED_INSTANCE;
         };
     }
 
@@ -100,7 +102,7 @@ public class TempadConfig {
         @SerializedName("timedoor_experience_cost_if_usage_type_is_set_to_EXP_POINTS")
         private int expCost;
 
-        @SerializedName("timedoor_experience_level_cost_if_usage_type_is_set_to_EXP_LEVELs")
+        @SerializedName("timedoor_experience_level_cost_if_usage_type_is_set_to_EXP_LEVELS")
         private int expLevelCost;
 
         @SerializedName("timedoor_energy_capacity_if_usage_type_is_set_to_ENERGY")

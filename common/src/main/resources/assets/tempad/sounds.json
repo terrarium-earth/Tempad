@@ -1,0 +1,8 @@
+{
+  "entity.timedoor.open": {
+    "sounds": [
+      "tempad:timedoor"
+    ],
+    "subtitle": "subtitles.tempad.entity.timedoor.open"
+  }
+}

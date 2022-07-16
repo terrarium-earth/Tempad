@@ -1,6 +1,6 @@
 #version 150
 
-#define blur 4
+const int blur = 4;
 uniform sampler2D DiffuseSampler, TimedoorSampler;
 
 in vec2 texCoord;

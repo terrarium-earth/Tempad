@@ -1,7 +1,9 @@
 package me.codexadrian.tempad.tempad;
 
+import dev.architectury.injectables.annotations.PlatformOnly;
 import me.codexadrian.tempad.*;
 import me.codexadrian.tempad.data.LocationData;
+import me.codexadrian.tempad.data.tempad_options.DurabilityOption;
 import me.codexadrian.tempad.data.tempad_options.EnergyOption;
 import me.codexadrian.tempad.data.tempad_options.TempadOption;
 import me.codexadrian.tempad.entity.TimedoorEntity;
@@ -31,7 +33,7 @@ public class TempadItem extends Item implements EnergyItem {
     private final TempadType type;
 
     public TempadItem(TempadType type, Properties properties) {
-        super(properties);
+        super(properties.defaultDurability(type.durability));
         this.type = type;
     }
 
@@ -57,6 +59,7 @@ public class TempadItem extends Item implements EnergyItem {
         timedoor.setPos(position.x() + dir.getStepX() * distance, position.y(), position.z() + dir.getStepZ() * distance);
         timedoor.setYRot(dir.getOpposite().toYRot());
         player.level.addFreshEntity(timedoor);
+        timedoor.playSound(Tempad.TIMEDOOR_SOUND.get());
     }
 
     @Override
@@ -85,5 +88,15 @@ public class TempadItem extends Item implements EnergyItem {
             return energy.getMaxEnergy();
         }
         return 0;
+    }
+
+    @Override
+    public boolean canBeDepleted() {
+        return this.getOption() instanceof DurabilityOption;
+    }
+
+    @PlatformOnly("forge")
+    public boolean isDamaged(@NotNull ItemStack stack) {
+        return canBeDepleted() && stack.getDamageValue() > 0;
     }
 }

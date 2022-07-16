@@ -50,9 +50,9 @@ public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, 
         @Override
         public BiConsumer<MinecraftServer, Player> handle(SummonTimedoorPacket message) {
             return (server, player) -> {
-                ItemStack itemInHand = player.getItemInHand(message.hand);
-                if(itemInHand.getItem() instanceof TempadItem tempadItem) {
-                    tempadItem.getOption().onTimedoorOpen(player, itemInHand);
+                ItemStack itemInHand = player.getItemInHand(message.hand());
+                if(itemInHand.getItem() instanceof TempadItem tempadItem && !player.getAbilities().instabuild) {
+                    tempadItem.getOption().onTimedoorOpen(player, message.hand());
                 }
                 TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registry.DIMENSION_REGISTRY, message.dimensionKey), message.pos), player, message.color);
             };

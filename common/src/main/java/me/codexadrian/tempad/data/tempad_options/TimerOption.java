@@ -51,12 +51,13 @@ public class TimerOption extends TempadOption {
 
     @Override
     public boolean isDurabilityBarVisible(ItemStack stack) {
-        return this.canTimedoorOpen(null, stack);
+        return !this.canTimedoorOpen(null, stack);
     }
 
     @Override
     public int durabilityBarWidth(ItemStack stack) {
-        return (int) (timeLeft(stack) / (ConfigUtils.getOptionConfig(getType()).getCooldownTime() * 1000.0)) * 13;
+        double maxTime = ConfigUtils.getOptionConfig(getType()).getCooldownTime() * 1000.0;
+        return (int) (((float)(maxTime - timeLeft(stack)) / maxTime) * 13F);
     }
 
     public static long timeLeft(ItemStack stack) {

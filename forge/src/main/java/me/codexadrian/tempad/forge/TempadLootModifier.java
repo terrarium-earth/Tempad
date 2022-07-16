@@ -1,0 +1,27 @@
+package me.codexadrian.tempad.forge;
+
+import com.mojang.serialization.Codec;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import org.jetbrains.annotations.NotNull;
+
+public class TempadLootModifier implements IGlobalLootModifier {
+    public static final TempadLootModifier INSTANCE = new TempadLootModifier();
+
+    @Override
+    public @NotNull ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> objectArrayList, LootContext arg) {
+        if (arg.getRandom().nextFloat() < 0.005F && arg.getQueriedLootTableId().equals(BuiltInLootTables.END_CITY_TREASURE)) {
+            objectArrayList.add(ForgeTempad.CREATIVE_TEMPAD.get().getDefaultInstance());
+        }
+        return objectArrayList;
+    }
+
+    @Override
+    public Codec<? extends IGlobalLootModifier> codec() {
+        return ForgeTempad.TEMPAD_LOOT_MODIFIER.get();
+    }
+}

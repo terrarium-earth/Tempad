@@ -24,7 +24,11 @@ loom {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
     //modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
-    modImplementation "curse.maven:charginggadgets-399757:3828008"
+    //modImplementation "curse.maven:charginggadgets-399757:3828008"
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}"// core
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:additions"// Mekanism: Addition
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:generators"// Mekanism: Generator
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:tools"// Mekanism: Tool
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }

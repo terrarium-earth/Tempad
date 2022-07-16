@@ -112,6 +112,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         buffer.vertex(model, xBound, -yBound, -zBound).color(red, green, blue, alpha).uv(0, 1).uv2(i).endVertex();
         buffer.vertex(model, xBound, -yBound, zBound).color(red, green, blue, alpha).uv(1, 1).uv2(i).endVertex();
         buffer.vertex(model, xBound, yBound, zBound).color(red, green, blue, alpha).uv(1, 0).uv2(i).endVertex();
+
     }
 
     @Override

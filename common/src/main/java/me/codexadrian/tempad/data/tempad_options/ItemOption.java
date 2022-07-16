@@ -20,7 +20,7 @@ public class ItemOption extends TempadOption {
 
     @Override
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
-        return !findItemStack(player).isEmpty();
+        return player.getInventory().contains(Tempad.TEMPAD_FUEL_TAG);
     }
 
     @Override
@@ -45,6 +45,11 @@ public class ItemOption extends TempadOption {
 
     public ItemStack findItemStack(Player player) {
         for (ItemStack item : player.getInventory().items) {
+            if(item.is(Tempad.TEMPAD_FUEL_TAG)) {
+                return item;
+            }
+        }
+        for (ItemStack item : player.getInventory().offhand) {
             if(item.is(Tempad.TEMPAD_FUEL_TAG)) {
                 return item;
             }

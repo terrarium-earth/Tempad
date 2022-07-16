@@ -53,7 +53,7 @@ public class ColorConfig {
     };
 
     @SerializedName("timedoorFancy")
-    private boolean isFancyTimedoorRendererEnabled = true;
+    private boolean isFancyTimedoorRendererEnabled = !TempadClient.isIncompatibleModLoaded();
 
     public int getColor() {
         return color;
