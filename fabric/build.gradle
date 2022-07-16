@@ -53,6 +53,7 @@ remapJar {
 
 jar {
     classifier "dev"
+    archivesBaseName = "$archives_base_name-fabric-$minecraft_version"
 }
 
 sourcesJar {

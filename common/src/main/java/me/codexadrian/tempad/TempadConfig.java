@@ -30,10 +30,10 @@ public class TempadConfig {
     private String heWhoRemainsTempadOption = "UNLIMITED";
 
     @SerializedName("configurationOptionsForTempad")
-    private TempadOptionConfig tempadOptions = new TempadOptionConfig(180, 40, 5,4000000, 100000);
+    private TempadOptionConfig tempadOptions = new TempadOptionConfig(180, 100, 5,1000000, 100000);
 
     @SerializedName("configurationOptionsForHeWhoRemainsTempad")
-    private TempadOptionConfig heWhoRemainsOptions = new TempadOptionConfig(60, 10, 3, 10000000, 10000);
+    private TempadOptionConfig heWhoRemainsOptions = new TempadOptionConfig(60, 60, 3, 5000000, 25000);
 
     public static TempadConfig loadConfig(Path configFolder) throws IOException {
         Path configPath = configFolder.resolve(Constants.MODID + ".json");

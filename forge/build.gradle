@@ -54,6 +54,7 @@ remapJar {
 
 jar {
     classifier "dev"
+    archivesBaseName = "$archives_base_name-forge-$minecraft_version"
 }
 
 sourcesJar {

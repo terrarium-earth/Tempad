@@ -12,7 +12,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ColorConfig {
+public class TempadClientConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     @SerializedName("color")
@@ -71,11 +71,11 @@ public class ColorConfig {
         return isFancyTimedoorRendererEnabled;
     }
 
-    public static ColorConfig loadConfig(Path configFolder) throws IOException {
+    public static TempadClientConfig loadConfig(Path configFolder) throws IOException {
         Path configPath = configFolder.resolve(Constants.MODID + "_client.json");
 
         if (!Files.exists(configPath)) {
-            ColorConfig config = new ColorConfig();
+            TempadClientConfig config = new TempadClientConfig();
             try (Writer writer = new FileWriter(configPath.toFile())) {
                 GSON.toJson(config, writer);
             }
@@ -84,10 +84,10 @@ public class ColorConfig {
             return config;
         }
 
-        return GSON.fromJson(new InputStreamReader(Files.newInputStream(configPath)), ColorConfig.class);
+        return GSON.fromJson(new InputStreamReader(Files.newInputStream(configPath)), TempadClientConfig.class);
     }
 
-    public static void saveConfig(ColorConfig config) {
+    public static void saveConfig(TempadClientConfig config) {
         try {
             Path file = Services.PLATFORM.getConfigDir().resolve(Constants.MODID + "_client.json");
 

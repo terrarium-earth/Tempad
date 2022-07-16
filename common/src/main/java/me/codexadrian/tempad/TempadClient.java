@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class TempadClient {
-    private static ColorConfig clientConfig;
+    private static TempadClientConfig clientConfig;
     private static final List<String> incompatibleMods = List.of("flywheel", "imm_ptl_core", "structurize");
     public static void init() {
         ClampedItemPropertyFunction clampedItemPropertyFunction = (itemStack, clientLevel, livingEntity, i) -> {
@@ -29,13 +29,13 @@ public class TempadClient {
         registerItemProperty(Services.REGISTRY.getCreativeItem(), new ResourceLocation("usable"), clampedItemPropertyFunction);
 
         try {
-            clientConfig = ColorConfig.loadConfig(Services.PLATFORM.getConfigDir());
+            clientConfig = TempadClientConfig.loadConfig(Services.PLATFORM.getConfigDir());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static ColorConfig getClientConfig() {
+    public static TempadClientConfig getClientConfig() {
         return clientConfig;
     }
 

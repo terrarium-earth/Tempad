@@ -2,7 +2,7 @@ package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.codexadrian.tempad.ColorConfig;
+import me.codexadrian.tempad.TempadClientConfig;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.TempadClient;
 import net.minecraft.client.gui.Font;
@@ -45,7 +45,7 @@ public class OptionsScreen extends Screen {
             ColorButton button = new ColorButton(x + startX, y + startY, scale, colors[i] | 0xFF000000, (button1) -> {
                 this.color = colors[finalI];
                 TempadClient.getClientConfig().setColor(color);
-                ColorConfig.saveConfig(TempadClient.getClientConfig());
+                TempadClientConfig.saveConfig(TempadClient.getClientConfig());
             });
             addRenderableWidget(button);
             x += scale + margin;

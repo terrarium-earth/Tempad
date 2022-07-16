@@ -1,40 +1,44 @@
 {
-    "schemaVersion": 1,
-    "id": "tempad",
-    "version": "${version}",
-  
-    "name": "Tempad",
-    "description": "Create a portal to anywhere from anywhere!",
-    "authors": [
-      "CodexAdrian",
-      "MsRandom1"
+  "schemaVersion": 1,
+  "id": "tempad",
+  "version": "${version}",
+  "name": "Tempad",
+  "description": "Create a portal to anywhere from anywhere!",
+  "authors": [
+    "CodexAdrian",
+    "MsRandom1"
+  ],
+  "contributors": [
+    "ThatGravyBoat",
+    "abused_master",
+    "Kekie6",
+    "Jooosh"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/terrarium-earth/Tempad"
+  },
+  "license": "All Rights Reserved",
+  "icon": "assets/modid/icon.png",
+  "accessWidener": "tempad.accesswidener",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.codexadrian.tempad.fabric.FabricTempad"
     ],
-    "contact": {
-      "homepage": "https://fabricmc.net/",
-      "sources": "https://github.com/terrarium-earth/Tempad"
-    },
-  
-    "license": "All Rights Reserved",
-    "icon": "assets/modid/icon.png",
-    "accessWidener": "tempad.accesswidener",
-    "environment": "*",
-    "entrypoints": {
-      "main": [
-        "me.codexadrian.tempad.fabric.FabricTempad"
-      ],
-      "client": [
-        "me.codexadrian.tempad.fabric.FabricTempadClient"
-      ]
-    },
-    "mixins": [
-      "tempad.mixins.json",
-      "tempad.fabric.mixins.json"
-    ],
-    "depends": {
-      "fabricloader": ">=0.13",
-      "fabric": "*",
-      "minecraft": "1.19.x",
-      "java": ">=17"
-    }
+    "client": [
+      "me.codexadrian.tempad.fabric.FabricTempadClient"
+    ]
+  },
+  "mixins": [
+    "tempad.mixins.json",
+    "tempad.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13",
+    "fabric": "*",
+    "minecraft": "1.19.x",
+    "java": ">=17"
   }
+}
   
