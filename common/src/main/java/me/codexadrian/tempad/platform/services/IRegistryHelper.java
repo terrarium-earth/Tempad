@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.platform.services;
 
 import me.codexadrian.tempad.entity.TimedoorEntity;
-import me.codexadrian.tempad.tempad.TempadItem;
+import me.codexadrian.tempad.items.TempadItem;
 import net.minecraft.world.entity.EntityType;
 
 public interface IRegistryHelper {

@@ -15,12 +15,21 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/tempad.accesswidener")
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rootProject.rei_version}"
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    include modApi('teamreborn:energy:2.2.0') {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modImplementation 'RebornCore:RebornCore-1.18:+'
+    modImplementation 'TechReborn:TechReborn-1.18:+'
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
@@ -48,6 +57,7 @@ remapJar {
 
 jar {
     classifier "dev"
+    archivesBaseName = "${mod_id}-fabric-${minecraft_version}-${project.version}"
 }
 
 sourcesJar {

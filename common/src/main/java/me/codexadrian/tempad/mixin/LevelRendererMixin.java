@@ -19,7 +19,7 @@ public class LevelRendererMixin {
 
     @Inject(method = "renderLevel", at = @At("TAIL"))
     public void renderBlur(PoseStack poseStack, float deltaTime, long l, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, CallbackInfo ci) {
-        if(!Services.PLATFORM.isModLoaded("imm_ptl_core") && TempadClient.getClientConfig().getIfRenderTimedoor()) {
+        if(TempadClient.getClientConfig().getIfRenderTimedoor()) {
             TimedoorBlurRenderer.renderBlur(deltaTime, poseStack, camera);
         }
     }

@@ -14,7 +14,7 @@ public class BlurReloader implements ResourceManagerReloadListener {
     private PostChain timedoorBlur;
     private RenderTarget renderTarget;
 
-    protected BlurReloader() {}
+    public BlurReloader() {}
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {

@@ -2,8 +2,8 @@ package me.codexadrian.tempad.network.messages;
 
 import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
-import me.codexadrian.tempad.tempad.LocationData;
-import me.codexadrian.tempad.tempad.TempadComponent;
+import me.codexadrian.tempad.data.LocationData;
+import me.codexadrian.tempad.data.TempadComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

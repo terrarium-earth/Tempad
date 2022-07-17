@@ -7,6 +7,7 @@ import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -115,6 +116,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return Services.PLATFORM.isModLoaded("imm_ptl_core") || !TempadClient.getClientConfig().getIfRenderTimedoor();
+        return !TempadClient.getClientConfig().getIfRenderTimedoor() || Minecraft.useShaderTransparency();
     }
 }

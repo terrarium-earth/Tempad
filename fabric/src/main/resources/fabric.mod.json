@@ -19,10 +19,10 @@
     "environment": "*",
     "entrypoints": {
       "main": [
-        "me.codexadrian.tempad.FabricTempad"
+        "me.codexadrian.tempad.fabric.FabricTempad"
       ],
       "client": [
-        "me.codexadrian.tempad.FabricTempadClient"
+        "me.codexadrian.tempad.fabric.FabricTempadClient"
       ]
     },
     "mixins": [

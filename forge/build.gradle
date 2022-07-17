@@ -15,24 +15,35 @@ configurations {
     developmentForge.extendsFrom common
 }
 
+loom {
+    forge {
+        mixinConfig "${mod_id}.mixins.json"
+        mixinConfig "${mod_id}.forge.mixins.json"
+        dataGen {
+            mod "tempad"
+        }
+    }
+    launches {
+        data {
+            arg "--existing", file("src/main/resources").absolutePath
+        }
+    }
+}
+
 dependencies {
     forge "net.minecraftforge:forge:${minecraft_version}-${rootProject.forge_version}"
     modImplementation "mezz.jei:jei-${minecraft_version}:${jei_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}"// core
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:additions"// Mekanism: Addition
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:generators"// Mekanism: Generator
+    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:tools"// Mekanism: Tool
     modCompileOnly ("mcjty.theoneprobe:theoneprobe:${top_version}:api") {
         transitive = false
     }
     modRuntimeOnly ("mcjty.theoneprobe:theoneprobe:${top_version}") {
         transitive = false
-    }
-}
-
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
     }
 }
 
@@ -52,6 +63,7 @@ remapJar {
 
 jar {
     classifier "dev"
+    archivesBaseName = "${mod_id}-forge-${minecraft_version}-${project.version}"
 }
 
 sourcesJar {
