@@ -1,6 +1,5 @@
 package me.codexadrian.tempad.forge;
 
-import com.mojang.serialization.Codec;
 import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.TempadType;
 import me.codexadrian.tempad.entity.TimedoorEntity;
@@ -12,16 +11,14 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
@@ -43,17 +40,17 @@ public class ForgeTempad {
 
     public ForgeTempad() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        Tempad.init();
         ITEMS.register(bus);
         ENTITIES.register(bus);
         LOOT_TABLES.register(bus);
         TempadImpl.SOUND_EVENTS.register(bus);
+        bus.addListener(this::runData);
         NetworkHandler.register();
         MinecraftForge.EVENT_BUS.register(this);
-        Tempad.init();
     }
 
-    @SubscribeEvent
-    public static void runData(GatherDataEvent event) {
+    public void runData(GatherDataEvent event) {
         DataGenerator gen = event.getGenerator();
         gen.addProvider(new LootTableDataProvider(gen, MODID));
     }
@@ -66,7 +63,7 @@ public class ForgeTempad {
 
         @Override
         protected void start() {
-            add("tempad_loot_modifier", TEMPAD_LOOT_MODIFIER.get(), new TempadLootModifier());
+            add("tempad_loot_modifier", TEMPAD_LOOT_MODIFIER.get(), new TempadLootModifier(new LootItemCondition[]{LootTableIdCondition.builder(BuiltInLootTables.END_CITY_TREASURE).build()}, 0.005f));
         }
     }
 }

@@ -63,7 +63,7 @@ remapJar {
 
 jar {
     classifier "dev"
-    archivesBaseName = "${mod_id}-forge-${minecraft_version}-${project.version}"
+    archivesBaseName = "${mod_id}-forge-${minecraft_version}"
 }
 
 sourcesJar {
