@@ -12,6 +12,10 @@ subprojects {
 
     loom {
         silentMojangMappingsLicense()
+
+        mixin {
+            defaultRefmapName = "$archives_base_name-$project.name-refmap.json"
+        }
     }
 
     dependencies {
