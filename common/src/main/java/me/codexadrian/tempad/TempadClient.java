@@ -16,7 +16,7 @@ import java.util.List;
 
 public class TempadClient {
     private static TempadClientConfig clientConfig;
-    private static final List<String> incompatibleMods = List.of("flywheel", "imm_ptl_core", "structurize");
+    private static final List<String> incompatibleMods = List.of("flywheel", "imm_ptl_core", "structurize", "mahou");
     public static void init() {
         ClampedItemPropertyFunction clampedItemPropertyFunction = (itemStack, clientLevel, livingEntity, i) -> {
             if (livingEntity instanceof Player player && itemStack.getItem() instanceof TempadItem tempad) {
