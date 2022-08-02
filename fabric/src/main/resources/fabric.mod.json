@@ -1,8 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "tempad",
-    "version": "${version}",
-  
+    "version": "1.4.1",
     "name": "Tempad",
     "description": "Create a portal to anywhere from anywhere!",
     "authors": [

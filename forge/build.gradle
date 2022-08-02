@@ -35,10 +35,10 @@ dependencies {
     modImplementation "mezz.jei:jei-${minecraft_version}:${jei_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
-    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}"// core
-    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:additions"// Mekanism: Addition
-    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:generators"// Mekanism: Generator
-    modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:tools"// Mekanism: Tool
+    // modRuntimeOnly "mekanism:Mekanism:${mekanism_version}"// core
+    // modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:additions"// Mekanism: Addition
+    // modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:generators"// Mekanism: Generator
+    // modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:tools"// Mekanism: Tool
     modCompileOnly ("mcjty.theoneprobe:theoneprobe:${top_version}:api") {
         transitive = false
     }
@@ -49,7 +49,6 @@ dependencies {
 
 shadowJar {
     exclude "fabric.mod.json"
-    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
@@ -75,6 +74,14 @@ sourcesJar {
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("mods.toml") {
+        expand "version": project.version
     }
 }
 
