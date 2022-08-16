@@ -1,6 +1,6 @@
 package me.codexadrian.tempad.mixin.fabric;
 
-import me.codexadrian.tempad.tempad.EnergyItem;
+import me.codexadrian.tempad.items.EnergyItem;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import team.reborn.energy.api.base.SimpleBatteryItem;

@@ -40,7 +40,7 @@ public class TextButton extends Button {
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         if(isCentered) {
-            return this.active && this.visible && mouseX > (x - getWidth() * .5 * (getHeight() * 2F / 16F)) && mouseX < (x + getWidth() * .5 * (getHeight() * 2F / 16F)) && mouseY > y && mouseY < y + getHeight();
+            return this.active && this.visible && (mouseX > (x - (getWidth() * 2 * ((getHeight() * 2F) / 16F)))) && (mouseX < (x + (getWidth() * 2 * ((getHeight() * 2F) / 16F)))) && (mouseY > y) && (mouseY < (y + getHeight()));
         } else {
             return this.active && this.visible && mouseX > x && mouseX < (x + getWidth() * (getHeight() * 2F / 16F)) && mouseY > y && mouseY < y + getHeight();
         }
@@ -64,10 +64,9 @@ public class TextButton extends Button {
 
         renderBg(matrices, minecraft, mouseX, mouseY);
         matrices.pushPose();
-        matrices.pushPose();
         float height = this.getPaddedHeight() - padding;
-        matrices.translate(x * (1- height * 2 / 16F), y * (1 - height * 2 / 16F), 0);
-        matrices.scale(height * 2 / 16F, height * 2 / 16F, 0);
+        matrices.translate(x * (1- height / 8F), y * (1 - height / 8F), 0);
+        matrices.scale(height / 8F, height / 8F, 0);
         matrices.translate(0, padding/2F, 0);
         boolean disabled = disabledUntil == null || Instant.now().isAfter(disabledUntil);
         int color = isMouseOver(mouseX, mouseY) && disabled ? this.color : getOffColor();

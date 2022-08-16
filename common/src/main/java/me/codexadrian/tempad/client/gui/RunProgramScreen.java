@@ -11,7 +11,7 @@ import me.codexadrian.tempad.network.messages.SummonTimedoorPacket;
 import me.codexadrian.tempad.platform.Services;
 import me.codexadrian.tempad.data.LocationData;
 import me.codexadrian.tempad.data.TempadComponent;
-import me.codexadrian.tempad.tempad.TempadItem;
+import me.codexadrian.tempad.items.TempadItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;

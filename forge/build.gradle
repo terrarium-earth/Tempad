@@ -23,7 +23,7 @@ loom {
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
-    //modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
+    include modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
     //modImplementation "curse.maven:charginggadgets-399757:3828008"
     modRuntimeOnly "mekanism:Mekanism:${mekanism_version}"// core
     modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:additions"// Mekanism: Addition

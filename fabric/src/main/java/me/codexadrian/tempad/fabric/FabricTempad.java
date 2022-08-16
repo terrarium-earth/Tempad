@@ -3,6 +3,7 @@ package me.codexadrian.tempad.fabric;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.network.NetworkHandler;
+import me.codexadrian.tempad.registry.TempadItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v2.FabricLootPoolBuilder;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
@@ -27,17 +28,13 @@ public class FabricTempad implements ModInitializer {
     @Override
     public void onInitialize() {
         Tempad.init();
-        Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(Constants.MODID, "timedoor"), FabricTempadRegistry.TIMEDOOR_ENTITY_ENTITY_TYPE);
-        Registry.register(Registry.ITEM, new ResourceLocation(Constants.MODID, "tempad"), FabricTempadRegistry.TEMPAD);
-        Registry.register(Registry.ITEM, new ResourceLocation(Constants.MODID, "he_who_remains_tempad"), FabricTempadRegistry.CREATIVE_TEMPAD);
-
         NetworkHandler.register();
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
             if (id.equals(BuiltInLootTables.END_CITY_TREASURE)) {
                 LootPool.Builder poolBuilder = new LootPool.Builder()
                         .setRolls(ConstantValue.exactly(1))
                         .when(LootItemRandomChanceCondition.randomChance(0.005F))
-                        .add(LootItem.lootTableItem(FabricTempadRegistry.CREATIVE_TEMPAD))
+                        .add(LootItem.lootTableItem(TempadItems.ADVANCED_TEMPAD.get()))
                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)).build());
                 tableBuilder.pool(poolBuilder.build());
             }

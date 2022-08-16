@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.data.tempad_options;
 
 import me.codexadrian.tempad.TempadType;
-import me.codexadrian.tempad.tempad.EnergyItem;
+import me.codexadrian.tempad.items.EnergyItem;
 import me.codexadrian.tempad.utils.ConfigUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

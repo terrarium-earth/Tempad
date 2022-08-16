@@ -3,7 +3,8 @@ package me.codexadrian.tempad;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.client.gui.TempadScreen;
 import me.codexadrian.tempad.platform.Services;
-import me.codexadrian.tempad.tempad.TempadItem;
+import me.codexadrian.tempad.registry.TempadItems;
+import me.codexadrian.tempad.items.TempadItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
@@ -25,8 +26,8 @@ public class TempadClient {
             return 0.0F;
         };
 
-        registerItemProperty(Services.REGISTRY.getItem(), new ResourceLocation("usable"), clampedItemPropertyFunction);
-        registerItemProperty(Services.REGISTRY.getCreativeItem(), new ResourceLocation("usable"), clampedItemPropertyFunction);
+        registerItemProperty(TempadItems.TEMPAD.get(), new ResourceLocation("usable"), clampedItemPropertyFunction);
+        registerItemProperty(TempadItems.ADVANCED_TEMPAD.get(), new ResourceLocation("usable"), clampedItemPropertyFunction);
 
         try {
             clientConfig = TempadClientConfig.loadConfig(Services.PLATFORM.getConfigDir());

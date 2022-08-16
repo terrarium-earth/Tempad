@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.mixin.forge;
 
 import me.codexadrian.tempad.forge.ForgeEnergyStorage;
-import me.codexadrian.tempad.tempad.EnergyItem;
+import me.codexadrian.tempad.items.EnergyItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;

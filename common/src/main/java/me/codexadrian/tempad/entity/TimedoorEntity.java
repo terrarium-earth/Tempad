@@ -3,6 +3,7 @@ package me.codexadrian.tempad.entity;
 import me.codexadrian.tempad.Tempad;
 import me.codexadrian.tempad.platform.Services;
 import me.codexadrian.tempad.data.LocationData;
+import me.codexadrian.tempad.registry.TempadEntities;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -114,7 +115,7 @@ public class TimedoorEntity extends Entity {
                     }
                 });
                 if (getLinkedPortalEntity() == null) {
-                    TimedoorEntity recipientPortal = new TimedoorEntity(Services.REGISTRY.getTimedoor(), destinationLevel);
+                    TimedoorEntity recipientPortal = new TimedoorEntity(TempadEntities.TIMEDOOR_ENTITY_TYPE.get(), destinationLevel);
                     recipientPortal.setOwner(this.getOwner());
                     recipientPortal.setClosingTime(Tempad.getTempadConfig().getTimedoorAddWaitTime());
                     recipientPortal.setLocation(null);

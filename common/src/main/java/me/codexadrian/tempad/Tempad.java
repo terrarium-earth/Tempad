@@ -2,6 +2,10 @@ package me.codexadrian.tempad;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.platform.Services;
+import me.codexadrian.tempad.registry.TempadBlocks;
+import me.codexadrian.tempad.registry.TempadEntities;
+import me.codexadrian.tempad.registry.TempadItems;
+import me.codexadrian.tempad.registry.TempadMenus;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -25,6 +29,10 @@ public class Tempad {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        TempadBlocks.register();
+        TempadItems.register();
+        TempadEntities.register();
+        TempadMenus.register();
     }
 
     public static TempadConfig getTempadConfig() {

@@ -3,8 +3,12 @@ package me.codexadrian.tempad.forge;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import me.codexadrian.tempad.BlurReloader;
 import me.codexadrian.tempad.TempadClient;
+import me.codexadrian.tempad.client.gui.blockmanager.TempadBlockScreen;
 import me.codexadrian.tempad.client.render.TimedoorRenderer;
+import me.codexadrian.tempad.registry.TempadEntities;
+import me.codexadrian.tempad.registry.TempadMenus;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
@@ -22,8 +26,10 @@ public class ForgeTempadClient {
 
     public static void init() {
         TempadClient.init();
-        EntityRenderers.register(ForgeTempad.TIMEDOOR.get(), TimedoorRenderer::new);
+        EntityRenderers.register(TempadEntities.TIMEDOOR_ENTITY_TYPE.get(), TimedoorRenderer::new);
+        EntityRenderers.register(TempadEntities.BLOCK_TIMEDOOR_ENTITY_TYPE.get(), TimedoorRenderer::new);
         FMLJavaModLoadingContext.get().getModEventBus().register(ForgeTempadClient.class);
+        MenuScreens.register(TempadMenus.TEMPAD_BLOCK_MENU.get(), TempadBlockScreen::new);
     }
 
     @SubscribeEvent

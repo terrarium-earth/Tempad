@@ -3,7 +3,7 @@ package me.codexadrian.tempad.network.messages;
 import me.codexadrian.tempad.network.handlers.IPacketHandler;
 import me.codexadrian.tempad.network.handlers.IPacket;
 import me.codexadrian.tempad.data.LocationData;
-import me.codexadrian.tempad.tempad.TempadItem;
+import me.codexadrian.tempad.items.TempadItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;

@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.tempad;
+package me.codexadrian.tempad.items;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
 import me.codexadrian.tempad.*;
@@ -7,12 +7,10 @@ import me.codexadrian.tempad.data.tempad_options.DurabilityOption;
 import me.codexadrian.tempad.data.tempad_options.EnergyOption;
 import me.codexadrian.tempad.data.tempad_options.TempadOption;
 import me.codexadrian.tempad.entity.TimedoorEntity;
-import me.codexadrian.tempad.platform.Services;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import me.codexadrian.tempad.registry.TempadEntities;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -20,12 +18,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.time.DurationFormatUtils;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class TempadItem extends Item implements EnergyItem {
@@ -48,18 +44,24 @@ public class TempadItem extends Item implements EnergyItem {
         return InteractionResultHolder.success(stack);
     }
 
-    public static void summonTimeDoor(LocationData locationData, Player player, int color) {
-        TimedoorEntity timedoor = new TimedoorEntity(Services.REGISTRY.getTimedoor(), player.level);
-        var dir = player.getDirection();
+    public static void summonTimeDoor(LocationData locationData, Player player, int color, boolean temporary) {
+        summonTimeDoor(locationData, player.getLevel(), player.position(), player.getDirection(), color, temporary, Tempad.getTempadConfig().getDistanceFromPlayer());
+    }
+
+    public static TimedoorEntity summonTimeDoor(LocationData locationData, Level level, Vec3 position, Direction dir, int color, boolean temporary, int distance) {
+        TimedoorEntity timedoor = new TimedoorEntity(temporary ? TempadEntities.TIMEDOOR_ENTITY_TYPE.get() : TempadEntities.BLOCK_TIMEDOOR_ENTITY_TYPE.get(), level);
         timedoor.setColor(color);
         timedoor.setLocation(locationData);
-        timedoor.setOwner(player.getUUID());
-        var position = player.position();
-        var distance = Tempad.getTempadConfig().getDistanceFromPlayer();
         timedoor.setPos(position.x() + dir.getStepX() * distance, position.y(), position.z() + dir.getStepZ() * distance);
         timedoor.setYRot(dir.getOpposite().toYRot());
-        player.level.addFreshEntity(timedoor);
+        if(!temporary) timedoor.setClosingTime(-1);
+        level.addFreshEntity(timedoor);
         timedoor.playSound(Tempad.TIMEDOOR_SOUND.get());
+        return timedoor;
+    }
+
+    public static void summonTimeDoor(LocationData locationData, Player player, int color) {
+        summonTimeDoor(locationData, player, color, true);
     }
 
     @Override

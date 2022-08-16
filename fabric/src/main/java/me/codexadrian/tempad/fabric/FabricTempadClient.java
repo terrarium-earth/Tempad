@@ -3,10 +3,14 @@ package me.codexadrian.tempad.fabric;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import me.codexadrian.tempad.TempadClient;
+import me.codexadrian.tempad.client.gui.blockmanager.TempadBlockScreen;
 import me.codexadrian.tempad.client.render.TimedoorRenderer;
+import me.codexadrian.tempad.registry.TempadEntities;
+import me.codexadrian.tempad.registry.TempadMenus;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -20,7 +24,9 @@ public class FabricTempadClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         TempadClient.init();
-        EntityRendererRegistry.register(FabricTempadRegistry.TIMEDOOR_ENTITY_ENTITY_TYPE, TimedoorRenderer::new);
+        EntityRendererRegistry.register(TempadEntities.TIMEDOOR_ENTITY_TYPE.get(), TimedoorRenderer::new);
+        EntityRendererRegistry.register(TempadEntities.BLOCK_TIMEDOOR_ENTITY_TYPE.get(), TimedoorRenderer::new);
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(INSTANCE);
+        MenuScreens.register(TempadMenus.TEMPAD_BLOCK_MENU.get(), TempadBlockScreen::new);
     }
 }

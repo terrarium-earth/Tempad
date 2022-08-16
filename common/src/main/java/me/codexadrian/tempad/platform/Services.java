@@ -9,7 +9,6 @@ public class Services {
 
     public static final IPlatformHelper PLATFORM = load(IPlatformHelper.class);
     public static final INetworkHelper NETWORK = load(INetworkHelper.class);
-    public static final IRegistryHelper REGISTRY = load(IRegistryHelper.class);
     public static final IShaderHelper SHADERS = load(IShaderHelper.class);
 
     public static <T> T load(Class<T> clazz) {

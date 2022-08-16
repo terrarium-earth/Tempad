@@ -25,7 +25,7 @@ dependencies {
     include modApi('teamreborn:energy:2.2.0') {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    //include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
+    include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
     modImplementation 'RebornCore:RebornCore-1.19:+'
     modImplementation 'TechReborn:TechReborn-1.19:+'
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
