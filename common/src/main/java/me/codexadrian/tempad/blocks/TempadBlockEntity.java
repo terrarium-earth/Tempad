@@ -161,6 +161,6 @@ public class TempadBlockEntity extends BlockEntity implements WorldlyContainer, 
     }
 
     public boolean hasFuel() {
-        return this.inventory.stream().filter(itemStack -> itemStack.getItem() == TempadBlocks.TEMPAD_FUEL.get().asItem()).findFirst().isPresent();
+        return true; //return this.inventory.stream().filter(itemStack -> itemStack.getItem() == TempadBlocks.TEMPAD_FUEL.get().asItem()).findFirst().isPresent();
     }
 }

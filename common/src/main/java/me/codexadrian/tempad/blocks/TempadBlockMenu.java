@@ -77,9 +77,4 @@ public class TempadBlockMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(inventory, k, 40 + k * 18, 155 + 58));
         }
     }
-
-    @Override
-    public void slotsChanged(Container container) {
-        super.slotsChanged(container);
-    }
 }
