@@ -4,7 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.client.widgets.TextButton;
+import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +38,13 @@ public class TempadScreen extends Screen {
         }));
 
         addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 10 + offset, 12, Component.translatable("gui." + Constants.MODID + ".wiki"), color, button -> {
+            this.minecraft.setScreen(new ConfirmLinkScreen((bl) -> {
+                if (bl) {
+                    Util.getPlatform().openUri("https://codexadrian.tech/tempad-wiki");
+                }
+
+                this.minecraft.setScreen(this);
+            }, "https://codexadrian.tech/tempad-wiki", true));
         }));
     }
 
