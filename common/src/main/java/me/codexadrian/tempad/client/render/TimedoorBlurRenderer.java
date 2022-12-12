@@ -47,31 +47,27 @@ public class TimedoorBlurRenderer {
         viewMatUniform.set(viewMat.last().pose());
         inSize.set((float) renderTexture.width, (float) renderTexture.height);
 
-        //renderTexture.unbindRead();
         assert minecraft.level != null;
+        blurRenderTarget.bindWrite(false);
         MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
+
         StreamSupport.stream(minecraft.level.entitiesForRendering().spliterator(), false).filter(TimedoorEntity.class::isInstance).sorted(Comparator.comparingDouble(value -> -value.distanceToSqr(minecraft.cameraEntity))).forEach(entity -> {
             double entityX = Mth.lerp(deltaTime, entity.xOld, entity.getX());
             double entityY = Mth.lerp(deltaTime, entity.yOld, entity.getY());
             double entityZ = Mth.lerp(deltaTime, entity.zOld, entity.getZ());
             float entityYaw = Mth.lerp(deltaTime, entity.yRotO, entity.getYRot());
 
-            blurRenderTarget.bindWrite(false);
             minecraft.getEntityRenderDispatcher().render(entity, entityX - cameraX, entityY - cameraY, entityZ - cameraZ, entityYaw, deltaTime, poseStack, bufferSource, minecraft.getEntityRenderDispatcher().getPackedLightCoords(entity, deltaTime));
-            bufferSource.endLastBatch();
-            renderTexture.bindWrite(false);
         });
 
-        RenderSystem.runAsFancy(() -> Services.SHADERS.getBlurReloader().getTimedoorBlur().process(deltaTime));
+        bufferSource.endLastBatch();
+
+        Services.SHADERS.getBlurReloader().getTimedoorBlur().process(deltaTime);
         renderTexture.bindWrite(false);
     }
 
-    public static void bindAll(RenderTarget renderTarget) {
-        GlStateManager._glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderTarget.frameBufferId);
-    }
-
     public static void clear(RenderTarget renderTarget) {
-        bindAll(renderTarget);
+        GlStateManager._glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderTarget.frameBufferId);
         GlStateManager._clear(GL11.GL_COLOR_BUFFER_BIT, false);
         GlStateManager._clearColor(0, 0, 0, 0);
         GlStateManager._glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);

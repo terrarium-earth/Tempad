@@ -117,6 +117,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return !TempadClient.getClientConfig().renderBlur() || Minecraft.useShaderTransparency();
+        return !TempadClient.getClientConfig().renderBlur();
     }
 }
