@@ -80,6 +80,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         PoseStack viewMat = new PoseStack();
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         RenderTarget renderTexture = Minecraft.getInstance().getMainRenderTarget();
+        Services.SHADERS.getBlurReloader().getRenderTarget().copyDepthFrom(renderTexture);
         viewMat.mulPose(Vector3f.XP.rotationDegrees(camera.getXRot()));
         viewMat.mulPose(Vector3f.YP.rotationDegrees(camera.getYRot() + 180.0F));
 
