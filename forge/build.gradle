@@ -21,6 +21,12 @@ loom {
     }
 }
 
+repositories {
+    flatDir {
+        dir("libs")
+    }
+}
+
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
     //modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
@@ -29,6 +35,11 @@ dependencies {
     modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:additions"// Mekanism: Addition
     modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:generators"// Mekanism: Generator
     modRuntimeOnly "mekanism:Mekanism:${mekanism_version}:tools"// Mekanism: Tool
+    modRuntimeOnly(':mahoutsukai:1.19.2-v1.34.36')
+    modRuntimeOnly(':create:1.19.2-0.5.0.f')
+    modRuntimeOnly(':Registrate:MC1.19-1.1.5')
+    modRuntimeOnly(':Registrate:MC1.19-1.1.5')
+    modRuntimeOnly(':flywheel-forge:1.19.2-0.6.7-8')
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }

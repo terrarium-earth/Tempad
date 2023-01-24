@@ -1,5 +1,7 @@
 package me.codexadrian.tempad.client.render;
 
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.shaders.AbstractUniform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
@@ -7,6 +9,7 @@ import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -71,6 +74,18 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         float xBound = width * 0.5F;
         float yBound = height * 0.5F - .01F;
         float zBound = depth * -0.5F;
+
+        AbstractUniform inSize = Services.SHADERS.getTimedoorShader().safeGetUniform("InSize");
+        AbstractUniform viewMatUniform = Services.SHADERS.getTimedoorShader().safeGetUniform("ViewMat");
+        PoseStack viewMat = new PoseStack();
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        RenderTarget renderTexture = Minecraft.getInstance().getMainRenderTarget();
+        viewMat.mulPose(Vector3f.XP.rotationDegrees(camera.getXRot()));
+        viewMat.mulPose(Vector3f.YP.rotationDegrees(camera.getYRot() + 180.0F));
+
+        viewMatUniform.set(viewMat.last().pose());
+        inSize.set((float) renderTexture.width, (float) renderTexture.height);
+
         var buffer = multiBufferSource.getBuffer(Services.SHADERS.getTimedoorShaderType());
         //Front
         float red = ((color & 0xFF0000) >> 16) / 255.0f;
@@ -117,6 +132,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return !TempadClient.getClientConfig().renderBlur();
+        return true;
     }
 }

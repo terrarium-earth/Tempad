@@ -19,6 +19,12 @@ loom {
     accessWidenerPath = file("src/main/resources/tempad.accesswidener")
 }
 
+repositories {
+    flatDir {
+        dir("libs")
+    }
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
@@ -26,8 +32,12 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     //include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
-    modImplementation 'RebornCore:RebornCore-1.19:+'
-    modImplementation 'TechReborn:TechReborn-1.19:+'
+    modImplementation 'RebornCore:RebornCore-1.19:5.4.0'
+    modImplementation 'TechReborn:TechReborn-1.19:5.4.0'
+    modRuntimeOnly(':immersive-portals:2.2.5-mc1.19.2-fabric')
+    modRuntimeOnly(':imm_ptl_core:2.2.5')
+    modRuntimeOnly(':cloth-config-fabric:8.0.75')
+    modRuntimeOnly(':q_misc_util:2.2.5')
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
