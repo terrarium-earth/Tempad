@@ -1,7 +1,10 @@
 package me.codexadrian.tempad.forge;
 
+import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import me.codexadrian.tempad.TempadClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
@@ -19,6 +22,18 @@ public class TimedoorBlurRenderType extends RenderType {
                 .setLightmapState(LIGHTMAP)
                 .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                 .setShaderState(new RenderStateShard.ShaderStateShard(() -> ForgeTempadClient.timedoorWhiteShader))
+                .setOutputState(new OutputStateShard("timedoor_blur", () -> {
+                    if (TempadClient.getClientConfig().renderBlur()) {
+                        RenderTarget renderTarget = ForgeTempadClient.BLUR_RELOADER.getRenderTarget();
+                        if (renderTarget != null) {
+                            renderTarget.bindWrite(false);
+                        }
+                    }
+                }, () -> {
+                    if (TempadClient.getClientConfig().renderBlur()) {
+                        Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
+                    }
+                }))
                 .createCompositeState(false);
 
         return create("timedoorBlur", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, state);
