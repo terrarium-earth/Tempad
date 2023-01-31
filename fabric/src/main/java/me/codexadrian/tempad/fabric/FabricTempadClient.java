@@ -49,6 +49,7 @@ public class FabricTempadClient implements ClientModInitializer {
     public void onInitializeClient() {
         TempadClient.init();
         EntityRendererRegistry.register(FabricTempadRegistry.TIMEDOOR_ENTITY_ENTITY_TYPE, TimedoorRenderer::new);
+        TempadClient.initItemProperties();
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(INSTANCE);
     }
 }

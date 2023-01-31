@@ -17,22 +17,24 @@ import java.util.List;
 public class TempadClient {
     private static TempadClientConfig clientConfig;
     private static final List<String> incompatibleMods = List.of("flywheel", "imm_ptl_core", "structurize", "mahoutsukai");
+    private static final ClampedItemPropertyFunction CLAMPED_ITEM_PROPERTY_FUNCTION = (itemStack, clientLevel, livingEntity, i) -> {
+        if (livingEntity instanceof Player player && itemStack.getItem() instanceof TempadItem tempad) {
+            return tempad.getOption().canTimedoorOpen(player, itemStack) ? 1.0F : 0.0F;
+        }
+        return 0.0F;
+    };
+
     public static void init() {
-        ClampedItemPropertyFunction clampedItemPropertyFunction = (itemStack, clientLevel, livingEntity, i) -> {
-            if (livingEntity instanceof Player player && itemStack.getItem() instanceof TempadItem tempad) {
-                return tempad.getOption().canTimedoorOpen(player, itemStack) ? 1.0F : 0.0F;
-            }
-            return 0.0F;
-        };
-
-        registerItemProperty(Services.REGISTRY.getItem(), new ResourceLocation("usable"), clampedItemPropertyFunction);
-        registerItemProperty(Services.REGISTRY.getCreativeItem(), new ResourceLocation("usable"), clampedItemPropertyFunction);
-
         try {
             clientConfig = TempadClientConfig.loadConfig(Services.PLATFORM.getConfigDir());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void initItemProperties() {
+        registerItemProperty(Services.REGISTRY.getItem(), new ResourceLocation("usable"), CLAMPED_ITEM_PROPERTY_FUNCTION);
+        registerItemProperty(Services.REGISTRY.getCreativeItem(), new ResourceLocation("usable"), CLAMPED_ITEM_PROPERTY_FUNCTION);
     }
 
     public static TempadClientConfig getClientConfig() {

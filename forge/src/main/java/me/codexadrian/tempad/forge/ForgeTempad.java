@@ -46,12 +46,7 @@ public class ForgeTempad {
         LOOT_TABLES.register(bus);
         TempadImpl.SOUND_EVENTS.register(bus);
         NetworkHandler.register();
-        bus.addListener(ForgeTempad::onClientSetup);
         MinecraftForge.EVENT_BUS.register(this);
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ForgeTempadClient::registerBlurReloader);
-    }
-
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        ForgeTempadClient.init();
     }
 }
