@@ -20,7 +20,6 @@ loom {
         mixinConfig "${archives_base_name}.forge.mixins.json"
     }
 }
-
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
     //modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
