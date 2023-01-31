@@ -106,7 +106,7 @@ public class RunProgramScreen extends Screen {
         Instant timeUntilUsable = null;
         ItemStack itemInHand = minecraft.player.getItemInHand(hand);
         if(itemInHand.getItem() instanceof TempadItem item && item.getOption() instanceof TimerOption) {
-            long timerTime = TimerOption.getTimerNBT(itemInHand);
+            long timerTime = TimerOption.timeLeft(itemInHand);
             if(timerTime > 0) {
                 timeUntilUsable = Instant.now().plusMillis(timerTime);
             }
