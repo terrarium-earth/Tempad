@@ -18,6 +18,10 @@ public class BlurReloader implements ResourceManagerReloadListener {
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
+        if (!TempadClient.getClientConfig().renderBlur()) {
+            return;
+        }
+
         var minecraft = Minecraft.getInstance();
 
         if (timedoorBlur != null) {

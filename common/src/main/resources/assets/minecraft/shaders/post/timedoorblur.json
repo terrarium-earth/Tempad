@@ -10,8 +10,16 @@
       "outtarget": "swap",
       "auxtargets": [
         {
+          "name": "DiffuseDepthSampler",
+          "id": "minecraft:main:depth"
+        },
+        {
           "name": "TimedoorSampler",
           "id": "blur_target"
+        },
+        {
+          "name": "TimedoorDepthSampler",
+          "id": "blur_target:depth"
         }
       ]
     },

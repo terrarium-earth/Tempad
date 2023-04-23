@@ -31,17 +31,11 @@ public class FabricTempadClient implements ClientModInitializer {
                     .setCullState(new RenderStateShard.CullStateShard(false))
                     .setShaderState(new RenderStateShard.ShaderStateShard(() -> timedoorWhiteShader))
                     .setOutputState(new RenderStateShard.OutputStateShard("timedoor_blur", () -> {
-                        if (TempadClient.getClientConfig().renderBlur()) {
-                            RenderTarget renderTarget = INSTANCE.getRenderTarget();
-                            if (renderTarget != null) {
-                                renderTarget.bindWrite(false);
-                            }
+                        RenderTarget renderTarget = INSTANCE.getRenderTarget();
+                        if (renderTarget != null) {
+                            renderTarget.bindWrite(false);
                         }
-                    }, () -> {
-                        if (TempadClient.getClientConfig().renderBlur()) {
-                            Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
-                        }
-                    }))
+                    }, () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false)))
                     .createCompositeState(false)
     );
 

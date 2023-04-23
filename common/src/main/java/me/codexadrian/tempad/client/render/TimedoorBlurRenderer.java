@@ -11,5 +11,7 @@ public class TimedoorBlurRenderer {
 
         Services.SHADERS.getBlurReloader().getTimedoorBlur().process(partialTicks);
         blurRenderTarget.clear(Minecraft.ON_OSX);
+
+        Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
     }
 }

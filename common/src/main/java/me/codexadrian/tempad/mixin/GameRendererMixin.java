@@ -1,6 +1,5 @@
 package me.codexadrian.tempad.mixin;
 
-import me.codexadrian.tempad.TempadClient;
 import me.codexadrian.tempad.client.render.TimedoorBlurRenderer;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.renderer.GameRenderer;
@@ -20,9 +19,7 @@ public class GameRendererMixin {
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;doEntityOutline()V"))
-    public void renderBlur(float partialTicks, long nanos, boolean stopped, CallbackInfo ci) {
-        if (TempadClient.getClientConfig().renderBlur()) {
-            TimedoorBlurRenderer.renderBlur(partialTicks);
-        }
+    public void render(float partialTicks, long l, boolean bl, CallbackInfo ci) {
+        TimedoorBlurRenderer.renderBlur(partialTicks);
     }
 }

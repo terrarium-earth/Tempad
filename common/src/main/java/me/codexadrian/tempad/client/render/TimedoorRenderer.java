@@ -75,18 +75,6 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         float yBound = height * 0.5F - .01F;
         float zBound = depth * -0.5F;
 
-        AbstractUniform inSize = Services.SHADERS.getTimedoorShader().safeGetUniform("InSize");
-        AbstractUniform viewMatUniform = Services.SHADERS.getTimedoorShader().safeGetUniform("ViewMat");
-        PoseStack viewMat = new PoseStack();
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        RenderTarget renderTexture = Minecraft.getInstance().getMainRenderTarget();
-        Services.SHADERS.getBlurReloader().getRenderTarget().copyDepthFrom(renderTexture);
-        viewMat.mulPose(Vector3f.XP.rotationDegrees(camera.getXRot()));
-        viewMat.mulPose(Vector3f.YP.rotationDegrees(camera.getYRot() + 180.0F));
-
-        viewMatUniform.set(viewMat.last().pose());
-        inSize.set((float) renderTexture.width, (float) renderTexture.height);
-
         var buffer = multiBufferSource.getBuffer(Services.SHADERS.getTimedoorShaderType());
         //Front
         float red = ((color & 0xFF0000) >> 16) / 255.0f;
@@ -129,10 +117,5 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         buffer.vertex(model, xBound, -yBound, zBound).color(red, green, blue, alpha).uv(1, 1).uv2(i).endVertex();
         buffer.vertex(model, xBound, yBound, zBound).color(red, green, blue, alpha).uv(1, 0).uv2(i).endVertex();
 
-    }
-
-    @Override
-    public boolean shouldRender(@NotNull TimedoorEntity entity, @NotNull Frustum frustum, double d, double e, double f) {
-        return true;
     }
 }
