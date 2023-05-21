@@ -31,7 +31,7 @@ public class FabricTempadClient implements ClientModInitializer {
                     .setCullState(new RenderStateShard.CullStateShard(false))
                     .setShaderState(new RenderStateShard.ShaderStateShard(() -> timedoorWhiteShader))
                     .setOutputState(new RenderStateShard.OutputStateShard("timedoor_blur", () -> {
-                        RenderTarget renderTarget = INSTANCE.getRenderTarget();
+                        RenderTarget renderTarget = INSTANCE.getBlurTarget();
                         if (renderTarget != null) {
                             renderTarget.bindWrite(false);
                         }
