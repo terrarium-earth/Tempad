@@ -1,37 +1,24 @@
 {
   "targets": [
     "swap",
-    "final",
     "blur_target"
   ],
   "passes": [
     {
       "name": "timedoorblur",
-      "intarget": "final",
+      "intarget": "minecraft:main",
       "outtarget": "swap",
       "auxtargets": [
         {
-          "name": "ScreenSampler",
-          "id": "minecraft:main"
-        },
-        {
-          "name": "ScreenDepthSampler",
-          "id": "minecraft:main:depth"
-        },
-        {
           "name": "TimedoorSampler",
           "id": "blur_target"
-        },
-        {
-          "name": "TimedoorDepthSampler",
-          "id": "blur_target:depth"
         }
       ]
     },
     {
       "name": "blit",
       "intarget": "swap",
-      "outtarget": "final"
+      "outtarget": "minecraft:main"
     }
   ]
 }
