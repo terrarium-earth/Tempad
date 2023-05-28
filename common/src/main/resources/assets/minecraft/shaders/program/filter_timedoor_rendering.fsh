@@ -12,7 +12,7 @@ void main() {
     float timedoorDepth = texture(DiffuseDepthSampler, texCoord).r;
     float worldDepth = texture(WorldDepthSampler, texCoord).r;
 
-    if (timedoorDepth < worldDepth) {
+    if (worldDepth < timedoorDepth) {
         discard;
     }
 

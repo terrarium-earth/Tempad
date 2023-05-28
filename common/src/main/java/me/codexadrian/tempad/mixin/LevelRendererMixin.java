@@ -12,12 +12,22 @@ import com.mojang.math.Matrix4f;
 import me.codexadrian.tempad.BlurReloader;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
 import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.PostPass;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.function.IntSupplier;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -28,46 +38,32 @@ public class LevelRendererMixin {
         if (blurRenderTarget == null) return;
 
         RenderTarget mainTarget = Minecraft.getInstance().getMainRenderTarget();
+        Matrix4f orthographicMatrix = Matrix4f.orthographic(0.0F, (float) mainTarget.width, (float) mainTarget.height, 0.0F, 0.1F, 1000.0F);
+
+        float partialTicks = Minecraft.getInstance().getFrameTime();
+        blurReloader.getFilterTimedoor().setOrthoMatrix(orthographicMatrix);
+        blurReloader.getSwapBlurTargets().setOrthoMatrix(orthographicMatrix);
+
+        blurReloader.getFilterTimedoor().process(partialTicks);
 
         RenderTarget blurSwapTarget = blurReloader.getBlurSwapTarget();
-        blurSwapTarget.bindWrite(false);
+        if (Files.notExists(Paths.get("swap.png"))) {
+            try (var x = Screenshot.takeScreenshot(blurSwapTarget)) {
+                x.writeToFile("swap.png");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
-        EffectInstance timedoorFilter = blurReloader.getFilterTimedoor();
-        GlStateManager._colorMask(true, true, true, false);
-        GlStateManager._disableDepthTest();
-        GlStateManager._depthMask(false);
-        GlStateManager._viewport(0, 0, mainTarget.width, mainTarget.height);
+        blurReloader.getSwapBlurTargets().process(partialTicks);
 
-        timedoorFilter.setSampler("DiffuseSampler", blurRenderTarget::getColorTextureId);
-        timedoorFilter.setSampler("DiffuseDepthSampler", blurRenderTarget::getDepthTextureId);
-        timedoorFilter.setSampler("WorldDepthSampler", mainTarget::getDepthTextureId);
-
-        Matrix4f matrix4f = Matrix4f.orthographic((float) mainTarget.width, (float) (-mainTarget.height), 1000.0F, 3000.0F);
-        RenderSystem.setProjectionMatrix(matrix4f);
-        timedoorFilter.safeGetUniform("ProjMat").set(matrix4f);
-        timedoorFilter.safeGetUniform("InSize").set((float) mainTarget.width, (float) mainTarget.height);
-        timedoorFilter.safeGetUniform("OutSize").set((float) blurSwapTarget.width, (float) blurSwapTarget.height);
-
-        timedoorFilter.apply();
-        float f = (float) mainTarget.width;
-        float g = (float) mainTarget.height;
-        float h = (float) blurSwapTarget.viewWidth / (float) blurSwapTarget.width;
-        float k = (float) blurSwapTarget.viewHeight / (float) blurSwapTarget.height;
-        Tesselator tesselator = RenderSystem.renderThreadTesselator();
-        BufferBuilder bufferBuilder = tesselator.getBuilder();
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferBuilder.vertex(0.0, g, 0.0).uv(0.0F, 0.0F).color(255, 255, 255, 255).endVertex();
-        bufferBuilder.vertex(f, g, 0.0).uv(h, 0.0F).color(255, 255, 255, 255).endVertex();
-        bufferBuilder.vertex(f, 0.0, 0.0).uv(h, k).color(255, 255, 255, 255).endVertex();
-        bufferBuilder.vertex(0.0, 0.0, 0.0).uv(0.0F, k).color(255, 255, 255, 255).endVertex();
-        BufferUploader.draw(bufferBuilder.end());
-        timedoorFilter.clear();
-        GlStateManager._depthMask(true);
-        GlStateManager._colorMask(true, true, true, true);
-
-        blurRenderTarget.clear(Minecraft.ON_OSX);
-        blurRenderTarget.bindWrite(false);
-        blurSwapTarget.blitToScreen(blurRenderTarget.width, blurRenderTarget.height);
+        if (Files.notExists(Paths.get("blur.png"))) {
+            try (var x = Screenshot.takeScreenshot(blurRenderTarget)) {
+                x.writeToFile("blur.png");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         mainTarget.bindWrite(false);
     }

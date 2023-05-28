@@ -31,7 +31,6 @@ public class GameRendererMixin {
         RenderTarget blurTarget = blurReloader.getBlurTarget();
         if (blurTarget == null) return;
 
-
         blurReloader.getTimedoorBlur().process(partialTicks);
         blurTarget.clear(Minecraft.ON_OSX);
     }

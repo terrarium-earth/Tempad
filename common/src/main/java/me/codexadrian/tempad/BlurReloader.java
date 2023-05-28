@@ -19,11 +19,13 @@ public class BlurReloader implements ResourceManagerReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private PostChain timedoorBlur;
-    private EffectInstance filterTimedoor;
+    private PostPass filterTimedoor;
+    private PostPass swapBlurTargets;
     private RenderTarget blurTarget;
     private RenderTarget blurSwapTarget;
 
-    public BlurReloader() {}
+    public BlurReloader() {
+    }
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
@@ -33,9 +35,10 @@ public class BlurReloader implements ResourceManagerReloadListener {
 
         var minecraft = Minecraft.getInstance();
 
-        if (timedoorBlur != null) {
-            timedoorBlur.close();
-        }
+        if (timedoorBlur != null) timedoorBlur.close();
+        if (blurSwapTarget != null) blurSwapTarget.destroyBuffers();
+        if (filterTimedoor != null) filterTimedoor.close();
+        if (swapBlurTargets != null) swapBlurTargets.close();
 
         ResourceLocation resourceLocation = new ResourceLocation("shaders/post/timedoorblur.json");
         try {
@@ -44,7 +47,12 @@ public class BlurReloader implements ResourceManagerReloadListener {
             blurTarget = timedoorBlur.getTempTarget("blur_target");
             blurSwapTarget = new TextureTarget(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight(), true, Minecraft.ON_OSX);
 
-            filterTimedoor = new EffectInstance(resourceManager, "filter_timedoor_rendering");
+            filterTimedoor = new PostPass(resourceManager, "filter_timedoor_rendering", blurTarget, blurSwapTarget);
+            swapBlurTargets = new PostPass(resourceManager, "blit", blurSwapTarget, blurTarget);
+
+            RenderTarget mainRenderTarget = Minecraft.getInstance().getMainRenderTarget();
+            filterTimedoor.addAuxAsset("DiffuseDepthSampler", blurTarget::getDepthTextureId, blurTarget.width, blurTarget.height);
+            filterTimedoor.addAuxAsset("WorldDepthSampler", mainRenderTarget::getDepthTextureId, mainRenderTarget.width, mainRenderTarget.height);
         } catch (JsonSyntaxException | IOException exception) {
             LOGGER.error("Failed to load Tempad shaders", exception);
 
@@ -67,7 +75,11 @@ public class BlurReloader implements ResourceManagerReloadListener {
         return blurSwapTarget;
     }
 
-    public EffectInstance getFilterTimedoor() {
+    public PostPass getFilterTimedoor() {
         return filterTimedoor;
+    }
+
+    public PostPass getSwapBlurTargets() {
+        return swapBlurTargets;
     }
 }
