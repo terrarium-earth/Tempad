@@ -45,25 +45,7 @@ public class LevelRendererMixin {
         blurReloader.getSwapBlurTargets().setOrthoMatrix(orthographicMatrix);
 
         blurReloader.getFilterTimedoor().process(partialTicks);
-
-        RenderTarget blurSwapTarget = blurReloader.getBlurSwapTarget();
-        if (Files.notExists(Paths.get("swap.png"))) {
-            try (var x = Screenshot.takeScreenshot(blurSwapTarget)) {
-                x.writeToFile("swap.png");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         blurReloader.getSwapBlurTargets().process(partialTicks);
-
-        if (Files.notExists(Paths.get("blur.png"))) {
-            try (var x = Screenshot.takeScreenshot(blurRenderTarget)) {
-                x.writeToFile("blur.png");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
 
         mainTarget.bindWrite(false);
     }
