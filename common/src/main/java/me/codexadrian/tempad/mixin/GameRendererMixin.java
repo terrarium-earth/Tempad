@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GameRendererMixin {
 
     @Inject(method = "resize", at = @At("TAIL"))
-    public void resize(int i, int j, CallbackInfo ci) {
+    public void tempad$resize(int i, int j, CallbackInfo ci) {
         BlurReloader blurReloader = Services.SHADERS.getBlurReloader();
         PostChain timedoorBlur = blurReloader.getTimedoorBlur();
         if (timedoorBlur != null) {
@@ -25,7 +25,7 @@ public class GameRendererMixin {
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;doEntityOutline()V"))
-    public void render(float partialTicks, long l, boolean bl, CallbackInfo ci) {
+    public void tempad$render(float partialTicks, long l, boolean bl, CallbackInfo ci) {
         BlurReloader blurReloader = Services.SHADERS.getBlurReloader();
 
         RenderTarget blurTarget = blurReloader.getBlurTarget();
@@ -33,5 +33,6 @@ public class GameRendererMixin {
 
         blurReloader.getTimedoorBlur().process(partialTicks);
         blurTarget.clear(Minecraft.ON_OSX);
+        Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
     }
 }
