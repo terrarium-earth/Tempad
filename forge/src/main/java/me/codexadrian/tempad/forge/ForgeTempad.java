@@ -33,8 +33,8 @@ public class ForgeTempad {
 
     public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_TABLES = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     public static final RegistryObject<EntityType<TimedoorEntity>> TIMEDOOR = ENTITIES.register("timedoor", () -> EntityType.Builder.of(TimedoorEntity::new, MobCategory.MISC).sized(.4F, 2.3F).noSave().build("timedoor"));
-    public static final RegistryObject<TempadItem> TEMPAD = ITEMS.register("tempad", () -> new TempadItem(TempadType.NORMAL, new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
-    public static final RegistryObject<TempadItem> CREATIVE_TEMPAD = ITEMS.register("he_who_remains_tempad", () -> new TempadItem(TempadType.HE_WHO_REMAINS, new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.EPIC)));
+    public static final RegistryObject<TempadItem> TEMPAD = ITEMS.register("tempad", () -> new TempadItem(TempadType.NORMAL, new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistryObject<TempadItem> CREATIVE_TEMPAD = ITEMS.register("he_who_remains_tempad", () -> new TempadItem(TempadType.HE_WHO_REMAINS, new Item.Properties().rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Codec<TempadLootModifier>> TEMPAD_LOOT_MODIFIER = LOOT_TABLES.register("tempad_loot_modifier", () -> Codec.unit(() -> TempadLootModifier.INSTANCE));
 

@@ -2,15 +2,18 @@ package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
 import me.codexadrian.tempad.TempadClientConfig;
 import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.TempadClient;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import org.jetbrains.annotations.NotNull;
 
 public class OptionsScreen extends Screen {
     private static final ResourceLocation GRID = new ResourceLocation(Constants.MODID, "textures/widget/tempad_grid.png");
@@ -56,45 +59,45 @@ public class OptionsScreen extends Screen {
         }
     }
 
-    private void renderOutline(PoseStack poseStack) {
+    private void renderOutline(GuiGraphics graphics) {
         int lineWidth = 4;
-        fill(poseStack, (width - WIDTH - lineWidth) / 2, (height - HEIGHT - lineWidth) / 2, (width + WIDTH + lineWidth) / 2, (height + HEIGHT + lineWidth) / 2, color | 0xFF000000);
+        graphics.fill((width - WIDTH - lineWidth) / 2, (height - HEIGHT - lineWidth) / 2, (width + WIDTH + lineWidth) / 2, (height + HEIGHT + lineWidth) / 2, color | 0xFF000000);
     }
 
-    private void renderGridBackground(PoseStack poseStack, float red, float green, float blue) {
+    private void renderGridBackground(@NotNull GuiGraphics graphics, float red, float green, float blue) {
         RenderSystem.setShaderTexture(0, GRID);
         RenderSystem.setShaderColor(red * 0.5f, green * 0.5f, blue * 0.5f, 1f);
-        blit(poseStack, (width - WIDTH) / 2, (height - HEIGHT) / 2, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, 16, 16);
+        graphics.blit(GRID, (width - WIDTH) / 2, (height - HEIGHT) / 2, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, 16, 16);
     }
 
     @Override
-    public void renderBackground(PoseStack poseStack, int offset) {
-        super.renderBackground(poseStack, offset);
+    public void renderBackground(@NotNull GuiGraphics graphics) {
+        super.renderBackground(graphics);
         float red = (color >> 16 & 0xFF) / 255f;
         float green = (color >> 8 & 0xFF) / 255f;
         float blue = (color & 0xFF) / 255f;
-        renderOutline(poseStack);
-        renderGridBackground(poseStack, red, green, blue);
-        renderHeaders(poseStack);
+        renderOutline(graphics);
+        renderGridBackground(graphics, red, green, blue);
+        renderHeaders(graphics);
     }
 
-    private void renderHeaders(PoseStack matrices) {
+    private void renderHeaders(GuiGraphics graphics) {
         Font font = minecraft.font;
         int cornerX = (width - WIDTH) / 2 + 3;
         int cornerY = (height - HEIGHT) / 2 + 7;
         int x = cornerX + 16 * 3;
         int y = cornerY + 16 * 2;
-        matrices.pushPose();
-        matrices.translate(x * (-1.2), y * (-1.2), 0);
-        matrices.scale(2.2F, 2.2F, 0);
-        drawString(matrices, font, Component.translatable("gui." + Constants.MODID + ".options_header"), x, y, color);
-        matrices.popPose();
+        try(var pose = new CloseablePoseStack(graphics)) {
+            pose.translate(x * (-1.2), y * (-1.2), 0);
+            pose.scale(2.2F, 2.2F, 0);
+            graphics.drawString(font, Component.translatable("gui." + Constants.MODID + ".options_header"), x, y, color);
+        }
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(poseStack);
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -110,17 +113,17 @@ public class OptionsScreen extends Screen {
     public static class ColorButton extends Button {
         private final int buttonColor;
         public ColorButton(int x, int y, int size, int buttonColor, OnPress onPress) {
-            super(x, y, size, size, Component.nullToEmpty(""), onPress);
+            super(x, y, size, size, Component.nullToEmpty(""), onPress, Button.DEFAULT_NARRATION);
             this.buttonColor = buttonColor;
         }
 
         @Override
-        public void renderButton(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
-            matrices.pushPose();
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-            fill(matrices, x - 1, y - 1, x + 1 + width, y + 1 + height, 0xFFFFFFFF);
-            fill(matrices, x, y, x + width, y + height, buttonColor);
-            matrices.popPose();
+        protected void renderWidget(GuiGraphics graphics, int i, int j, float f) {
+            try(var pose = new CloseablePoseStack(graphics)) {
+                RenderSystem.setShaderColor(1, 1, 1, 1);
+                graphics.fill(getX() - 1, getY() - 1, getX() + 1 + width, getY() + 1 + height, 0xFFFFFFFF);
+                graphics.fill(getX(), getY(), getX() + width, getY() + height, buttonColor);
+            }
         }
     }
 }

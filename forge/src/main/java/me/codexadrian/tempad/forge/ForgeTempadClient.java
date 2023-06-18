@@ -36,13 +36,13 @@ public class ForgeTempadClient {
     @SubscribeEvent
     public static void registerShaders(RegisterShadersEvent event) throws IOException {
         event.registerShader(new ShaderInstance(
-                event.getResourceManager(),
+                event.getResourceProvider(),
                 new ResourceLocation("rendertype_timedoor"),
                 DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP
         ), shaderInstance -> timedoorShader = shaderInstance);
 
         event.registerShader(new ShaderInstance(
-                event.getResourceManager(),
+                event.getResourceProvider(),
                 new ResourceLocation("rendertype_timedoor_white"),
                 DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP
         ), shaderInstance -> timedoorWhiteShader = shaderInstance);

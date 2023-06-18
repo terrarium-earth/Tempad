@@ -66,7 +66,6 @@ public class TempadConfig {
     public TempadOption getTempadOption() {
         return switch (tempadOption) {
             case "DURABILITY" -> DurabilityOption.NORMAL_INSTANCE;
-            case "ENERGY" -> EnergyOption.NORMAL_INSTANCE;
             case "ITEM" -> ItemOption.NORMAL_INSTANCE;
             case "UNLIMITED" -> UnlimitedOption.NORMAL_INSTANCE;
             case "EXP_POINTS" -> ExperiencePointsOption.NORMAL_INSTANCE;
@@ -78,7 +77,6 @@ public class TempadConfig {
     public TempadOption getHeWhoRemainsOption() {
         return switch (heWhoRemainsTempadOption) {
             case "DURABILITY" -> DurabilityOption.ADVANCED_INSTANCE;
-            case "ENERGY" -> EnergyOption.ADVANCED_INSTANCE;
             case "ITEM" -> ItemOption.ADVANCED_INSTANCE;
             case "TIMER" -> TimerOption.ADVANCED_INSTANCE;
             case "EXP_POINTS" -> ExperiencePointsOption.ADVANCED_INSTANCE;

@@ -1,6 +1,5 @@
 package me.codexadrian.tempad.tempad;
 
-import me.codexadrian.tempad.Tempad;
 import net.minecraft.world.item.ItemStack;
 
 public interface EnergyItem {

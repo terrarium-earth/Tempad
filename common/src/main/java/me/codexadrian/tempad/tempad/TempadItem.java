@@ -1,18 +1,15 @@
 package me.codexadrian.tempad.tempad;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
-import me.codexadrian.tempad.*;
+import me.codexadrian.tempad.Tempad;
+import me.codexadrian.tempad.TempadClient;
+import me.codexadrian.tempad.TempadType;
 import me.codexadrian.tempad.data.LocationData;
 import me.codexadrian.tempad.data.tempad_options.DurabilityOption;
-import me.codexadrian.tempad.data.tempad_options.EnergyOption;
 import me.codexadrian.tempad.data.tempad_options.TempadOption;
 import me.codexadrian.tempad.entity.TimedoorEntity;
 import me.codexadrian.tempad.platform.Services;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -20,15 +17,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class TempadItem extends Item implements EnergyItem {
+public class TempadItem extends Item {
 
     private final TempadType type;
 
@@ -49,7 +43,7 @@ public class TempadItem extends Item implements EnergyItem {
     }
 
     public static void summonTimeDoor(LocationData locationData, Player player, int color) {
-        TimedoorEntity timedoor = new TimedoorEntity(Services.REGISTRY.getTimedoor(), player.level);
+        TimedoorEntity timedoor = new TimedoorEntity(Services.REGISTRY.getTimedoor(), player.level());
         var dir = player.getDirection();
         timedoor.setColor(color);
         timedoor.setLocation(locationData);
@@ -58,7 +52,7 @@ public class TempadItem extends Item implements EnergyItem {
         var distance = Tempad.getTempadConfig().getDistanceFromPlayer();
         timedoor.setPos(position.x() + dir.getStepX() * distance, position.y(), position.z() + dir.getStepZ() * distance);
         timedoor.setYRot(dir.getOpposite().toYRot());
-        player.level.addFreshEntity(timedoor);
+        player.level().addFreshEntity(timedoor);
         timedoor.playSound(Tempad.TIMEDOOR_SOUND.get());
     }
 
@@ -80,14 +74,6 @@ public class TempadItem extends Item implements EnergyItem {
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
         return getOption().durabilityBarWidth(stack);
-    }
-
-    @Override
-    public int getMaxEnergy() {
-        if(this.getOption() instanceof EnergyOption energy) {
-            return energy.getMaxEnergy();
-        }
-        return 0;
     }
 
     @Override

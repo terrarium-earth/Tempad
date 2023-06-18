@@ -6,6 +6,7 @@ import me.codexadrian.tempad.data.LocationData;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -59,7 +60,7 @@ public class TimedoorEntity extends Entity {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
+    protected void addAdditionalSaveData(@NotNull CompoundTag compoundTag) {
         if (locationData != null) {
             compoundTag.put("location", locationData.toTag());
         }
@@ -72,7 +73,7 @@ public class TimedoorEntity extends Entity {
     }
 
     @Override
-    public @NotNull Packet<?> getAddEntityPacket() {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this);
     }
 
@@ -86,15 +87,15 @@ public class TimedoorEntity extends Entity {
             box = box.inflate(0, 0, 0.5);
         }
         if (getLocation() != null) {
-            List<Entity> entities = this.level.getEntitiesOfClass(Entity.class, box, entity -> !(entity instanceof TimedoorEntity) && entity.canChangeDimensions() && !(entity instanceof FallingBlockEntity) && !(entity instanceof HangingEntity));
-            if (!entities.isEmpty() && !level.isClientSide()) {
-                ServerLevel destinationLevel = Objects.requireNonNull(level.getServer()).getLevel(getLocation().getLevelKey());
+            List<Entity> entities = this.level().getEntitiesOfClass(Entity.class, box, entity -> !(entity instanceof TimedoorEntity) && entity.canChangeDimensions() && !(entity instanceof FallingBlockEntity) && !(entity instanceof HangingEntity));
+            if (!entities.isEmpty() && !level().isClientSide()) {
+                ServerLevel destinationLevel = Objects.requireNonNull(level().getServer()).getLevel(getLocation().getLevelKey());
                 entities.stream().flatMap(entity -> entity.getRootVehicle().getSelfAndPassengers()).distinct().forEach(entity -> {
                     entity.ejectPassengers();
                     Vec3 deltaMovement = entity.getDeltaMovement();
                     var pos = getLocation().getBlockPos();
                     if (destinationLevel != null) {
-                        if (!getLocation().getLevelKey().location().equals(this.level.dimension().location())) {
+                        if (!getLocation().getLevelKey().location().equals(this.level().dimension().location())) {
                             Services.PLATFORM.teleportEntity(destinationLevel, pos, deltaMovement, entity);
                         } else {
                             entity.teleportToWithTicket(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
@@ -124,7 +125,7 @@ public class TimedoorEntity extends Entity {
                     var position = getLocation().getBlockPos().relative(this.getDirection(), 1);
                     recipientPortal.setPos(position.getX() + 0.5, position.getY(), position.getZ() + 0.5);
                     recipientPortal.setYRot(this.getYRot());
-                    this.level.addFreshEntity(recipientPortal);
+                    this.level().addFreshEntity(recipientPortal);
                 }
             }
         }
@@ -166,8 +167,8 @@ public class TimedoorEntity extends Entity {
     }
 
     public TimedoorEntity getLinkedPortalEntity() {
-        if (!level.isClientSide() && linkedPortalEntity == null) {
-            ServerLevel serverLevel = (ServerLevel) level;
+        if (!level().isClientSide() && linkedPortalEntity == null) {
+            ServerLevel serverLevel = (ServerLevel) level();
             linkedPortalEntity = (TimedoorEntity) serverLevel.getEntity(linkedPortalId);
         }
         return linkedPortalEntity;

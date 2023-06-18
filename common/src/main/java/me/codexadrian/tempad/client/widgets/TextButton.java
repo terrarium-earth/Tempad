@@ -1,9 +1,11 @@
 package me.codexadrian.tempad.client.widgets;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +17,8 @@ import java.time.Instant;
 public class TextButton extends Button {
     private float padding;
     private final int color;
-    private OnPress dynamicPress;
-    private boolean isCentered;
+    private final OnPress dynamicPress;
+    private final boolean isCentered;
     private Instant disabledUntil;
 
     public TextButton(int x, int y, int height, Component component, int color, OnPress onPress) {
@@ -28,10 +30,10 @@ public class TextButton extends Button {
     }
 
     public TextButton(int x, int y, int height, Component component, int color, boolean isCentered, OnPress onPress, @Nullable Instant disabledUntil) {
-        super(x, y, Minecraft.getInstance().font.width(component), Minecraft.getInstance().font.lineHeight, component, onPress);
+        super(x, y, Minecraft.getInstance().font.width(component), Minecraft.getInstance().font.lineHeight, component, onPress, Button.DEFAULT_NARRATION);
         this.dynamicPress = onPress;
         this.height = height;
-        this.width = (int) (Minecraft.getInstance().font.width(getMessage()) * (getHeight() / 8F));
+        this.width = Minecraft.getInstance().font.width(getMessage());
         this.color = color;
         this.isCentered = isCentered;
         if(disabledUntil != null) this.disabledUntil = disabledUntil;
@@ -39,11 +41,7 @@ public class TextButton extends Button {
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        if(isCentered) {
-            return this.active && this.visible && mouseX > (x - getWidth() * .5 * (getHeight() * 2F / 16F)) && mouseX < (x + getWidth() * .5 * (getHeight() * 2F / 16F)) && mouseY > y && mouseY < y + getHeight();
-        } else {
-            return this.active && this.visible && mouseX > x && mouseX < (x + getWidth() * (getHeight() * 2F / 16F)) && mouseY > y && mouseY < y + getHeight();
-        }
+        return mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY >= getY() && mouseY <= getY() + getHeight();
     }
 
     @Override
@@ -58,26 +56,20 @@ public class TextButton extends Button {
     }
 
     @Override
-    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
 
-        renderBg(matrices, minecraft, mouseX, mouseY);
-        matrices.pushPose();
-        matrices.pushPose();
-        float height = this.getPaddedHeight() - padding;
-        matrices.translate(x * (1- height * 2 / 16F), y * (1 - height * 2 / 16F), 0);
-        matrices.scale(height * 2 / 16F, height * 2 / 16F, 0);
-        matrices.translate(0, padding/2F, 0);
-        boolean disabled = disabledUntil == null || Instant.now().isAfter(disabledUntil);
-        int color = isMouseOver(mouseX, mouseY) && disabled ? this.color : getOffColor();
-        //drawCenteredString(matrices, font, getMessage(), x + (TempadScreen.this.width - WIDTH) / 2, y + (TempadScreen.this.height - HEIGHT) / 2, color);
-        if(isCentered) {
-            drawCenteredString(matrices, font, getMessage(), x, y, color);
-        } else {
-            drawString(matrices, font, getMessage(), x, y, color);
+        try (var pose = new CloseablePoseStack(graphics)) {
+            boolean disabled = disabledUntil == null || Instant.now().isAfter(disabledUntil);
+            int color = isMouseOver(mouseX, mouseY) && disabled ? this.color : getOffColor();
+            //drawCenteredString(matrices, font, getMessage(), x + (TempadScreen.this.width - WIDTH) / 2, y + (TempadScreen.this.height - HEIGHT) / 2, color);
+            if(isCentered) {
+                graphics.drawCenteredString(font, getMessage(), getX(), getY(), color);
+            } else {
+                graphics.drawString(font, getMessage(), getX(), getY(), color);
+            }
         }
-        matrices.popPose();
     }
 
     @Override
@@ -87,15 +79,7 @@ public class TextButton extends Button {
 
     @Override
     public int getHeight() {
-        return height + (int) Math.ceil(padding);
-    }
-
-    public float getPaddedHeight() {
-        return height + padding;
-    }
-
-    public void setVerticalPadding(float padding) {
-        this.padding = padding;
+        return height;
     }
 
     private int getOffColor() {

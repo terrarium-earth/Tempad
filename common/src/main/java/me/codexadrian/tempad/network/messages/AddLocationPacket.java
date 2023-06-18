@@ -47,10 +47,9 @@ public record AddLocationPacket(String name, InteractionHand hand) implements IP
         public BiConsumer<MinecraftServer, Player> handle(AddLocationPacket message) {
             return (server, player) -> {
                 ItemStack stack = player.getItemInHand(message.hand);
-                var tempadLocation = new LocationData(message.name, player.level.dimension(), new BlockPos(player.getX(), Math.ceil(player.getY()), player.getZ()));
+                var tempadLocation = new LocationData(message.name, player.level().dimension(), BlockPos.containing(player.getX(), Math.ceil(player.getY()), player.getZ()));
                 TempadComponent.addStackLocation(stack, tempadLocation);
             };
         }
     }
-
 }

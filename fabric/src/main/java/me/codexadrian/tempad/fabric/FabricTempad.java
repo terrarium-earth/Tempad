@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.loot.v2.FabricLootPoolBuilder;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.mixin.loot.LootTableAccessor;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -27,9 +28,9 @@ public class FabricTempad implements ModInitializer {
     @Override
     public void onInitialize() {
         Tempad.init();
-        Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(Constants.MODID, "timedoor"), FabricTempadRegistry.TIMEDOOR_ENTITY_ENTITY_TYPE);
-        Registry.register(Registry.ITEM, new ResourceLocation(Constants.MODID, "tempad"), FabricTempadRegistry.TEMPAD);
-        Registry.register(Registry.ITEM, new ResourceLocation(Constants.MODID, "he_who_remains_tempad"), FabricTempadRegistry.CREATIVE_TEMPAD);
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, new ResourceLocation(Constants.MODID, "timedoor"), FabricTempadRegistry.TIMEDOOR_ENTITY_ENTITY_TYPE);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(Constants.MODID, "tempad"), FabricTempadRegistry.TEMPAD);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(Constants.MODID, "he_who_remains_tempad"), FabricTempadRegistry.CREATIVE_TEMPAD);
 
         NetworkHandler.register();
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {

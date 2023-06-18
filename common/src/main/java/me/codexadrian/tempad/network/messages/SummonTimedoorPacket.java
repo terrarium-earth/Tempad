@@ -6,6 +6,7 @@ import me.codexadrian.tempad.data.LocationData;
 import me.codexadrian.tempad.tempad.TempadItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +55,7 @@ public record SummonTimedoorPacket(ResourceLocation dimensionKey, BlockPos pos, 
                 if(itemInHand.getItem() instanceof TempadItem tempadItem && !player.getAbilities().instabuild) {
                     tempadItem.getOption().onTimedoorOpen(player, message.hand());
                 }
-                TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registry.DIMENSION_REGISTRY, message.dimensionKey), message.pos), player, message.color);
+                TempadItem.summonTimeDoor(new LocationData("", ResourceKey.create(Registries.DIMENSION, message.dimensionKey), message.pos), player, message.color);
             };
         }
     }

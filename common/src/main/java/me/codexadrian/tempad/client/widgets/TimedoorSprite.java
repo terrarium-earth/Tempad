@@ -1,20 +1,20 @@
 package me.codexadrian.tempad.client.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.Widget;
+import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import static me.codexadrian.tempad.Constants.MODID;
-import static net.minecraft.client.gui.GuiComponent.blit;
 
-public class TimedoorSprite implements Widget, GuiEventListener, NarratableEntry {
+public class TimedoorSprite implements Renderable, GuiEventListener, NarratableEntry {
     private final int color;
     private final int size;
     private int x;
@@ -34,17 +34,15 @@ public class TimedoorSprite implements Widget, GuiEventListener, NarratableEntry
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         float red = (color >> 16 & 0xFF) / 255f;
         float green = (color >> 8 & 0xFF) / 255f;
         float blue = (color & 0xFF) / 255f;
-        poseStack.pushPose();
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderTexture(0, new ResourceLocation(MODID, "textures/widget/timedoor/timedoor_" + age / 4 + ".png"));
-        RenderSystem.setShaderColor(red, green, blue, 1f);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        blit(poseStack, x, y, size, size, 0, 0, 16, 16, 16, 16);
-        poseStack.popPose();
+        try(var pose = new CloseablePoseStack(graphics)) {
+            RenderSystem.enableBlend();
+            RenderSystem.setShaderColor(red, green, blue, 1f);
+            graphics.blit(new ResourceLocation(MODID, "textures/widget/timedoor/timedoor_" + age / 4 + ".png"), x, y, size, size, 0, 0, 16, 16, 16, 16);
+        }
         if (age <= 44) age++;
     }
 
@@ -56,5 +54,14 @@ public class TimedoorSprite implements Widget, GuiEventListener, NarratableEntry
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.TITLE, Component.translatable("gui." + MODID + ".timedoor"));
+    }
+
+    @Override
+    public void setFocused(boolean bl) {
+    }
+
+    @Override
+    public boolean isFocused() {
+        return false;
     }
 }

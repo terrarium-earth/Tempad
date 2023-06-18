@@ -14,6 +14,6 @@ public class TempadImpl {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Constants.MODID);
 
     public static Supplier<SoundEvent> registerSound(String name) {
-        return SOUND_EVENTS.register(name, () -> new SoundEvent(new ResourceLocation(Constants.MODID, name)));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Constants.MODID, name)));
     }
 }

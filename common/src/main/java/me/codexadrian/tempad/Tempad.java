@@ -3,6 +3,8 @@ package me.codexadrian.tempad;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.platform.Services;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
@@ -15,7 +17,7 @@ public class Tempad {
 
     private static TempadConfig tempadConfig;
 
-    public static final TagKey<Item> TEMPAD_FUEL_TAG = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(Constants.MODID, "tempad_fuel"));
+    public static final TagKey<Item> TEMPAD_FUEL_TAG = TagKey.create(Registries.ITEM, new ResourceLocation(Constants.MODID, "tempad_fuel"));
 
     public static final Supplier<SoundEvent> TIMEDOOR_SOUND = registerSound("entity.timedoor.open");
 
