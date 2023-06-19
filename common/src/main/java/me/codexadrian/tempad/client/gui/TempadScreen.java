@@ -1,10 +1,9 @@
 package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
-import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.client.widgets.TextButton;
+import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,8 +15,8 @@ import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.NotNull;
 
 public class TempadScreen extends Screen {
-    private static final ResourceLocation GRID = new ResourceLocation(Constants.MODID, "textures/widget/tempad_grid.png");
-    private static final ResourceLocation TVA_LOGO = new ResourceLocation(Constants.MODID, "textures/widget/tva_logo.png");
+    private static final ResourceLocation GRID = new ResourceLocation(Tempad.MODID, "textures/widget/tempad_grid.png");
+    private static final ResourceLocation TVA_LOGO = new ResourceLocation(Tempad.MODID, "textures/widget/tva_logo.png");
     private final int color;
 
     private static final int WIDTH = 256;
@@ -33,14 +32,14 @@ public class TempadScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        int offset = 3;
-        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 8 + offset, 12, Component.translatable("gui." + Constants.MODID + ".options"), color, button -> minecraft.setScreen(new OptionsScreen(color, hand))));
+        int offset = 4;
+        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 10 + offset, (height - HEIGHT) / 2 + 72 + offset, Component.translatable("gui." + Tempad.MODID + ".options"), 0xFFFFFFFF, button -> minecraft.setScreen(new OptionsScreen(color, hand))));
 
-        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 9 + offset, 12, Component.translatable("gui." + Constants.MODID + ".run_program"), color, button -> {
+        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 10 + offset, (height - HEIGHT) / 2 + 82 + offset, Component.translatable("gui." + Tempad.MODID + ".run_program"), 0xFFFFFFFF, button -> {
             minecraft.setScreen(new RunProgramScreen(color, this.hand));
         }));
 
-        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 17 + offset, (height - HEIGHT) / 2 + 16 * 10 + offset, 12, Component.translatable("gui." + Constants.MODID + ".wiki"), color, button -> {
+        addRenderableWidget(new TextButton((width - WIDTH) / 2 + 16 * 10 + offset, (height - HEIGHT) / 2 + 92 + offset, Component.translatable("gui." + Tempad.MODID + ".wiki"), 0xFFFFFFFF, button -> {
             this.minecraft.setScreen(new ConfirmLinkScreen((bl) -> {
                 if (bl) {
                     Util.getPlatform().openUri("https://codexadrian.tech/tempad-wiki");
@@ -74,10 +73,10 @@ public class TempadScreen extends Screen {
         int cornerX = (width - WIDTH) / 2 + 3;
         int cornerY = (height - HEIGHT) / 2 + 7;
         int x = cornerX + 16 * 10;
-        int y = cornerY + 16;
+        int y = cornerY + 16 * 3;
         try(var pose = new CloseablePoseStack(graphics)) {
-            graphics.drawString(font, Component.translatable("gui." + Constants.MODID + ".header_line_1"), x, y, color);
-            graphics.drawString(font, Component.translatable("gui." + Constants.MODID + ".header_line_2"), x, y + 10, color);
+            graphics.drawString(font, Component.translatable("gui." + Tempad.MODID + ".header_line_1"), x, y, 0xFFFFFFFF);
+            graphics.drawString(font, Component.translatable("gui." + Tempad.MODID + ".header_line_2"), x, y + 10, 0xFFFFFFFF);
         }
     }
 

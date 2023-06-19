@@ -1,18 +1,18 @@
 package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
-import me.codexadrian.tempad.Constants;
+import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
 import me.codexadrian.tempad.client.widgets.TextButton;
+import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
-import me.codexadrian.tempad.data.tempad_options.TimerOption;
-import me.codexadrian.tempad.network.messages.DeleteLocationPacket;
-import me.codexadrian.tempad.network.messages.SummonTimedoorPacket;
-import me.codexadrian.tempad.platform.Services;
-import me.codexadrian.tempad.data.LocationData;
-import me.codexadrian.tempad.data.TempadComponent;
-import me.codexadrian.tempad.tempad.TempadItem;
+import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.network.messages.DeleteLocationPacket;
+import me.codexadrian.tempad.common.network.messages.SummonTimedoorPacket;
+import me.codexadrian.tempad.common.data.LocationData;
+import me.codexadrian.tempad.common.data.TempadComponent;
+import me.codexadrian.tempad.common.tempad.TempadItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,13 +24,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class RunProgramScreen extends Screen {
-    private static final ResourceLocation GRID = new ResourceLocation(Constants.MODID, "textures/widget/tempad_grid.png");
+    private static final ResourceLocation GRID = new ResourceLocation(Tempad.MODID, "textures/widget/tempad_grid.png");
     private final int color;
 
     private static final int WIDTH = 256;
@@ -39,10 +37,8 @@ public class RunProgramScreen extends Screen {
     private int listSize;
     private final InteractionHand hand;
     private boolean interfaceNeedsReload = false;
-    private boolean listNeedsReload = false;
     private final TimedoorSprite timedoorSprite;
     private List<LocationData> allLocations;
-    private List<TextButton> displayedLocations;
     private final List<Button> displayedInterfaceButtons = new ArrayList<>();
     private final List<Button> upNextButtons = new ArrayList<>();
 
@@ -50,49 +46,25 @@ public class RunProgramScreen extends Screen {
         super(Component.nullToEmpty(""));
         this.color = color;
         this.hand = hand;
-        timedoorSprite = new TimedoorSprite(0, 0, color, 16 * 9);
+        timedoorSprite = new TimedoorSprite(0, 0, color, 96);
         allLocations = new ArrayList<>();
-        displayedLocations = new ArrayList<>();
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        int wiggleRoom = listSize > 12 ? listSize - 12 : 0;
-        mouseMovement = Math.min(wiggleRoom, Math.max(mouseMovement + (int) (delta * 10), 0));
-        if(listSize > 12) listNeedsReload = true;
-        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     @Override
     protected void init() {
         super.init();
         int offset = 3;
-        timedoorSprite.changePosition((width - WIDTH) / 2 + 16 * 3, (height - HEIGHT) / 2 + offset + 16 * 2);
+        timedoorSprite.changePosition((width - WIDTH) / 2 + 24, (height - HEIGHT) / 2 + offset + 16);
         ItemStack stack = minecraft.player.getItemInHand(this.hand);
         if(stack.hasTag()) {
             allLocations = new ArrayList<>(TempadComponent.fromStack(stack).getLocations());
-            listSize = allLocations.size();
-            List<LocationData> shownLocationData = new ArrayList<>();
-            if(listSize > 12) {
-                for(int i = 0; i < 12; i++) {
-                    shownLocationData.add(allLocations.get(i));
-                }
-            } else {
-                shownLocationData = allLocations;
-            }
-
-            int x = (width - WIDTH) / 2 + offset + 16 * 15;
+            int x = (width - WIDTH) / 2 + offset + 16 * 9;
             int y = (height - HEIGHT) / 2 + offset + 16 * 2;
-            Collections.sort(shownLocationData);
-            for(LocationData data : shownLocationData) {
-                var locationButton = new TextButton(x, y, 12, Component.literal(data.getName()), color, (button) -> locationButtonOnPress(data));
-                this.displayedLocations.add(locationButton);
-                addRenderableWidget(locationButton);
-                y+=16;
-            }
+            var list = addRenderableWidget(new SelectionList<TextEntry>(x, y, 16 * 6, 16 * 6 - 6, 10, textEntry -> { if(textEntry != null) locationButtonOnPress(textEntry.data); }));
+            list.updateEntries(allLocations.stream().map(TextEntry::new).toList());
         }
 
-        TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 15, (height - HEIGHT) / 2 + offset + 16 * 14, 12, Component.translatable("gui." + Constants.MODID + ".new_location"), color, (button)->{
+        TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 9, (height - HEIGHT) / 2 + offset + 16 * 8 + 3, Component.translatable("gui." + Tempad.MODID + ".new_location"), 0xFFFFFFFF, (button)->{
           minecraft.setScreen(new NewLocationScreen(color, hand));
         });
 
@@ -101,22 +73,18 @@ public class RunProgramScreen extends Screen {
 
     private void locationButtonOnPress(LocationData data) {
         String locationName = data.getBlockPos().toShortString();
-        TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(locationName) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 11,12, Component.literal(locationName), color, (button1) -> {});
-        var teleportText = Component.translatable("gui." + Constants.MODID + ".teleport");
-        Instant timeUntilUsable = null;
-        ItemStack itemInHand = minecraft.player.getItemInHand(hand);
-        if(itemInHand.getItem() instanceof TempadItem item && item.getOption() instanceof TimerOption) {
-            long timerTime = TimerOption.timeLeft(itemInHand);
-            if(timerTime > 0) {
-                timeUntilUsable = Instant.now().plusMillis(timerTime);
-            }
-        }
-        TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(teleportText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 12,12, teleportText, color, (button2) -> teleportAction(data), timeUntilUsable);
-        var deleteText = Component.translatable("gui." + Constants.MODID + ".delete");
-        TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 16 * 8 - (int)(font.width(deleteText) * .75) - 8, (height - HEIGHT) / 2 + 3 + 16 * 13,12, deleteText, color, (button2) ->{
+        TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(locationName) / 2, (height - HEIGHT) / 2 + 3 + 16 * 7, Component.literal(locationName), color, (button1) -> {});
+
+        var teleportText = Component.translatable("gui." + Tempad.MODID + ".teleport");
+        TempadItem itemInHand = (TempadItem) minecraft.player.getItemInHand(hand).getItem();
+        TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(teleportText) / 2, (height - HEIGHT) / 2 + 3 + 16 * 7 + 10, teleportText, color, (button2) -> teleportAction(data), () -> itemInHand.getOption().canTimedoorOpen(minecraft.player, minecraft.player.getItemInHand(hand)));
+
+        var deleteText = Component.translatable("gui." + Tempad.MODID + ".delete");
+        TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(deleteText) / 2, (height - HEIGHT) / 2 + 3 + 16 * 7 + 20, deleteText, color, (button2) ->{
             Minecraft.getInstance().setScreen(null);
-            Services.NETWORK.sendToServer(new DeleteLocationPacket(data.getId(), hand));
+            NetworkHandler.CHANNEL.sendToServer(new DeleteLocationPacket(data.getId(), hand));
         });
+
         upNextButtons.add(displayedLocation);
         upNextButtons.add(teleportButton);
         upNextButtons.add(deleteLocationButton);
@@ -129,7 +97,7 @@ public class RunProgramScreen extends Screen {
         if(itemInHand.hasTag() && itemInHand.getItem() instanceof TempadItem tempadItem) {
             if(tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand)) {
                 Minecraft.getInstance().setScreen(null);
-                Services.NETWORK.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
+                NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
             }
         }
     }
@@ -149,21 +117,6 @@ public class RunProgramScreen extends Screen {
         }
         int x = (width - WIDTH) / 2 + 3 + 16 * 15;
         int y = (height - HEIGHT) / 2 + 3 + 16 * 2;
-        if(this.listNeedsReload) {
-
-            for(TextButton button : displayedLocations) {
-                removeWidget(button);
-            }
-            displayedLocations = new ArrayList<>();
-            int offset = Math.min(mouseMovement, listSize - 12);
-            for(int i = offset; i < 12 + offset; i++) {
-                LocationData data = allLocations.get(i);
-                displayedLocations.add(new TextButton(x, y, 12, Component.literal(data.getName()), color, (button -> locationButtonOnPress(data))));
-                y+=16;
-            }
-            displayedLocations.forEach(this::addRenderableWidget);
-            this.listNeedsReload = false;
-        }
     }
 
     private void renderOutline(@NotNull GuiGraphics graphics) {
@@ -185,19 +138,20 @@ public class RunProgramScreen extends Screen {
         float blue = (color & 0xFF) / 255f;
         renderOutline(graphics);
         renderGridBackground(graphics, red, green, blue);
+        RenderSystem.setShaderColor(red, green, blue, 1f);
+        graphics.fill((width - WIDTH) / 2 + 16 * 9, (height - HEIGHT) / 2 + 16 * 2, (width - WIDTH) / 2 + 16 * 15, (height - HEIGHT) / 2 + 16 * 8, 0xFFFFFFFF);
+        graphics.fill((width - WIDTH) / 2 + 16 * 9 + 2, (height - HEIGHT) / 2 + 16 * 2 + 2, (width - WIDTH) / 2 + 16 * 15 - 2, (height - HEIGHT) / 2 + 16 * 8 - 2, 0xFF131313);
         renderHeaders(graphics);
     }
 
     private void renderHeaders(@NotNull GuiGraphics graphics) {
         Font font = minecraft.font;
         int cornerX = (width - WIDTH) / 2 + 3;
-        int cornerY = (height - HEIGHT) / 2 + 3;
-        int x = cornerX + 16 * 15;
+        int cornerY = (height - HEIGHT) / 2 + 5;
+        int x = cornerX + 16 * 9;
         int y = cornerY + 16;
         try (var pose = new CloseablePoseStack(graphics)) {
-            pose.translate(x * (-0.5), y * (-0.5), 0);
-            pose.scale(1.5F, 1.5F, 0);
-            graphics.drawString(font, Component.translatable("gui." + Constants.MODID + ".select_location"), x, y, color);
+            graphics.drawString(font, Component.translatable("gui." + Tempad.MODID + ".select_location"), x, y, 0xFFFFFFFF);
         }
     }
 

@@ -24,10 +24,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.codexadrian.tempad.fabric.FabricTempad"
+      "me.codexadrian.tempad.common.fabric.FabricTempad"
     ],
     "client": [
-      "me.codexadrian.tempad.fabric.FabricTempadClient"
+      "me.codexadrian.tempad.common.fabric.FabricTempadClient"
     ]
   },
   "mixins": [
@@ -37,7 +37,7 @@
   "depends": {
     "fabricloader": ">=0.13",
     "fabric": "*",
-    "minecraft": "1.19.x",
+    "minecraft": "1.20.x",
     "java": ">=17"
   }
 }

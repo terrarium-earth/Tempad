@@ -1,14 +1,12 @@
 package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
-import com.teamresourceful.resourcefullib.client.scissor.CloseableScissorStack;
-import me.codexadrian.tempad.Constants;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
-import me.codexadrian.tempad.network.messages.AddLocationPacket;
-import me.codexadrian.tempad.platform.Services;
+import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.network.messages.AddLocationPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,7 +18,7 @@ import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.NotNull;
 
 public class NewLocationScreen extends Screen {
-    private static final ResourceLocation GRID = new ResourceLocation(Constants.MODID, "textures/widget/tempad_grid.png");
+    private static final ResourceLocation GRID = new ResourceLocation(Tempad.MODID, "textures/widget/tempad_grid.png");
     private final int color;
 
     private static final int WIDTH = 256;
@@ -39,12 +37,12 @@ public class NewLocationScreen extends Screen {
         int cornerX = (width - WIDTH) / 2;
         int cornerY = (height - HEIGHT) / 2;
         TimedoorSprite timeDoorSprite = new TimedoorSprite(cornerX + 16 * 4, cornerY + 16 * 4, color, 128);
-        Component addLocationText = Component.translatable("gui." + Constants.MODID + ".add_location");
-        EditBox textField = new EditBox(font, cornerX + 16 * 15, cornerY + 16 * 8 - 4, 16 * 8, 24, Component.translatable("gui." + Constants.MODID + ".textfield"));
-        TextButton addLocation = new TextButton(cornerX + 16 * 15, cornerY + 16 * 10, 12, addLocationText, color, (button -> {
+        Component addLocationText = Component.translatable("gui." + Tempad.MODID + ".add_location");
+        EditBox textField = new EditBox(font, cornerX + 16 * 15, cornerY + 16 * 8 - 4, 16 * 8, 24, Component.translatable("gui." + Tempad.MODID + ".textfield"));
+        TextButton addLocation = new TextButton(cornerX + 16 * 15, cornerY + 16 * 10, addLocationText, color, (button -> {
             String nameFieldText = textField.getValue();
             if (!nameFieldText.isBlank()) {
-                Services.NETWORK.sendToServer(new AddLocationPacket(nameFieldText, hand));
+                NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(nameFieldText, hand));
                 Minecraft.getInstance().setScreen(null);
             }
 

@@ -2,9 +2,10 @@ package me.codexadrian.tempad.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.entity.TimedoorEntity;
-import me.codexadrian.tempad.platform.Services;
+import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.entity.TimedoorEntity;
+
+import me.codexadrian.tempad.common.utils.ShaderUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -61,7 +62,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull TimedoorEntity entity) {
-        return new ResourceLocation(Constants.MODID, "");
+        return new ResourceLocation(Tempad.MODID, "");
     }
 
     public void renderTimedoor(Matrix4f model, MultiBufferSource multiBufferSource, float width, float height, float depth, int i, int color) {
@@ -69,7 +70,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         float yBound = height * 0.5F - .01F;
         float zBound = depth * -0.5F;
 
-        var buffer = multiBufferSource.getBuffer(Services.SHADERS.getTimedoorShaderType());
+        var buffer = multiBufferSource.getBuffer(ShaderUtils.getTimedoorShaderType());
         //Front
         float red = ((color & 0xFF0000) >> 16) / 255.0f;
         float green = ((color & 0xFF00) >> 8) / 255.0f;

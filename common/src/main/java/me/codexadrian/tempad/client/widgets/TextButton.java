@@ -1,6 +1,5 @@
 package me.codexadrian.tempad.client.widgets;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -9,34 +8,23 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.time.Instant;
+import java.util.function.Supplier;
 
 public class TextButton extends Button {
-    private float padding;
-    private final int color;
     private final OnPress dynamicPress;
-    private final boolean isCentered;
-    private Instant disabledUntil;
+    private Supplier<Boolean> disabled = () -> true;
 
-    public TextButton(int x, int y, int height, Component component, int color, OnPress onPress) {
-        this(x, y, height, component, color, false, onPress, null);
+    public TextButton(int x, int y, Component component, int color, OnPress onPress) {
+        this(x, y, component, color, onPress, null);
     }
 
-    public TextButton(int x, int y, int height, Component component, int color, OnPress onPress, @Nullable Instant diabledUntil) {
-        this(x, y, height, component, color, false, onPress, diabledUntil);
-    }
-
-    public TextButton(int x, int y, int height, Component component, int color, boolean isCentered, OnPress onPress, @Nullable Instant disabledUntil) {
+    public TextButton(int x, int y, Component component, int color, OnPress onPress, Supplier<Boolean> disabled) {
         super(x, y, Minecraft.getInstance().font.width(component), Minecraft.getInstance().font.lineHeight, component, onPress, Button.DEFAULT_NARRATION);
         this.dynamicPress = onPress;
-        this.height = height;
+        this.height = Minecraft.getInstance().font.lineHeight;
         this.width = Minecraft.getInstance().font.width(getMessage());
-        this.color = color;
-        this.isCentered = isCentered;
-        if(disabledUntil != null) this.disabledUntil = disabledUntil;
+        if(disabled != null) this.disabled = disabled;
     }
 
     @Override
@@ -45,30 +33,13 @@ public class TextButton extends Button {
     }
 
     @Override
-    public int getWidth() {
-        Font font = Minecraft.getInstance().font;
-        return (int) (font.width(getMessage()) * (getHeight() / 8F));
-    }
-
-    @Override
-    public void onClick(double mouseX, double mouseY) {
-        super.onClick(mouseX, mouseY);
-    }
-
-    @Override
     public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
 
         try (var pose = new CloseablePoseStack(graphics)) {
-            boolean disabled = disabledUntil == null || Instant.now().isAfter(disabledUntil);
-            int color = isMouseOver(mouseX, mouseY) && disabled ? this.color : getOffColor();
-            //drawCenteredString(matrices, font, getMessage(), x + (TempadScreen.this.width - WIDTH) / 2, y + (TempadScreen.this.height - HEIGHT) / 2, color);
-            if(isCentered) {
-                graphics.drawCenteredString(font, getMessage(), getX(), getY(), color);
-            } else {
-                graphics.drawString(font, getMessage(), getX(), getY(), color);
-            }
+            int color = isMouseOver(mouseX, mouseY) && disabled.get() ? 0xFFFFFFFF : 0xFFAAAAAA;
+            graphics.drawString(font, getMessage(), getX(), getY(), color);
         }
     }
 
@@ -78,25 +49,8 @@ public class TextButton extends Button {
     }
 
     @Override
-    public int getHeight() {
-        return height;
-    }
-
-    private int getOffColor() {
-        Color c0 = Color.getColor("", color);
-
-        double r = 0.5 * c0.getRed() + 0.5;
-        double g = 0.5 * c0.getGreen() + 0.5;
-        double b = 0.5 * c0.getBlue() + 0.5;
-        double a = 1;
-
-        return new Color((int) r, (int) g, (int) b, (int) a).getRGB();
-    }
-
-    @Override
     public @NotNull Component getMessage() {
-        if(disabledUntil == null) return super.getMessage();
-        if(Instant.now().isBefore(disabledUntil)) return super.getMessage().copy().withStyle(ChatFormatting.STRIKETHROUGH);
-        return super.getMessage();
+        if(disabled.get()) return super.getMessage();
+        else return super.getMessage().copy().withStyle(ChatFormatting.STRIKETHROUGH);
     }
 }

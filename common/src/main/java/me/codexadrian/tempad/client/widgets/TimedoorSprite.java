@@ -2,6 +2,7 @@ package me.codexadrian.tempad.client.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
+import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -12,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import static me.codexadrian.tempad.Constants.MODID;
+import static me.codexadrian.tempad.common.Tempad.MODID;
 
 public class TimedoorSprite implements Renderable, GuiEventListener, NarratableEntry {
     private final int color;
@@ -41,7 +42,7 @@ public class TimedoorSprite implements Renderable, GuiEventListener, NarratableE
         try(var pose = new CloseablePoseStack(graphics)) {
             RenderSystem.enableBlend();
             RenderSystem.setShaderColor(red, green, blue, 1f);
-            graphics.blit(new ResourceLocation(MODID, "textures/widget/timedoor/timedoor_" + age / 4 + ".png"), x, y, size, size, 0, 0, 16, 16, 16, 16);
+            graphics.blit(new ResourceLocation(Tempad.MODID, "textures/widget/timedoor/timedoor_" + age / 4 + ".png"), x, y, size, size, 0, 0, 16, 16, 16, 16);
         }
         if (age <= 44) age++;
     }

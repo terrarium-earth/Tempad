@@ -3,6 +3,7 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modImplementation "com.teamresourceful.resourcefullib:resourcefullib-common-$rootProject.resourcefullib_version"
+    modImplementation "earth.terrarium:botarium-common-1.20:$rootProject.botarium_version"
 }
 
 architectury {

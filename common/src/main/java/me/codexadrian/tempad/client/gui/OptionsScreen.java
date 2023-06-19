@@ -1,11 +1,10 @@
 package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
-import me.codexadrian.tempad.TempadClientConfig;
-import me.codexadrian.tempad.Constants;
-import me.codexadrian.tempad.TempadClient;
+import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.TempadClientConfig;
+import me.codexadrian.tempad.common.TempadClient;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -16,12 +15,12 @@ import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.NotNull;
 
 public class OptionsScreen extends Screen {
-    private static final ResourceLocation GRID = new ResourceLocation(Constants.MODID, "textures/widget/tempad_grid.png");
+    private static final ResourceLocation GRID = new ResourceLocation(Tempad.MODID, "textures/widget/tempad_grid.png");
     private final InteractionHand hand;
     private int color;
 
-    private static final int WIDTH = 480;
-    private static final int HEIGHT = 256;
+    private static final int WIDTH = 256;
+    private static final int HEIGHT = 160;
 
     public OptionsScreen(int color, InteractionHand hand) {
         super(Component.nullToEmpty(""));
@@ -34,9 +33,9 @@ public class OptionsScreen extends Screen {
         super.init();
         int colorPerRow = 10;
         int margin = 6;
-        int scale = 32;
-        int startX = (width - WIDTH) / 2 + 16 * 3 + 5;
-        int startY = (height - HEIGHT) / 2 + 16 * 5 + 2;
+        int scale = 16;
+        int startX = (width - WIDTH) / 2 + 16 + 5;
+        int startY = (height - HEIGHT) / 2 + 16 * 3 + 2;
         int x = 0;
         int y = 0;
         int[] colors = TempadClient.getClientConfig().getColorOptions();
@@ -65,7 +64,6 @@ public class OptionsScreen extends Screen {
     }
 
     private void renderGridBackground(@NotNull GuiGraphics graphics, float red, float green, float blue) {
-        RenderSystem.setShaderTexture(0, GRID);
         RenderSystem.setShaderColor(red * 0.5f, green * 0.5f, blue * 0.5f, 1f);
         graphics.blit(GRID, (width - WIDTH) / 2, (height - HEIGHT) / 2, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, 16, 16);
     }
@@ -78,19 +76,18 @@ public class OptionsScreen extends Screen {
         float blue = (color & 0xFF) / 255f;
         renderOutline(graphics);
         renderGridBackground(graphics, red, green, blue);
+        RenderSystem.setShaderColor(red, green, blue, 1f);
         renderHeaders(graphics);
     }
 
     private void renderHeaders(GuiGraphics graphics) {
         Font font = minecraft.font;
-        int cornerX = (width - WIDTH) / 2 + 3;
-        int cornerY = (height - HEIGHT) / 2 + 7;
-        int x = cornerX + 16 * 3;
+        int cornerX = (width - WIDTH) / 2 + 5;
+        int cornerY = (height - HEIGHT) / 2;
+        int x = cornerX + 16;
         int y = cornerY + 16 * 2;
         try(var pose = new CloseablePoseStack(graphics)) {
-            pose.translate(x * (-1.2), y * (-1.2), 0);
-            pose.scale(2.2F, 2.2F, 0);
-            graphics.drawString(font, Component.translatable("gui." + Constants.MODID + ".options_header"), x, y, color);
+            graphics.drawString(font, Component.translatable("gui." + Tempad.MODID + ".options_header"), x, y, 0xFFFFFFFF);
         }
     }
 
