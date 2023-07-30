@@ -27,5 +27,11 @@
   "advancements.tempad.tempad.description": "Obtain a Tempad",
   "advancements.tempad.he_who_remains": "The Citadel at the End of Time",
   "advancements.tempad.he_who_remains.description": "Obtain 'He Who Remains'' Tempad",
-  "subtitles.tempad.entity.timedoor.open": "Timedoor opens"
+  "subtitles.tempad.entity.timedoor.open": "Timedoor opens",
+  "dimension.minecraft.overworld": "Overworld",
+  "dimension.minecraft.the_nether": "The Nether",
+  "dimension.minecraft.the_end": "The End",
+  "tempad_option.tempad.energy": "Energy: %s/%s §b⚡§r",
+  "item.tempad.empty_tank": "Empty",
+  "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r"
 }

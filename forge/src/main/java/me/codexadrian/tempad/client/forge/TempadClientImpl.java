@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.fabric;
+package me.codexadrian.tempad.client.forge;
 
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;

@@ -2,7 +2,7 @@ package me.codexadrian.tempad.common.entity;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.common.Tempad;
-
+import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import net.minecraft.core.BlockPos;
@@ -46,13 +46,14 @@ public class TimedoorEntity extends Entity {
 
     @Override
     protected void defineSynchedData() {
-        entityData.define(CLOSING_TIME, Tempad.getTempadConfig().getTimedoorWait());
+        entityData.define(CLOSING_TIME, TempadConfig.timedoorWait);
         entityData.define(COLOR, Tempad.ORANGE);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
-        if (compoundTag.contains("location")) this.setLocation(LocationData.fromTag(compoundTag.getCompound("location")));
+        if (compoundTag.contains("location"))
+            this.setLocation(LocationData.fromTag(compoundTag.getCompound("location")));
         this.setClosingTime(compoundTag.getInt("closing_time"));
         if (compoundTag.hasUUID("owner")) this.setOwner(compoundTag.getUUID("owner"));
         this.setColor(compoundTag.getInt("outline_color"));
@@ -67,7 +68,7 @@ public class TimedoorEntity extends Entity {
             compoundTag.put("location", locationData.toTag());
         }
         compoundTag.putInt("closing_time", getClosingTime());
-        if(owner != null) compoundTag.putUUID("owner", getOwner());
+        if (owner != null) compoundTag.putUUID("owner", getOwner());
         compoundTag.putInt("outline_color", getColor());
         if (getLinkedPortalId() != null) {
             compoundTag.putUUID("linked_portal", getLinkedPortalId());
@@ -110,16 +111,16 @@ public class TimedoorEntity extends Entity {
                     this.resetClosingTime();
                     if (entity instanceof Player player) {
                         if (player.getUUID().equals(getOwner())) {
-                            this.setClosingTime(this.tickCount + Tempad.getTempadConfig().getTimedoorAddWaitTime());
+                            this.setClosingTime(this.tickCount + TempadConfig.timedoorAddWaitTime);
                             if (getLinkedPortalEntity() != null)
-                                this.getLinkedPortalEntity().setClosingTime(getLinkedPortalEntity().tickCount + Tempad.getTempadConfig().getTimedoorAddWaitTime());
+                                this.getLinkedPortalEntity().setClosingTime(getLinkedPortalEntity().tickCount + TempadConfig.timedoorAddWaitTime);
                         }
                     }
                 });
                 if (getLinkedPortalEntity() == null) {
                     TimedoorEntity recipientPortal = new TimedoorEntity(TempadRegistry.TIMEDOOR_ENTITY.get(), destinationLevel);
                     recipientPortal.setOwner(this.getOwner());
-                    recipientPortal.setClosingTime(Tempad.getTempadConfig().getTimedoorAddWaitTime());
+                    recipientPortal.setClosingTime(TempadConfig.timedoorAddWaitTime);
                     recipientPortal.setLocation(null);
                     recipientPortal.setColor(this.getColor());
                     this.setLinkedPortalId(recipientPortal.getUUID());
@@ -169,7 +170,7 @@ public class TimedoorEntity extends Entity {
     }
 
     @ExpectPlatform
-    public static void teleportEntity(ServerLevel destinationLevel, BlockPos pos, Vec3 deltaMovement, Entity entity){
+    public static void teleportEntity(ServerLevel destinationLevel, BlockPos pos, Vec3 deltaMovement, Entity entity) {
         throw new NotImplementedException();
     }
 
@@ -196,7 +197,7 @@ public class TimedoorEntity extends Entity {
 
     public void resetClosingTime() {
         if (getClosingTime() != -1) {
-            this.setClosingTime(this.tickCount + Tempad.getTempadConfig().getTimedoorWait());
+            this.setClosingTime(this.tickCount + TempadConfig.timedoorWait);
         }
     }
 }

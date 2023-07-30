@@ -21,7 +21,7 @@ public class TextEntry extends ListEntry {
     protected void render(@NotNull GuiGraphics graphics, @NotNull ScissorBoxStack stack, int id, int left, int top, int width, int height, int mouseX, int mouseY, boolean hovered, float partialTick, boolean selected) {
         boolean isMouseOver = mouseX >= left && mouseX <= left + width && mouseY >= top && mouseY <= top + height;
         MutableComponent translatable = Component.translatable(data.getName());
-        graphics.drawString(Minecraft.getInstance().font, selected ? translatable.append(" ⬅") : translatable, left + 2, top + 2, isMouseOver || selected ? 0xFFFFFFFF : 0xFFAAAAAA);
+        graphics.drawString(Minecraft.getInstance().font, selected ? Component.literal("➡ ").append(translatable) : translatable, left + 2, top + 2, isMouseOver || selected ? 0xFFFFFFFF : 0xFFAAAAAA);
     }
 
     @Override

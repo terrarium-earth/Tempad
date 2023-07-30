@@ -1,10 +1,10 @@
 package me.codexadrian.tempad.common.forge;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import me.codexadrian.tempad.client.TempadClient;
+import me.codexadrian.tempad.client.render.TimedoorRenderer;
 import me.codexadrian.tempad.common.BlurReloader;
 import me.codexadrian.tempad.common.Tempad;
-import me.codexadrian.tempad.common.TempadClient;
-import me.codexadrian.tempad.client.render.TimedoorRenderer;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;

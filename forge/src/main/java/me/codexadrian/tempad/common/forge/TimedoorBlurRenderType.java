@@ -22,10 +22,10 @@ public class TimedoorBlurRenderType extends RenderType {
                 .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                 .setShaderState(new RenderStateShard.ShaderStateShard(() -> ForgeTempadClient.timedoorWhiteShader))
                 .setOutputState(new OutputStateShard("timedoor_blur", () -> {
-                        RenderTarget renderTarget = ForgeTempadClient.BLUR_RELOADER.getBlurTarget();
-                        if (renderTarget != null) {
-                            renderTarget.bindWrite(false);
-                        }
+                    RenderTarget renderTarget = ForgeTempadClient.BLUR_RELOADER.getBlurTarget();
+                    if (renderTarget != null) {
+                        renderTarget.bindWrite(false);
+                    }
                 }, () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false)))
                 .createCompositeState(false);
 

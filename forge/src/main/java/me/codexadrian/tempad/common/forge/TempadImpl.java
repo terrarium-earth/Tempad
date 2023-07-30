@@ -1,6 +1,6 @@
 package me.codexadrian.tempad.common.forge;
 
-import me.codexadrian.tempad.common.Constants;
+import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.DeferredRegister;

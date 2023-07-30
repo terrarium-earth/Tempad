@@ -3,15 +3,15 @@ package me.codexadrian.tempad.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
+import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.client.widgets.TextButton;
 import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.client.widgets.TimedoorSprite;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.DeleteLocationPacket;
 import me.codexadrian.tempad.common.network.messages.SummonTimedoorPacket;
-import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadComponent;
 import me.codexadrian.tempad.common.tempad.TempadItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -29,7 +29,6 @@ import java.util.List;
 
 public class RunProgramScreen extends Screen {
     private static final ResourceLocation GRID = new ResourceLocation(Tempad.MODID, "textures/widget/tempad_grid.png");
-    private final int color;
 
     private static final int WIDTH = 256;
     private static final int HEIGHT = 160;
@@ -38,16 +37,15 @@ public class RunProgramScreen extends Screen {
     private final InteractionHand hand;
     private boolean interfaceNeedsReload = false;
     private final TimedoorSprite timedoorSprite;
-    private List<LocationData> allLocations;
+    private final List<LocationData> locations;
     private final List<Button> displayedInterfaceButtons = new ArrayList<>();
     private final List<Button> upNextButtons = new ArrayList<>();
 
-    public RunProgramScreen(int color, InteractionHand hand) {
+    public RunProgramScreen(InteractionHand hand, List<LocationData> locations) {
         super(Component.nullToEmpty(""));
-        this.color = color;
         this.hand = hand;
-        timedoorSprite = new TimedoorSprite(0, 0, color, 96);
-        allLocations = new ArrayList<>();
+        timedoorSprite = new TimedoorSprite(0, 0, TempadClientConfig.color, 96);
+        this.locations = locations;
     }
 
     @Override
@@ -55,49 +53,52 @@ public class RunProgramScreen extends Screen {
         super.init();
         int offset = 3;
         timedoorSprite.changePosition((width - WIDTH) / 2 + 24, (height - HEIGHT) / 2 + offset + 16);
-        ItemStack stack = minecraft.player.getItemInHand(this.hand);
-        if(stack.hasTag()) {
-            allLocations = new ArrayList<>(TempadComponent.fromStack(stack).getLocations());
-            int x = (width - WIDTH) / 2 + offset + 16 * 9;
-            int y = (height - HEIGHT) / 2 + offset + 16 * 2;
-            var list = addRenderableWidget(new SelectionList<TextEntry>(x, y, 16 * 6, 16 * 6 - 6, 10, textEntry -> { if(textEntry != null) locationButtonOnPress(textEntry.data); }));
-            list.updateEntries(allLocations.stream().map(TextEntry::new).toList());
-        }
+        int x = (width - WIDTH) / 2 + offset + 16 * 9;
+        int y = (height - HEIGHT) / 2 + offset + 16 * 2;
+        var list = addRenderableWidget(new SelectionList<TextEntry>(x, y, 88, 16 * 6 - 6, 10, textEntry -> {
+            if (textEntry != null) locationButtonOnPress(textEntry.data);
+        }));
+        list.updateEntries(locations.stream().map(TextEntry::new).toList());
 
-        TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 9, (height - HEIGHT) / 2 + offset + 16 * 8 + 3, Component.translatable("gui." + Tempad.MODID + ".new_location"), 0xFFFFFFFF, (button)->{
-          minecraft.setScreen(new NewLocationScreen(color, hand));
+        TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 9, (height - HEIGHT) / 2 + offset + 16 * 8 + 1, Component.translatable("gui." + Tempad.MODID + ".new_location"), 0xFFFFFFFF, (button) -> {
+            minecraft.setScreen(new NewLocationScreen(hand));
         });
 
         addRenderableWidget(addLocation);
     }
 
     private void locationButtonOnPress(LocationData data) {
-        String locationName = data.getBlockPos().toShortString();
-        TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(locationName) / 2, (height - HEIGHT) / 2 + 3 + 16 * 7, Component.literal(locationName), color, (button1) -> {});
+        Component locationName = Component.translatableWithFallback(data.getLevelKey().location().toLanguageKey("dimension"), data.getLevelKey().location().toString()).append(" [" + data.getBlockPos().toShortString() + "]");
+        TextButton displayedLocation = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(locationName) / 2, (height - HEIGHT) / 2 + 4 + 16 * 8 - 20, locationName, TempadClientConfig.color, (button1) -> {
+        });
+        upNextButtons.add(displayedLocation);
 
         var teleportText = Component.translatable("gui." + Tempad.MODID + ".teleport");
-        TempadItem itemInHand = (TempadItem) minecraft.player.getItemInHand(hand).getItem();
-        TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(teleportText) / 2, (height - HEIGHT) / 2 + 3 + 16 * 7 + 10, teleportText, color, (button2) -> teleportAction(data), () -> itemInHand.getOption().canTimedoorOpen(minecraft.player, minecraft.player.getItemInHand(hand)));
+        if (minecraft.player.getItemInHand(hand).getItem() instanceof TempadItem itemInHand) {
+            TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(teleportText) / 2, (height - HEIGHT) / 2 + 4 + 16 * 8 - 10, teleportText, TempadClientConfig.color, (button2) -> teleportAction(data), () -> itemInHand.getOption().canTimedoorOpen(minecraft.player, minecraft.player.getItemInHand(hand)));
+            upNextButtons.add(teleportButton);
+        } else {
+            TextButton teleportButton = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(teleportText) / 2, (height - HEIGHT) / 2 + 4 + 16 * 8 - 10, teleportText, TempadClientConfig.color, (button2) -> teleportAction(data), () -> false);
+            upNextButtons.add(teleportButton);
+        }
 
         var deleteText = Component.translatable("gui." + Tempad.MODID + ".delete");
-        TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(deleteText) / 2, (height - HEIGHT) / 2 + 3 + 16 * 7 + 20, deleteText, color, (button2) ->{
+        TextButton deleteLocationButton = new TextButton((width - WIDTH) / 2 + 72 - minecraft.font.width(deleteText) / 2, (height - HEIGHT) / 2 + 4 + 16 * 8, deleteText, TempadClientConfig.color, (button2) -> {
             Minecraft.getInstance().setScreen(null);
-            NetworkHandler.CHANNEL.sendToServer(new DeleteLocationPacket(data.getId(), hand));
+            NetworkHandler.CHANNEL.sendToServer(new DeleteLocationPacket(data.getId()));
         });
 
-        upNextButtons.add(displayedLocation);
-        upNextButtons.add(teleportButton);
         upNextButtons.add(deleteLocationButton);
         this.interfaceNeedsReload = true;
     }
 
     private void teleportAction(LocationData data) {
-        if(minecraft == null || minecraft.player == null) return;
+        if (minecraft == null || minecraft.player == null) return;
         ItemStack itemInHand = minecraft.player.getItemInHand(hand);
-        if(itemInHand.hasTag() && itemInHand.getItem() instanceof TempadItem tempadItem) {
-            if(tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand)) {
+        if (itemInHand.hasTag() && itemInHand.getItem() instanceof TempadItem tempadItem) {
+            if (tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand)) {
                 Minecraft.getInstance().setScreen(null);
-                NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(data.getLevelKey().location(), data.getBlockPos(), hand, color));
+                NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(data.getId(), hand, TempadClientConfig.color));
             }
         }
     }
@@ -105,7 +106,7 @@ public class RunProgramScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        if(this.interfaceNeedsReload) {
+        if (this.interfaceNeedsReload) {
             displayedInterfaceButtons.forEach(this::removeWidget);
             displayedInterfaceButtons.clear();
             displayedInterfaceButtons.addAll(upNextButtons);
@@ -115,27 +116,25 @@ public class RunProgramScreen extends Screen {
             addRenderableWidget(timedoorSprite);
             this.interfaceNeedsReload = false;
         }
-        int x = (width - WIDTH) / 2 + 3 + 16 * 15;
-        int y = (height - HEIGHT) / 2 + 3 + 16 * 2;
     }
 
     private void renderOutline(@NotNull GuiGraphics graphics) {
         int lineWidth = 4;
-        graphics.fill((width - WIDTH - lineWidth) / 2, (height - HEIGHT - lineWidth) / 2, (width + WIDTH + lineWidth) / 2, (height + HEIGHT + lineWidth) / 2, color | 0xFF000000);
+        graphics.fill((width - WIDTH - lineWidth) / 2, (height - HEIGHT - lineWidth) / 2, (width + WIDTH + lineWidth) / 2, (height + HEIGHT + lineWidth) / 2, TempadClientConfig.color | 0xFF000000);
     }
 
     private void renderGridBackground(@NotNull GuiGraphics graphics, float red, float green, float blue) {
         RenderSystem.setShaderTexture(0, GRID);
         RenderSystem.setShaderColor(red * 0.5f, green * 0.5f, blue * 0.5f, 1f);
-        graphics.blit(GRID,(width - WIDTH) / 2, (height - HEIGHT) / 2, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, 16, 16);
+        graphics.blit(GRID, (width - WIDTH) / 2, (height - HEIGHT) / 2, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT, 16, 16);
     }
 
     @Override
     public void renderBackground(@NotNull GuiGraphics graphics) {
         super.renderBackground(graphics);
-        float red = (color >> 16 & 0xFF) / 255f;
-        float green = (color >> 8 & 0xFF) / 255f;
-        float blue = (color & 0xFF) / 255f;
+        float red = (TempadClientConfig.color >> 16 & 0xFF) / 255f;
+        float green = (TempadClientConfig.color >> 8 & 0xFF) / 255f;
+        float blue = (TempadClientConfig.color & 0xFF) / 255f;
         renderOutline(graphics);
         renderGridBackground(graphics, red, green, blue);
         RenderSystem.setShaderColor(red, green, blue, 1f);

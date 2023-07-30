@@ -3,7 +3,7 @@ package me.codexadrian.tempad.common.fabric;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import me.codexadrian.tempad.common.TempadClient;
+import me.codexadrian.tempad.client.TempadClient;
 import me.codexadrian.tempad.client.render.TimedoorRenderer;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import net.fabricmc.api.ClientModInitializer;

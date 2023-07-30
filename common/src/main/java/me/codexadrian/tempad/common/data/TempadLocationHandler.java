@@ -1,0 +1,80 @@
+package me.codexadrian.tempad.common.data;
+
+import com.teamresourceful.resourcefullib.common.utils.SaveHandler;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.Level;
+
+import java.util.*;
+
+public class TempadLocationHandler extends SaveHandler {
+
+    private static final TempadLocationHandler CLIENT_ONLY = new TempadLocationHandler();
+
+    private final Map<UUID, Map<UUID, LocationData>> locations = new HashMap<>();
+
+    public void addLocation(UUID player, LocationData location) {
+        if (!locations.containsKey(player)) {
+            locations.put(player, new LinkedHashMap<>());
+        }
+        locations.get(player).put(location.getId(), location);
+    }
+
+    public static void addLocation(Level level, UUID player, LocationData location) {
+        TempadLocationHandler handler = read(level);
+        handler.addLocation(player, location);
+    }
+
+    public static void removeLocation(Level level, UUID player, UUID location) {
+        TempadLocationHandler handler = read(level);
+        if (handler.locations.containsKey(player)) {
+            handler.locations.get(player).remove(location);
+        }
+    }
+
+    public static Map<UUID, LocationData> getLocations(Level level, UUID player) {
+        TempadLocationHandler handler = read(level);
+        return handler.locations.getOrDefault(player, Collections.emptyMap());
+    }
+
+    public static LocationData getLocation(Level level, UUID player, UUID location) {
+        TempadLocationHandler handler = read(level);
+        return handler.locations.getOrDefault(player, Collections.emptyMap()).get(location);
+    }
+
+    public static TempadLocationHandler read(Level level) {
+        return read(level, CLIENT_ONLY, TempadLocationHandler::new, "tempad_locations");
+    }
+
+    public static boolean containsLocation(Level level, UUID player, UUID location) {
+        TempadLocationHandler handler = read(level);
+        return handler.locations.containsKey(player) && handler.locations.get(player).containsKey(location);
+    }
+
+    @Override
+    public void loadData(CompoundTag tag) {
+        for (String playerId : tag.getAllKeys()) {
+            UUID player = UUID.fromString(playerId);
+            for (Tag list : tag.getList(playerId, Tag.TAG_COMPOUND)) {
+                if (list instanceof CompoundTag compound) {
+                    addLocation(player, LocationData.fromTag(compound));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void saveData(CompoundTag tag) {
+        locations.forEach((player, locationMap) -> {
+            ListTag playerTag = new ListTag();
+            locationMap.forEach((uuid, location) -> playerTag.add(location.toTag()));
+            tag.put(player.toString(), playerTag);
+        });
+    }
+
+    @Override
+    public boolean isDirty() {
+        return true;
+    }
+}

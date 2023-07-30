@@ -1,19 +1,21 @@
 package me.codexadrian.tempad.common;
 
-import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
+import com.teamresourceful.resourcefulconfig.common.config.Configurator;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import me.codexadrian.tempad.common.compat.botarium.BotariumTempadOptionRegistry;
+import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.network.NetworkHandler;
-
+import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Fluid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.function.Supplier;
 
 public class Tempad {
@@ -23,22 +25,25 @@ public class Tempad {
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
     public static final int ORANGE = 0xFF_ff6f00;
 
-    private static TempadConfig tempadConfig;
+    public static final Configurator CONFIGURATOR = new Configurator();
 
     public static final TagKey<Item> TEMPAD_FUEL_TAG = TagKey.create(Registries.ITEM, new ResourceLocation(MODID, "tempad_fuel"));
+    public static final TagKey<Fluid> TEMPAD_LIQUID_FUEL_TAG = TagKey.create(Registries.FLUID, new ResourceLocation(MODID, "tempad_liquid_fuel"));
     public static final Supplier<SoundEvent> TIMEDOOR_SOUND = registerSound("entity.timedoor.open");
 
     public static void init() {
-        NetworkHandler.register();
-        try {
-            tempadConfig = TempadConfig.loadConfig(PlatformUtils.getConfigDir());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (PlatformUtils.isModLoaded("botarium")) {
+            BotariumTempadOptionRegistry.preInit();
         }
-    }
 
-    public static TempadConfig getTempadConfig() {
-        return tempadConfig;
+        CONFIGURATOR.registerConfig(TempadConfig.class);
+        TempadRegistry.ITEMS.init();
+        TempadRegistry.ENTITIES.init();
+        NetworkHandler.register();
+
+        if (PlatformUtils.isModLoaded("botarium")) {
+            BotariumTempadOptionRegistry.postInit();
+        }
     }
 
     @ExpectPlatform

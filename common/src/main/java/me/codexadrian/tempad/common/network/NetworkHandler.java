@@ -5,6 +5,7 @@ import com.teamresourceful.resourcefullib.common.networking.base.NetworkDirectio
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.network.messages.AddLocationPacket;
 import me.codexadrian.tempad.common.network.messages.DeleteLocationPacket;
+import me.codexadrian.tempad.common.network.messages.OpenTempadScreenPacket;
 import me.codexadrian.tempad.common.network.messages.SummonTimedoorPacket;
 
 
@@ -15,5 +16,6 @@ public class NetworkHandler {
         CHANNEL.registerPacket(NetworkDirection.CLIENT_TO_SERVER, SummonTimedoorPacket.ID, SummonTimedoorPacket.HANDLER, SummonTimedoorPacket.class);
         CHANNEL.registerPacket(NetworkDirection.CLIENT_TO_SERVER, AddLocationPacket.ID, AddLocationPacket.HANDLER, AddLocationPacket.class);
         CHANNEL.registerPacket(NetworkDirection.CLIENT_TO_SERVER, DeleteLocationPacket.ID, DeleteLocationPacket.HANDLER, DeleteLocationPacket.class);
+        CHANNEL.registerPacket(NetworkDirection.SERVER_TO_CLIENT, OpenTempadScreenPacket.ID, OpenTempadScreenPacket.HANDLER, OpenTempadScreenPacket.class);
     }
 }

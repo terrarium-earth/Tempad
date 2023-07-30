@@ -4,14 +4,13 @@ import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
 import me.codexadrian.tempad.common.Tempad;
-import me.codexadrian.tempad.common.data.TempadComponent;
+import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 
 import java.util.UUID;
 
-public record DeleteLocationPacket(UUID location, InteractionHand hand) implements Packet<DeleteLocationPacket> {
+public record DeleteLocationPacket(UUID location) implements Packet<DeleteLocationPacket> {
     public static Handler HANDLER = new Handler();
     public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "delete_location");
 
@@ -30,17 +29,16 @@ public record DeleteLocationPacket(UUID location, InteractionHand hand) implemen
         @Override
         public void encode(DeleteLocationPacket message, FriendlyByteBuf buffer) {
             buffer.writeUUID(message.location);
-            buffer.writeEnum(message.hand);
         }
 
         @Override
         public DeleteLocationPacket decode(FriendlyByteBuf buffer) {
-            return new DeleteLocationPacket(buffer.readUUID(), buffer.readEnum(InteractionHand.class));
+            return new DeleteLocationPacket(buffer.readUUID());
         }
 
         @Override
         public PacketContext handle(DeleteLocationPacket message) {
-            return (player, level) -> TempadComponent.deleteStackLocation(player.getItemInHand(message.hand), message.location);
+            return (player, level) -> TempadLocationHandler.removeLocation(level, player.getUUID(), message.location);
         }
     }
 }

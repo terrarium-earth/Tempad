@@ -1,6 +1,6 @@
-package me.codexadrian.tempad.common.data.tempad_options;
+package me.codexadrian.tempad.api.options.impl;
 
-import me.codexadrian.tempad.common.TempadType;
+import me.codexadrian.tempad.api.options.TempadOption;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -10,21 +10,10 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class UnlimitedOption extends TempadOption {
-    public static final UnlimitedOption NORMAL_INSTANCE = new UnlimitedOption(TempadType.NORMAL);
-    public static final UnlimitedOption ADVANCED_INSTANCE = new UnlimitedOption(TempadType.HE_WHO_REMAINS);
-
-    protected UnlimitedOption(TempadType type) {
-        super(type);
-    }
 
     @Override
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
         return true;
-    }
-
-    @Override
-    public void onTimedoorOpen(Player player, ItemStack stack) {
-
     }
 
     @Override

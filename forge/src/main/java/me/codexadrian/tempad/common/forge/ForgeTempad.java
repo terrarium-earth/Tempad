@@ -2,14 +2,9 @@ package me.codexadrian.tempad.common.forge;
 
 import com.mojang.serialization.Codec;
 import me.codexadrian.tempad.common.Tempad;
-import me.codexadrian.tempad.common.TempadType;
-import me.codexadrian.tempad.common.entity.TimedoorEntity;
 import me.codexadrian.tempad.common.network.NetworkHandler;
-import me.codexadrian.tempad.common.tempad.TempadItem;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.IGlobalLootModifier;

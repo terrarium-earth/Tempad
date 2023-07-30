@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,18 +14,18 @@ import java.util.function.Supplier;
 
 public class TextButton extends Button {
     private final OnPress dynamicPress;
-    private Supplier<Boolean> disabled = () -> true;
+    private Supplier<Boolean> enabled = () -> true;
 
     public TextButton(int x, int y, Component component, int color, OnPress onPress) {
         this(x, y, component, color, onPress, null);
     }
 
-    public TextButton(int x, int y, Component component, int color, OnPress onPress, Supplier<Boolean> disabled) {
+    public TextButton(int x, int y, Component component, int color, OnPress onPress, Supplier<Boolean> enabled) {
         super(x, y, Minecraft.getInstance().font.width(component), Minecraft.getInstance().font.lineHeight, component, onPress, Button.DEFAULT_NARRATION);
         this.dynamicPress = onPress;
         this.height = Minecraft.getInstance().font.lineHeight;
         this.width = Minecraft.getInstance().font.width(getMessage());
-        if(disabled != null) this.disabled = disabled;
+        if (enabled != null) this.enabled = enabled;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class TextButton extends Button {
         Font font = minecraft.font;
 
         try (var pose = new CloseablePoseStack(graphics)) {
-            int color = isMouseOver(mouseX, mouseY) && disabled.get() ? 0xFFFFFFFF : 0xFFAAAAAA;
+            int color = isMouseOver(mouseX, mouseY) && enabled.get() ? 0xFFFFFFFF : 0xFFAAAAAA;
             graphics.drawString(font, getMessage(), getX(), getY(), color);
         }
     }
@@ -50,7 +51,12 @@ public class TextButton extends Button {
 
     @Override
     public @NotNull Component getMessage() {
-        if(disabled.get()) return super.getMessage();
+        if (enabled.get()) return super.getMessage();
         else return super.getMessage().copy().withStyle(ChatFormatting.STRIKETHROUGH);
+    }
+
+    @Override
+    public void playDownSound(SoundManager soundManager) {
+        if (enabled.get()) super.playDownSound(soundManager);
     }
 }

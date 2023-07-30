@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.logging.LogUtils;
+import me.codexadrian.tempad.client.config.TempadClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
@@ -28,7 +29,7 @@ public class BlurReloader implements ResourceManagerReloadListener {
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
-        if (!TempadClient.getClientConfig().renderBlur()) {
+        if (!TempadClientConfig.isFancyTimedoorRendererEnabled) {
             return;
         }
 
