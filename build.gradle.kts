@@ -3,6 +3,7 @@ import dev.architectury.plugin.ArchitectPluginExtension
 import groovy.json.StringEscapeUtils
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
+import java.net.URI
 
 plugins {
     java
@@ -24,8 +25,8 @@ subprojects {
     apply(plugin = "architectury-plugin")
 
     val minecraftVersion: String by project
+    val modId: String by project
     val modLoader = project.name
-    val modId = rootProject.name
     val isCommon = modLoader == rootProject.projects.common.name
 
     base {
@@ -41,6 +42,24 @@ subprojects {
         maven(url = "https://maven.minecraftforge.net/")
         maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
         maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
+        maven {
+            url = URI("https://jitpack.io")
+            content {
+                includeGroup("com.github.LlamaLad7")
+                includeGroup("com.github.llamalad7.mixinextras")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = uri("https://api.modrinth.com/maven")
+                }
+            }
+            filter {
+                includeGroup("maven.modrinth")
+            }
+        }
     }
 
     dependencies {
@@ -50,6 +69,8 @@ subprojects {
         val jeiVersion: String by project
         val balmVersion: String by project
         val waystonesVersion: String by project
+        val prometheusVersion: String by project
+        val reiVersion: String by project
 
         "minecraft"("::$minecraftVersion")
 
@@ -65,6 +86,19 @@ subprojects {
         compileOnly(group = "com.teamresourceful", name = "yabn", version = "1.0.3")
         "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-$modLoader-$minecraftVersion", version = resourcefulLibVersion)
         "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-$modLoader-1.20", version = resourcefulConfigVersion)
+
+        if (isCommon) {
+            // "modCompileOnly"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-$minecraftVersion", version = prometheusVersion) { isTransitive = false }
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api", version = reiVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin", version = reiVersion)
+        } else {
+            // "modLocalRuntime"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-$minecraftVersion", version = prometheusVersion)
+
+            "modRuntimeOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-$modLoader", version = reiVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-$modLoader", version = reiVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-$modLoader", version = reiVersion)
+        }
+
         "modApi"(group = "earth.terrarium", name = "botarium-$modLoader-$minecraftVersion", version = botariumVersion)
 
         "modApi"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {

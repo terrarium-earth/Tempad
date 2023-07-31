@@ -10,20 +10,20 @@ displayName = "Tempad"
 displayURL = "https://modrinth.com/mod/tempad"
 logoFile = "icon.png"
 authors = "CodexAdrian"
-credits = "MsRandom1, ThatGravyBoat, abused_master, Kekie6, Jooosh"
+credits = "MsRandom1, ThatGravyBoat, Kekie6, AlexNijjar, ShrimpPixels, Jooosh, abused_master"
 description = "Create a portal to anywhere from anywhere!"
 
 [[dependencies.tempad]]
 modId = "forge"
 mandatory = true
-versionRange = "[47,)"
+versionRange = "[47.1.3,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20,)"
+versionRange = "[1.20.1,)"
 ordering = "NONE"
 side = "BOTH"
 

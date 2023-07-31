@@ -1,6 +1,6 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "tempad"
+rootProject.name = "Tempad"
 
 pluginManagement {
     repositories {

@@ -1,8 +1,10 @@
 package me.codexadrian.tempad.common.fabric;
 
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.compat.fabricwaystones.FabricWaystoneLocationGetter;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
+import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.core.Registry;
@@ -31,5 +33,9 @@ public class FabricTempad implements ModInitializer {
                 tableBuilder.pool(poolBuilder.build());
             }
         });
+
+        if (PlatformUtils.isModLoaded("fwaystones")) {
+            FabricWaystoneLocationGetter.init();
+        }
     }
 }
