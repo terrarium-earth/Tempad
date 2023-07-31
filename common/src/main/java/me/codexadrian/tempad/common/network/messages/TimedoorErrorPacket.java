@@ -3,11 +3,9 @@ package me.codexadrian.tempad.common.network.messages;
 import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
-import me.codexadrian.tempad.client.TimedoorErrorToast;
 import me.codexadrian.tempad.common.Tempad;
-import net.minecraft.client.Minecraft;
+import me.codexadrian.tempad.common.utils.ClientUtils;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public record TimedoorErrorPacket(String error) implements Packet<TimedoorErrorPacket> {
@@ -38,11 +36,7 @@ public record TimedoorErrorPacket(String error) implements Packet<TimedoorErrorP
 
         @Override
         public PacketContext handle(TimedoorErrorPacket message) {
-            return (player, level) -> {
-                if (Minecraft.getInstance().screen != null) {
-                    Minecraft.getInstance().getToasts().addToast(new TimedoorErrorToast(Component.nullToEmpty(message.error)));
-                }
-            };
+            return (player, level) -> ClientUtils.showError(message);
         }
     }
 }

@@ -3,10 +3,9 @@ package me.codexadrian.tempad.common.network.messages;
 import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
-import me.codexadrian.tempad.client.gui.TempadScreen;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
-import net.minecraft.client.Minecraft;
+import me.codexadrian.tempad.common.utils.ClientUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -59,7 +58,7 @@ public record OpenTempadScreenPacket(List<LocationData> locationData,
 
         @Override
         public PacketContext handle(OpenTempadScreenPacket message) {
-            return (player, level) -> Minecraft.getInstance().setScreen(new TempadScreen(message.hand, message.locationData));
+            return (player, level) -> ClientUtils.openScreen(message);
         }
     }
 }

@@ -1,6 +1,7 @@
 package me.codexadrian.tempad.common.data;
 
 import com.teamresourceful.resourcefullib.common.utils.SaveHandler;
+import me.codexadrian.tempad.api.locations.LocationsApi;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -35,12 +36,13 @@ public class TempadLocationHandler extends SaveHandler {
 
     public static Map<UUID, LocationData> getLocations(Level level, UUID player) {
         TempadLocationHandler handler = read(level);
-        return handler.locations.getOrDefault(player, Collections.emptyMap());
+        Map<UUID, LocationData> orDefault = new HashMap<>(handler.locations.getOrDefault(player, Collections.emptyMap()));
+        LocationsApi.gatherLocations(level, player, orDefault);
+        return orDefault;
     }
 
     public static LocationData getLocation(Level level, UUID player, UUID location) {
-        TempadLocationHandler handler = read(level);
-        return handler.locations.getOrDefault(player, Collections.emptyMap()).get(location);
+        return getLocations(level, player).get(location);
     }
 
     public static TempadLocationHandler read(Level level) {
@@ -48,8 +50,7 @@ public class TempadLocationHandler extends SaveHandler {
     }
 
     public static boolean containsLocation(Level level, UUID player, UUID location) {
-        TempadLocationHandler handler = read(level);
-        return handler.locations.containsKey(player) && handler.locations.get(player).containsKey(location);
+        return getLocations(level, player).containsKey(location);
     }
 
     @Override

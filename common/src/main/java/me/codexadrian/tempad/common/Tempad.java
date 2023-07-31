@@ -3,6 +3,7 @@ package me.codexadrian.tempad.common;
 import com.teamresourceful.resourcefulconfig.common.config.Configurator;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.common.compat.botarium.BotariumTempadOptionRegistry;
+import me.codexadrian.tempad.common.compat.waystones.WaystoneLocationGetter;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
@@ -34,6 +35,10 @@ public class Tempad {
     public static void init() {
         if (PlatformUtils.isModLoaded("botarium")) {
             BotariumTempadOptionRegistry.preInit();
+        }
+
+        if (PlatformUtils.isModLoaded("waystones")) {
+            WaystoneLocationGetter.init();
         }
 
         CONFIGURATOR.registerConfig(TempadConfig.class);
