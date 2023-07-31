@@ -66,18 +66,12 @@ subprojects {
         "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-$modLoader-$minecraftVersion", version = resourcefulLibVersion)
         "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-$modLoader-1.20", version = resourcefulConfigVersion)
         "modApi"(group = "earth.terrarium", name = "botarium-$modLoader-$minecraftVersion", version = botariumVersion)
-        /*
-        compileOnly("net.blay09.mods:balm-common:$balm_version") {
-            exclude(group: "net.blay09.mods", module: "shared-bridge")
-            changing = balm_version.endsWith("SNAPSHOT")
-        }
-         */
 
-        compileOnly(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {
+        "modApi"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")
         }
 
-        compileOnly(group = "net.blay09.mods", name = "waystones-$modLoader", version = waystonesVersion) {
+        "modApi"(group = "net.blay09.mods", name = "waystones-$modLoader", version = waystonesVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")
         }
     }
