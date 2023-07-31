@@ -38,7 +38,7 @@ public final class TempadConfig {
 
     @ConfigEntry(id = "timedoorFuelAmount", type = EntryType.INTEGER, translation = "config.tempad.timedoor_fuel_amount")
     @Comment("The amount of fuel that the timedoor will consume on opening of the timedoor.")
-    public static int tempadFuelConsumptionValue = 1;
+    public static int tempadFuelConsumptionValue = 180;
 
     @ConfigEntry(id = "timedoorFuelCapacity", type = EntryType.INTEGER, translation = "config.tempad.timedoor_fuel_capacity")
     @Comment("The amount of fuel that the timedoor can hold.")
