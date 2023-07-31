@@ -11,7 +11,7 @@ public class ShaderUtilsImpl {
     }
 
     public static RenderType getTimedoorShaderType() {
-        return FabricTempadClient.timedoorBlurRenderType;
+        return FabricTempadClient.RenderTypeAccessor.TIMEDOOR_BLUR_RENDER_TYPE;
     }
 
     public static void setTimedoorWhiteShader(ShaderInstance shader) {

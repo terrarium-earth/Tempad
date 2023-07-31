@@ -1,44 +1,44 @@
 {
-  "schemaVersion": 1,
-  "id": "tempad",
-  "version": "${version}",
-  "name": "Tempad",
-  "description": "Create a portal to anywhere from anywhere!",
-  "authors": [
-    "CodexAdrian",
-    "MsRandom1"
-  ],
-  "contributors": [
-    "ThatGravyBoat",
-    "abused_master",
-    "Kekie6",
-    "Jooosh"
-  ],
-  "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/terrarium-earth/Tempad"
-  },
-  "license": "All Rights Reserved",
-  "icon": "assets/modid/icon.png",
-  "accessWidener": "tempad.accesswidener",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "me.codexadrian.tempad.common.fabric.FabricTempad"
+    "schemaVersion": 1,
+    "id": "tempad",
+    "version": "${version}",
+    "name": "Tempad",
+    "description": "",
+    "authors": [
+        "CodexAdrian"
     ],
-    "client": [
-      "me.codexadrian.tempad.common.fabric.FabricTempadClient"
-    ]
-  },
-  "mixins": [
-    "tempad.mixins.json",
-    "tempad.fabric.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.13",
-    "fabric": "*",
-    "minecraft": "1.20.x",
-    "java": ">=17"
-  }
+    "contributors": [
+        "MsRandom1",
+        "ThatGravyBoat",
+        "abused_master",
+        "Kekie6",
+        "Jooosh"
+    ],
+    "contact": {
+        "website": "https://modrinth.com/mod/tempad",
+        "repo": "https://github.com/terrarium-earth/Tempad",
+        "issues": "https://github.com/terrarium-earth/Tempad/issues"
+    },
+    "license": "ARR",
+    "icon": "icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "me.codexadrian.tempad.common.fabric.FabricTempad"
+        ],
+        "client": [
+            "me.codexadrian.tempad.common.fabric.FabricTempadClient"
+        ]
+    },
+    "mixins": [
+        "tempad-common.mixins.json",
+        "tempad.mixins.json"
+    ],
+    "depends": {
+        "fabric": "*",
+        "minecraft": ">=1.20",
+        "java": ">=17",
+        "resourcefullib": ">=2.1.7",
+        "resourcefulconfig": ">=2.0.0"
+    }
 }
-  
