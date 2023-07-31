@@ -20,25 +20,6 @@ public class FabricTempadClient implements ClientModInitializer {
     public static ShaderInstance timedoorWhiteShader;
 
     public static final FabricBlurReloader INSTANCE = new FabricBlurReloader();
-    public static final RenderType timedoorBlurRenderType = RenderType.create(
-            "timedoorBlur",
-            DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
-            VertexFormat.Mode.QUADS,
-            256,
-            false,
-            true,
-            RenderType.CompositeState.builder()
-                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                    .setCullState(new RenderStateShard.CullStateShard(false))
-                    .setShaderState(new RenderStateShard.ShaderStateShard(() -> timedoorWhiteShader))
-                    .setOutputState(new RenderStateShard.OutputStateShard("timedoor_blur", () -> {
-                        RenderTarget renderTarget = INSTANCE.getBlurTarget();
-                        if (renderTarget != null) {
-                            renderTarget.bindWrite(false);
-                        }
-                    }, () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false)))
-                    .createCompositeState(false)
-    );
 
     @Override
     public void onInitializeClient() {
@@ -46,5 +27,31 @@ public class FabricTempadClient implements ClientModInitializer {
         EntityRendererRegistry.register(TempadRegistry.TIMEDOOR_ENTITY.get(), TimedoorRenderer::new);
         TempadClient.initItemProperties();
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(INSTANCE);
+    }
+
+    public final static class RenderTypeAccessor extends RenderType {
+        public static final RenderType TIMEDOOR_BLUR_RENDER_TYPE = RenderType.create(
+            "timedoorBlur",
+            DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+            VertexFormat.Mode.QUADS,
+            256,
+            false,
+            true,
+            RenderType.CompositeState.builder()
+                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                .setCullState(new RenderStateShard.CullStateShard(false))
+                .setShaderState(new RenderStateShard.ShaderStateShard(() -> timedoorWhiteShader))
+                .setOutputState(new RenderStateShard.OutputStateShard("timedoor_blur", () -> {
+                    RenderTarget renderTarget = INSTANCE.getBlurTarget();
+                    if (renderTarget != null) {
+                        renderTarget.bindWrite(false);
+                    }
+                }, () -> Minecraft.getInstance().getMainRenderTarget().bindWrite(false)))
+                .createCompositeState(false)
+        );
+
+        private RenderTypeAccessor(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling, boolean sortOnUpload, Runnable setupState, Runnable clearState) {
+            super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setupState, clearState);
+        }
     }
 }
