@@ -20,7 +20,6 @@ public class BlurReloader implements ResourceManagerReloadListener {
 
     private PostChain timedoorBlur;
     private PostPass filterTimedoor;
-    private PostPass swapBlurTargets;
     private RenderTarget blurTarget;
     private RenderTarget blurSwapTarget;
 
@@ -37,8 +36,8 @@ public class BlurReloader implements ResourceManagerReloadListener {
 
         if (timedoorBlur != null) timedoorBlur.close();
         if (blurSwapTarget != null) blurSwapTarget.destroyBuffers();
+        if (blurTarget != null) blurTarget.destroyBuffers();
         if (filterTimedoor != null) filterTimedoor.close();
-        if (swapBlurTargets != null) swapBlurTargets.close();
 
         ResourceLocation resourceLocation = new ResourceLocation("shaders/post/timedoorblur.json");
         try {
@@ -48,7 +47,6 @@ public class BlurReloader implements ResourceManagerReloadListener {
             blurSwapTarget = new TextureTarget(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight(), true, Minecraft.ON_OSX);
 
             filterTimedoor = new PostPass(resourceManager, "filter_timedoor_rendering", blurTarget, blurSwapTarget);
-            swapBlurTargets = new PostPass(resourceManager, "blit", blurSwapTarget, blurTarget);
 
             RenderTarget mainRenderTarget = Minecraft.getInstance().getMainRenderTarget();
             filterTimedoor.addAuxAsset("DiffuseDepthSampler", blurTarget::getDepthTextureId, blurTarget.width, blurTarget.height);
@@ -77,9 +75,5 @@ public class BlurReloader implements ResourceManagerReloadListener {
 
     public PostPass getFilterTimedoor() {
         return filterTimedoor;
-    }
-
-    public PostPass getSwapBlurTargets() {
-        return swapBlurTargets;
     }
 }

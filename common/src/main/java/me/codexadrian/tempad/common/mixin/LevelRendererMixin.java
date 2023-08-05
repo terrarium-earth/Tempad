@@ -25,10 +25,8 @@ public class LevelRendererMixin {
 
         float partialTicks = Minecraft.getInstance().getFrameTime();
         blurReloader.getFilterTimedoor().setOrthoMatrix(orthographicMatrix);
-        blurReloader.getSwapBlurTargets().setOrthoMatrix(orthographicMatrix);
 
         blurReloader.getFilterTimedoor().process(partialTicks);
-        blurReloader.getSwapBlurTargets().process(partialTicks);
 
         mainTarget.bindWrite(false);
     }
