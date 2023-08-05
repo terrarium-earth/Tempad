@@ -1,4 +1,4 @@
-# 2.1.0
+# 2.1.1
 
-Tempad can now show locations from the Waystones mod.<br>
-Fixed serverside crash
+Huge thanks to Drullkus!
+- Blur shader is back!!!
