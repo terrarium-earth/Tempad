@@ -1,13 +1,18 @@
 package me.codexadrian.tempad.common.forge;
 
 import com.mojang.serialization.Codec;
+import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.registry.TempadRegistry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -37,5 +42,9 @@ public class ForgeTempad {
         NetworkHandler.register();
         MinecraftForge.EVENT_BUS.register(this);
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ForgeTempadClient::registerBlurReloader);
+
+        bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
+            if (event.getTab() == BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.TOOLS_AND_UTILITIES)) TempadRegistry.ITEMS.stream().map(RegistryEntry::get).forEach(event::accept);
+        });
     }
 }

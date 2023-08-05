@@ -1,15 +1,20 @@
 package me.codexadrian.tempad.common.fabric;
 
+import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.compat.fabricwaystones.FabricWaystoneLocationGetter;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -37,5 +42,9 @@ public class FabricTempad implements ModInitializer {
         if (PlatformUtils.isModLoaded("fwaystones")) {
             FabricWaystoneLocationGetter.init();
         }
+
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(group -> {
+            TempadRegistry.ITEMS.stream().map(RegistryEntry::get).forEach(group::accept);
+        });
     }
 }
