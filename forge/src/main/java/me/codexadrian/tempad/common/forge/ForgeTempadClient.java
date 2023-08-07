@@ -23,7 +23,6 @@ import java.io.IOException;
 @Mod.EventBusSubscriber(modid = Tempad.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ForgeTempadClient {
     public static ShaderInstance timedoorShader;
-    public static ShaderInstance timedoorWhiteShader;
     public static final BlurReloader BLUR_RELOADER = new BlurReloader();
 
     @SubscribeEvent
@@ -41,12 +40,6 @@ public class ForgeTempadClient {
                 new ResourceLocation("rendertype_timedoor"),
                 DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP
         ), shaderInstance -> timedoorShader = shaderInstance);
-
-        event.registerShader(new ShaderInstance(
-                event.getResourceProvider(),
-                new ResourceLocation("rendertype_timedoor_white"),
-                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP
-        ), shaderInstance -> timedoorWhiteShader = shaderInstance);
     }
 
     public static void registerBlurReloader() {

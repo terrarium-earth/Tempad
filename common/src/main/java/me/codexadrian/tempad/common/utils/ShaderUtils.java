@@ -18,16 +18,6 @@ public class ShaderUtils {
     }
 
     @ExpectPlatform
-    public static ShaderInstance getTimedoorWhiteShader() {
-        throw new NotImplementedException();
-    }
-
-    @ExpectPlatform
-    public static void setTimedoorWhiteShader(ShaderInstance shader) {
-        throw new NotImplementedException();
-    }
-
-    @ExpectPlatform
     public static RenderType getTimedoorShaderType() {
         throw new NotImplementedException();
     }

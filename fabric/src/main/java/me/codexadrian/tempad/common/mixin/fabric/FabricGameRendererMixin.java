@@ -26,26 +26,19 @@ public class FabricGameRendererMixin {
     private void reloadShaders(ResourceProvider resourceProvider, CallbackInfo ci) {
         try {
             ShaderUtils.setTimeDoorShader(new ShaderInstance(resourceProvider, "rendertype_timedoor", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
-            ShaderUtils.setTimedoorWhiteShader(new ShaderInstance(resourceProvider, "rendertype_timedoor_white", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
         } catch (Exception e) {
             ShaderInstance timedoorShader = ShaderUtils.getTimedoorShader();
-            ShaderInstance timedoorWhiteShader = ShaderUtils.getTimedoorWhiteShader();
 
             if (timedoorShader != null) {
                 timedoorShader.close();
                 ShaderUtils.setTimeDoorShader(null);
-            } if (timedoorWhiteShader != null) {
-                timedoorWhiteShader.close();
-                ShaderUtils.setTimedoorWhiteShader(null);
             }
 
             throw new RuntimeException("could not reload Tempad shaders", e);
         }
 
         ShaderInstance timedoorShader = ShaderUtils.getTimedoorShader();
-        ShaderInstance timedoorWhiteShader = ShaderUtils.getTimedoorWhiteShader();
 
         this.shaders.put(timedoorShader.getName(), timedoorShader);
-        this.shaders.put(timedoorWhiteShader.getName(), timedoorWhiteShader);
     }
 }

@@ -1,33 +1,18 @@
 #version 150
-
 in vec4 color;
-in vec2 texCoord, lightmap;
+in vec2 texCoord0;
+in vec2 texCoord2;
 
 out vec4 fragColor;
 
-float easeOut(float x) {
-    float x2 = x * x;
-    float x4 = x2 * x2;
-    float x8 = x4 * x4;
-    float x16 = x8 * x8;
-    float x25 = x16 * x4 * x;
-    return clamp(x25, 0, 1);
-}
-
-vec3 adjustColor(vec3 inputColor, float light) {
-    return inputColor * (1.25 - light) * 4.8;
+// https://www.desmos.com/calculator/zwfme8sqoh
+vec2 trapezoid(vec2 i, vec2 c) {
+    return min((0.5 - abs(i - 0.5)) * c, 1.0);
 }
 
 void main() {
-    float light = length(lightmap/255) * .5;
-    vec3 center = color.rgb * .03;
-    vec3 edge = color.rgb * .3;
-    vec3 adjustedEdge = adjustColor(edge, light);
-    float x = abs(texCoord.s - 0.5) * 2;
-    float y = abs(texCoord.t - 0.5) * 2;
-    vec3 xVec = mix(center, adjustedEdge, easeOut(x));
-    vec3 yVec = mix(center, adjustedEdge, easeOut(y));
-    //fragColor = vec4((xVec + yVec) * 0.5, light + .5);
-    fragColor = vec4(0);
-}
+    vec2 edgedValue = 1.0 - trapezoid(texCoord2.xy, texCoord0.xy);
+    edgedValue = edgedValue * edgedValue * 0.5;
 
+    fragColor = vec4(vec3(edgedValue.x + edgedValue.y) * color.rgb, 1.0);
+}

@@ -14,14 +14,6 @@ public class ShaderUtilsImpl {
         return FabricTempadClient.RenderTypeAccessor.TIMEDOOR_BLUR_RENDER_TYPE;
     }
 
-    public static void setTimedoorWhiteShader(ShaderInstance shader) {
-        FabricTempadClient.timedoorWhiteShader = shader;
-    }
-
-    public static ShaderInstance getTimedoorWhiteShader() {
-        return FabricTempadClient.timedoorWhiteShader;
-    }
-
     public static void setTimeDoorShader(ShaderInstance shader) {
         FabricTempadClient.timedoorShader = shader;
     }
