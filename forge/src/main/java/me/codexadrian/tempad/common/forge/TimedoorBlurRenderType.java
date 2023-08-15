@@ -20,7 +20,7 @@ public class TimedoorBlurRenderType extends RenderType {
                 .setCullState(NO_CULL)
                 .setLightmapState(LIGHTMAP)
                 .setLayeringState(VIEW_OFFSET_Z_LAYERING)
-                .setShaderState(new RenderStateShard.ShaderStateShard(() -> ForgeTempadClient.timedoorWhiteShader))
+                .setShaderState(new RenderStateShard.ShaderStateShard(() -> ForgeTempadClient.timedoorShader))
                 .setOutputState(new OutputStateShard("timedoor_blur", () -> {
                     RenderTarget renderTarget = ForgeTempadClient.BLUR_RELOADER.getBlurTarget();
                     if (renderTarget != null) {

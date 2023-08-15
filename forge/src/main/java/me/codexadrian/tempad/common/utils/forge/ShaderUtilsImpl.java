@@ -15,14 +15,6 @@ public class ShaderUtilsImpl {
         ForgeTempadClient.timedoorShader = shader;
     }
 
-    public static ShaderInstance getTimedoorWhiteShader() {
-        return ForgeTempadClient.timedoorWhiteShader;
-    }
-
-    public static void setTimedoorWhiteShader(ShaderInstance shader) {
-        ForgeTempadClient.timedoorWhiteShader = shader;
-    }
-
     public static RenderType getTimedoorShaderType() {
         return TimedoorBlurRenderType.TIMEDOOR_BLUR_RENDER_TYPE;
     }
