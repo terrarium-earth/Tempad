@@ -30,7 +30,7 @@ public class ForgeTempad {
 
     public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_TABLES = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
 
-    public static final RegistryObject<Codec<TempadLootModifier>> TEMPAD_LOOT_MODIFIER = LOOT_TABLES.register("tempad_loot_modifier", () -> Codec.unit(() -> TempadLootModifier.INSTANCE));
+    public static final RegistryObject<Codec<TempadLootModifier>> TEMPAD_LOOT_MODIFIER = LOOT_TABLES.register("tempad_loot_modifier", TempadLootModifier.CODEC);
 
     public ForgeTempad() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
