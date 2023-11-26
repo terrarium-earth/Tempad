@@ -19,6 +19,9 @@ public class LocationData implements Comparable<LocationData>{
     private final String name;
     private final BlockPos blockPos;
     private final ResourceKey<Level> levelKey;
+    private boolean isTeleportable = true;
+    private boolean isDeletable = true;
+    private boolean isDownloadable = true;
 
     public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid) {
         this.name = name;
@@ -74,6 +77,30 @@ public class LocationData implements Comparable<LocationData>{
 
     public BlockPos getBlockPos() {
         return blockPos;
+    }
+
+    public boolean isTeleportable() {
+        return isTeleportable;
+    }
+
+    public void setTeleportable(boolean teleportable) {
+        isTeleportable = teleportable;
+    }
+
+    public boolean isDeletable() {
+        return isDeletable;
+    }
+
+    public void setDeletable(boolean deletable) {
+        isDeletable = deletable;
+    }
+
+    public boolean isDownloadable() {
+        return isDownloadable;
+    }
+
+    public void setDownloadable(boolean downloadable) {
+        isDownloadable = downloadable;
     }
 
     @Override

@@ -18,7 +18,10 @@ public class WaystoneLocationGetter {
             if (player != null) {
                 List<IWaystone> waystones = PlayerWaystoneManager.getWaystones(player);
                 for (var waystone : waystones) {
-                    locations.put(waystone.getWaystoneUid(), new LocationData(waystone.getName(), waystone.getDimension(), waystone.getPos().above(2), waystone.getWaystoneUid()));
+                    LocationData value = new LocationData(waystone.getName(), waystone.getDimension(), waystone.getPos().above(2), waystone.getWaystoneUid());
+                    value.setDownloadable(false);
+                    value.setDeletable(false);
+                    locations.put(waystone.getWaystoneUid(), value);
                 }
             }
             return locations;

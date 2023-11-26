@@ -1,7 +1,6 @@
 package me.codexadrian.tempad.client;
 
 import me.codexadrian.tempad.client.config.TempadClientConfig;
-import me.codexadrian.tempad.client.gui.TempadScreen;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -28,7 +27,7 @@ public class TimedoorErrorToast implements Toast {
         graphics.setColor(red, green, blue, 1f);
         graphics.fill(0, 0, this.width(), this.height(), TempadClientConfig.color | 0xFF000000);
         graphics.setColor(red / 2, green / 2, blue / 2, 1f);
-        graphics.blit(TempadScreen.GRID, 0, 0, 0, 0, this.width(), this.height(), 16, 16);
+        // graphics.blit(TempadScreen.GRID, 0, 0, 0, 0, this.width(), this.height(), 16, 16);
         Font font = Minecraft.getInstance().font;
         graphics.renderItem(itemStack, 6, 6);
         graphics.drawString(font, message, 25, 7, TempadClientConfig.color);

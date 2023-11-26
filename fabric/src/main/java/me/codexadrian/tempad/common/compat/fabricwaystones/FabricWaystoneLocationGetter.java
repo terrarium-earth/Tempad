@@ -17,10 +17,18 @@ public class FabricWaystoneLocationGetter {
             var locations = new HashMap<UUID, LocationData>();
             Player player = level.getPlayerByUUID(playerId);
             if (player != null) {
-                FabricWaystones.WAYSTONE_STORAGE.WAYSTONES.values().forEach(waystoneValue -> {
-                    UUID locationId = UUID.nameUUIDFromBytes(waystoneValue.getHash().getBytes());
-                    locations.put(locationId, new LocationData(waystoneValue.getWaystoneName(), ResourceKey.create(Registries.DIMENSION, ResourceLocation.tryParse(waystoneValue.getWorldName())), waystoneValue.way_getPos().above(2), locationId));
-                });
+                FabricWaystones.WAYSTONE_STORAGE.WAYSTONES
+                    .values()
+                    .stream()
+                    .filter(waystoneValue -> waystoneValue.isGlobal() || waystoneValue.getEntity().getOwner().equals(player.getUUID()))
+                    .forEach(waystoneValue -> {
+                        UUID locationId = UUID.nameUUIDFromBytes(waystoneValue.getHash().getBytes());
+                        LocationData value = new LocationData(waystoneValue.getWaystoneName(), ResourceKey.create(Registries.DIMENSION, ResourceLocation.tryParse(waystoneValue.getWorldName())), waystoneValue.way_getPos().above(2), locationId);
+                        value.setDownloadable(false);
+                        value.setDeletable(false);
+                        locations.put(locationId, value);
+                    }
+                );
             }
             return locations;
         });
