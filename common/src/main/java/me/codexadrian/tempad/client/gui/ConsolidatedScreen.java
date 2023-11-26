@@ -7,6 +7,7 @@ import me.codexadrian.tempad.client.widgets.NewLocationModal;
 import me.codexadrian.tempad.client.widgets.TemporaryWidget;
 import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.network.NetworkHandler;
@@ -15,6 +16,7 @@ import me.codexadrian.tempad.common.network.messages.DeleteLocationPacket;
 import me.codexadrian.tempad.common.network.messages.ExportLocationPacket;
 import me.codexadrian.tempad.common.network.messages.SummonTimedoorPacket;
 import me.codexadrian.tempad.common.items.TempadItem;
+import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -117,7 +119,7 @@ public class ConsolidatedScreen extends Screen {
     private void teleportAction() {
         if (minecraft == null || minecraft.player == null) return;
         ItemStack itemInHand = minecraft.player.getItemInHand(hand);
-        if (itemInHand.getItem() instanceof TempadItem tempadItem) {
+        if (itemInHand.getItem() instanceof TempadItem tempadItem && TeleportUtils.mayTeleport(selectedLocation.getLevelKey(), minecraft.player)) {
             if (tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand)) {
                 NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.getId(), hand, TempadClientConfig.color));
                 Minecraft.getInstance().setScreen(null);
@@ -133,7 +135,7 @@ public class ConsolidatedScreen extends Screen {
     }
 
     private void exportAction() {
-        if (minecraft != null && minecraft.player != null && TempadConfig.allowExporting) {
+        if (minecraft != null && minecraft.player != null && ConfigCache.allowExporting) {
             Minecraft.getInstance().setScreen(null);
             NetworkHandler.CHANNEL.sendToServer(new ExportLocationPacket(selectedLocation.getId(), hand));
         }

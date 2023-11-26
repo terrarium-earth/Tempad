@@ -15,5 +15,6 @@ public class NetworkHandler {
         CHANNEL.registerPacket(NetworkDirection.CLIENT_TO_SERVER, DeleteLocationPacket.ID, DeleteLocationPacket.HANDLER, DeleteLocationPacket.class);
         CHANNEL.registerPacket(NetworkDirection.CLIENT_TO_SERVER, ExportLocationPacket.ID, ExportLocationPacket.HANDLER, ExportLocationPacket.class);
         CHANNEL.registerPacket(NetworkDirection.SERVER_TO_CLIENT, OpenTempadScreenPacket.ID, OpenTempadScreenPacket.HANDLER, OpenTempadScreenPacket.class);
+        CHANNEL.registerPacket(NetworkDirection.SERVER_TO_CLIENT, InitConfigPacket.ID, InitConfigPacket.HANDLER, InitConfigPacket.class);
     }
 }

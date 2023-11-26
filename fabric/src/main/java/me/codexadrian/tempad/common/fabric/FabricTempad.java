@@ -3,12 +3,15 @@ package me.codexadrian.tempad.common.fabric;
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.compat.fabricwaystones.FabricWaystoneLocationGetter;
+import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.network.messages.InitConfigPacket;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -37,6 +40,17 @@ public class FabricTempad implements ModInitializer {
                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)).build());
                 tableBuilder.pool(poolBuilder.build());
             }
+        });
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            NetworkHandler.CHANNEL.sendToPlayer(new InitConfigPacket(TempadConfig.allowInterdimensionalTravel,
+                TempadConfig.allowExporting,
+                TempadConfig.tempadFuelType,
+                TempadConfig.tempadFuelConsumptionValue,
+                TempadConfig.tempadFuelCapacityValue,
+                TempadConfig.advancedTempadFuelType,
+                TempadConfig.advancedTempadfuelConsumptionValue,
+                TempadConfig.advancedTempadfuelCapacityValue), handler.player);
         });
 
         if (PlatformUtils.isModLoaded("fwaystones")) {

@@ -48,8 +48,7 @@ public record SummonTimedoorPacket(UUID location, InteractionHand hand,
             return (player, level) -> {
                 ItemStack itemInHand = player.getItemInHand(message.hand());
                 if ((itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand))) {
-                    if (!player.getAbilities().instabuild)
-                        tempadItem.getOption().onTimedoorOpen(player, message.hand(), itemInHand);
+                    if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player, message.hand(), itemInHand);
                     LocationData locationData = TempadLocationHandler.getLocation(level, player.getUUID(), message.location);
                     TempadItem.summonTimeDoor(locationData, player, message.color);
                 }

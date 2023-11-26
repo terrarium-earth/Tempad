@@ -2,7 +2,7 @@ package me.codexadrian.tempad.common.items;
 
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
-import me.codexadrian.tempad.common.config.TempadConfig;
+import me.codexadrian.tempad.common.config.ConfigCache;
 
 public class AdvancedTempadItem extends TempadItem {
     public AdvancedTempadItem(Properties properties) {
@@ -11,16 +11,16 @@ public class AdvancedTempadItem extends TempadItem {
 
     @Override
     public TempadOption getOption() {
-        return TempadOptionApi.getOption(TempadConfig.advancedTempadFuelType);
+        return TempadOptionApi.getOption(ConfigCache.advancedTempadFuelType);
     }
 
     @Override
     public int getFuelCost() {
-        return TempadConfig.advancedTempadfuelConsumptionValue;
+        return ConfigCache.advancedTempadfuelConsumptionValue;
     }
 
     @Override
     public int getFuelCapacity() {
-        return TempadConfig.advancedTempadfuelCapacityValue;
+        return ConfigCache.advancedTempadfuelCapacityValue;
     }
 }

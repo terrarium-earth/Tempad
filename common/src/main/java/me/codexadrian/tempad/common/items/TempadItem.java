@@ -4,6 +4,7 @@ import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.data.TempadLocationHandler;
@@ -31,15 +32,15 @@ public class TempadItem extends Item implements TempadPower {
     }
 
     public TempadOption getOption() {
-        return TempadOptionApi.getOption(TempadConfig.tempadFuelType);
+        return TempadOptionApi.getOption(ConfigCache.tempadFuelType);
     }
 
     public int getFuelCost() {
-        return TempadConfig.tempadFuelConsumptionValue;
+        return ConfigCache.tempadFuelConsumptionValue;
     }
 
     public int getFuelCapacity() {
-        return TempadConfig.tempadFuelCapacityValue;
+        return ConfigCache.tempadFuelCapacityValue;
     }
 
     @Override
