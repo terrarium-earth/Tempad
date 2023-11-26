@@ -14,6 +14,7 @@ import java.util.UUID;
 public record InitConfigPacket(
     boolean allowInterdimensionalTravel,
     boolean allowExporting,
+    boolean consumeCooldown,
     String tempadFuelType,
     int tempadFuelConsumptionValue,
     int tempadFuelCapacityValue,
@@ -22,7 +23,7 @@ public record InitConfigPacket(
     int advancedTempadfuelCapacityValue
 ) implements Packet<InitConfigPacket> {
     public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "delete_location");
+    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "sync_config");
 
     @Override
     public ResourceLocation getID() {
@@ -40,6 +41,7 @@ public record InitConfigPacket(
         public void encode(InitConfigPacket message, FriendlyByteBuf buffer) {
             buffer.writeBoolean(message.allowInterdimensionalTravel);
             buffer.writeBoolean(message.allowExporting);
+            buffer.writeBoolean(message.consumeCooldown);
             buffer.writeUtf(message.tempadFuelType);
             buffer.writeInt(message.tempadFuelConsumptionValue);
             buffer.writeInt(message.tempadFuelCapacityValue);
@@ -51,6 +53,7 @@ public record InitConfigPacket(
         @Override
         public InitConfigPacket decode(FriendlyByteBuf buffer) {
             return new InitConfigPacket(
+                buffer.readBoolean(),
                 buffer.readBoolean(),
                 buffer.readBoolean(),
                 buffer.readUtf(),
@@ -67,6 +70,7 @@ public record InitConfigPacket(
             return (player, level) -> {
                 ConfigCache.allowInterdimensionalTravel = message.allowInterdimensionalTravel;
                 ConfigCache.allowExporting = message.allowExporting;
+                ConfigCache.consumeCooldown = message.consumeCooldown;
                 ConfigCache.tempadFuelType = message.tempadFuelType;
                 ConfigCache.tempadFuelConsumptionValue = message.tempadFuelConsumptionValue;
                 ConfigCache.tempadFuelCapacityValue = message.tempadFuelCapacityValue;

@@ -37,7 +37,7 @@ public class TimerOption extends TempadOption {
         if (cooldown > 0) {
             components.add(Component.translatable("tooltip.tempad.timeleft").append(DurationFormatUtils.formatDuration(cooldown, "mm:ss", true)));
         } else {
-            components.add(Component.translatable("tooltip.tempad.fullycharged", DurationFormatUtils.formatDuration(TempadOptionApi.getFuelCost(stack) * 1000L, "mm:ss", false)));
+            components.add(Component.translatable("tooltip.tempad.fullycharged", DurationFormatUtils.formatDuration(TempadOptionApi.getFuelCost(stack) * 1000L, "mm:ss", true)));
         }
     }
 

@@ -45,6 +45,7 @@ public class FabricTempad implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             NetworkHandler.CHANNEL.sendToPlayer(new InitConfigPacket(TempadConfig.allowInterdimensionalTravel,
                 TempadConfig.allowExporting,
+                TempadConfig.consumeCooldown,
                 TempadConfig.tempadFuelType,
                 TempadConfig.tempadFuelConsumptionValue,
                 TempadConfig.tempadFuelCapacityValue,

@@ -76,13 +76,6 @@ public class ConsolidatedScreen extends Screen {
                     new TextEntry(Component.translatable("gui." + Tempad.MODID + ".dimension", Component.translatable(selectedLocation.getLevelKey().location().toLanguageKey("dimension")))))
                 );
 
-                downloadButton.active = selectedLocation.isDownloadable();
-                if (selectedLocation.isDownloadable()) {
-                    downloadButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".download")));
-                } else {
-                    downloadButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".download_disabled")));
-                }
-
                 deleteButton.active = selectedLocation.isDeletable();
                 if (selectedLocation.isDeletable()) {
                     deleteButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".delete")));
@@ -90,11 +83,22 @@ public class ConsolidatedScreen extends Screen {
                     deleteButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".delete_disabled")));
                 }
 
-                teleportButton.active = selectedLocation.isTeleportable();
-                if (selectedLocation.isTeleportable()) {
-                    teleportButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".teleport")));
-                } else {
-                    teleportButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".teleport_disabled")));
+                if (minecraft != null && minecraft.player != null) {
+                    ItemStack itemInHand = minecraft.player.getItemInHand(hand);
+                    boolean isTempadUsable = itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand);
+                    teleportButton.active = selectedLocation.isTeleportable() && TeleportUtils.mayTeleport(selectedLocation.getLevelKey(), minecraft.player) && isTempadUsable;
+                    if (selectedLocation.isTeleportable()) {
+                        teleportButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".teleport")));
+                    } else {
+                        teleportButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".teleport_disabled")));
+                    }
+
+                    downloadButton.active = selectedLocation.isDownloadable() && ConfigCache.allowExporting && (ConfigCache.consumeCooldown || isTempadUsable);
+                    if (selectedLocation.isDownloadable()) {
+                        downloadButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".download")));
+                    } else {
+                        downloadButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".download_disabled")));
+                    }
                 }
             }
         }));
@@ -117,13 +121,9 @@ public class ConsolidatedScreen extends Screen {
     }
 
     private void teleportAction() {
-        if (minecraft == null || minecraft.player == null) return;
-        ItemStack itemInHand = minecraft.player.getItemInHand(hand);
-        if (itemInHand.getItem() instanceof TempadItem tempadItem && TeleportUtils.mayTeleport(selectedLocation.getLevelKey(), minecraft.player)) {
-            if (tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand)) {
-                NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.getId(), hand, TempadClientConfig.color));
-                Minecraft.getInstance().setScreen(null);
-            }
+        if (minecraft != null && minecraft.player != null) {
+            NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.getId(), hand, TempadClientConfig.color));
+            Minecraft.getInstance().setScreen(null);
         }
     }
 

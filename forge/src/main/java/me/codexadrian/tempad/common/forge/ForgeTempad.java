@@ -54,6 +54,7 @@ public class ForgeTempad {
         bus.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
             NetworkHandler.CHANNEL.sendToPlayer(new InitConfigPacket(TempadConfig.allowInterdimensionalTravel,
                 TempadConfig.allowExporting,
+                TempadConfig.consumeCooldown,
                 TempadConfig.tempadFuelType,
                 TempadConfig.tempadFuelConsumptionValue,
                 TempadConfig.tempadFuelCapacityValue,
