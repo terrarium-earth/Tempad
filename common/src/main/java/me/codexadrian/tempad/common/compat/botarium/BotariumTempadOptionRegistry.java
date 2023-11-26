@@ -22,18 +22,10 @@ public class BotariumTempadOptionRegistry {
     }
 
     public static void postInit() {
-        TempadOption option = TempadOptionApi.getOption(TempadConfig.tempadFuelType);
-        if (option instanceof EnergyOption) {
-            EnergyApi.registerEnergyItem(TempadRegistry.TEMPAD, stack -> new WrappedItemEnergyContainer(stack, new SimpleEnergyContainer(TempadOptionApi.getFuelCapacity(stack))));
-        } else if (option instanceof FluidOption) {
-            FluidApi.registerFluidItem(TempadRegistry.TEMPAD, stack -> new WrappedItemFluidContainer(stack, new SimpleFluidContainer(FluidHooks.buckets(TempadOptionApi.getFuelCapacity(stack)), 1, (integer, fluidHolder) -> fluidHolder.is(Tempad.TEMPAD_LIQUID_FUEL_TAG))));
-        }
+        EnergyApi.registerEnergyItem(TempadRegistry.TEMPAD, stack -> new WrappedItemEnergyContainer(stack, new SimpleEnergyContainer(TempadOptionApi.getFuelCapacity(stack))));
+        FluidApi.registerFluidItem(TempadRegistry.TEMPAD, stack -> new WrappedItemFluidContainer(stack, new SimpleFluidContainer(FluidHooks.buckets(TempadOptionApi.getFuelCapacity(stack)), 1, (integer, fluidHolder) -> fluidHolder.is(Tempad.TEMPAD_LIQUID_FUEL_TAG))));
 
-        TempadOption advancedOption = TempadOptionApi.getOption(TempadConfig.advancedTempadFuelType);
-        if (advancedOption instanceof EnergyOption) {
-            EnergyApi.registerEnergyItem(TempadRegistry.CREATIVE_TEMPAD, stack -> new WrappedItemEnergyContainer(stack, new SimpleEnergyContainer(TempadOptionApi.getFuelCapacity(stack))));
-        } else if (advancedOption instanceof FluidOption) {
-            FluidApi.registerFluidItem(TempadRegistry.CREATIVE_TEMPAD, stack -> new WrappedItemFluidContainer(stack, new SimpleFluidContainer(FluidHooks.buckets(TempadOptionApi.getFuelCapacity(stack)), 1, (integer, fluidHolder) -> fluidHolder.is(Tempad.TEMPAD_LIQUID_FUEL_TAG))));
-        }
+        EnergyApi.registerEnergyItem(TempadRegistry.CREATIVE_TEMPAD, stack -> new WrappedItemEnergyContainer(stack, new SimpleEnergyContainer(TempadOptionApi.getFuelCapacity(stack))));
+        FluidApi.registerFluidItem(TempadRegistry.CREATIVE_TEMPAD, stack -> new WrappedItemFluidContainer(stack, new SimpleFluidContainer(FluidHooks.buckets(TempadOptionApi.getFuelCapacity(stack)), 1, (integer, fluidHolder) -> fluidHolder.is(Tempad.TEMPAD_LIQUID_FUEL_TAG))));
     }
 }

@@ -5,7 +5,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
-import me.codexadrian.tempad.common.tempad.TempadItem;
+import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;

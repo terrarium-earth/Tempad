@@ -36,6 +36,16 @@ public final class TempadConfig {
     @Comment("The amount of time in ticks that the Tempad will add to the wait time when the player is in the Tempad.")
     public static int timedoorAddWaitTime = 40;
 
+    // allow interdimensional travel
+    @ConfigEntry(id = "allowInterdimensionalTravel", type = EntryType.BOOLEAN, translation = "config.tempad.allow_interdimensional_travel")
+    @Comment("Whether or not the Tempad should allow interdimensional travel.")
+    public static boolean allowInterdimensionalTravel = true;
+
+    // allow exporting of locations
+    @ConfigEntry(id = "allowExporting", type = EntryType.BOOLEAN, translation = "config.tempad.allow_exporting")
+    @Comment("Whether or not the Tempad should allow exporting of locations onto Location Cards.")
+    public static boolean allowExporting = true;
+
     @ConfigEntry(id = "timedoorFuelAmount", type = EntryType.INTEGER, translation = "config.tempad.timedoor_fuel_amount")
     @Comment("The amount of fuel that the timedoor will consume on opening of the timedoor.")
     public static int tempadFuelConsumptionValue = 180;

@@ -3,13 +3,12 @@
   "gui.tempad.new_location": "(+) New Location",
   "gui.tempad.add_location": "Add location",
   "gui.tempad.download": "Export location",
-  "gui.tempad.download_diabled": "You may not export this location",
+  "gui.tempad.download_disabled": "You may not export this location",
   "gui.tempad.teleport": "Teleport",
   "gui.tempad.teleport_disabled": "You may not teleport to this location",
   "gui.tempad.delete": "Delete location",
   "gui.tempad.delete_disabled": "You may not delete this location",
   "gui.tempad.timedoor": "Timedoor",
-  "gui.tempad.name": "Name: %s",
   "gui.tempad.dimension": "Dim: %s",
   "gui.tempad.x": "X: %s",
   "gui.tempad.y": "Y: %s",
@@ -35,5 +34,13 @@
   "dimension.minecraft.the_end": "The End",
   "tempad_option.tempad.energy": "Energy: %s/%s §b⚡§r",
   "item.tempad.empty_tank": "Empty",
-  "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r"
+  "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r",
+
+  "item.tempad.location_card": "Location Card",
+  "item.tempad.location_card.creator_toolip": "Created by %s",
+  "item.tempad.location_card.shift_toolip": "Hold [%s] for more info",
+  "item.tempad.location_card.added_location": "Added location: %s",
+  "item.tempad.location_card.add_location": "Right click to set location",
+  "item.tempad.location_card.set_name": "Rename in anvil to set location name",
+  "item.tempad.location_card.set_location": "Set location: %s"
 }

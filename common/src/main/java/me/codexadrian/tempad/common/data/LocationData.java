@@ -19,19 +19,22 @@ public class LocationData implements Comparable<LocationData>{
     private final String name;
     private final BlockPos blockPos;
     private final ResourceKey<Level> levelKey;
-    private boolean isTeleportable = true;
-    private boolean isDeletable = true;
-    private boolean isDownloadable = true;
+    private boolean isTeleportable;
+    private boolean isDeletable;
+    private boolean isDownloadable;
 
-    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid) {
+    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid, boolean isTeleportable, boolean isDeletable, boolean isDownloadable) {
         this.name = name;
         this.levelKey = levelKey;
         this.blockPos = pos;
         this.id = uuid;
+        this.isTeleportable = isTeleportable;
+        this.isDeletable = isDeletable;
+        this.isDownloadable = isDownloadable;
     }
 
-    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos) {
-        this(name, levelKey, pos, UUID.randomUUID());
+    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid) {
+        this(name, levelKey, pos, uuid, true, true, true);
     }
 
     public CompoundTag toTag() {
@@ -83,24 +86,12 @@ public class LocationData implements Comparable<LocationData>{
         return isTeleportable;
     }
 
-    public void setTeleportable(boolean teleportable) {
-        isTeleportable = teleportable;
-    }
-
     public boolean isDeletable() {
         return isDeletable;
     }
 
-    public void setDeletable(boolean deletable) {
-        isDeletable = deletable;
-    }
-
     public boolean isDownloadable() {
         return isDownloadable;
-    }
-
-    public void setDownloadable(boolean downloadable) {
-        isDownloadable = downloadable;
     }
 
     @Override

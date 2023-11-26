@@ -27,4 +27,9 @@ public class TempadTeleporter implements ITeleporter {
     public boolean isVanilla() {
         return false;
     }
+
+    @Override
+    public Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
+        return repositionEntity.apply(false);
+    }
 }

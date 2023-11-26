@@ -1,24 +1,27 @@
 package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
-import me.codexadrian.tempad.client.widgets.TextButton;
+import me.codexadrian.tempad.client.widgets.NewLocationModal;
+import me.codexadrian.tempad.client.widgets.TemporaryWidget;
 import me.codexadrian.tempad.client.widgets.TextEntry;
-import me.codexadrian.tempad.client.widgets.TimedoorSprite;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.network.messages.AddLocationPacket;
 import me.codexadrian.tempad.common.network.messages.DeleteLocationPacket;
+import me.codexadrian.tempad.common.network.messages.ExportLocationPacket;
 import me.codexadrian.tempad.common.network.messages.SummonTimedoorPacket;
-import me.codexadrian.tempad.common.tempad.TempadItem;
+import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -26,16 +29,17 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class ConsolidatedScreen extends Screen {
     private static final ResourceLocation SCREEN = new ResourceLocation(Tempad.MODID, "textures/widget/tempad_screen.png");
-
     private static final int TEMPAD_WIDTH = 249;
     private static final int TEMPAD_HEIGHT = 138;
+
+    protected final List<TemporaryWidget> temporaryWidgets = new ArrayList<>();
     private final InteractionHand hand;
     private final List<LocationData> locations;
     private LocationData selectedLocation;
@@ -101,13 +105,13 @@ public class ConsolidatedScreen extends Screen {
         editBox.setResponder((string) -> locationPanel.updateEntries(locations.stream().filter(locationData -> locationData.getName().toLowerCase().contains(string.toLowerCase())).map(TextEntry::new).toList()));
         addRenderableWidget(editBox);
 
-        downloadButton = addRenderableWidget(new TempadButton(cornerX + 62, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".download"), (button) -> {}, 0));
+        downloadButton = addRenderableWidget(new TempadButton(cornerX + 62, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".download"), (button) -> exportAction(), 0));
         downloadButton.active = false;
         deleteButton = addRenderableWidget(new TempadButton(cornerX + 78, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".delete"), (button) -> deleteAction(), 1));
         deleteButton.active = false;
         teleportButton = addRenderableWidget(new TempadButton(cornerX + 94, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".teleport"), (button) -> teleportAction(), 2));
         teleportButton.active = false;
-        addRenderableWidget(new TempadButton(cornerX + 208, cornerY + 14, 12, 12, Component.translatable("gui." + Tempad.MODID + ".add_location"), (button) -> {}, 3)).setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".add_location")));
+        addRenderableWidget(new TempadButton(cornerX + 208, cornerY + 14, 12, 12, Component.translatable("gui." + Tempad.MODID + ".add_location"), (button) -> openNewLocationModal(), 3)).setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".add_location")));
     }
 
     private void teleportAction() {
@@ -128,11 +132,87 @@ public class ConsolidatedScreen extends Screen {
         }
     }
 
+    private void exportAction() {
+        if (minecraft != null && minecraft.player != null && TempadConfig.allowExporting) {
+            Minecraft.getInstance().setScreen(null);
+            NetworkHandler.CHANNEL.sendToServer(new ExportLocationPacket(selectedLocation.getId(), hand));
+        }
+    }
+
+    private void openNewLocationModal() {
+        if (minecraft != null && minecraft.player != null) {
+            findOrCreateEditWidget();
+        }
+    }
+
+    private void newLocationAction(String name) {
+        if (minecraft != null && minecraft.player != null) {
+            Minecraft.getInstance().setScreen(null);
+            NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(name, hand));
+        }
+    }
+
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         renderBackground(graphics);
         graphics.blit(SCREEN, (width - TEMPAD_WIDTH) / 2, (height - TEMPAD_HEIGHT) / 2, TEMPAD_WIDTH, TEMPAD_HEIGHT, 0, 0, TEMPAD_WIDTH, TEMPAD_HEIGHT, 256, 256);
         super.render(graphics, mouseX, mouseY, partialTicks);
+    }
+
+    public <R extends Renderable & TemporaryWidget> R addTemporary(R renderable) {
+        addRenderableOnly(renderable);
+        this.temporaryWidgets.add(renderable);
+        return renderable;
+    }
+
+    @Nullable
+    @Override
+    public GuiEventListener getFocused() {
+        boolean visible = false;
+        for (TemporaryWidget widget : this.temporaryWidgets) {
+            visible |= widget.isVisible();
+            if (widget.isVisible() && widget instanceof GuiEventListener listener) {
+                return listener;
+            }
+        }
+        if (visible) {
+            return null;
+        }
+        return super.getFocused();
+    }
+
+    @Override
+    public @NotNull List<? extends GuiEventListener> children() {
+        List<GuiEventListener> listeners = new ArrayList<>();
+        for (TemporaryWidget widget : temporaryWidgets) {
+            if (widget.isVisible() && widget instanceof GuiEventListener listener) {
+                listeners.add(listener);
+            }
+        }
+        if (!listeners.isEmpty()) {
+            return listeners;
+        }
+        return super.children();
+    }
+
+    public List<TemporaryWidget> temporaryWidgets() {
+        return this.temporaryWidgets;
+    }
+
+    public void findOrCreateEditWidget() {
+        boolean found = false;
+        NewLocationModal widget = new NewLocationModal(this.width, this.height, (width - TEMPAD_WIDTH) / 2 + 70, (height - TEMPAD_HEIGHT) / 2 + 54, this::newLocationAction);
+        for (TemporaryWidget temporaryWidget : this.temporaryWidgets()) {
+            if (temporaryWidget instanceof NewLocationModal modal) {
+                found = true;
+                widget = modal;
+                break;
+            }
+        }
+        widget.setVisible(true);
+        if (!found) {
+            this.addTemporary(widget);
+        }
     }
 
     @Override

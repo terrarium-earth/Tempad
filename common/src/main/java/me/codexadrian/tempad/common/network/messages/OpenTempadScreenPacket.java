@@ -55,11 +55,10 @@ public record OpenTempadScreenPacket(List<LocationData> locationData,
                 String name = buf.readUtf();
                 BlockPos pos = buf.readBlockPos();
                 ResourceKey<Level> levelResourceKey = buf.readResourceKey(Registries.DIMENSION);
-                LocationData locationData1 = new LocationData(name, levelResourceKey, pos, id);
-                locationData1.setTeleportable(buf.readBoolean());
-                locationData1.setDeletable(buf.readBoolean());
-                locationData1.setDownloadable(buf.readBoolean());
-                return locationData1;
+                boolean teleportable = buf.readBoolean();
+                boolean deletable = buf.readBoolean();
+                boolean downloadable = buf.readBoolean();
+                return new LocationData(name, levelResourceKey, pos, id, teleportable, deletable, downloadable);
             }), buffer.readEnum(InteractionHand.class));
         }
 

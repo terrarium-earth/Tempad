@@ -23,9 +23,7 @@ public class FabricWaystoneLocationGetter {
                     .filter(waystoneValue -> waystoneValue.isGlobal() || waystoneValue.getEntity().getOwner().equals(player.getUUID()))
                     .forEach(waystoneValue -> {
                         UUID locationId = UUID.nameUUIDFromBytes(waystoneValue.getHash().getBytes());
-                        LocationData value = new LocationData(waystoneValue.getWaystoneName(), ResourceKey.create(Registries.DIMENSION, ResourceLocation.tryParse(waystoneValue.getWorldName())), waystoneValue.way_getPos().above(2), locationId);
-                        value.setDownloadable(false);
-                        value.setDeletable(false);
+                        LocationData value = new LocationData(waystoneValue.getWaystoneName(), ResourceKey.create(Registries.DIMENSION, ResourceLocation.tryParse(waystoneValue.getWorldName())), waystoneValue.way_getPos().above(2), locationId, true, false, false);
                         locations.put(locationId, value);
                     }
                 );

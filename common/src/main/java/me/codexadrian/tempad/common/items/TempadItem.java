@@ -1,8 +1,7 @@
-package me.codexadrian.tempad.common.tempad;
+package me.codexadrian.tempad.common.items;
 
-import dev.architectury.injectables.annotations.PlatformOnly;
 import me.codexadrian.tempad.api.options.TempadOption;
-import me.codexadrian.tempad.api.options.impl.DurabilityOption;
+import me.codexadrian.tempad.api.options.TempadOptionApi;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.TempadConfig;
@@ -26,28 +25,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TempadItem extends Item {
-    private final TempadOption option;
-    private final int fuelCost;
-    private final int fuelCapacity;
-
-    public TempadItem(Properties properties, TempadOption option, int fuelCost, int fuelCapacity) {
-        super(option.apply(properties, fuelCost, fuelCapacity));
-        this.option = option;
-        this.fuelCost = fuelCost;
-        this.fuelCapacity = fuelCapacity;
+public class TempadItem extends Item implements TempadPower {
+    public TempadItem(Properties properties) {
+        super(properties);
     }
 
     public TempadOption getOption() {
-        return option;
+        return TempadOptionApi.getOption(TempadConfig.tempadFuelType);
     }
 
     public int getFuelCost() {
-        return fuelCost;
+        return TempadConfig.tempadFuelConsumptionValue;
     }
 
     public int getFuelCapacity() {
-        return fuelCapacity;
+        return TempadConfig.tempadFuelCapacityValue;
     }
 
     @Override
@@ -85,21 +77,11 @@ public class TempadItem extends Item {
 
     @Override
     public boolean isBarVisible(@NotNull ItemStack stack) {
-        return getOption().isDurabilityBarVisible(stack);
+        return this.getOption().isDurabilityBarVisible(stack);
     }
 
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
-        return getOption().durabilityBarWidth(stack);
-    }
-
-    @Override
-    public boolean canBeDepleted() {
-        return this.getOption() instanceof DurabilityOption;
-    }
-
-    @PlatformOnly("forge")
-    public boolean isDamaged(@NotNull ItemStack stack) {
-        return canBeDepleted() && stack.getDamageValue() > 0;
+        return this.getOption().durabilityBarWidth(stack);
     }
 }

@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.api.options;
 
 import me.codexadrian.tempad.api.options.impl.*;
-import me.codexadrian.tempad.common.tempad.TempadItem;
+import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
@@ -16,7 +16,6 @@ public class TempadOptionApi {
         OPTION_REGISTRY.put("tempad:experience_points", new ExperiencePointsOption());
         OPTION_REGISTRY.put("tempad:item", new ItemOption());
         OPTION_REGISTRY.put("tempad:timer", new TimerOption());
-        OPTION_REGISTRY.put("tempad:durability", new DurabilityOption());
     }
 
     public static TempadOption getOption(String id) {

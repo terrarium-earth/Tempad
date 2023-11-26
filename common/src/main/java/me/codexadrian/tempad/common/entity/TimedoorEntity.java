@@ -17,8 +17,11 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -30,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class TimedoorEntity extends Entity {
     public static final int ANIMATION_LENGTH = 8;
@@ -90,7 +94,8 @@ public class TimedoorEntity extends Entity {
             box = box.inflate(0, 0, 0.5);
         }
         if (getLocation() != null) {
-            List<Entity> entities = this.level().getEntitiesOfClass(Entity.class, box, entity -> !(entity instanceof TimedoorEntity) && entity.canChangeDimensions() && !(entity instanceof FallingBlockEntity) && !(entity instanceof HangingEntity));
+            Predicate<Entity> b = (entity) -> ((entity instanceof LivingEntity || entity instanceof ItemEntity) && !entity.getType().is(Tempad.TEMPAD_ENTITY_BLACKLIST)) || entity.getType().is(Tempad.TEMPAD_ENTITY_WHITELIST);
+            List<Entity> entities = this.level().getEntitiesOfClass(Entity.class, box, b);
             if (!entities.isEmpty() && !level().isClientSide()) {
                 ServerLevel destinationLevel = Objects.requireNonNull(level().getServer()).getLevel(getLocation().getLevelKey());
                 entities.stream().flatMap(entity -> entity.getRootVehicle().getSelfAndPassengers()).distinct().forEach(entity -> {

@@ -12,7 +12,7 @@ import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.DeleteLocationPacket;
 import me.codexadrian.tempad.common.network.messages.SummonTimedoorPacket;
-import me.codexadrian.tempad.common.tempad.TempadItem;
+import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

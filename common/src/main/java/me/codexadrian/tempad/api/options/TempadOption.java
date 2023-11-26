@@ -28,4 +28,8 @@ public abstract class TempadOption {
     public Item.Properties apply(Item.Properties properties, int fuelCost, int fuelCapacity) {
         return properties;
     }
+
+    public boolean depletesDurability() {
+        return false;
+    }
 }
