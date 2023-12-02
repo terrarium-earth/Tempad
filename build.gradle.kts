@@ -90,12 +90,10 @@ subprojects {
 
         if (isCommon) {
             "modCompileOnly"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-1.20", version = prometheusVersion) { isTransitive = false }
-            "modCompileOnly"(group = "earth.terrarium.argonauts", name = "argonauts-$modLoader-1.20", version = argonautsVersion) { isTransitive = false }
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api", version = reiVersion)
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin", version = reiVersion)
         } else {
             "modLocalRuntime"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-1.20", version = prometheusVersion)
-            "modLocalRuntime"(group = "earth.terrarium.argonauts", name = "argonauts-$modLoader-1.20", version = argonautsVersion)
             "modRuntimeOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-$modLoader", version = reiVersion)
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-$modLoader", version = reiVersion)
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-$modLoader", version = reiVersion)

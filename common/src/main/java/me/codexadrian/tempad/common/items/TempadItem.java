@@ -10,6 +10,7 @@ import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.entity.TimedoorEntity;
 import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.network.messages.c2s.OpenFavoritedLocationPacket;
 import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import net.minecraft.network.chat.Component;
@@ -46,19 +47,23 @@ public class TempadItem extends Item implements TempadPower {
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
-        if (!level.isClientSide) {
-            if (!player.isShiftKeyDown()) {
+        if (!player.isShiftKeyDown()) {
+            if (!level.isClientSide) {
                 OpenTempadScreenPacket packet = new OpenTempadScreenPacket(new ArrayList<>(TempadLocationHandler.getLocations(level, player.getUUID()).values()), TempadLocationHandler.getFavorite(level, player.getUUID()));
                 NetworkHandler.CHANNEL.sendToPlayer(packet, player);
+                return InteractionResultHolder.success(stack);
             } else {
-                if (getOption().canTimedoorOpen(player, stack) && TempadLocationHandler.getFavorite(level, player.getUUID()) != null) {
-                    if (!player.getAbilities().instabuild) getOption().onTimedoorOpen(player);
-                    LocationData locationData = TempadLocationHandler.getLocation(level, player.getUUID(), TempadLocationHandler.getFavorite(level, player.getUUID()));
-                    TempadItem.summonTimeDoor(locationData, player, Tempad.ORANGE);
-                }
+                return InteractionResultHolder.pass(stack);
+            }
+        } else {
+            if (level.isClientSide) {
+                OpenFavoritedLocationPacket packet = new OpenFavoritedLocationPacket(TempadClientConfig.color);
+                NetworkHandler.CHANNEL.sendToServer(packet);
+                return InteractionResultHolder.pass(stack);
+            } else {
+                return InteractionResultHolder.success(stack);
             }
         }
-        return InteractionResultHolder.success(stack);
     }
 
     public static void summonTimeDoor(LocationData locationData, Player player, int color) {

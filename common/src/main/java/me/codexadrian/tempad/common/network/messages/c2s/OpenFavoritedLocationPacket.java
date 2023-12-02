@@ -12,11 +12,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.UUID;
-
-public record SummonTimedoorPacket(UUID location, int color) implements Packet<SummonTimedoorPacket> {
+public record OpenFavoritedLocationPacket(int color) implements Packet<OpenFavoritedLocationPacket> {
     public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "timedoor");
+    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "location");
 
     @Override
     public ResourceLocation getID() {
@@ -24,30 +22,29 @@ public record SummonTimedoorPacket(UUID location, int color) implements Packet<S
     }
 
     @Override
-    public PacketHandler<SummonTimedoorPacket> getHandler() {
+    public PacketHandler<OpenFavoritedLocationPacket> getHandler() {
         return HANDLER;
     }
 
-    private static class Handler implements PacketHandler<SummonTimedoorPacket> {
+    private static class Handler implements PacketHandler<OpenFavoritedLocationPacket> {
 
         @Override
-        public void encode(SummonTimedoorPacket message, FriendlyByteBuf buffer) {
-            buffer.writeUUID(message.location);
+        public void encode(OpenFavoritedLocationPacket message, FriendlyByteBuf buffer) {
             buffer.writeVarInt(message.color);
         }
 
         @Override
-        public SummonTimedoorPacket decode(FriendlyByteBuf buffer) {
-            return new SummonTimedoorPacket(buffer.readUUID(), buffer.readVarInt());
+        public OpenFavoritedLocationPacket decode(FriendlyByteBuf buffer) {
+            return new OpenFavoritedLocationPacket(buffer.readVarInt());
         }
 
         @Override
-        public PacketContext handle(SummonTimedoorPacket message) {
+        public PacketContext handle(OpenFavoritedLocationPacket message) {
             return (player, level) -> {
                 ItemStack itemInHand = TeleportUtils.findTempad(player);
-                LocationData locationData = TempadLocationHandler.getLocation(level, player.getUUID(), message.location);
-                if (locationData != null && itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand)) {
+                if ((itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand))) {
                     if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player);
+                    LocationData locationData = TempadLocationHandler.getLocation(level, player.getUUID(), TempadLocationHandler.getFavorite(level, player.getUUID()));
                     TempadItem.summonTimeDoor(locationData, player, message.color);
                 }
             };

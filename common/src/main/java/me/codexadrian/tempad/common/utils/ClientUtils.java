@@ -1,6 +1,10 @@
 package me.codexadrian.tempad.common.utils;
 
+import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.client.gui.ConsolidatedScreen;
+import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.network.messages.c2s.OpenFavoritedLocationPacket;
+import me.codexadrian.tempad.common.network.messages.c2s.OpenTempadByShortcutPacket;
 import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
 import net.minecraft.client.Minecraft;
 
@@ -19,5 +23,13 @@ public class ClientUtils {
         b = (int) (b * 0.8);
 
         return (r << 16) | (g << 8) | b;
+    }
+
+    public static void openTempadbyShortcut() {
+        NetworkHandler.CHANNEL.sendToServer(new OpenTempadByShortcutPacket());
+    }
+
+    public static void openFavorited() {
+        NetworkHandler.CHANNEL.sendToServer(new OpenFavoritedLocationPacket(TempadClientConfig.color));
     }
 }
