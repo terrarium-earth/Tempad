@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 public record OpenFavoritedLocationPacket(int color) implements Packet<OpenFavoritedLocationPacket> {
     public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "location");
+    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "shortcut_favorited");
 
     @Override
     public ResourceLocation getID() {

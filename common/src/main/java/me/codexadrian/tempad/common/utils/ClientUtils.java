@@ -26,10 +26,12 @@ public class ClientUtils {
     }
 
     public static void openTempadbyShortcut() {
-        NetworkHandler.CHANNEL.sendToServer(new OpenTempadByShortcutPacket());
+        OpenTempadByShortcutPacket packet = new OpenTempadByShortcutPacket();
+        NetworkHandler.CHANNEL.sendToServer(packet);
     }
 
     public static void openFavorited() {
-        NetworkHandler.CHANNEL.sendToServer(new OpenFavoritedLocationPacket(TempadClientConfig.color));
+        OpenFavoritedLocationPacket packet = new OpenFavoritedLocationPacket(TempadClientConfig.color);
+        NetworkHandler.CHANNEL.sendToServer(packet);
     }
 }

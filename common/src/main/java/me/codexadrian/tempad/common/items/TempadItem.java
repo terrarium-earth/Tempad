@@ -13,6 +13,7 @@ import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.c2s.OpenFavoritedLocationPacket;
 import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
+import me.codexadrian.tempad.common.utils.ClientUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -57,8 +58,7 @@ public class TempadItem extends Item implements TempadPower {
             }
         } else {
             if (level.isClientSide) {
-                OpenFavoritedLocationPacket packet = new OpenFavoritedLocationPacket(TempadClientConfig.color);
-                NetworkHandler.CHANNEL.sendToServer(packet);
+                ClientUtils.openFavorited();
                 return InteractionResultHolder.pass(stack);
             } else {
                 return InteractionResultHolder.success(stack);

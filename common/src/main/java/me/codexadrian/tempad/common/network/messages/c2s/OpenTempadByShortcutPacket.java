@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public record OpenTempadByShortcutPacket() implements Packet<OpenTempadByShortcutPacket> {
     public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "location");
+    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "shortcut_screen");
 
     @Override
     public ResourceLocation getID() {

@@ -54,5 +54,9 @@
   "item.tempad.location_card.added_location": "Added location: %s",
   "item.tempad.location_card.add_location": "Right click to set location",
   "item.tempad.location_card.set_name": "Rename in anvil to set location name",
-  "item.tempad.location_card.set_location": "Set location: %s"
+  "item.tempad.location_card.set_location": "Set location: %s",
+
+  "category.tempad.keybinds": "Tempad",
+  "key.tempad.favorite": "Open favorited location",
+  "key.tempad.shortcut": "Open Tempad screen"
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public record AddLocationPacket(String name) implements Packet<AddLocationPacket> {
     public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "location");
+    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "add_location");
 
     @Override
     public ResourceLocation getID() {

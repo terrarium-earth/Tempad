@@ -19,15 +19,21 @@ public class TeleportUtils {
 
     public static ItemStack findAndReplaceTempad(Player player, @Nullable ItemStack replacementTempad) {
         ItemStack tempad = ItemStack.EMPTY;
+        int tempadIndex = 0;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);
-            if (stack.getItem() instanceof TempadItem) {
+            if (stack.getItem() instanceof TempadItem tempadItem) {
                 tempad = stack;
-                if (replacementTempad != null) {
-                    player.getInventory().setItem(i, replacementTempad);
+                tempadIndex = i;
+
+                if (tempadItem.getOption().canTimedoorOpen(player, tempad)) {
+                    break;
                 }
-                break;
             }
+        }
+
+        if (replacementTempad != null && !tempad.isEmpty()) {
+            player.getInventory().setItem(tempadIndex, replacementTempad);
         }
         return tempad;
     }

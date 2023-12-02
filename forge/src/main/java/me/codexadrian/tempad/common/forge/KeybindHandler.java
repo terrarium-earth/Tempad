@@ -13,7 +13,7 @@ public class KeybindHandler {
     private static final KeyMapping SHORTCUT_KEYBIND = new KeyMapping(
         "key.tempad.shortcut", // The translation key of the keybinding's name
         InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-        GLFW.GLFW_KEY_V, // The keycode of the key
+        GLFW.GLFW_KEY_B, // The keycode of the key
         "category.tempad.keybinds" // The translation key of the keybinding's category.
     );
 
