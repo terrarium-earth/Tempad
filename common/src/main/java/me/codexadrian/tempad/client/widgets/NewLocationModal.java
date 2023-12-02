@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -22,18 +23,18 @@ public class NewLocationModal extends BaseModal {
         var editBox = new EditBox(font, x + 18, y + 5, 72, 12, Component.nullToEmpty(""));
         editBox.setMaxLength(32);
         editBox.setBordered(false);
-        editBox.setHint(Component.translatable("gui." + Tempad.MODID + ".textfield"));
+        editBox.setHint(Component.translatable("gui." + Tempad.MODID + ".name_field"));
         editBox.setTextColor(TempadClientConfig.color);
         addChild(editBox);
 
         addChild(new TempadButton(x + 65, y + 17, 12, 12, Component.nullToEmpty(""), button -> {
             this.setVisible(false);
-        }, 0));
+        }, 0)).setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".cancel")));
 
         addChild(new TempadButton(x + 79, y + 17, 12, 12, Component.nullToEmpty(""), button -> {
             this.setVisible(false);
             callback.accept(editBox.getValue());
-        }, 1));
+        }, 1)).setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".confirm")));
     }
 
     @Override

@@ -27,4 +27,5 @@ dependencies {
     modApi(group = "com.terraformersmc", name = "modmenu", version = modMenuVersion)
     modImplementation(group = "maven.modrinth", name = "fwaystones", version = "3.1.2+mc1.20")
     modImplementation(group = "maven.modrinth", name = "owo-lib", version = "0.11.1+1.20")
+    modImplementation(group = "maven.modrinth", name = "energized-power", version = "ViCNmOFw")
 }

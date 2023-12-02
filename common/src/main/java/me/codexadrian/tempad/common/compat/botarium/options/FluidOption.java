@@ -4,11 +4,13 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.energy.EnergyApi;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.fluid.FluidApi;
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.base.ItemFluidContainer;
 import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import earth.terrarium.botarium.common.item.ItemStackHolder;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
+import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -25,9 +27,9 @@ import java.util.List;
 public class FluidOption extends TempadOption {
     @Override
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
-        EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(new ItemStackHolder(stack));
-        if (energyStorage == null) return false;
-        return energyStorage.getStoredEnergy() > TempadOptionApi.getFuelCost(stack);
+        ItemFluidContainer fluidStorage = FluidApi.getItemFluidContainer(new ItemStackHolder(stack));
+        if (fluidStorage == null) return false;
+        return !fluidStorage.getFluids().get(0).isEmpty() && fluidStorage.getFluids().get(0).getFluidAmount() >= TempadOptionApi.getFuelCost(stack) && fluidStorage.getFluids().get(0).is(Tempad.TEMPAD_LIQUID_FUEL_TAG);
     }
 
     @Override
@@ -39,9 +41,13 @@ public class FluidOption extends TempadOption {
 
     @Override
     public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
-        EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(new ItemStackHolder(stack));
-        if (energyStorage == null) return;
-        energyStorage.extractEnergy(TempadOptionApi.getFuelCost(stack), false);
+        ItemStackHolder holder = new ItemStackHolder(stack);
+        ItemFluidContainer fluidStorage = FluidApi.getItemFluidContainer(holder);
+        if (fluidStorage == null) return;
+        FluidHolder fluid = fluidStorage.getFluids().get(0);
+        fluid.setAmount(TempadOptionApi.getFuelCost(stack));
+        fluidStorage.extractFluid(fluid, false);
+        if (holder.isDirty()) player.setItemInHand(hand, holder.getStack());
     }
 
     @Override

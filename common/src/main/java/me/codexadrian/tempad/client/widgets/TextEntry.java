@@ -32,7 +32,7 @@ public class TextEntry extends ListEntry {
     @Override
     protected void render(@NotNull GuiGraphics graphics, @NotNull ScissorBoxStack stack, int id, int left, int top, int width, int height, int mouseX, int mouseY, boolean hovered, float partialTick, boolean selected) {
         boolean isMouseOver = mouseX > left && mouseX < left + width && mouseY > top && mouseY < top + height;
-        graphics.drawString(Minecraft.getInstance().font, selected && isSelectable ? Component.literal("➡ ").append(component) : component, left + 2, top + 2, isSelectable && (isMouseOver || selected) ? TempadClientConfig.color : ClientUtils.darkenColor(TempadClientConfig.color));
+        graphics.drawString(Minecraft.getInstance().font, selected && isSelectable ? Component.literal("➡ ").append(component) : component, left + 2, top + 2, (isMouseOver || (selected || !isSelectable)) ? TempadClientConfig.color : ClientUtils.darkenColor(TempadClientConfig.color));
     }
 
     @Override

@@ -21,7 +21,7 @@ public class EnergyOption extends TempadOption {
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
         EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(new ItemStackHolder(stack));
         if (energyStorage == null) return false;
-        return energyStorage.getStoredEnergy() > TempadOptionApi.getFuelCost(stack);
+        return energyStorage.getStoredEnergy() >= TempadOptionApi.getFuelCost(stack);
     }
 
     @Override
@@ -29,13 +29,16 @@ public class EnergyOption extends TempadOption {
         EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(new ItemStackHolder(stack));
         if (energyStorage == null) return;
         components.add(Component.translatable("tempad_option.tempad.energy", energyStorage.getStoredEnergy(), energyStorage.getMaxCapacity()).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("tempad_option.tempad.energy_cost", TempadOptionApi.getFuelCost(stack)).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
-        EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(new ItemStackHolder(stack));
+        ItemStackHolder holder = new ItemStackHolder(stack);
+        EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(holder);
         if (energyStorage == null) return;
-        energyStorage.extractEnergy(TempadOptionApi.getFuelCost(stack), false);
+        energyStorage.internalExtract(TempadOptionApi.getFuelCost(stack), false);
+        if (holder.isDirty()) player.setItemInHand(hand, holder.getStack());
     }
 
     @Override

@@ -42,7 +42,7 @@ public class LocationCard extends Item {
         var location = getLocation(stack);
 
         if (location != null) {
-            tooltipComponents.add(Component.translatable("item.tempad.location_card.shift_toolip", Component.keybind("key.shift").withStyle(Screen.hasShiftDown() ? ChatFormatting.WHITE : ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY));
+            tooltipComponents.add(Component.translatable("item.tempad.location_card.shift_toolip", Component.literal("SHIFT").withStyle(Screen.hasShiftDown() ? ChatFormatting.WHITE : ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY));
 
             if (Screen.hasShiftDown()) {
                 tooltipComponents.add(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));

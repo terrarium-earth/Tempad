@@ -63,9 +63,9 @@ public class ConsolidatedScreen extends Screen {
         int offset = 3;
         int cornerX = (width - TEMPAD_WIDTH) / 2;
         int cornerY = (height - TEMPAD_HEIGHT) / 2;
-        informationPanel = addRenderableWidget(new SelectionList<>(cornerX + 16, cornerY + 31, 91, 76, 10, textEntry -> {}));
+        informationPanel = addRenderableWidget(new SelectionList<>(cornerX + 16, cornerY + 33, 91, 78, 10, textEntry -> {}));
         locationPanel = addRenderableWidget(new SelectionList<>(cornerX + 129, cornerY + 31, 91, 92, 10, textEntry -> {
-            if (textEntry != null) {
+            if (textEntry != null && textEntry.data != null) {
                 selectedLocation = textEntry.data;
 
                 informationPanel.updateEntries(List.of(
@@ -102,13 +102,24 @@ public class ConsolidatedScreen extends Screen {
                 }
             }
         }));
+        if (locations.isEmpty()) {
+            locationPanel.updateEntries(List.of(
+                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_locations.first_line")),
+                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_locations.second_line"))
+            ));
+        } else {
+            locationPanel.updateEntries(locations.stream().map(TextEntry::new).toList());
+            informationPanel.updateEntries(List.of(
+                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.first_line")),
+                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.second_line"))
+            ));
+        }
 
-        locationPanel.updateEntries(locations.stream().map(TextEntry::new).toList());
-        EditBox editBox = new EditBox(font, cornerX + 139, cornerY + 16, 66, 12, Component.translatable("gui." + Tempad.MODID + ".textfield"));
+        EditBox editBox = new EditBox(font, cornerX + 139, cornerY + 16, 66, 12, Component.translatable("gui." + Tempad.MODID + ".search_field"));
         editBox.setBordered(false);
-        editBox.setHint(Component.translatable("gui." + Tempad.MODID + ".textfield"));
+        editBox.setHint(Component.translatable("gui." + Tempad.MODID + ".search_field"));
         editBox.setTextColor(TempadClientConfig.color);
-        editBox.setResponder((string) -> locationPanel.updateEntries(locations.stream().filter(locationData -> locationData.getName().toLowerCase().contains(string.toLowerCase())).map(TextEntry::new).toList()));
+        if (!locations.isEmpty()) editBox.setResponder((string) -> locationPanel.updateEntries(locations.stream().filter(locationData -> locationData.getName().toLowerCase().contains(string.toLowerCase())).map(TextEntry::new).toList()));
         addRenderableWidget(editBox);
 
         downloadButton = addRenderableWidget(new TempadButton(cornerX + 62, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".download"), (button) -> exportAction(), 0));
