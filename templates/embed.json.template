@@ -1,4 +1,24 @@
 {
+    "components": [
+        {
+            "type": 1,
+            "components": [
+                {
+                    "type": 2,
+                    "label": "Fabric",
+                    "style": 5,
+                    "url": "https://modrinth.com/mod/tempad/version/${fabric_link}"
+                },
+                {
+                    "type": 2,
+                    "label": "Forge",
+                    "style": 5,
+                    "url": "https://modrinth.com/mod/tempad/version/${forge_link}"
+                }
+            ]
+
+        }
+    ],
     "embeds": [
         {
             "title": "Tempad",
@@ -7,20 +27,18 @@
             "fields": [
                 {
                     "name": "Minecraft Version",
-                    "value": "${minecraft}"
+                    "value": "${minecraft}",
+                    "inline": true
                 },
                 {
                     "name": "Mod Version",
-                    "value": "${version}"
-                },
-                {
-                    "name": "Download",
-                    "value": "<:modrinth:1083795635414773760> [Modrinth](https://modrinth.com/mod/tempad)\\n<:curseforge:978684543026462790> [Curseforge](https://www.curseforge.com/minecraft/mc-mods/tempad)"
+                    "value": "${version}",
+                    "inline": true
                 }
             ],
             "footer": {
-                "text": "Want to support us? Check out our Ko-fi! http://kofi.terrarium.earth",
-                "icon_url": "https://media.discordapp.net/attachments/881367981463072809/1044025688719626250/61e1116779fc0a9bd5bdbcc7_Frame_6.png"
+                "text": "Follow the project on Modrinth at mods.gay/tempad",
+                "icon_url": "https://i.imgur.com/3hVj8nM.png"
             },
             "thumbnail": {
                 "url": "https://media.forgecdn.net/avatars/500/177/637818622588372032.gif"
@@ -28,5 +46,5 @@
         }
     ],
     "username": "Terrarium Releases",
-    "avatar_url": "https://cdn.discordapp.com/avatars/955572264823300096/3c226580b871a57b6da095fea1cccf1e.webp"
+    "avatar_url": "https://cdn.modrinth.com/user/6ZoP9xY8/845ab3625ed09a90b58b4ec6089c92d8e459ca09.png"
 }
