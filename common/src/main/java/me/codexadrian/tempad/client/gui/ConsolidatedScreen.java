@@ -8,14 +8,10 @@ import me.codexadrian.tempad.client.widgets.TemporaryWidget;
 import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
-import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.network.NetworkHandler;
-import me.codexadrian.tempad.common.network.messages.AddLocationPacket;
-import me.codexadrian.tempad.common.network.messages.DeleteLocationPacket;
-import me.codexadrian.tempad.common.network.messages.ExportLocationPacket;
-import me.codexadrian.tempad.common.network.messages.SummonTimedoorPacket;
 import me.codexadrian.tempad.common.items.TempadItem;
+import me.codexadrian.tempad.common.network.messages.c2s.*;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,13 +24,13 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ConsolidatedScreen extends Screen {
     private static final ResourceLocation SCREEN = new ResourceLocation(Tempad.MODID, "textures/widget/tempad_screen.png");
@@ -42,19 +38,21 @@ public class ConsolidatedScreen extends Screen {
     private static final int TEMPAD_HEIGHT = 138;
 
     protected final List<TemporaryWidget> temporaryWidgets = new ArrayList<>();
-    private final InteractionHand hand;
     private final List<LocationData> locations;
+    private UUID favorite;
     private LocationData selectedLocation;
     private SelectionList<TextEntry> informationPanel;
     private SelectionList<TextEntry> locationPanel;
+    private Button favoriteButton;
+    private Button unfavoriteButton;
     private Button downloadButton;
     private Button deleteButton;
     private Button teleportButton;
 
-    public ConsolidatedScreen(InteractionHand hand, List<LocationData> locations) {
+    public ConsolidatedScreen(List<LocationData> locations, UUID favorite) {
         super(Component.nullToEmpty(""));
-        this.hand = hand;
         this.locations = locations;
+        this.favorite = favorite;
     }
 
     @Override
@@ -76,6 +74,17 @@ public class ConsolidatedScreen extends Screen {
                     new TextEntry(Component.translatable("gui." + Tempad.MODID + ".dimension", Component.translatable(selectedLocation.getLevelKey().location().toLanguageKey("dimension")))))
                 );
 
+                if (selectedLocation.getId().equals(favorite)) {
+                    favoriteButton.visible = false;
+                    unfavoriteButton.visible = true;
+                } else {
+                    favoriteButton.visible = true;
+                    unfavoriteButton.visible = false;
+                }
+                downloadButton.visible = true;
+                deleteButton.visible = true;
+                teleportButton.visible = true;
+
                 deleteButton.active = selectedLocation.isDeletable();
                 if (selectedLocation.isDeletable()) {
                     deleteButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".delete")));
@@ -84,7 +93,7 @@ public class ConsolidatedScreen extends Screen {
                 }
 
                 if (minecraft != null && minecraft.player != null) {
-                    ItemStack itemInHand = minecraft.player.getItemInHand(hand);
+                    ItemStack itemInHand = TeleportUtils.findTempad(minecraft.player);
                     boolean isTempadUsable = itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand);
                     teleportButton.active = selectedLocation.isTeleportable() && TeleportUtils.mayTeleport(selectedLocation.getLevelKey(), minecraft.player) && isTempadUsable;
                     if (selectedLocation.isTeleportable()) {
@@ -93,7 +102,7 @@ public class ConsolidatedScreen extends Screen {
                         teleportButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".teleport_disabled")));
                     }
 
-                    downloadButton.active = selectedLocation.isDownloadable() && ConfigCache.allowExporting && (ConfigCache.consumeCooldown || isTempadUsable);
+                    downloadButton.active = selectedLocation.isDownloadable() && ConfigCache.allowExporting && (!ConfigCache.consumeCooldown || isTempadUsable);
                     if (selectedLocation.isDownloadable()) {
                         downloadButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".download")));
                     } else {
@@ -108,7 +117,7 @@ public class ConsolidatedScreen extends Screen {
                 new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_locations.second_line"))
             ));
         } else {
-            locationPanel.updateEntries(locations.stream().map(TextEntry::new).toList());
+            locationPanel.updateEntries(locations.stream().map(locationData -> new TextEntry(locationData, locData -> locData.getId().equals(favorite))).toList());
             informationPanel.updateEntries(List.of(
                 new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.first_line")),
                 new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.second_line"))
@@ -119,36 +128,68 @@ public class ConsolidatedScreen extends Screen {
         editBox.setBordered(false);
         editBox.setHint(Component.translatable("gui." + Tempad.MODID + ".search_field"));
         editBox.setTextColor(TempadClientConfig.color);
-        if (!locations.isEmpty()) editBox.setResponder((string) -> locationPanel.updateEntries(locations.stream().filter(locationData -> locationData.getName().toLowerCase().contains(string.toLowerCase())).map(TextEntry::new).toList()));
+        if (!locations.isEmpty()) editBox.setResponder((string) -> locationPanel.updateEntries(locations.stream().filter(locationData -> locationData.getName().toLowerCase().contains(string.toLowerCase())).map(locationData -> new TextEntry(locationData, locData -> locData.getId().equals(favorite))).toList()));
         addRenderableWidget(editBox);
 
-        downloadButton = addRenderableWidget(new TempadButton(cornerX + 62, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".download"), (button) -> exportAction(), 0));
-        downloadButton.active = false;
-        deleteButton = addRenderableWidget(new TempadButton(cornerX + 78, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".delete"), (button) -> deleteAction(), 1));
-        deleteButton.active = false;
-        teleportButton = addRenderableWidget(new TempadButton(cornerX + 94, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".teleport"), (button) -> teleportAction(), 2));
-        teleportButton.active = false;
-        addRenderableWidget(new TempadButton(cornerX + 208, cornerY + 14, 12, 12, Component.translatable("gui." + Tempad.MODID + ".add_location"), (button) -> openNewLocationModal(), 3)).setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".add_location")));
+        favoriteButton = addRenderableWidget(new TempadButton(cornerX + 46, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".favorite"), (button) -> favoriteAction(), 0));
+        favoriteButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".favorite")));
+        favoriteButton.visible = false;
+        unfavoriteButton = addRenderableWidget(new TempadButton(cornerX + 46, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".unfavorite"), (button) -> favoriteAction(), 1));
+        unfavoriteButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".unfavorite")));
+        unfavoriteButton.visible = false;
+        downloadButton = addRenderableWidget(new TempadButton(cornerX + 62, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".download"), (button) -> exportAction(), 2));
+        downloadButton.visible = false;
+        deleteButton = addRenderableWidget(new TempadButton(cornerX + 78, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".delete"), (button) -> deleteAction(), 3));
+        deleteButton.visible = false;
+        teleportButton = addRenderableWidget(new TempadButton(cornerX + 94, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".teleport"), (button) -> teleportAction(), 4));
+        teleportButton.visible = false;
+        addRenderableWidget(new TempadButton(cornerX + 208, cornerY + 14, 12, 12, Component.translatable("gui." + Tempad.MODID + ".add_location"), (button) -> openNewLocationModal(), 5)).setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".add_location")));
+    }
+
+    private void favoriteAction() {
+        if (minecraft != null && minecraft.player != null) {
+            if (selectedLocation.getId().equals(favorite)) {
+                favorite = null;
+                favoriteButton.visible = true;
+                unfavoriteButton.visible = false;
+            } else {
+                favorite = selectedLocation.getId();
+                favoriteButton.visible = false;
+                unfavoriteButton.visible = true;
+            }
+            NetworkHandler.CHANNEL.sendToServer(new FavoriteLocationPacket(favorite));
+        }
     }
 
     private void teleportAction() {
         if (minecraft != null && minecraft.player != null) {
-            NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.getId(), hand, TempadClientConfig.color));
+            NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.getId(), TempadClientConfig.color));
             Minecraft.getInstance().setScreen(null);
         }
     }
 
     private void deleteAction() {
         if (minecraft != null && minecraft.player != null) {
-            Minecraft.getInstance().setScreen(null);
             NetworkHandler.CHANNEL.sendToServer(new DeleteLocationPacket(selectedLocation.getId()));
+            locations.removeIf(locationData -> locationData.getId().equals(selectedLocation.getId()));
+            selectedLocation = null;
+            locationPanel.updateEntries(locations.stream().map(locationData -> new TextEntry(locationData, locData -> locData.getId().equals(favorite))).toList());
+            informationPanel.updateEntries(List.of(
+                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.first_line")),
+                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.second_line"))
+            ));
+            favoriteButton.visible = false;
+            unfavoriteButton.visible = false;
+            downloadButton.visible = false;
+            deleteButton.visible = false;
+            teleportButton.visible = false;
         }
     }
 
     private void exportAction() {
         if (minecraft != null && minecraft.player != null && ConfigCache.allowExporting) {
             Minecraft.getInstance().setScreen(null);
-            NetworkHandler.CHANNEL.sendToServer(new ExportLocationPacket(selectedLocation.getId(), hand));
+            NetworkHandler.CHANNEL.sendToServer(new ExportLocationPacket(selectedLocation.getId()));
         }
     }
 
@@ -161,7 +202,7 @@ public class ConsolidatedScreen extends Screen {
     private void newLocationAction(String name) {
         if (minecraft != null && minecraft.player != null) {
             Minecraft.getInstance().setScreen(null);
-            NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(name, hand));
+            NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(name));
         }
     }
 

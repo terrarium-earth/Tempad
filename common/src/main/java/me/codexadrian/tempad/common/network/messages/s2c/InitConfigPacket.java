@@ -1,15 +1,12 @@
-package me.codexadrian.tempad.common.network.messages;
+package me.codexadrian.tempad.common.network.messages.s2c;
 
 import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.UUID;
 
 public record InitConfigPacket(
     boolean allowInterdimensionalTravel,

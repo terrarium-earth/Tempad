@@ -10,7 +10,7 @@ import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.entity.TimedoorEntity;
 import me.codexadrian.tempad.common.network.NetworkHandler;
-import me.codexadrian.tempad.common.network.messages.OpenTempadScreenPacket;
+import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -47,8 +47,16 @@ public class TempadItem extends Item implements TempadPower {
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
         if (!level.isClientSide) {
-            OpenTempadScreenPacket packet = new OpenTempadScreenPacket(new ArrayList<>(TempadLocationHandler.getLocations(level, player.getUUID()).values()), interactionHand);
-            NetworkHandler.CHANNEL.sendToPlayer(packet, player);
+            if (!player.isShiftKeyDown()) {
+                OpenTempadScreenPacket packet = new OpenTempadScreenPacket(new ArrayList<>(TempadLocationHandler.getLocations(level, player.getUUID()).values()), TempadLocationHandler.getFavorite(level, player.getUUID()));
+                NetworkHandler.CHANNEL.sendToPlayer(packet, player);
+            } else {
+                if (getOption().canTimedoorOpen(player, stack) && TempadLocationHandler.getFavorite(level, player.getUUID()) != null) {
+                    if (!player.getAbilities().instabuild) getOption().onTimedoorOpen(player);
+                    LocationData locationData = TempadLocationHandler.getLocation(level, player.getUUID(), TempadLocationHandler.getFavorite(level, player.getUUID()));
+                    TempadItem.summonTimeDoor(locationData, player, Tempad.ORANGE);
+                }
+            }
         }
         return InteractionResultHolder.success(stack);
     }

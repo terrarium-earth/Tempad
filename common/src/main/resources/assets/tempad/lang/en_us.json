@@ -9,6 +9,8 @@
   "gui.tempad.teleport_disabled": "You may not teleport to this location",
   "gui.tempad.delete": "Delete location",
   "gui.tempad.delete_disabled": "You may not delete this location",
+  "gui.tempad.favorite": "Favorite location",
+  "gui.tempad.unfavorite": "Unfavorite location",
   "gui.tempad.timedoor": "Timedoor",
   "gui.tempad.dimension": "Dim: %s",
   "gui.tempad.no_locations.first_line": "Press [+] to",
@@ -42,7 +44,7 @@
   "dimension.minecraft.the_nether": "The Nether",
   "dimension.minecraft.the_end": "The End",
   "tempad_option.tempad.energy": "Energy: %s/%s §b⚡§r",
-  "tempad_option.tempad.energy_cost": "Energy Cost: %s §b⚡§r",
+  "tempad_option.tempad.energy_cost": "Costs %s §b⚡§r",
   "item.tempad.empty_tank": "Empty",
   "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r",
 

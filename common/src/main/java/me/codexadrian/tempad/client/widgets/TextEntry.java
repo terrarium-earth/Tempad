@@ -11,15 +11,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Function;
+
 public class TextEntry extends ListEntry {
     public final LocationData data;
+    private Function<LocationData, Boolean> isFavorite = (data) -> false;
     private final Component component;
     private boolean isFocused = false;
     private final boolean isSelectable;
 
-    public TextEntry(LocationData data) {
+    public TextEntry(LocationData data, Function<LocationData, Boolean> isFavorite) {
         this.data = data;
         this.component = Component.translatable(data.getName());
+        this.isFavorite = isFavorite;
         isSelectable = true;
     }
 
@@ -32,7 +36,8 @@ public class TextEntry extends ListEntry {
     @Override
     protected void render(@NotNull GuiGraphics graphics, @NotNull ScissorBoxStack stack, int id, int left, int top, int width, int height, int mouseX, int mouseY, boolean hovered, float partialTick, boolean selected) {
         boolean isMouseOver = mouseX > left && mouseX < left + width && mouseY > top && mouseY < top + height;
-        graphics.drawString(Minecraft.getInstance().font, selected && isSelectable ? Component.literal("➡ ").append(component) : component, left + 2, top + 2, (isMouseOver || (selected || !isSelectable)) ? TempadClientConfig.color : ClientUtils.darkenColor(TempadClientConfig.color));
+        Component renderedComponent = isFavorite.apply(data) ? Component.literal("❤ ").append(component) : component;
+        graphics.drawString(Minecraft.getInstance().font, selected && isSelectable ? Component.literal("➡ ").append(renderedComponent) : renderedComponent, left + 2, top + 2, (isMouseOver || (selected || !isSelectable)) ? TempadClientConfig.color : ClientUtils.darkenColor(TempadClientConfig.color));
     }
 
     @Override

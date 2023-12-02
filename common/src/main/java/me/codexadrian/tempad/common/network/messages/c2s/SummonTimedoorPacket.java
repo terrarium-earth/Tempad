@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.network.messages;
+package me.codexadrian.tempad.common.network.messages.c2s;
 
 import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
@@ -7,15 +7,14 @@ import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.items.TempadItem;
+import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
 
-public record SummonTimedoorPacket(UUID location, InteractionHand hand,
-                                   int color) implements Packet<SummonTimedoorPacket> {
+public record SummonTimedoorPacket(UUID location, int color) implements Packet<SummonTimedoorPacket> {
     public static Handler HANDLER = new Handler();
     public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "timedoor");
 
@@ -34,21 +33,20 @@ public record SummonTimedoorPacket(UUID location, InteractionHand hand,
         @Override
         public void encode(SummonTimedoorPacket message, FriendlyByteBuf buffer) {
             buffer.writeUUID(message.location);
-            buffer.writeEnum(message.hand);
             buffer.writeVarInt(message.color);
         }
 
         @Override
         public SummonTimedoorPacket decode(FriendlyByteBuf buffer) {
-            return new SummonTimedoorPacket(buffer.readUUID(), buffer.readEnum(InteractionHand.class), buffer.readVarInt());
+            return new SummonTimedoorPacket(buffer.readUUID(), buffer.readVarInt());
         }
 
         @Override
         public PacketContext handle(SummonTimedoorPacket message) {
             return (player, level) -> {
-                ItemStack itemInHand = player.getItemInHand(message.hand());
+                ItemStack itemInHand = TeleportUtils.findTempad(player);
                 if ((itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand))) {
-                    if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player, message.hand(), itemInHand);
+                    if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player);
                     LocationData locationData = TempadLocationHandler.getLocation(level, player.getUUID(), message.location);
                     TempadItem.summonTimeDoor(locationData, player, message.color);
                 }

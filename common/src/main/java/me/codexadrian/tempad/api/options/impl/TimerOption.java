@@ -3,6 +3,7 @@ package me.codexadrian.tempad.api.options.impl;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -27,8 +28,8 @@ public class TimerOption extends TempadOption {
     }
 
     @Override
-    public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
-        stack.getOrCreateTag().putLong(Tempad.TIMER_NBT, Instant.now().plusSeconds(TempadOptionApi.getFuelCost(stack)).getEpochSecond());
+    public void onTimedoorOpen(Player player) {
+        TeleportUtils.findTempad(player).getOrCreateTag().putLong(Tempad.TIMER_NBT, Instant.now().plusSeconds(TempadOptionApi.getFuelCost(TeleportUtils.findTempad(player))).getEpochSecond());
     }
 
     @Override

@@ -2,6 +2,7 @@ package me.codexadrian.tempad.api.options.impl;
 
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
+import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -18,8 +19,8 @@ public class ExperiencePointsOption extends TempadOption {
     }
 
     @Override
-    public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
-        player.giveExperiencePoints(-TempadOptionApi.getFuelCost(stack));
+    public void onTimedoorOpen(Player player) {
+        player.giveExperiencePoints(-TempadOptionApi.getFuelCost(TeleportUtils.findTempad(player)));
     }
 
     @Override

@@ -11,6 +11,7 @@ import earth.terrarium.botarium.common.item.ItemStackHolder;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -40,14 +41,17 @@ public class FluidOption extends TempadOption {
     }
 
     @Override
-    public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
+    public void onTimedoorOpen(Player player) {
+        ItemStack stack = TeleportUtils.findTempad(player);
         ItemStackHolder holder = new ItemStackHolder(stack);
         ItemFluidContainer fluidStorage = FluidApi.getItemFluidContainer(holder);
         if (fluidStorage == null) return;
         FluidHolder fluid = fluidStorage.getFluids().get(0);
         fluid.setAmount(TempadOptionApi.getFuelCost(stack));
         fluidStorage.extractFluid(fluid, false);
-        if (holder.isDirty()) player.setItemInHand(hand, holder.getStack());
+        if (holder.isDirty()) {
+            TeleportUtils.findAndReplaceTempad(player, holder.getStack());
+        }
     }
 
     @Override

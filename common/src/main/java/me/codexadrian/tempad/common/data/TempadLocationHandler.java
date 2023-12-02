@@ -14,6 +14,7 @@ public class TempadLocationHandler extends SaveHandler {
     private static final TempadLocationHandler CLIENT_ONLY = new TempadLocationHandler();
 
     private final Map<UUID, Map<UUID, LocationData>> locations = new HashMap<>();
+    private final Map<UUID, UUID> favorites = new HashMap<>();
 
     public void addLocation(UUID player, LocationData location) {
         if (!locations.containsKey(player)) {
@@ -31,7 +32,30 @@ public class TempadLocationHandler extends SaveHandler {
         TempadLocationHandler handler = read(level);
         if (handler.locations.containsKey(player)) {
             handler.locations.get(player).remove(location);
+
+            if (handler.favorites.containsKey(player) && handler.favorites.get(player).equals(location)) {
+                handler.favorites.remove(player);
+            }
         }
+    }
+
+    public static void favoriteLocation(Level level, UUID player, UUID location) {
+        TempadLocationHandler handler = read(level);
+        if (handler.locations.containsKey(player)) {
+            handler.favorites.put(player, location);
+        }
+    }
+
+    public static void unfavoriteLocation(Level level, UUID player) {
+        TempadLocationHandler handler = read(level);
+        if (handler.locations.containsKey(player)) {
+            handler.favorites.remove(player);
+        }
+    }
+
+    public static UUID getFavorite(Level level, UUID player) {
+        TempadLocationHandler handler = read(level);
+        return handler.favorites.get(player);
     }
 
     public static Map<UUID, LocationData> getLocations(Level level, UUID player) {

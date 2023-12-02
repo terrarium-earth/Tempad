@@ -18,7 +18,7 @@ public class ItemOption extends TempadOption {
     }
 
     @Override
-    public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
+    public void onTimedoorOpen(Player player) {
         findItemStack(player).shrink(1);
     }
 

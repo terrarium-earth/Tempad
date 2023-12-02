@@ -15,7 +15,7 @@ public abstract class TempadOption {
 
     public abstract boolean canTimedoorOpen(Player player, ItemStack stack);
 
-    public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
+    public void onTimedoorOpen(Player player) {
     }
 
     public abstract void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag);

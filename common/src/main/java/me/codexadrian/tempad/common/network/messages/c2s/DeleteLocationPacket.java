@@ -1,10 +1,11 @@
-package me.codexadrian.tempad.common.network.messages;
+package me.codexadrian.tempad.common.network.messages.c2s;
 
 import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.TempadLocationHandler;
+import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -38,7 +39,10 @@ public record DeleteLocationPacket(UUID location) implements Packet<DeleteLocati
 
         @Override
         public PacketContext handle(DeleteLocationPacket message) {
-            return (player, level) -> TempadLocationHandler.removeLocation(level, player.getUUID(), message.location);
+            return (player, level) -> {
+                if (!TeleportUtils.hasTempad(player)) return;
+                TempadLocationHandler.removeLocation(level, player.getUUID(), message.location);
+            };
         }
     }
 }

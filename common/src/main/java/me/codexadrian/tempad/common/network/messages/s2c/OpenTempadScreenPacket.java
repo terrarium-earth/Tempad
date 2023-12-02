@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.network.messages;
+package me.codexadrian.tempad.common.network.messages.s2c;
 
 import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
@@ -11,14 +11,14 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public record OpenTempadScreenPacket(List<LocationData> locationData,
-                                     InteractionHand hand) implements Packet<OpenTempadScreenPacket> {
+                                     UUID favorite) implements Packet<OpenTempadScreenPacket> {
     public static Handler HANDLER = new Handler();
     public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "open_screen");
 
@@ -45,7 +45,7 @@ public record OpenTempadScreenPacket(List<LocationData> locationData,
                 buf.writeBoolean(locationData.isDeletable());
                 buf.writeBoolean(locationData.isDownloadable());
             });
-            buffer.writeEnum(message.hand);
+            buffer.writeOptional(Optional.ofNullable(message.favorite), FriendlyByteBuf::writeUUID);
         }
 
         @Override
@@ -59,7 +59,7 @@ public record OpenTempadScreenPacket(List<LocationData> locationData,
                 boolean deletable = buf.readBoolean();
                 boolean downloadable = buf.readBoolean();
                 return new LocationData(name, levelResourceKey, pos, id, teleportable, deletable, downloadable);
-            }), buffer.readEnum(InteractionHand.class));
+            }), buffer.readOptional(FriendlyByteBuf::readUUID).orElse(null));
         }
 
         @Override

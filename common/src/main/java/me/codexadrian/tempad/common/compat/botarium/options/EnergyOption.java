@@ -5,6 +5,7 @@ import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.item.ItemStackHolder;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
+import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -33,12 +34,15 @@ public class EnergyOption extends TempadOption {
     }
 
     @Override
-    public void onTimedoorOpen(Player player, InteractionHand hand, ItemStack stack) {
-        ItemStackHolder holder = new ItemStackHolder(stack);
+    public void onTimedoorOpen(Player player) {
+        ItemStack itemStack = TeleportUtils.findTempad(player);
+        ItemStackHolder holder = new ItemStackHolder(itemStack);
         EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(holder);
         if (energyStorage == null) return;
-        energyStorage.internalExtract(TempadOptionApi.getFuelCost(stack), false);
-        if (holder.isDirty()) player.setItemInHand(hand, holder.getStack());
+        energyStorage.internalExtract(TempadOptionApi.getFuelCost(itemStack), false);
+        if (holder.isDirty()) {
+            TeleportUtils.findAndReplaceTempad(player, holder.getStack());
+        }
     }
 
     @Override
