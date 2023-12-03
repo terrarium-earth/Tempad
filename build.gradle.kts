@@ -206,6 +206,8 @@ resourcefulGradle {
                     "minecraft" to minecraftVersion,
                     "version" to version,
                     "changelog" to StringEscapeUtils.escapeJava(changelog),
+                    "fabric_link" to fabricLink,
+                    "forge_link" to forgeLink
             ))
         }
     }
