@@ -51,9 +51,9 @@ public class EnergyOption extends TempadOption {
     }
 
     @Override
-    public @Range(from = 0, to = 13) int durabilityBarWidth(ItemStack stack) {
+    public double getPercentage(ItemStack stack) {
         EnergyContainer energyStorage = EnergyApi.getItemEnergyContainer(new ItemStackHolder(stack));
         if (energyStorage == null) return 0;
-        return (int) (((double) energyStorage.getStoredEnergy() / energyStorage.getMaxCapacity()) * 13);
+        return (double) energyStorage.getStoredEnergy() / energyStorage.getMaxCapacity();
     }
 }

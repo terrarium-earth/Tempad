@@ -22,8 +22,13 @@ public abstract class TempadOption {
 
     public abstract boolean isDurabilityBarVisible(ItemStack stack);
 
-    @Range(from = 0, to = 13)
-    public abstract int durabilityBarWidth(ItemStack stack);
+    public int durabilityBarWidth(ItemStack stack) {
+        return (int) (getPercentage(stack) * 13);
+    }
+
+    public double getPercentage(ItemStack stack) {
+        return 1;
+    }
 
     public Item.Properties apply(Item.Properties properties, int fuelCost, int fuelCapacity) {
         return properties;

@@ -32,11 +32,6 @@ public class ItemOption extends TempadOption {
         return false;
     }
 
-    @Override
-    public int durabilityBarWidth(ItemStack stack) {
-        return 0;
-    }
-
     public ItemStack findItemStack(Player player) {
         for (ItemStack item : player.getInventory().items) {
             if (item.is(Tempad.TEMPAD_FUEL_TAG)) {

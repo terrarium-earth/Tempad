@@ -60,10 +60,10 @@ public class FluidOption extends TempadOption {
     }
 
     @Override
-    public @Range(from = 0, to = 13) int durabilityBarWidth(ItemStack stack) {
+    public double getPercentage(ItemStack stack) {
         ItemFluidContainer fluidStorage = FluidApi.getItemFluidContainer(new ItemStackHolder(stack));
         if (fluidStorage == null || fluidStorage.isEmpty()) return 0;
-        return (int) (((double) fluidStorage.getFluids().get(0).getFluidAmount() / fluidStorage.getTankCapacity(0)) * 13);
+        return (double) fluidStorage.getFluids().get(0).getFluidAmount() / fluidStorage.getTankCapacity(0);
     }
 
     @ExpectPlatform

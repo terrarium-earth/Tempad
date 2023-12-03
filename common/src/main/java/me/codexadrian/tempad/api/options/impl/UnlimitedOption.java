@@ -28,6 +28,11 @@ public class UnlimitedOption extends TempadOption {
 
     @Override
     public int durabilityBarWidth(ItemStack stack) {
-        return 0;
+        return 1;
+    }
+
+    @Override
+    public double getPercentage(ItemStack stack) {
+        return 1;
     }
 }

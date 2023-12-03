@@ -33,10 +33,5 @@ public class ExperienceLevelOption extends TempadOption {
     public boolean isDurabilityBarVisible(ItemStack stack) {
         return false;
     }
-
-    @Override
-    public int durabilityBarWidth(ItemStack stack) {
-        return 0;
-    }
 }
 

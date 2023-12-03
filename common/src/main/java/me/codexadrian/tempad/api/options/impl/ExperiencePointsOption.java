@@ -33,8 +33,4 @@ public class ExperiencePointsOption extends TempadOption {
         return false;
     }
 
-    @Override
-    public int durabilityBarWidth(ItemStack stack) {
-        return 0;
-    }
 }

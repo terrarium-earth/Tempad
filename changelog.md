@@ -1,3 +1,3 @@
-# 2.2.1
+# 2.2.2
 
-Fix issue with mod not loading on Forge
+Make energy bar on Tempad screen reflect the percentage bar on the Tempad itself.

@@ -50,8 +50,8 @@ public class TimerOption extends TempadOption {
     }
 
     @Override
-    public int durabilityBarWidth(ItemStack stack) {
-        return (int) ((TempadOptionApi.getFuelCost(stack) * 1000.0 - timeLeft(stack)) / (TempadOptionApi.getFuelCost(stack) * 1000.0) * 13);
+    public double getPercentage(ItemStack stack) {
+        return (TempadOptionApi.getFuelCost(stack) * 1000.0 - timeLeft(stack)) / (TempadOptionApi.getFuelCost(stack) * 1000.0);
     }
 
     public static long timeLeft(ItemStack stack) {

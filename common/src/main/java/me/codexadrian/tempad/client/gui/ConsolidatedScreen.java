@@ -2,6 +2,7 @@ package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
+import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.client.widgets.NewLocationModal;
 import me.codexadrian.tempad.client.widgets.TemporaryWidget;
@@ -25,11 +26,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ConsolidatedScreen extends Screen {
@@ -210,7 +213,27 @@ public class ConsolidatedScreen extends Screen {
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         renderBackground(graphics);
         graphics.blit(SCREEN, (width - TEMPAD_WIDTH) / 2, (height - TEMPAD_HEIGHT) / 2, TEMPAD_WIDTH, TEMPAD_HEIGHT, 0, 0, TEMPAD_WIDTH, TEMPAD_HEIGHT, 256, 256);
+
         super.render(graphics, mouseX, mouseY, partialTicks);
+
+        int barHeight = 0;
+        ItemStack tempad = TeleportUtils.findTempad(minecraft.player);
+        if (tempad.getItem() instanceof TempadItem item) {
+            TempadOption option = item.getOption();
+            if(option.isDurabilityBarVisible(tempad)) {
+                barHeight = (int) (option.getPercentage(tempad) * 54);
+            } else {
+                barHeight = option.canTimedoorOpen(minecraft.player, tempad) ? 54 : 0;
+            }
+
+            graphics.blit(SCREEN, (width - TEMPAD_WIDTH) / 2 + 234, (height - TEMPAD_HEIGHT) / 2 + 42 + 54 - barHeight, 6, barHeight, 249, 54 - barHeight, 6, barHeight, 256, 256);
+
+            if (mouseX >= (width - TEMPAD_WIDTH) / 2 + 234 && mouseX <= (width - TEMPAD_WIDTH) / 2 + 240 && mouseY >= (height - TEMPAD_HEIGHT) / 2 + 42 && mouseY <= (height - TEMPAD_HEIGHT) / 2 + 96) {
+                List<Component> tooltip = new ArrayList<>();
+                option.addToolTip(tempad, minecraft.level, tooltip, TooltipFlag.NORMAL);
+                graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
+            }
+        }
     }
 
     public <R extends Renderable & TemporaryWidget> R addTemporary(R renderable) {
