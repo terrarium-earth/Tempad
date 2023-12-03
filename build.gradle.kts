@@ -39,7 +39,7 @@ subprojects {
 
     repositories {
         maven(url = "https://maven.architectury.dev/")
-        maven(url = "https://maven.minecraftforge.net/")
+        maven(url = "https://maven.neoforged.net/releases")
         maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
         maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
         maven {
@@ -108,6 +108,9 @@ subprojects {
         "modApi"(group = "net.blay09.mods", name = "waystones-$modLoader", version = waystonesVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")
         }
+
+        implementation("io.github.llamalad7:mixinextras-common:0.3.1")
+        implementation("io.github.llamalad7:mixinextras-forge:0.3.1")
     }
 
     java {

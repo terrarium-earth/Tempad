@@ -59,6 +59,7 @@ jobs:
 
           dependencies: |
             resourceful-lib | depends | *
+            resourceful-config | depends | *
 
       - name: Upload Fabric Releases (Curse/Modrinth/Github)
         id: fabric_release
@@ -83,6 +84,7 @@ jobs:
           dependencies: |
             fabric-api | depends | *
             resourceful-lib | depends | *
+            resourceful-config | depends | *
 
       - name: Generate Discord Embed
         run: ./gradlew injectEmbed
