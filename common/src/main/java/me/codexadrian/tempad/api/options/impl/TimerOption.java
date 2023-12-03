@@ -4,6 +4,7 @@ import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -36,10 +37,11 @@ public class TimerOption extends TempadOption {
     public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
         long cooldown = timeLeft(stack);
         if (cooldown > 0) {
-            components.add(Component.translatable("tooltip.tempad.timeleft").append(DurationFormatUtils.formatDuration(cooldown, "mm:ss", true)));
+            components.add(Component.translatable("tooltip.tempad.timeleft", Component.literal(DurationFormatUtils.formatDuration(cooldown, "mm:ss", true)).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY));
         } else {
-            components.add(Component.translatable("tooltip.tempad.fullycharged", DurationFormatUtils.formatDuration(TempadOptionApi.getFuelCost(stack) * 1000L, "mm:ss", true)));
+            components.add(Component.translatable("tooltip.tempad.fullycharged").withStyle(ChatFormatting.AQUA));
         }
+        components.add(Component.translatable("tooltip.tempad.timer_cost", Component.literal(DurationFormatUtils.formatDuration(TempadOptionApi.getFuelCost(stack) * 1000L, "mm:ss", true)).withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -49,8 +51,7 @@ public class TimerOption extends TempadOption {
 
     @Override
     public int durabilityBarWidth(ItemStack stack) {
-        double maxTime = TempadOptionApi.getFuelCapacity(stack) * 1000.0;
-        return (int) (((float) (maxTime - timeLeft(stack)) / maxTime) * 13F);
+        return (int) ((TempadOptionApi.getFuelCost(stack) * 1000.0 - timeLeft(stack)) / (TempadOptionApi.getFuelCost(stack) * 1000.0) * 13);
     }
 
     public static long timeLeft(ItemStack stack) {
