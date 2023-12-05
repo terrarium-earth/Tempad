@@ -1,3 +1,5 @@
-# 2.2.2
+# 2.2.3
 
-Make energy bar on Tempad screen reflect the percentage bar on the Tempad itself.
+Fix bug that keybind is hardcoded on Forge
+Fix bug that Tempad screen opens via keybind without having one in inventory
+Fix bug that Favorited Location opens via keybind or shift right click when a location is not favorited
