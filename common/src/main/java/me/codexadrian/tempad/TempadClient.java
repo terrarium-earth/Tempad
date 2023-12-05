@@ -38,6 +38,9 @@ public class TempadClient {
     }
 
     public static TempadClientConfig getClientConfig() {
+        if (clientConfig == null) {
+            init();
+        }
         return clientConfig;
     }
 
