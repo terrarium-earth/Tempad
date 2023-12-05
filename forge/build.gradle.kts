@@ -25,6 +25,10 @@ dependencies {
 
     val minecraftVersion: String by project
     val forgeVersion: String by project
+    val curiosVersion: String by project
 
     forge(group = "net.neoforged", name = "forge", version = "$minecraftVersion-$forgeVersion")
+
+    compileOnly("top.theillusivec4.curios:curios-forge:${curiosVersion}")
+    compileOnly("top.theillusivec4.curios:curios-forge:${curiosVersion}:api")
 }

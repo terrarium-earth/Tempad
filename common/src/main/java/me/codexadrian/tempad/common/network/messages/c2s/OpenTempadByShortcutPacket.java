@@ -45,6 +45,7 @@ public record OpenTempadByShortcutPacket() implements Packet<OpenTempadByShortcu
         @Override
         public PacketContext handle(OpenTempadByShortcutPacket message) {
             return (player, level) -> {
+                if (!TeleportUtils.hasTempad(player)) return;
                 OpenTempadScreenPacket packet = new OpenTempadScreenPacket(new ArrayList<>(TempadLocationHandler.getLocations(level, player.getUUID()).values()), TempadLocationHandler.getFavorite(level, player.getUUID()));
                 NetworkHandler.CHANNEL.sendToPlayer(packet, player);
             };

@@ -42,6 +42,8 @@ subprojects {
         maven(url = "https://maven.neoforged.net/releases")
         maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
         maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
+        maven(url = "https://maven.terraformersmc.com/")
+        maven(url = "https://maven.ladysnake.org/releases")
         maven {
             url = URI("https://jitpack.io")
             content {

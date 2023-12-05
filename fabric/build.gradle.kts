@@ -20,6 +20,7 @@ dependencies {
     val fabricLoaderVersion: String by project
     val fabricApiVersion: String by project
     val modMenuVersion: String by project
+    val trinketsVersion: String by project
 
     modImplementation(group = "net.fabricmc", name = "fabric-loader", version = fabricLoaderVersion)
     modApi(group = "net.fabricmc.fabric-api", name = "fabric-api", version = "$fabricApiVersion+$minecraftVersion")
@@ -28,4 +29,6 @@ dependencies {
     modImplementation(group = "maven.modrinth", name = "fwaystones", version = "3.1.2+mc1.20")
     modImplementation(group = "maven.modrinth", name = "owo-lib", version = "0.11.1+1.20")
     modImplementation(group = "maven.modrinth", name = "energized-power", version = "ViCNmOFw")
+
+    modImplementation("dev.emi:trinkets:${trinketsVersion}")
 }
