@@ -1,6 +1,7 @@
 package me.codexadrian.tempad.common.compat.fabricwaystones;
 
 import me.codexadrian.tempad.api.locations.LocationsApi;
+import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -9,11 +10,13 @@ import net.minecraft.world.entity.player.Player;
 import wraith.fwaystones.FabricWaystones;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class FabricWaystoneLocationGetter {
     public static void init() {
         LocationsApi.registerLocationGetter("tempad:fabric_waystones", (level, playerId) -> {
+            if (!TempadConfig.fabricWaystonesCompat) return Map.of();
             var locations = new HashMap<UUID, LocationData>();
             Player player = level.getPlayerByUUID(playerId);
             if (player != null) {

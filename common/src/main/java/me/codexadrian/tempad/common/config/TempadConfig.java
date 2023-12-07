@@ -51,6 +51,16 @@ public final class TempadConfig {
     @Comment("Whether or not the Tempad should consume a cooldown when exporting a location.")
     public static boolean consumeCooldown = true;
 
+    //enable waystones compat
+    @ConfigEntry(id = "waystonesCompat", type = EntryType.BOOLEAN, translation = "config.tempad.waystones_compat")
+    @Comment("Whether or not the Tempad should allow teleporting to waystones.")
+    public static boolean waystonesCompat = true;
+
+    //enable fabric waystones compat
+    @ConfigEntry(id = "fabricWaystonesCompat", type = EntryType.BOOLEAN, translation = "config.tempad.fabric_waystones_compat")
+    @Comment("Whether or not the Tempad should allow teleporting to waystones from the Fabric version of Waystones by LordDeatHunter (fwaystones) (ignore on forge).")
+    public static boolean fabricWaystonesCompat = true;
+
     @ConfigEntry(id = "timedoorFuelAmount", type = EntryType.INTEGER, translation = "config.tempad.timedoor_fuel_amount")
     @Comment("The amount of fuel that the timedoor will consume on opening of the timedoor.")
     public static int tempadFuelConsumptionValue = 180;

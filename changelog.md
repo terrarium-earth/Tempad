@@ -1,3 +1,4 @@
 # 2.2.4
 
 Fixed favorited locations not being saved
+Add config to disabled waystones & fwaystones compat

@@ -28,8 +28,7 @@ public class LocationsApi {
     public static void gatherLocations(Level level, UUID player, Map<UUID, LocationData> locations) {
         for (var getter : LOCATION_GETTERS.entrySet()) {
             try {
-                Map<UUID, LocationData> apply = getter.getValue().apply(level, player);
-                locations.putAll(apply);
+                locations.putAll(getter.getValue().apply(level, player));
             } catch (Exception e) {
                 Tempad.LOG.error("Error gathering locations from " + getter.getKey(), e);
             }
