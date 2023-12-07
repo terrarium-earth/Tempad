@@ -79,6 +79,23 @@ public class TempadLocationHandler extends SaveHandler {
 
     @Override
     public void loadData(CompoundTag tag) {
+        if (tag.contains("Favorites")) {
+            CompoundTag favorites = tag.getCompound("Favorites");
+            CompoundTag savedLocations = tag.getCompound("SavedLocations");
+
+            loadLocations(savedLocations);
+
+            for (String playerId : favorites.getAllKeys()) {
+                UUID player = UUID.fromString(playerId);
+                UUID favorite = favorites.getUUID(playerId);
+                this.favorites.put(player, favorite);
+            }
+        } else {
+            loadLocations(tag);
+        }
+    }
+
+    public void loadLocations(CompoundTag tag) {
         for (String playerId : tag.getAllKeys()) {
             UUID player = UUID.fromString(playerId);
             for (Tag list : tag.getList(playerId, Tag.TAG_COMPOUND)) {
@@ -91,11 +108,19 @@ public class TempadLocationHandler extends SaveHandler {
 
     @Override
     public void saveData(CompoundTag tag) {
+        CompoundTag favorites = new CompoundTag();
+        CompoundTag savedLocations = new CompoundTag();
+
         locations.forEach((player, locationMap) -> {
             ListTag playerTag = new ListTag();
             locationMap.forEach((uuid, location) -> playerTag.add(location.toTag()));
-            tag.put(player.toString(), playerTag);
+            savedLocations.put(player.toString(), playerTag);
         });
+
+        this.favorites.forEach((player, location) -> favorites.putUUID(player.toString(), location));
+
+        tag.put("Favorites", favorites);
+        tag.put("SavedLocations", savedLocations);
     }
 
     @Override
