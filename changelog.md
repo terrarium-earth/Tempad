@@ -1,4 +1,5 @@
-# 2.2.4
+# 2.3.0
 
-Fixed favorited locations not being saved
-Add config to disabled waystones & fwaystones compat
+Fixed issue with Timer mode on Tempad
+Added Curios support on Forge
+Added Trinket support on Fabric

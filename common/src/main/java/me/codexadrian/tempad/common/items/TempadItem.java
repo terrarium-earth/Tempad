@@ -1,5 +1,6 @@
 package me.codexadrian.tempad.common.items;
 
+import dev.architectury.injectables.annotations.PlatformOnly;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.api.options.TempadOptionApi;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
@@ -17,6 +18,7 @@ import me.codexadrian.tempad.common.utils.ClientUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -97,5 +99,21 @@ public class TempadItem extends Item implements TempadPower {
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
         return this.getOption().durabilityBarWidth(stack);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        this.getOption().tick(stack, entity);
+    }
+
+    @PlatformOnly(PlatformOnly.FABRIC)
+    public boolean allowNbtUpdateAnimation(Player player, InteractionHand hand, ItemStack oldStack, ItemStack newStack) {
+        return false;
+    }
+
+    @PlatformOnly(PlatformOnly.FORGE)
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
     }
 }

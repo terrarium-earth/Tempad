@@ -25,26 +25,26 @@ public class BotariumTempadOptionRegistry {
     public static void postInit() {
         EnergyApi.registerEnergyItem(TempadRegistry.TEMPAD, stack -> {
             if (stack.getItem() instanceof TempadItem item && item.getOption() instanceof EnergyOption) {
-                return new WrappedItemEnergyContainer(stack, new SimpleEnergyContainer(TempadOptionApi.getFuelCapacity(stack)));
+                return new WrappedItemEnergyContainer(stack, new TempadEnergyContainer(TempadOptionApi.getFuelCapacity(stack)));
             }
             return null;
         });
         FluidApi.registerFluidItem(TempadRegistry.TEMPAD, stack -> {
             if (stack.getItem() instanceof TempadItem item && item.getOption() instanceof FluidOption) {
-                return new WrappedItemFluidContainer(stack, new SimpleFluidContainer(TempadOptionApi.getFuelCapacity(stack), 1, (integer, fluidHolder) -> fluidHolder.is(Tempad.TEMPAD_LIQUID_FUEL_TAG)));
+                return new WrappedItemFluidContainer(stack, new TempadFluidContainer(TempadOptionApi.getFuelCapacity(stack)));
             }
             return null;
         });
 
         EnergyApi.registerEnergyItem(TempadRegistry.CREATIVE_TEMPAD, stack -> {
             if (stack.getItem() instanceof TempadItem item && item.getOption() instanceof EnergyOption) {
-                return new WrappedItemEnergyContainer(stack, new SimpleEnergyContainer(TempadOptionApi.getFuelCapacity(stack)));
+                return new WrappedItemEnergyContainer(stack, new TempadEnergyContainer(TempadOptionApi.getFuelCapacity(stack)));
             }
             return null;
         });
         FluidApi.registerFluidItem(TempadRegistry.CREATIVE_TEMPAD, stack -> {
             if (stack.getItem() instanceof TempadItem item && item.getOption() instanceof FluidOption) {
-                return new WrappedItemFluidContainer(stack, new SimpleFluidContainer(TempadOptionApi.getFuelCapacity(stack), 1, (integer, fluidHolder) -> fluidHolder.is(Tempad.TEMPAD_LIQUID_FUEL_TAG)));
+                return new WrappedItemFluidContainer(stack, new TempadFluidContainer(TempadOptionApi.getFuelCapacity(stack)));
             }
             return null;
         });

@@ -41,9 +41,9 @@ public record OpenFavoritedLocationPacket(int color) implements Packet<OpenFavor
         @Override
         public PacketContext handle(OpenFavoritedLocationPacket message) {
             return (player, level) -> {
-                ItemStack itemInHand = TeleportUtils.findTempad(player);
+                ItemStack tempadStack = TeleportUtils.findTempad(player);
                 LocationData locationData = TempadLocationHandler.getLocation(level, player.getUUID(), TempadLocationHandler.getFavorite(level, player.getUUID()));
-                if (locationData != null && itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand)) {
+                if (locationData != null && tempadStack.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, tempadStack)) {
                     if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player);
                     TempadItem.summonTimeDoor(locationData, player, message.color);
                 }

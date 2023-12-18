@@ -3,6 +3,7 @@ package me.codexadrian.tempad.common.fabric;
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.compat.fabricwaystones.FabricWaystoneLocationGetter;
+import me.codexadrian.tempad.common.compat.trinkets.TempadTrinketHandler;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.s2c.InitConfigPacket;
@@ -51,6 +52,10 @@ public class FabricTempad implements ModInitializer {
 
         if (PlatformUtils.isModLoaded("fwaystones")) {
             FabricWaystoneLocationGetter.init();
+        }
+
+        if (PlatformUtils.isModLoaded("trinkets")) {
+            TempadTrinketHandler.init();
         }
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(group -> {

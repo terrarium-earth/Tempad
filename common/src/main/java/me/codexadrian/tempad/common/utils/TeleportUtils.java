@@ -1,6 +1,6 @@
 package me.codexadrian.tempad.common.utils;
 
-import me.codexadrian.tempad.common.Tempad;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.items.TempadItem;
@@ -8,7 +8,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class TeleportUtils {
 
@@ -18,24 +22,34 @@ public class TeleportUtils {
     }
 
     public static ItemStack findAndReplaceTempad(Player player, @Nullable ItemStack replacementTempad) {
-        ItemStack tempad = ItemStack.EMPTY;
-        int tempadIndex = 0;
+        AtomicReference<ItemStack> tempad = new AtomicReference<>(ItemStack.EMPTY);
+        Consumer<ItemStack> setTempad = findTempadInBaubles(player, tempad::set);
+
+        if (setTempad != null) {
+            if (replacementTempad != null) {
+                setTempad.accept(replacementTempad);
+            }
+            return tempad.get();
+        }
+
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);
             if (stack.getItem() instanceof TempadItem tempadItem) {
-                tempad = stack;
-                tempadIndex = i;
+                tempad.set(stack);
+                int finalI = i;
+                setTempad = (itemStack) -> player.getInventory().setItem(finalI, itemStack);
 
-                if (tempadItem.getOption().canTimedoorOpen(player, tempad)) {
+                if (tempadItem.getOption().canTimedoorOpen(player, tempad.get())) {
                     break;
                 }
             }
         }
 
-        if (replacementTempad != null && !tempad.isEmpty()) {
-            player.getInventory().setItem(tempadIndex, replacementTempad);
+        if (replacementTempad != null && setTempad != null) {
+            setTempad.accept(replacementTempad);
         }
-        return tempad;
+
+        return tempad.get();
     }
 
     public static ItemStack findTempad(Player player) {
@@ -44,5 +58,11 @@ public class TeleportUtils {
 
     public static boolean hasTempad(Player player) {
         return !findTempad(player).isEmpty();
+    }
+
+    @ExpectPlatform
+    @Nullable
+    public static Consumer<ItemStack> findTempadInBaubles(Player player, Consumer<ItemStack> setTempad) {
+        throw new NotImplementedException("Baubles is not implemented yet!");
     }
 }

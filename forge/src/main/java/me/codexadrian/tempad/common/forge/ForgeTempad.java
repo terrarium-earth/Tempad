@@ -3,10 +3,12 @@ package me.codexadrian.tempad.common.forge;
 import com.mojang.serialization.Codec;
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.compat.curios.TempadCurioHandler;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.s2c.InitConfigPacket;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
+import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -19,6 +21,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -45,6 +48,7 @@ public class ForgeTempad {
         NetworkHandler.register();
         MinecraftForge.EVENT_BUS.register(this);
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ForgeTempadClient::registerBlurReloader);
+        bus.addListener(this::setup);
 
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTab() == BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.TOOLS_AND_UTILITIES)) TempadRegistry.ITEMS.stream().map(RegistryEntry::get).forEach(event::accept);
@@ -61,5 +65,11 @@ public class ForgeTempad {
                 TempadConfig.advancedTempadfuelConsumptionValue,
                 TempadConfig.advancedTempadfuelCapacityValue), event.getEntity());
         });
+    }
+
+    private void setup(final FMLCommonSetupEvent evt) {
+        if (PlatformUtils.isModLoaded("curios")) {
+            TempadCurioHandler.init();
+        }
     }
 }

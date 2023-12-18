@@ -29,6 +29,6 @@ dependencies {
 
     forge(group = "net.neoforged", name = "forge", version = "$minecraftVersion-$forgeVersion")
 
-    compileOnly("top.theillusivec4.curios:curios-forge:${curiosVersion}")
-    compileOnly("top.theillusivec4.curios:curios-forge:${curiosVersion}:api")
+    "modRuntimeOnly"("top.theillusivec4.curios:curios-forge:${curiosVersion}")
+    "modCompileOnly"("top.theillusivec4.curios:curios-forge:${curiosVersion}:api")
 }
