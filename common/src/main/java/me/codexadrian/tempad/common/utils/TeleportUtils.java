@@ -18,7 +18,7 @@ public class TeleportUtils {
 
     public static boolean mayTeleport(ResourceKey<Level> level, Player player) {
         if (player.isCreative()) return true;
-        return level.equals(player.level().dimension()) || player.level().isClientSide() ? ConfigCache.allowInterdimensionalTravel : TempadConfig.allowInterdimensionalTravel;
+        return level.equals(player.level().dimension()) || (player.level().isClientSide() ? ConfigCache.allowInterdimensionalTravel : TempadConfig.allowInterdimensionalTravel);
     }
 
     public static ItemStack findAndReplaceTempad(Player player, @Nullable ItemStack replacementTempad) {
