@@ -1,4 +1,3 @@
-# 2.3.1
+# 2.3.2
 
-- Fix interdimensional travel bug
-- Fix favorited locations ignoring interdimensional travel settings
+- Add null check to Fabric Waystones
