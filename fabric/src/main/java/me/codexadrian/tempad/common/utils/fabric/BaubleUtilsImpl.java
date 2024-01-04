@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class TeleportUtilsImpl {
+public class BaubleUtilsImpl {
     @Nullable
     public static Consumer<ItemStack> findTempadInBaubles(Player player, Consumer<ItemStack> setTempad) {
         Optional<TrinketComponent> optionalTrinketComponent = TrinketsApi.getTrinketComponent(player);

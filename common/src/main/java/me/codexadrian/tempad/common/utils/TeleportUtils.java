@@ -1,6 +1,7 @@
 package me.codexadrian.tempad.common.utils;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.botarium.util.CommonHooks;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.items.TempadItem;
@@ -23,8 +24,13 @@ public class TeleportUtils {
 
     public static ItemStack findAndReplaceTempad(Player player, @Nullable ItemStack replacementTempad) {
         AtomicReference<ItemStack> tempad = new AtomicReference<>(ItemStack.EMPTY);
-        Consumer<ItemStack> setTempad = findTempadInBaubles(player, tempad::set);
+        Consumer<ItemStack> setTempad = null;
 
+        if (CommonHooks.isModLoaded("curios") || CommonHooks.isModLoaded("trinkets")) {
+            setTempad = BaubleUtils.findTempadInBaubles(player, tempad::set);
+        }
+
+        //noinspection ConstantValue
         if (setTempad != null) {
             if (replacementTempad != null) {
                 setTempad.accept(replacementTempad);
@@ -58,11 +64,5 @@ public class TeleportUtils {
 
     public static boolean hasTempad(Player player) {
         return !findTempad(player).isEmpty();
-    }
-
-    @ExpectPlatform
-    @Nullable
-    public static Consumer<ItemStack> findTempadInBaubles(Player player, Consumer<ItemStack> setTempad) {
-        throw new NotImplementedException("Baubles is not implemented yet!");
     }
 }

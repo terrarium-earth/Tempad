@@ -12,7 +12,7 @@ import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class TeleportUtilsImpl {
+public class BaubleUtilsImpl {
     @Nullable
     public static Consumer<ItemStack> findTempadInBaubles(Player player, Consumer<ItemStack> setTempad) {
         LazyOptional<ICuriosItemHandler> curiosInventory = CuriosApi.getCuriosInventory(player);
