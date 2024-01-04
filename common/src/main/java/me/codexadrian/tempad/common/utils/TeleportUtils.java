@@ -1,6 +1,5 @@
 package me.codexadrian.tempad.common.utils;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.util.CommonHooks;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
@@ -9,7 +8,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicReference;
