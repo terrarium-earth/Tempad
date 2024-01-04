@@ -1,6 +1,6 @@
 package me.codexadrian.tempad.common.utils;
 
-import earth.terrarium.botarium.util.CommonHooks;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.items.TempadItem;
@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,7 +25,7 @@ public class TeleportUtils {
         AtomicReference<ItemStack> tempad = new AtomicReference<>(ItemStack.EMPTY);
         Consumer<ItemStack> setTempad = null;
 
-        if (CommonHooks.isModLoaded("curios") || CommonHooks.isModLoaded("trinkets")) {
+        if (isBaubleModLoaded()) {
             setTempad = BaubleUtils.findTempadInBaubles(player, tempad::set);
         }
 
@@ -62,5 +63,10 @@ public class TeleportUtils {
 
     public static boolean hasTempad(Player player) {
         return !findTempad(player).isEmpty();
+    }
+
+    @ExpectPlatform
+    public static boolean isBaubleModLoaded() {
+        throw new NotImplementedException();
     }
 }
