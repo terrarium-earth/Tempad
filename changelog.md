@@ -1,4 +1,3 @@
-# 2.3.2
+# 2.3.3
 
-- Add null check to Fabric Waystones
-- Fix crash when Curios or Trinkets is not present
+- "tempad:experience_levels" now works as an alias for "tempad:experience_level"
