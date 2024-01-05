@@ -13,6 +13,7 @@ public class TempadOptionApi {
     static {
         OPTION_REGISTRY.put("tempad:unlimited", new UnlimitedOption());
         OPTION_REGISTRY.put("tempad:experience_level", new ExperienceLevelOption());
+        OPTION_REGISTRY.put("tempad:experience_levels", new ExperienceLevelOption());
         OPTION_REGISTRY.put("tempad:experience_points", new ExperiencePointsOption());
         OPTION_REGISTRY.put("tempad:item", new ItemOption());
         OPTION_REGISTRY.put("tempad:timer", new TimerOption());
