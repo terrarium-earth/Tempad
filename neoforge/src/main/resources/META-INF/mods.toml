@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[47,)"
+loaderVersion = "[1,)"
 license = "ARR"
 issueTrackerURL = "https://github.com/terrarium-earth/Tempad/issues"
 
@@ -13,17 +13,23 @@ authors = "CodexAdrian"
 credits = "MsRandom1, ThatGravyBoat, Kekie6, AlexNijjar, ShrimpPixels, Jooosh, abused_master"
 description = "Create a portal to anywhere from anywhere!"
 
+[[mixins]]
+config = "tempad-common.mixins.json"
+
+[[mixins]]
+config = "tempad.mixins.json"
+
 [[dependencies.tempad]]
-modId = "forge"
+modId = "neoforge"
 mandatory = true
-versionRange = "[47.1.0,)"
+versionRange = "[20,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.1,)"
+versionRange = "[1.20.4,)"
 ordering = "NONE"
 side = "BOTH"
 
