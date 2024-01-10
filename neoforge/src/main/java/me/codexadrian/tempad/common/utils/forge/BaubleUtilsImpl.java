@@ -3,18 +3,14 @@ package me.codexadrian.tempad.common.utils.forge;
 import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
-import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class BaubleUtilsImpl {
     @Nullable
     public static Consumer<ItemStack> findTempadInBaubles(Player player, Consumer<ItemStack> setTempad) {
+        /* TODO: Implement when Curios updates
         LazyOptional<ICuriosItemHandler> curiosInventory = CuriosApi.getCuriosInventory(player);
         AtomicReference<ItemStack> tempad = new AtomicReference<>(ItemStack.EMPTY);
         AtomicReference<Consumer<ItemStack>> setter = new AtomicReference<>(null);
@@ -38,5 +34,7 @@ public class BaubleUtilsImpl {
             });
         }
         return setter.get();
+         */
+        return null;
     }
 }

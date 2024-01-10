@@ -1,6 +1,7 @@
 package me.codexadrian.tempad.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.teamresourceful.resourcefulconfig.client.components.base.SpriteButton;
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
@@ -64,6 +65,32 @@ public class ConsolidatedScreen extends Screen {
         int offset = 3;
         int cornerX = (width - TEMPAD_WIDTH) / 2;
         int cornerY = (height - TEMPAD_HEIGHT) / 2;
+
+        addRenderableOnly((graphics, mouseX, mouseY, partialTicks) -> {
+            graphics.blit(SCREEN, (width - TEMPAD_WIDTH) / 2, (height - TEMPAD_HEIGHT) / 2, TEMPAD_WIDTH, TEMPAD_HEIGHT, 0, 0, TEMPAD_WIDTH, TEMPAD_HEIGHT, 256, 256);
+        });
+
+        addRenderableOnly((graphics, mouseX, mouseY, partialTicks) -> {
+            int barHeight = 0;
+            ItemStack tempad = TeleportUtils.findTempad(minecraft.player);
+            if (tempad.getItem() instanceof TempadItem item) {
+                TempadOption option = item.getOption();
+                if(option.isDurabilityBarVisible(tempad)) {
+                    barHeight = (int) (option.getPercentage(tempad) * 54);
+                } else {
+                    barHeight = option.canTimedoorOpen(minecraft.player, tempad) ? 54 : 0;
+                }
+
+                graphics.blit(SCREEN, (width - TEMPAD_WIDTH) / 2 + 234, (height - TEMPAD_HEIGHT) / 2 + 42 + 54 - barHeight, 6, barHeight, 249, 54 - barHeight, 6, barHeight, 256, 256);
+
+                if (mouseX >= (width - TEMPAD_WIDTH) / 2 + 234 && mouseX <= (width - TEMPAD_WIDTH) / 2 + 240 && mouseY >= (height - TEMPAD_HEIGHT) / 2 + 42 && mouseY <= (height - TEMPAD_HEIGHT) / 2 + 96) {
+                    List<Component> tooltip = new ArrayList<>();
+                    option.addToolTip(tempad, minecraft.level, tooltip, TooltipFlag.NORMAL);
+                    graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
+                }
+            }
+        });
+
         informationPanel = addRenderableWidget(new SelectionList<>(cornerX + 16, cornerY + 33, 91, 78, 10, textEntry -> {}));
         locationPanel = addRenderableWidget(new SelectionList<>(cornerX + 129, cornerY + 31, 91, 92, 10, textEntry -> {
             if (textEntry != null && textEntry.data != null) {
@@ -209,33 +236,6 @@ public class ConsolidatedScreen extends Screen {
         }
     }
 
-    @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics);
-        graphics.blit(SCREEN, (width - TEMPAD_WIDTH) / 2, (height - TEMPAD_HEIGHT) / 2, TEMPAD_WIDTH, TEMPAD_HEIGHT, 0, 0, TEMPAD_WIDTH, TEMPAD_HEIGHT, 256, 256);
-
-        super.render(graphics, mouseX, mouseY, partialTicks);
-
-        int barHeight = 0;
-        ItemStack tempad = TeleportUtils.findTempad(minecraft.player);
-        if (tempad.getItem() instanceof TempadItem item) {
-            TempadOption option = item.getOption();
-            if(option.isDurabilityBarVisible(tempad)) {
-                barHeight = (int) (option.getPercentage(tempad) * 54);
-            } else {
-                barHeight = option.canTimedoorOpen(minecraft.player, tempad) ? 54 : 0;
-            }
-
-            graphics.blit(SCREEN, (width - TEMPAD_WIDTH) / 2 + 234, (height - TEMPAD_HEIGHT) / 2 + 42 + 54 - barHeight, 6, barHeight, 249, 54 - barHeight, 6, barHeight, 256, 256);
-
-            if (mouseX >= (width - TEMPAD_WIDTH) / 2 + 234 && mouseX <= (width - TEMPAD_WIDTH) / 2 + 240 && mouseY >= (height - TEMPAD_HEIGHT) / 2 + 42 && mouseY <= (height - TEMPAD_HEIGHT) / 2 + 96) {
-                List<Component> tooltip = new ArrayList<>();
-                option.addToolTip(tempad, minecraft.level, tooltip, TooltipFlag.NORMAL);
-                graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
-            }
-        }
-    }
-
     public <R extends Renderable & TemporaryWidget> R addTemporary(R renderable) {
         addRenderableOnly(renderable);
         this.temporaryWidgets.add(renderable);
@@ -306,9 +306,6 @@ public class ConsolidatedScreen extends Screen {
 
         @Override
         protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-            guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
-            RenderSystem.enableBlend();
-            RenderSystem.enableDepthTest();
             guiGraphics.blit(SCREEN, this.getX(), this.getY(), this.getWidth(), this.getHeight(), buttonOffset * 14, this.getTextureY(), this.getWidth(), this.getHeight(), 256, 256);
         }
 

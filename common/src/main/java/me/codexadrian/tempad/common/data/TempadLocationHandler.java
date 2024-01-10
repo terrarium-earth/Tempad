@@ -70,7 +70,7 @@ public class TempadLocationHandler extends SaveHandler {
     }
 
     public static TempadLocationHandler read(Level level) {
-        return read(level, CLIENT_ONLY, TempadLocationHandler::new, "tempad_locations");
+        return read(level, HandlerType.create(CLIENT_ONLY, TempadLocationHandler::new), "tempad_locations");
     }
 
     public static boolean containsLocation(Level level, UUID player, UUID location) {

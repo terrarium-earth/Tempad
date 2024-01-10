@@ -7,7 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import wraith.fwaystones.FabricWaystones;
+// import wraith.fwaystones.FabricWaystones;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public class FabricWaystoneLocationGetter {
     public static void init() {
+        /* TODO Enable this when Fabric Waystones is updated
         LocationsApi.registerLocationGetter("tempad:fabric_waystones", (level, playerId) -> {
             if (!TempadConfig.fabricWaystonesCompat) return Map.of();
             var locations = new HashMap<UUID, LocationData>();
@@ -33,5 +34,6 @@ public class FabricWaystoneLocationGetter {
             }
             return locations;
         });
+         */
     }
 }

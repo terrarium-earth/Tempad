@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.forge;
+package me.codexadrian.tempad.common.neoforge;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;

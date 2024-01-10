@@ -62,6 +62,12 @@ subprojects {
                 includeGroup("maven.modrinth")
             }
         }
+        maven {
+            url = uri("https://jm.gserv.me/repository/maven-public/")
+            content {
+                includeGroup("info.journeymap")
+            }
+        }
     }
 
     dependencies {
@@ -95,6 +101,7 @@ subprojects {
             // "modCompileOnly"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-1.20", version = prometheusVersion) { isTransitive = false }
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api", version = reiVersion)
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin", version = reiVersion)
+            implementation("io.github.llamalad7:mixinextras-common:0.3.2")
         } else {
             // "modLocalRuntime"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-1.20", version = prometheusVersion)
             "modRuntimeOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-$modLoader", version = reiVersion)
@@ -111,9 +118,6 @@ subprojects {
         "modApi"(group = "net.blay09.mods", name = "waystones-$modLoader", version = waystonesVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")
         }
-
-        implementation("io.github.llamalad7:mixinextras-common:0.3.1")
-        implementation("io.github.llamalad7:mixinextras-forge:0.3.1")
     }
 
     java {

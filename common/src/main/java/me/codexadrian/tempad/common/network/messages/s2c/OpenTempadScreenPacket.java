@@ -1,6 +1,9 @@
 package me.codexadrian.tempad.common.network.messages.s2c;
 
-import com.teamresourceful.resourcefullib.common.networking.base.Packet;
+import com.teamresourceful.resourcefullib.common.network.Packet;
+import com.teamresourceful.resourcefullib.common.network.base.ClientboundPacketType;
+import com.teamresourceful.resourcefullib.common.network.base.PacketType;
+import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
 import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
 import me.codexadrian.tempad.common.Tempad;
@@ -11,28 +14,35 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public record OpenTempadScreenPacket(List<LocationData> locationData,
                                      UUID favorite) implements Packet<OpenTempadScreenPacket> {
-    public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "open_screen");
+    public static final Handler HANDLER = new Handler();
 
     @Override
-    public ResourceLocation getID() {
-        return ID;
-    }
-
-    @Override
-    public PacketHandler<OpenTempadScreenPacket> getHandler() {
+    public PacketType<OpenTempadScreenPacket> type() {
         return HANDLER;
     }
 
-    private static class Handler implements PacketHandler<OpenTempadScreenPacket> {
+    public static class Handler implements ClientboundPacketType<OpenTempadScreenPacket> {
+        public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "open_screen");
+
+        @Override
+        public Class<OpenTempadScreenPacket> type() {
+            return OpenTempadScreenPacket.class;
+        }
+
+        @Override
+        public ResourceLocation id() {
+            return ID;
+        }
 
         @Override
         public void encode(OpenTempadScreenPacket message, FriendlyByteBuf buffer) {
@@ -63,8 +73,8 @@ public record OpenTempadScreenPacket(List<LocationData> locationData,
         }
 
         @Override
-        public PacketContext handle(OpenTempadScreenPacket message) {
-            return (player, level) -> ClientUtils.openScreen(message);
+        public Runnable handle(OpenTempadScreenPacket message) {
+            return () -> ClientUtils.openScreen(message);
         }
     }
 }

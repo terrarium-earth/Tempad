@@ -1,6 +1,6 @@
 package me.codexadrian.tempad.common;
 
-import com.teamresourceful.resourcefulconfig.common.config.Configurator;
+import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.common.compat.botarium.BotariumTempadOptionRegistry;
 import me.codexadrian.tempad.common.compat.waystones.WaystoneLocationGetter;
@@ -14,7 +14,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluid;
 import org.slf4j.Logger;
@@ -47,7 +46,7 @@ public class Tempad {
             WaystoneLocationGetter.init();
         }
 
-        CONFIGURATOR.registerConfig(TempadConfig.class);
+        CONFIGURATOR.register(TempadConfig.class);
         TempadRegistry.ITEMS.init();
         TempadRegistry.ENTITIES.init();
         NetworkHandler.register();

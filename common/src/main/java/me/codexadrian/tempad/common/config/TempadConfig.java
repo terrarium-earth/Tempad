@@ -1,10 +1,10 @@
 package me.codexadrian.tempad.common.config;
 
-import com.teamresourceful.resourcefulconfig.common.annotations.Comment;
-import com.teamresourceful.resourcefulconfig.common.annotations.Config;
-import com.teamresourceful.resourcefulconfig.common.annotations.ConfigEntry;
-import com.teamresourceful.resourcefulconfig.common.annotations.IntRange;
-import com.teamresourceful.resourcefulconfig.common.config.EntryType;
+import com.teamresourceful.resourcefulconfig.api.annotations.Comment;
+import com.teamresourceful.resourcefulconfig.api.annotations.Config;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
+import com.teamresourceful.resourcefulconfig.api.annotations.ConfigOption;
+import com.teamresourceful.resourcefulconfig.api.types.options.EntryType;
 import com.teamresourceful.resourcefulconfig.web.annotations.Link;
 import com.teamresourceful.resourcefulconfig.web.annotations.WebInfo;
 import me.codexadrian.tempad.common.Tempad;
@@ -25,7 +25,7 @@ import me.codexadrian.tempad.common.Tempad;
 public final class TempadConfig {
     @ConfigEntry(id = "distanceFromPlayer", type = EntryType.INTEGER, translation = "config.tempad.distance_from_player")
     @Comment("The distance from the player that the Tempad is summoned.")
-    @IntRange(min = 1, max = 10)
+    @ConfigOption.Range(min = 1, max = 10)
     public static int distanceFromPlayer = 3;
 
     @ConfigEntry(id = "timedoorWaitTime", type = EntryType.INTEGER, translation = "config.tempad.timedoor_wait_time")

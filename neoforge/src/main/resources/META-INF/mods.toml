@@ -21,28 +21,28 @@ config = "tempad.mixins.json"
 
 [[dependencies.tempad]]
 modId = "neoforge"
-mandatory = true
+type = "required"
 versionRange = "[20,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "[1.20.4,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "resourcefullib"
-mandatory = true
+type = "required"
 versionRange = "[2.1.7,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "resourcefulconfig"
-mandatory = true
+type = "required"
 versionRange = "[2.0.0,)"
 ordering = "NONE"
 side = "BOTH"

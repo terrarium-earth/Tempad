@@ -23,7 +23,7 @@ public class TempadClient {
     };
 
     public static void init() {
-        Tempad.CONFIGURATOR.registerConfig(TempadClientConfig.class);
+        Tempad.CONFIGURATOR.register(TempadClientConfig.class);
     }
 
     public static void initItemProperties() {

@@ -1,8 +1,8 @@
 package me.codexadrian.tempad.common.utils.forge;
 
 import me.codexadrian.tempad.common.BlurReloader;
-import me.codexadrian.tempad.common.forge.ForgeTempadClient;
-import me.codexadrian.tempad.common.forge.TimedoorBlurRenderType;
+import me.codexadrian.tempad.common.neoforge.ForgeTempadClient;
+import me.codexadrian.tempad.common.neoforge.TimedoorBlurRenderType;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 

@@ -1,6 +1,6 @@
 package me.codexadrian.tempad.common.entity.forge;
 
-import me.codexadrian.tempad.common.forge.TempadTeleporter;
+import me.codexadrian.tempad.common.neoforge.TempadTeleporter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;

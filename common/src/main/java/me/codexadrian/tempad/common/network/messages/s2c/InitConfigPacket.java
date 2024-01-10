@@ -1,8 +1,8 @@
 package me.codexadrian.tempad.common.network.messages.s2c;
 
-import com.teamresourceful.resourcefullib.common.networking.base.Packet;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
+import com.teamresourceful.resourcefullib.common.network.Packet;
+import com.teamresourceful.resourcefullib.common.network.base.ClientboundPacketType;
+import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,20 +19,25 @@ public record InitConfigPacket(
     int advancedTempadfuelConsumptionValue,
     int advancedTempadfuelCapacityValue
 ) implements Packet<InitConfigPacket> {
-    public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "sync_config");
+    public static final Handler HANDLER = new Handler();
 
     @Override
-    public ResourceLocation getID() {
-        return ID;
-    }
-
-    @Override
-    public PacketHandler<InitConfigPacket> getHandler() {
+    public PacketType<InitConfigPacket> type() {
         return HANDLER;
     }
 
-    private static class Handler implements PacketHandler<InitConfigPacket> {
+    public static class Handler implements ClientboundPacketType<InitConfigPacket> {
+        public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "sync_config");
+
+        @Override
+        public Class<InitConfigPacket> type() {
+            return InitConfigPacket.class;
+        }
+
+        @Override
+        public ResourceLocation id() {
+            return ID;
+        }
 
         @Override
         public void encode(InitConfigPacket message, FriendlyByteBuf buffer) {
@@ -63,8 +68,8 @@ public record InitConfigPacket(
         }
 
         @Override
-        public PacketContext handle(InitConfigPacket message) {
-            return (player, level) -> {
+        public Runnable handle(InitConfigPacket message) {
+            return () -> {
                 ConfigCache.allowInterdimensionalTravel = message.allowInterdimensionalTravel;
                 ConfigCache.allowExporting = message.allowExporting;
                 ConfigCache.consumeCooldown = message.consumeCooldown;

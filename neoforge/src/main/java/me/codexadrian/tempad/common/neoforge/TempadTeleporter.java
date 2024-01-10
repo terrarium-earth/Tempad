@@ -1,11 +1,11 @@
-package me.codexadrian.tempad.common.forge;
+package me.codexadrian.tempad.common.neoforge;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.ITeleporter;
+import net.neoforged.neoforge.common.util.ITeleporter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;

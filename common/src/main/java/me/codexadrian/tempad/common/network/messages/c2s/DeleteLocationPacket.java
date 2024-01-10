@@ -1,47 +1,56 @@
 package me.codexadrian.tempad.common.network.messages.c2s;
 
-import com.teamresourceful.resourcefullib.common.networking.base.Packet;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
+import com.teamresourceful.resourcefullib.common.network.Packet;
+import com.teamresourceful.resourcefullib.common.network.base.PacketType;
+import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public record DeleteLocationPacket(UUID location) implements Packet<DeleteLocationPacket> {
-    public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "delete_location");
+
+    public static final Handler HANDLER = new Handler();
 
     @Override
-    public ResourceLocation getID() {
-        return ID;
-    }
-
-    @Override
-    public PacketHandler<DeleteLocationPacket> getHandler() {
+    public PacketType<DeleteLocationPacket> type() {
         return HANDLER;
     }
 
-    private static class Handler implements PacketHandler<DeleteLocationPacket> {
+    public static class Handler implements ServerboundPacketType<DeleteLocationPacket> {
+        public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "delete_location");
 
         @Override
-        public void encode(DeleteLocationPacket message, FriendlyByteBuf buffer) {
-            buffer.writeUUID(message.location);
+        public Class<DeleteLocationPacket> type() {
+            return DeleteLocationPacket.class;
         }
 
         @Override
-        public DeleteLocationPacket decode(FriendlyByteBuf buffer) {
-            return new DeleteLocationPacket(buffer.readUUID());
+        public ResourceLocation id() {
+            return ID;
         }
 
         @Override
-        public PacketContext handle(DeleteLocationPacket message) {
-            return (player, level) -> {
-                if (!TeleportUtils.hasTempad(player)) return;
-                TempadLocationHandler.removeLocation(level, player.getUUID(), message.location);
+        public DeleteLocationPacket decode(FriendlyByteBuf buf) {
+            return new DeleteLocationPacket(buf.readUUID());
+        }
+
+        @Override
+        public void encode(DeleteLocationPacket packet, FriendlyByteBuf buffer) {
+            buffer.writeUUID(packet.location);
+        }
+
+        @Override
+        public Consumer<Player> handle(DeleteLocationPacket message) {
+            return player -> {
+                if (TeleportUtils.hasTempad(player)) {
+                    TempadLocationHandler.removeLocation(player.level(), player.getUUID(), message.location);
+                }
             };
         }
     }

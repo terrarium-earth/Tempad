@@ -1,36 +1,38 @@
 package me.codexadrian.tempad.common.network.messages.c2s;
 
-import com.teamresourceful.resourcefullib.common.networking.base.Packet;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
+import com.teamresourceful.resourcefullib.common.network.Packet;
+import com.teamresourceful.resourcefullib.common.network.base.PacketType;
+import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public record FavoriteLocationPacket(@Nullable UUID location) implements Packet<FavoriteLocationPacket> {
-    public static Handler HANDLER = new Handler();
-    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "favorite_location");
+    public static final Handler HANDLER = new Handler();
 
     @Override
-    public ResourceLocation getID() {
-        return ID;
-    }
-
-    @Override
-    public PacketHandler<FavoriteLocationPacket> getHandler() {
+    public PacketType<FavoriteLocationPacket> type() {
         return HANDLER;
     }
 
-    private static class Handler implements PacketHandler<FavoriteLocationPacket> {
+    public static class Handler implements ServerboundPacketType<FavoriteLocationPacket> {
+        public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "favorite_location");
 
         @Override
-        public void encode(FavoriteLocationPacket message, FriendlyByteBuf buffer) {
-            buffer.writeOptional(Optional.ofNullable(message.location), FriendlyByteBuf::writeUUID);
+        public Class<FavoriteLocationPacket> type() {
+            return FavoriteLocationPacket.class;
+        }
+
+        @Override
+        public ResourceLocation id() {
+            return ID;
         }
 
         @Override
@@ -39,13 +41,18 @@ public record FavoriteLocationPacket(@Nullable UUID location) implements Packet<
         }
 
         @Override
-        public PacketContext handle(FavoriteLocationPacket message) {
-            return (player, level) -> {
-                TempadLocationHandler.getFavorite(level, player.getUUID());
+        public void encode(FavoriteLocationPacket packet, FriendlyByteBuf buffer) {
+            buffer.writeOptional(Optional.ofNullable(packet.location), FriendlyByteBuf::writeUUID);
+        }
+
+        @Override
+        public Consumer<Player> handle(FavoriteLocationPacket message) {
+            return player -> {
+                TempadLocationHandler.getFavorite(player.level(), player.getUUID());
                 if (message.location != null) {
-                    TempadLocationHandler.favoriteLocation(level, player.getUUID(), message.location);
+                    TempadLocationHandler.favoriteLocation(player.level(), player.getUUID(), message.location);
                 } else {
-                    TempadLocationHandler.unfavoriteLocation(level, player.getUUID());
+                    TempadLocationHandler.unfavoriteLocation(player.level(), player.getUUID());
                 }
             };
         }
