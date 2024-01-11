@@ -1,3 +1,3 @@
-# 2.3.3
+# 2.3.4
 
-- Port to 1.20.4
+- Readded Curios Support

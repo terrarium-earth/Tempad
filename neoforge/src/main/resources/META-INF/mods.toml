@@ -36,13 +36,13 @@ side = "BOTH"
 [[dependencies.tempad]]
 modId = "resourcefullib"
 type = "required"
-versionRange = "[2.1.7,)"
+versionRange = "[2.4.2,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "resourcefulconfig"
 type = "required"
-versionRange = "[2.0.0,)"
+versionRange = "[2.4.2,)"
 ordering = "NONE"
 side = "BOTH"

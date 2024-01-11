@@ -38,9 +38,9 @@
     ],
     "depends": {
         "fabric": "*",
-        "minecraft": ">=1.20",
+        "minecraft": ">=1.20.4",
         "java": ">=17",
-        "resourcefullib": ">=2.1.7",
-        "resourcefulconfig": ">=2.0.0"
+        "resourcefullib": ">=2.4.2",
+        "resourcefulconfig": ">=2.4.2"
     }
 }
