@@ -19,6 +19,6 @@ dependencies {
 
     neoForge(group = "net.neoforged", name = "neoforge", version = neoforgeVersion)
 
-    "modImplementation"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
+    "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
     "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}:api")
 }
