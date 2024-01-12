@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.compat.botarium.options.forge;
+package me.codexadrian.tempad.common.compat.botarium.options.neoforge;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.material.Fluid;

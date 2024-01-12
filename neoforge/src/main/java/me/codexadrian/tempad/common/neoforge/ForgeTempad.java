@@ -18,6 +18,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.DistExecutor;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -43,9 +44,6 @@ public class ForgeTempad {
         ENTITIES.register(bus);
         LOOT_TABLES.register(bus);
         TempadImpl.SOUND_EVENTS.register(bus);
-        NetworkHandler.register();
-        NeoForge.EVENT_BUS.register(this);
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ForgeTempadClient::registerBlurReloader);
         bus.addListener(this::setup);
 
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {

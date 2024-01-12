@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.utils.forge;
+package me.codexadrian.tempad.common.utils.neoforge;
 
 
 import net.neoforged.fml.ModList;

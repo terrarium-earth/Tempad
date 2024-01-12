@@ -104,18 +104,18 @@ subprojects {
             implementation("io.github.llamalad7:mixinextras-common:0.3.2")
         } else {
             // "modLocalRuntime"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-1.20", version = prometheusVersion)
-            "modRuntimeOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-$modLoader", version = reiVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-$modLoader", version = reiVersion)
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-$modLoader", version = reiVersion)
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-$modLoader", version = reiVersion)
         }
 
         "modApi"(group = "earth.terrarium.botarium", name = "botarium-$modLoader-$minecraftVersion", version = botariumVersion)
 
-        "modApi"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {
+        "modCompileOnly"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")
         }
 
-        "modApi"(group = "net.blay09.mods", name = "waystones-$modLoader", version = waystonesVersion) {
+        "modCompileOnly"(group = "net.blay09.mods", name = "waystones-$modLoader", version = waystonesVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")
         }
     }

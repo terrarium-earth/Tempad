@@ -16,9 +16,6 @@ description = "Create a portal to anywhere from anywhere!"
 [[mixins]]
 config = "tempad-common.mixins.json"
 
-[[mixins]]
-config = "tempad.mixins.json"
-
 [[dependencies.tempad]]
 modId = "neoforge"
 type = "required"

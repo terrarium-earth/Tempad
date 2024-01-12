@@ -49,12 +49,11 @@ public class ForgeTempadClient {
 
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         TempadClient.init();
         EntityRenderers.register(TempadRegistry.TIMEDOOR_ENTITY.get(), TimedoorRenderer::new);
         event.enqueueWork(TempadClient::initItemProperties);
-        bus.register(ForgeTempadClient.class);
         NeoForge.EVENT_BUS.addListener(ForgeTempadClient::onClientTick);
+        ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(BLUR_RELOADER);
     }
 
     @SubscribeEvent
@@ -70,10 +69,6 @@ public class ForgeTempadClient {
     public static void registerKeyBinding(RegisterKeyMappingsEvent event) {
         event.register(SHORTCUT_KEYBIND);
         event.register(FAVORITED_KEYBIND);
-    }
-
-    public static void registerBlurReloader() {
-        ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(BLUR_RELOADER);
     }
 
     public static void onClientTick(TickEvent.ClientTickEvent event) {

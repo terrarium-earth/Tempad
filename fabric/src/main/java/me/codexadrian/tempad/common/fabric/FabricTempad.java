@@ -25,8 +25,6 @@ public class FabricTempad implements ModInitializer {
     @Override
     public void onInitialize() {
         Tempad.init();
-
-        NetworkHandler.register();
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
             if (id.equals(BuiltInLootTables.END_CITY_TREASURE)) {
                 LootPool.Builder poolBuilder = new LootPool.Builder()

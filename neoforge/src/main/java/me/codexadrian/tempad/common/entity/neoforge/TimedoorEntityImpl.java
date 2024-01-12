@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.entity.forge;
+package me.codexadrian.tempad.common.entity.neoforge;
 
 import me.codexadrian.tempad.common.neoforge.TempadTeleporter;
 import net.minecraft.core.BlockPos;

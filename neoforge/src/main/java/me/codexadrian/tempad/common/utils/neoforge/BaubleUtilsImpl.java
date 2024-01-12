@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common.utils.forge;
+package me.codexadrian.tempad.common.utils.neoforge;
 
 import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.world.entity.player.Player;
