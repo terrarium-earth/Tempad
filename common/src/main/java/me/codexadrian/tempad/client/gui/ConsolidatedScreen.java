@@ -1,12 +1,12 @@
 package me.codexadrian.tempad.client.gui;
 
-import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
 import me.codexadrian.tempad.api.options.TempadOption;
+import me.codexadrian.tempad.client.components.InformationPanel;
+import me.codexadrian.tempad.client.components.LocationPanel;
 import me.codexadrian.tempad.client.components.ModSprites;
 import me.codexadrian.tempad.client.components.ToggleButton;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.client.screens.ModalScreen;
-import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.data.LocationData;
@@ -22,7 +22,6 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
@@ -39,8 +38,9 @@ public class ConsolidatedScreen extends Screen {
     private final List<LocationData> locations;
     private UUID favorite;
     private LocationData selectedLocation;
-    private SelectionList<TextEntry> informationPanel;
-    private SelectionList<TextEntry> locationPanel;
+    private InformationPanel informationPanel;
+    private LocationPanel locationPanel;
+
     private ToggleButton favoriteButton;
     private Button downloadButton;
     private Button deleteButton;
@@ -84,18 +84,12 @@ public class ConsolidatedScreen extends Screen {
             }
         });
 
-        informationPanel = addRenderableWidget(new SelectionList<>(cornerX + 16, cornerY + 33, 91, 78, 10, textEntry -> {}));
-        locationPanel = addRenderableWidget(new SelectionList<>(cornerX + 129, cornerY + 31, 91, 92, 10, textEntry -> {
+        informationPanel = addRenderableWidget(new InformationPanel(cornerX + 16, cornerY + 33, 91, 78));
+        locationPanel = addRenderableWidget(new LocationPanel(cornerX + 129, cornerY + 31, 91, 92, textEntry -> {
             if (textEntry != null && textEntry.data != null) {
                 selectedLocation = textEntry.data;
 
-                informationPanel.updateEntries(List.of(
-                    new TextEntry(Component.literal(selectedLocation.getName())),
-                    new TextEntry(Component.translatable("gui." + Tempad.MODID + ".x", Mth.floor(selectedLocation.getBlockPos().getX()))),
-                    new TextEntry(Component.translatable("gui." + Tempad.MODID + ".y", Mth.floor(selectedLocation.getBlockPos().getY()))),
-                    new TextEntry(Component.translatable("gui." + Tempad.MODID + ".z", Mth.floor(selectedLocation.getBlockPos().getZ()))),
-                    new TextEntry(Component.translatable("gui." + Tempad.MODID + ".dimension", Component.translatable(selectedLocation.getLevelKey().location().toLanguageKey("dimension")))))
-                );
+                informationPanel.setLocation(selectedLocation);
 
                 favoriteButton.setSelected(selectedLocation.getId().equals(favorite));
                 favoriteButton.visible = true;
@@ -129,25 +123,21 @@ public class ConsolidatedScreen extends Screen {
                 }
             }
         }));
-        if (locations.isEmpty()) {
-            locationPanel.updateEntries(List.of(
-                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_locations.first_line")),
-                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_locations.second_line"))
-            ));
-        } else {
-            locationPanel.updateEntries(locations.stream().map(locationData -> new TextEntry(locationData, locData -> locData.getId().equals(favorite))).toList());
-            informationPanel.updateEntries(List.of(
-                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.first_line")),
-                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.second_line"))
-            ));
-        }
 
-        EditBox editBox = new EditBox(font, cornerX + 139, cornerY + 16, 66, 12, Component.translatable("gui." + Tempad.MODID + ".search_field"));
+        EditBox editBox = addRenderableWidget(new EditBox(font,
+            cornerX + 139, cornerY + 16,
+            66, 12,
+            Component.translatable("gui." + Tempad.MODID + ".search_field")
+        ));
         editBox.setBordered(false);
         editBox.setHint(Component.translatable("gui." + Tempad.MODID + ".search_field"));
         editBox.setTextColor(TempadClientConfig.color);
-        if (!locations.isEmpty()) editBox.setResponder((string) -> locationPanel.updateEntries(locations.stream().filter(locationData -> locationData.getName().toLowerCase().contains(string.toLowerCase())).map(locationData -> new TextEntry(locationData, locData -> locData.getId().equals(favorite))).toList()));
-        addRenderableWidget(editBox);
+        editBox.setResponder(this::updateLocations);
+
+        updateLocations("");
+        if (!locations.isEmpty()) {
+            informationPanel.setLocation(null);
+        }
 
         favoriteButton = addRenderableWidget(new ToggleButton(
             cornerX + 46, cornerY + 110, 14, 14,
@@ -164,6 +154,10 @@ public class ConsolidatedScreen extends Screen {
         teleportButton = addRenderableWidget(new TempadButton(cornerX + 94, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".teleport"), (button) -> teleportAction(), 4));
         teleportButton.visible = false;
         addRenderableWidget(new TempadButton(cornerX + 208, cornerY + 14, 12, 12, Component.translatable("gui." + Tempad.MODID + ".add_location"), (button) -> openNewLocationModal(), 5)).setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".add_location")));
+    }
+
+    private void updateLocations(String text) {
+        locationPanel.update(text, this.locations, id -> id.equals(favorite));
     }
 
     private void favoriteAction() {
@@ -185,11 +179,9 @@ public class ConsolidatedScreen extends Screen {
             NetworkHandler.CHANNEL.sendToServer(new DeleteLocationPacket(selectedLocation.getId()));
             locations.removeIf(locationData -> locationData.getId().equals(selectedLocation.getId()));
             selectedLocation = null;
-            locationPanel.updateEntries(locations.stream().map(locationData -> new TextEntry(locationData, locData -> locData.getId().equals(favorite))).toList());
-            informationPanel.updateEntries(List.of(
-                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.first_line")),
-                new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.second_line"))
-            ));
+            updateLocations("");
+            informationPanel.setLocation(null);
+
             favoriteButton.visible = false;
             downloadButton.visible = false;
             deleteButton.visible = false;

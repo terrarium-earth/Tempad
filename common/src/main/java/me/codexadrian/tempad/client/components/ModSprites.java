@@ -17,4 +17,22 @@ public class ModSprites {
         new ResourceLocation(Tempad.MODID, "screen/unfavorite/disabled"),
         new ResourceLocation(Tempad.MODID, "screen/unfavorite/hover")
     );
+
+    public static final WidgetSprites DOWNLOAD = new WidgetSprites(
+        new ResourceLocation(Tempad.MODID, "screen/download/normal"),
+        new ResourceLocation(Tempad.MODID, "screen/download/disabled"),
+        new ResourceLocation(Tempad.MODID, "screen/download/hover")
+    );
+
+    public static final WidgetSprites DELETE = new WidgetSprites(
+        new ResourceLocation(Tempad.MODID, "screen/delete/normal"),
+        new ResourceLocation(Tempad.MODID, "screen/delete/disabled"),
+        new ResourceLocation(Tempad.MODID, "screen/delete/hover")
+    );
+
+    public static final WidgetSprites TELEPORT = new WidgetSprites(
+        new ResourceLocation(Tempad.MODID, "screen/teleport/normal"),
+        new ResourceLocation(Tempad.MODID, "screen/teleport/disabled"),
+        new ResourceLocation(Tempad.MODID, "screen/teleport/hover")
+    );
 }
