@@ -28,7 +28,7 @@ public class Tempad {
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
     public static final int ORANGE = 0xFF_ff6f00;
 
-    public static final Configurator CONFIGURATOR = new Configurator();
+    public static final Configurator CONFIGURATOR = new Configurator(MODID);
 
     public static final TagKey<Item> TEMPAD_FUEL_TAG = TagKey.create(Registries.ITEM, new ResourceLocation(MODID, "tempad_fuel"));
     public static final TagKey<Fluid> TEMPAD_LIQUID_FUEL_TAG = TagKey.create(Registries.FLUID, new ResourceLocation(MODID, "tempad_liquid_fuel"));

@@ -1,27 +1,22 @@
 package me.codexadrian.tempad.common.config;
 
-import com.teamresourceful.resourcefulconfig.api.annotations.Comment;
-import com.teamresourceful.resourcefulconfig.api.annotations.Config;
-import com.teamresourceful.resourcefulconfig.api.annotations.ConfigEntry;
-import com.teamresourceful.resourcefulconfig.api.annotations.ConfigOption;
+import com.teamresourceful.resourcefulconfig.api.annotations.*;
 import com.teamresourceful.resourcefulconfig.api.types.options.EntryType;
-import com.teamresourceful.resourcefulconfig.web.annotations.Link;
-import com.teamresourceful.resourcefulconfig.web.annotations.WebInfo;
 import me.codexadrian.tempad.common.Tempad;
 
 @Config(Tempad.MODID)
-@WebInfo(
+@ConfigInfo(
         icon = "watch",
-        color = "#ff6f00",
         title = "Tempad",
         description = "Adds a device that allows you to teleport to any location stored on your Tempad.",
         links = {
-                @Link(title = "CurseForge", value = "https://www.curseforge.com/minecraft/mc-mods/tempad", icon = "curseforge"),
-                @Link(title = "Modrinth", value = "https://modrinth.com/mod/tempad", icon = "modrinth"),
-                @Link(title = "GitHub", value = "https://modrinth.com/mod/tempad", icon = "github"),
-                @Link(title = "Discord", value = "https://discord.terrarium.earth", icon = "gamepad-2")
+                @ConfigInfo.Link(text = "CurseForge", value = "https://www.curseforge.com/minecraft/mc-mods/tempad", icon = "curseforge"),
+                @ConfigInfo.Link(text = "Modrinth", value = "https://modrinth.com/mod/tempad", icon = "modrinth"),
+                @ConfigInfo.Link(text = "GitHub", value = "https://modrinth.com/mod/tempad", icon = "github"),
+                @ConfigInfo.Link(text = "Discord", value = "https://discord.terrarium.earth", icon = "gamepad-2")
         }
 )
+@ConfigInfo.Color("#ff6f00")
 public final class TempadConfig {
     @ConfigEntry(id = "distanceFromPlayer", type = EntryType.INTEGER, translation = "config.tempad.distance_from_player")
     @Comment("The distance from the player that the Tempad is summoned.")

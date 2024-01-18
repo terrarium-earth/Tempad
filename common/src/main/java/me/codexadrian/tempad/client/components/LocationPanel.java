@@ -1,7 +1,6 @@
 package me.codexadrian.tempad.client.components;
 
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
-import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
 import net.minecraft.network.chat.Component;
@@ -32,10 +31,18 @@ public class LocationPanel extends SelectionList<TextEntry> {
         this.isFavorite = isFavorite;
     }
 
+    public void select(LocationData selected) {
+        for (TextEntry entry : this.children()) {
+            if (entry.data != null && entry.data.equals(selected)) {
+                this.setSelected(entry);
+                break;
+            }
+        }
+    }
+
     public void update(String text) {
         if (this.locations.isEmpty()) {
             updateEntries(EMPTY);
-
         } else {
             updateEntries(this.locations.stream()
                 .filter(data -> text.isBlank() || data.getName().toLowerCase().contains(text.toLowerCase()))

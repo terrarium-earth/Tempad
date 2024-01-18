@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.client.widgets;
+package me.codexadrian.tempad.client.components;
 
 import com.teamresourceful.resourcefullib.client.components.selection.ListEntry;
 import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack;
@@ -8,7 +8,6 @@ import me.codexadrian.tempad.common.utils.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -57,10 +56,11 @@ public class TextEntry extends ListEntry implements Comparable<TextEntry> {
 
     @Override
     public int compareTo(@NotNull TextEntry o) {
-        boolean favorited1 = this.data != null && isFavorite();
-        boolean favorited2 = o.data != null && o.isFavorite();
-        if (favorited1 && !favorited2) return -1;
-        if (!favorited1 && favorited2) return 1;
+        int compare = Boolean.compare(
+            this.data != null && isFavorite(),
+            o.data != null && o.isFavorite()
+        );
+        if (compare != 0) return compare;
         return component.getString().compareTo(o.component.getString());
     }
 }

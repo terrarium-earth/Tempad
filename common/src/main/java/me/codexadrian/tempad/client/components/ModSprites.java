@@ -8,6 +8,7 @@ public class ModSprites {
 
     public static final ResourceLocation SCREEN = new ResourceLocation(Tempad.MODID, "screen/background");
     public static final ResourceLocation BAR = new ResourceLocation(Tempad.MODID, "screen/bar");
+    public static final ResourceLocation MODAL = new ResourceLocation(Tempad.MODID, "modal/background");
 
     public static final WidgetSprites FAVORITE = new WidgetSprites(
         new ResourceLocation(Tempad.MODID, "screen/favorite/normal"),
@@ -43,5 +44,17 @@ public class ModSprites {
         new ResourceLocation(Tempad.MODID, "screen/add/normal"),
         new ResourceLocation(Tempad.MODID, "screen/add/disabled"),
         new ResourceLocation(Tempad.MODID, "screen/add/hover")
+    );
+
+    public static final WidgetSprites BACK = new WidgetSprites(
+        new ResourceLocation(Tempad.MODID, "modal/back/normal"),
+        new ResourceLocation(Tempad.MODID, "modal/back/disabled"),
+        new ResourceLocation(Tempad.MODID, "modal/back/hover")
+    );
+
+    public static final WidgetSprites SAVE = new WidgetSprites(
+        new ResourceLocation(Tempad.MODID, "modal/save/normal"),
+        new ResourceLocation(Tempad.MODID, "modal/save/disabled"),
+        new ResourceLocation(Tempad.MODID, "modal/save/hover")
     );
 }

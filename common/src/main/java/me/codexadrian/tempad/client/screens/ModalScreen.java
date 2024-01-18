@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen;
+import me.codexadrian.tempad.client.components.ModSprites;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.client.Minecraft;
@@ -9,49 +9,29 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
-public class ModalScreen extends BaseCursorScreen {
+public class ModalScreen extends BackgroundScreen {
 
-    private static final ResourceLocation BACKGROUND = new ResourceLocation(Tempad.MODID, "modal/background");
-    private static final WidgetSprites BACK = new WidgetSprites(
-        new ResourceLocation(Tempad.MODID, "modal/back/normal"),
-        new ResourceLocation(Tempad.MODID, "modal/back/disabled"),
-        new ResourceLocation(Tempad.MODID, "modal/back/hover")
-    );
-    private static final WidgetSprites SAVE = new WidgetSprites(
-        new ResourceLocation(Tempad.MODID, "modal/save/normal"),
-        new ResourceLocation(Tempad.MODID, "modal/save/disabled"),
-        new ResourceLocation(Tempad.MODID, "modal/save/hover")
-    );
     private static final Component NAME_FIELD = Component.translatable("gui." + Tempad.MODID + ".name_field");
-
-    private static final int WIDTH = 94;
-    private static final int HEIGHT = 32;
 
     private final Screen background;
     private final Consumer<String> callback;
 
-    private int left;
-    private int top;
-
     protected ModalScreen(Screen background, Consumer<String> callback) {
-        super(CommonComponents.EMPTY);
+        super(94, 32, ModSprites.MODAL);
         this.background = background;
         this.callback = callback;
     }
 
     @Override
     protected void init() {
-        this.left = (this.width - WIDTH) / 2;
-        this.top = (this.height - HEIGHT) / 2;
+        super.init();
 
         EditBox box = new EditBox(this.font, this.left + 16, this.top + 5, 74, 8, CommonComponents.EMPTY);
         box.setMaxLength(32);
@@ -65,19 +45,19 @@ public class ModalScreen extends BaseCursorScreen {
 
         layout.addChild(new ImageButton(
             0, 0, 12, 12,
-            BACK, b -> this.onClose()
+            ModSprites.BACK, b -> this.onClose()
         )).setTooltip(Tooltip.create(CommonComponents.GUI_CANCEL));
 
         layout.addChild(new ImageButton(
             0, 0, 12, 12,
-            SAVE, b -> {
+            ModSprites.SAVE, b -> {
             this.callback.accept(box.getValue());
             this.minecraft.setScreen(null);
         }
         )).setTooltip(Tooltip.create(CommonComponents.GUI_DONE));
 
         layout.arrangeElements();
-        layout.setPosition(this.left + WIDTH - layout.getWidth() - 3, this.top + HEIGHT - layout.getHeight() - 3);
+        layout.setPosition(this.left + this.screenWidth - layout.getWidth() - 3, this.top + this.screenHeight - layout.getHeight() - 3);
         layout.visitWidgets(this::addRenderableWidget);
     }
 
@@ -97,9 +77,7 @@ public class ModalScreen extends BaseCursorScreen {
         this.background.render(graphics, -1, -1, partialTick);
         graphics.flush();
         RenderSystem.clear(256, Minecraft.ON_OSX);
-        this.renderTransparentBackground(graphics);
-
-        graphics.blitSprite(BACKGROUND, this.left, this.top, WIDTH, HEIGHT);
+        super.renderBackground(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override

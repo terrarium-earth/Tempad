@@ -1,10 +1,8 @@
 package me.codexadrian.tempad.client.screens;
 
-import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.client.components.*;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
-import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.items.TempadItem;
@@ -15,7 +13,6 @@ import net.minecraft.Optionull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -25,10 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class TempadScreen extends BaseCursorScreen {
-
-    private static final int TEMPAD_WIDTH = 249;
-    private static final int TEMPAD_HEIGHT = 138;
+public class TempadScreen extends BackgroundScreen {
 
     private final List<LocationData> locations;
     private UUID favorite;
@@ -44,7 +38,7 @@ public class TempadScreen extends BaseCursorScreen {
     private SpriteButton teleportButton;
 
     public TempadScreen(List<LocationData> locations, UUID favorite) {
-        super(CommonComponents.EMPTY);
+        super(249, 138, ModSprites.SCREEN);
         this.locations = locations;
         this.favorite = favorite;
     }
@@ -52,11 +46,9 @@ public class TempadScreen extends BaseCursorScreen {
     @Override
     protected void init() {
         super.init();
-        int left = (width - TEMPAD_WIDTH) / 2;
-        int top = (height - TEMPAD_HEIGHT) / 2;
 
-        informationPanel = addRenderableWidget(new InformationPanel(left + 16, top + 33, 91, 78));
-        locationPanel = addRenderableWidget(new LocationPanel(
+        this.informationPanel = addRenderableWidget(new InformationPanel(this.left + 16, this.top + 33, 91, 78));
+        this.locationPanel = addRenderableWidget(new LocationPanel(
             left + 129, top + 31, 91, 92, this.locations, id -> id.equals(favorite), this::select
         ));
 
@@ -85,6 +77,8 @@ public class TempadScreen extends BaseCursorScreen {
             left + 208, top + 14, 12, 12,
             () -> ModalScreen.open(name -> NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(name)))
         ));
+
+        this.locationPanel.select(this.selectedLocation);
     }
 
     private void select(TextEntry entry) {
@@ -145,21 +139,10 @@ public class TempadScreen extends BaseCursorScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick);
-        int left = (width - TEMPAD_WIDTH) / 2;
-        int top = (height - TEMPAD_HEIGHT) / 2;
-
-        graphics.blitSprite(ModSprites.SCREEN, left, top, TEMPAD_WIDTH, TEMPAD_HEIGHT);
-    }
-
-    @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
 
         if (minecraft == null) return;
-        int left = (width - TEMPAD_WIDTH) / 2;
-        int top = (height - TEMPAD_HEIGHT) / 2;
 
         ItemStack tempad = TeleportUtils.findTempad(minecraft.player);
         if (tempad.getItem() instanceof TempadItem item) {
@@ -179,10 +162,5 @@ public class TempadScreen extends BaseCursorScreen {
                 setTooltipForNextRenderPass(tooltip.stream().map(Component::getVisualOrderText).toList());
             }
         }
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
     }
 }

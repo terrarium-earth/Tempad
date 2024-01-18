@@ -1,7 +1,6 @@
 package me.codexadrian.tempad.client.components;
 
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
-import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
 import net.minecraft.network.chat.Component;
