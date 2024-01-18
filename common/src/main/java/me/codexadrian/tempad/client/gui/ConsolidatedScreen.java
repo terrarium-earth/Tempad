@@ -1,35 +1,30 @@
 package me.codexadrian.tempad.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.teamresourceful.resourcefulconfig.client.components.base.SpriteButton;
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
 import me.codexadrian.tempad.api.options.TempadOption;
+import me.codexadrian.tempad.client.components.ModSprites;
+import me.codexadrian.tempad.client.components.ToggleButton;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
-import me.codexadrian.tempad.client.widgets.NewLocationModal;
-import me.codexadrian.tempad.client.widgets.TemporaryWidget;
+import me.codexadrian.tempad.client.screens.ModalScreen;
 import me.codexadrian.tempad.client.widgets.TextEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.items.TempadItem;
+import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.c2s.*;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,14 +36,12 @@ public class ConsolidatedScreen extends Screen {
     private static final int TEMPAD_WIDTH = 249;
     private static final int TEMPAD_HEIGHT = 138;
 
-    protected final List<TemporaryWidget> temporaryWidgets = new ArrayList<>();
     private final List<LocationData> locations;
     private UUID favorite;
     private LocationData selectedLocation;
     private SelectionList<TextEntry> informationPanel;
     private SelectionList<TextEntry> locationPanel;
-    private Button favoriteButton;
-    private Button unfavoriteButton;
+    private ToggleButton favoriteButton;
     private Button downloadButton;
     private Button deleteButton;
     private Button teleportButton;
@@ -104,13 +97,8 @@ public class ConsolidatedScreen extends Screen {
                     new TextEntry(Component.translatable("gui." + Tempad.MODID + ".dimension", Component.translatable(selectedLocation.getLevelKey().location().toLanguageKey("dimension")))))
                 );
 
-                if (selectedLocation.getId().equals(favorite)) {
-                    favoriteButton.visible = false;
-                    unfavoriteButton.visible = true;
-                } else {
-                    favoriteButton.visible = true;
-                    unfavoriteButton.visible = false;
-                }
+                favoriteButton.setSelected(selectedLocation.getId().equals(favorite));
+                favoriteButton.visible = true;
                 downloadButton.visible = true;
                 deleteButton.visible = true;
                 teleportButton.visible = true;
@@ -161,12 +149,14 @@ public class ConsolidatedScreen extends Screen {
         if (!locations.isEmpty()) editBox.setResponder((string) -> locationPanel.updateEntries(locations.stream().filter(locationData -> locationData.getName().toLowerCase().contains(string.toLowerCase())).map(locationData -> new TextEntry(locationData, locData -> locData.getId().equals(favorite))).toList()));
         addRenderableWidget(editBox);
 
-        favoriteButton = addRenderableWidget(new TempadButton(cornerX + 46, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".favorite"), (button) -> favoriteAction(), 0));
+        favoriteButton = addRenderableWidget(new ToggleButton(
+            cornerX + 46, cornerY + 110, 14, 14,
+            ModSprites.UNFAVORITE, ModSprites.FAVORITE,
+            b -> favoriteAction()
+        ));
         favoriteButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".favorite")));
         favoriteButton.visible = false;
-        unfavoriteButton = addRenderableWidget(new TempadButton(cornerX + 46, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".unfavorite"), (button) -> favoriteAction(), 1));
-        unfavoriteButton.setTooltip(Tooltip.create(Component.translatable("gui." + Tempad.MODID + ".unfavorite")));
-        unfavoriteButton.visible = false;
+
         downloadButton = addRenderableWidget(new TempadButton(cornerX + 62, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".download"), (button) -> exportAction(), 2));
         downloadButton.visible = false;
         deleteButton = addRenderableWidget(new TempadButton(cornerX + 78, cornerY + 110, 14, 14, Component.translatable("gui." + Tempad.MODID + ".delete"), (button) -> deleteAction(), 3));
@@ -178,15 +168,7 @@ public class ConsolidatedScreen extends Screen {
 
     private void favoriteAction() {
         if (minecraft != null && minecraft.player != null) {
-            if (selectedLocation.getId().equals(favorite)) {
-                favorite = null;
-                favoriteButton.visible = true;
-                unfavoriteButton.visible = false;
-            } else {
-                favorite = selectedLocation.getId();
-                favoriteButton.visible = false;
-                unfavoriteButton.visible = true;
-            }
+            favorite = selectedLocation.getId().equals(favorite) ? null : selectedLocation.getId();
             NetworkHandler.CHANNEL.sendToServer(new FavoriteLocationPacket(favorite));
         }
     }
@@ -209,7 +191,6 @@ public class ConsolidatedScreen extends Screen {
                 new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_selection.second_line"))
             ));
             favoriteButton.visible = false;
-            unfavoriteButton.visible = false;
             downloadButton.visible = false;
             deleteButton.visible = false;
             teleportButton.visible = false;
@@ -224,72 +205,7 @@ public class ConsolidatedScreen extends Screen {
     }
 
     private void openNewLocationModal() {
-        if (minecraft != null && minecraft.player != null) {
-            findOrCreateEditWidget();
-        }
-    }
-
-    private void newLocationAction(String name) {
-        if (minecraft != null && minecraft.player != null) {
-            Minecraft.getInstance().setScreen(null);
-            NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(name));
-        }
-    }
-
-    public <R extends Renderable & TemporaryWidget> R addTemporary(R renderable) {
-        addRenderableOnly(renderable);
-        this.temporaryWidgets.add(renderable);
-        return renderable;
-    }
-
-    @Nullable
-    @Override
-    public GuiEventListener getFocused() {
-        boolean visible = false;
-        for (TemporaryWidget widget : this.temporaryWidgets) {
-            visible |= widget.isVisible();
-            if (widget.isVisible() && widget instanceof GuiEventListener listener) {
-                return listener;
-            }
-        }
-        if (visible) {
-            return null;
-        }
-        return super.getFocused();
-    }
-
-    @Override
-    public @NotNull List<? extends GuiEventListener> children() {
-        List<GuiEventListener> listeners = new ArrayList<>();
-        for (TemporaryWidget widget : temporaryWidgets) {
-            if (widget.isVisible() && widget instanceof GuiEventListener listener) {
-                listeners.add(listener);
-            }
-        }
-        if (!listeners.isEmpty()) {
-            return listeners;
-        }
-        return super.children();
-    }
-
-    public List<TemporaryWidget> temporaryWidgets() {
-        return this.temporaryWidgets;
-    }
-
-    public void findOrCreateEditWidget() {
-        boolean found = false;
-        NewLocationModal widget = new NewLocationModal(this.width, this.height, (width - TEMPAD_WIDTH) / 2 + 70, (height - TEMPAD_HEIGHT) / 2 + 54, this::newLocationAction);
-        for (TemporaryWidget temporaryWidget : this.temporaryWidgets()) {
-            if (temporaryWidget instanceof NewLocationModal modal) {
-                found = true;
-                widget = modal;
-                break;
-            }
-        }
-        widget.setVisible(true);
-        if (!found) {
-            this.addTemporary(widget);
-        }
+        ModalScreen.open(name -> NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(name)));
     }
 
     @Override
