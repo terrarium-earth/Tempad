@@ -40,11 +40,8 @@ public class ToggleButton extends Button {
         this.selected = selected;
     }
 
-    public boolean isSelected() {
-        return this.selected;
-    }
-
     public void setTooltip(Boolean2ObjectFunction<Tooltip> tooltip) {
         this.tooltip = tooltip == null ? value -> Tooltip.create(CommonComponents.EMPTY) : tooltip;
+        this.setTooltip(this.tooltip.get(this.selected));
     }
 }

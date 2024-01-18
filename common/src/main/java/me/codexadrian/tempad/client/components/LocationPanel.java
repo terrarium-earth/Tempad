@@ -19,18 +19,28 @@ public class LocationPanel extends SelectionList<TextEntry> {
         new TextEntry(Component.translatable("gui." + Tempad.MODID + ".no_locations.second_line"))
     );
 
-    public LocationPanel(int x, int y, int width, int height, Consumer<@Nullable TextEntry> onSelection) {
+    private final List<LocationData> locations;
+    private final Predicate<UUID> isFavorite;
+
+    public LocationPanel(
+        int x, int y, int width, int height,
+        List<LocationData> locations, Predicate<UUID> isFavorite,
+        Consumer<@Nullable TextEntry> onSelection
+    ) {
         super(x, y, width, height, 10, onSelection);
+        this.locations = locations;
+        this.isFavorite = isFavorite;
     }
 
-    public void update(String text, List<LocationData> locations, Predicate<UUID> isFavorite) {
-        if (locations.isEmpty()) {
+    public void update(String text) {
+        if (this.locations.isEmpty()) {
             updateEntries(EMPTY);
 
         } else {
-            updateEntries(locations.stream()
+            updateEntries(this.locations.stream()
                 .filter(data -> text.isBlank() || data.getName().toLowerCase().contains(text.toLowerCase()))
-                .map(locationData -> new TextEntry(locationData, locData -> isFavorite.test(locData.getId())))
+                .map(locationData -> new TextEntry(locationData, locData -> this.isFavorite.test(locData.getId())))
+                .sorted(TextEntry::compareTo)
                 .toList());
         }
     }

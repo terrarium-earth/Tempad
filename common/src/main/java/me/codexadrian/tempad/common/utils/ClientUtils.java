@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.common.utils;
 
 import me.codexadrian.tempad.client.config.TempadClientConfig;
-import me.codexadrian.tempad.client.gui.ConsolidatedScreen;
+import me.codexadrian.tempad.client.screens.TempadScreen;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.c2s.OpenFavoritedLocationPacket;
 import me.codexadrian.tempad.common.network.messages.c2s.OpenTempadByShortcutPacket;
@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 
 public class ClientUtils {
     public static void openScreen(OpenTempadScreenPacket packet) {
-        Minecraft.getInstance().setScreen(new ConsolidatedScreen(packet.locationData(), packet.favorite()));
+        Minecraft.getInstance().setScreen(new TempadScreen(packet.locationData(), packet.favorite()));
     }
 
     public static int darkenColor(int color) {

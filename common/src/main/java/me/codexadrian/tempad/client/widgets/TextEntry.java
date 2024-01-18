@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-public class TextEntry extends ListEntry {
+public class TextEntry extends ListEntry implements Comparable<TextEntry> {
+
     public final LocationData data;
     private Function<LocationData, Boolean> isFavorite = (data) -> false;
     private final Component component;
@@ -48,5 +49,18 @@ public class TextEntry extends ListEntry {
     @Override
     public boolean isFocused() {
         return isFocused;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite.apply(data);
+    }
+
+    @Override
+    public int compareTo(@NotNull TextEntry o) {
+        boolean favorited1 = this.data != null && isFavorite();
+        boolean favorited2 = o.data != null && o.isFavorite();
+        if (favorited1 && !favorited2) return -1;
+        if (!favorited1 && favorited2) return 1;
+        return component.getString().compareTo(o.component.getString());
     }
 }

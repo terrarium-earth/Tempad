@@ -24,7 +24,7 @@ public class InformationPanel extends SelectionList<TextEntry> {
         super(x, y, width, height, 10, entry -> {});
     }
 
-    public void setLocation(LocationData location) {
+    public void update(LocationData location) {
         if (location == null) {
             updateEntries(NO_SELECTION);
         } else {

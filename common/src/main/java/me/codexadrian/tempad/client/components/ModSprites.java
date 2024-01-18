@@ -6,6 +6,9 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModSprites {
 
+    public static final ResourceLocation SCREEN = new ResourceLocation(Tempad.MODID, "screen/background");
+    public static final ResourceLocation BAR = new ResourceLocation(Tempad.MODID, "screen/bar");
+
     public static final WidgetSprites FAVORITE = new WidgetSprites(
         new ResourceLocation(Tempad.MODID, "screen/favorite/normal"),
         new ResourceLocation(Tempad.MODID, "screen/favorite/disabled"),
@@ -34,5 +37,11 @@ public class ModSprites {
         new ResourceLocation(Tempad.MODID, "screen/teleport/normal"),
         new ResourceLocation(Tempad.MODID, "screen/teleport/disabled"),
         new ResourceLocation(Tempad.MODID, "screen/teleport/hover")
+    );
+
+    public static final WidgetSprites ADD = new WidgetSprites(
+        new ResourceLocation(Tempad.MODID, "screen/add/normal"),
+        new ResourceLocation(Tempad.MODID, "screen/add/disabled"),
+        new ResourceLocation(Tempad.MODID, "screen/add/hover")
     );
 }
