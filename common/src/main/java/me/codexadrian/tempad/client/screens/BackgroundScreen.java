@@ -23,6 +23,7 @@ public class BackgroundScreen extends BaseCursorScreen {
 
     @Override
     protected void init() {
+        super.init();
         this.left = (this.width - this.screenWidth) / 2;
         this.top = (this.height - this.screenHeight) / 2;
     }

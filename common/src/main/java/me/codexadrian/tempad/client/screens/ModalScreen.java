@@ -52,7 +52,9 @@ public class ModalScreen extends BackgroundScreen {
             0, 0, 12, 12,
             ModSprites.SAVE, b -> {
             this.callback.accept(box.getValue());
-            this.minecraft.setScreen(null);
+            if (this.minecraft != null) {
+                this.minecraft.setScreen(null);
+            }
         }
         )).setTooltip(Tooltip.create(CommonComponents.GUI_DONE));
 
@@ -82,6 +84,7 @@ public class ModalScreen extends BackgroundScreen {
 
     @Override
     public void onClose() {
+        if (this.minecraft == null) return;
         this.minecraft.setScreen(this.background);
     }
 

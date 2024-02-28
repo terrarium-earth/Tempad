@@ -1,9 +1,11 @@
 package me.codexadrian.tempad.common.utils;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.items.TempadItem;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +20,15 @@ public class TeleportUtils {
 
     public static boolean mayTeleport(ResourceKey<Level> level, Player player) {
         if (player.isCreative()) return true;
+        var lookup = player.level().registryAccess().lookup(Registries.DIMENSION);
+        if (lookup.isPresent()) {
+            var levelReference = lookup.get().get(level);
+            if (levelReference.isPresent()) {
+                if (levelReference.get().is(Tempad.TEMPAD_DIMENSION_BLACKLIST)) {
+                    return false;
+                };
+            }
+        }
         return level.equals(player.level().dimension()) || (player.level().isClientSide() ? ConfigCache.allowInterdimensionalTravel : TempadConfig.allowInterdimensionalTravel);
     }
 
@@ -29,7 +40,6 @@ public class TeleportUtils {
             setTempad = BaubleUtils.findTempadInBaubles(player, tempad::set);
         }
 
-        //noinspection ConstantValue
         if (setTempad != null) {
             if (replacementTempad != null) {
                 setTempad.accept(replacementTempad);
