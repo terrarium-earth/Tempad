@@ -1,3 +1,3 @@
-# 2.3.4
+# 2.3.5
 
-- Readded Curios Support
+- Fixed common module not being including in the mod

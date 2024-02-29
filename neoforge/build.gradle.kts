@@ -12,6 +12,9 @@ dependencies {
     common(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
+    shadowCommon(project(path = ":common", configuration = "transformProductionNeoForge")) {
+        isTransitive = false
+    }
 
     val minecraftVersion: String by project
     val neoforgeVersion: String by project
