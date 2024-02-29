@@ -1,3 +1,4 @@
-# 2.3.5
+# 2.3.7
 
-- Fixed common module not being including in the mod
+- Fix loottable issue on Neo
+- Increased odds of getting HWR Tempad

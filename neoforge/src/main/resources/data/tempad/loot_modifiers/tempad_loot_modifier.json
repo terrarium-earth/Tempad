@@ -2,12 +2,12 @@
   "type": "tempad:tempad_loot_modifier",
   "conditions": [
     {
-      "condition": "forge:loot_table_id",
+      "condition": "neoforge:loot_table_id",
       "loot_table_id": "minecraft:chests/end_city_treasure"
     },
     {
       "condition": "minecraft:random_chance",
-      "chance": 0.005
+      "chance": 0.05
     }
   ]
 }

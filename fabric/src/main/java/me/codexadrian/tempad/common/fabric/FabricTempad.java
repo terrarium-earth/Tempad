@@ -29,7 +29,7 @@ public class FabricTempad implements ModInitializer {
             if (id.equals(BuiltInLootTables.END_CITY_TREASURE)) {
                 LootPool.Builder poolBuilder = new LootPool.Builder()
                         .setRolls(ConstantValue.exactly(1))
-                        .when(LootItemRandomChanceCondition.randomChance(0.005F))
+                        .when(LootItemRandomChanceCondition.randomChance(0.05F))
                         .add(LootItem.lootTableItem(TempadRegistry.CREATIVE_TEMPAD.get()))
                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)).build());
                 tableBuilder.pool(poolBuilder.build());
