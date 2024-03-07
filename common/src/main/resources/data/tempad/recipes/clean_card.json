@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "tempad:location_card"
+        }
+    ],
+    "result": {
+        "count": 1,
+        "item": "tempad:location_card"
+    }
+}

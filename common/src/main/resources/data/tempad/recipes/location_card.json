@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "QB",
+        "PC"
+    ],
+    "key": {
+        "Q": {
+            "item": "minecraft:quartz"
+        },
+        "P": {
+            "item": "minecraft:paper"
+        },
+        "C": {
+            "item": "minecraft:compass"
+        },
+        "B": {
+            "item": "minecraft:black_dye"
+        }
+    },
+    "result": {
+        "item": "tempad:location_card",
+        "count": 1
+    }
+}

@@ -5,6 +5,7 @@
   "gui.tempad.add_location": "Add location",
   "gui.tempad.download": "Export location",
   "gui.tempad.download_disabled": "You may not export this location",
+  "gui.tempad.download_disabled.no_card": "You need a blank location card to export",
   "gui.tempad.teleport": "Teleport",
   "gui.tempad.teleport_disabled": "You may not teleport to this location",
   "gui.tempad.delete": "Delete location",
@@ -57,7 +58,9 @@
   "item.tempad.location_card.set_name": "Rename in anvil to set location name",
   "item.tempad.location_card.set_location": "Set location: %s",
 
-  "category.tempad.keybinds": "Tempad",
+  "item.tempad.temporal_shielding": "Temporal Shielding",
+
+  "category.tempad": "Tempad",
   "key.tempad.favorite": "Open favorited location",
   "key.tempad.shortcut": "Open Tempad screen"
 }

@@ -38,15 +38,15 @@ public class FabricTempadClient implements ClientModInitializer {
         shortcutKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
             "key.tempad.shortcut", // The translation key of the keybinding's name
             InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_B, // The keycode of the key
-            "category.tempad.keybinds" // The translation key of the keybinding's category.
+            InputConstants.UNKNOWN.getValue(), // The keycode of the key
+            "category.tempad" // The translation key of the keybinding's category.
         ));
 
         favoriteKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
             "key.tempad.favorite", // The translation key of the keybinding's name
             InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_G, // The keycode of the key
-            "category.tempad.keybinds" // The translation key of the keybinding's category.
+            InputConstants.UNKNOWN.getValue(), // The keycode of the key
+            "category.tempad" // The translation key of the keybinding's category.
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

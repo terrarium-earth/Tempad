@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "###",
+        "AGA",
+        "###"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:quartz"
+        },
+        "A": {
+            "item": "minecraft:netherite_scrap"
+        },
+        "G": {
+            "item": "minecraft:gold_ingot"
+        }
+    },
+    "result": {
+        "item": "tempad:temporal_shielding",
+        "count": 3
+    }
+}

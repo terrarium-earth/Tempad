@@ -70,8 +70,16 @@ public class LocationCard extends Item {
                 player.getItemInHand(usedHand).shrink(1);
                 player.displayClientMessage(Component.translatable("item.tempad.location_card.added_location", Component.literal(location.getName()).withStyle(ChatFormatting.GOLD)), true);
             } else {
-                var newLocation = new LocationData(player.getItemInHand(usedHand).getHoverName().getString(), level.dimension(), player.blockPosition(), CommonUtils.generate(id -> !TempadLocationHandler.containsLocation(level, player.getUUID(), id), UUID::randomUUID));
-                setLocation(player.getItemInHand(usedHand), newLocation, player.getDisplayName().getString());
+                ItemStack cardStack = player.getItemInHand(usedHand);
+                var newLocation = new LocationData(cardStack.getHoverName().getString(), level.dimension(), player.blockPosition(), CommonUtils.generate(id -> !TempadLocationHandler.containsLocation(level, player.getUUID(), id), UUID::randomUUID));
+                ItemStack stack = new ItemStack(this);
+                setLocation(stack, newLocation, player.getDisplayName().getString());
+                if (cardStack.getCount() > 1) {
+                    cardStack.shrink(1);
+                    player.getInventory().placeItemBackInInventory(stack);
+                } else {
+                    player.setItemInHand(usedHand, stack);
+                }
                 player.displayClientMessage(Component.translatable("item.tempad.location_card.set_location", Component.literal(newLocation.getName()).withStyle(ChatFormatting.GOLD)), true);
             }
             return InteractionResultHolder.success(player.getItemInHand(usedHand));

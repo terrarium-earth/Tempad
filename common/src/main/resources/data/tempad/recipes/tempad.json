@@ -7,16 +7,16 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:quartz_block"
+      "item": "tempad:temporal_shielding"
     },
     "R": {
       "item": "minecraft:redstone_lamp"
     },
     "T": {
-      "item": "minecraft:tinted_glass"
+      "item": "minecraft:ender_pearl"
     },
     "B": {
-      "item": "minecraft:beacon"
+      "item": "minecraft:tinted_glass"
     }
   },
   "result": {

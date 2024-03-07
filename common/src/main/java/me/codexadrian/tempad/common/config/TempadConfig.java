@@ -41,11 +41,6 @@ public final class TempadConfig {
     @Comment("Whether or not the Tempad should allow exporting of locations onto Location Cards.")
     public static boolean allowExporting = true;
 
-    //consume cooldown for exporting boolean
-    @ConfigEntry(id = "consumeCooldown", type = EntryType.BOOLEAN, translation = "config.tempad.consume_cooldown")
-    @Comment("Whether or not the Tempad should consume a cooldown when exporting a location.")
-    public static boolean consumeCooldown = true;
-
     //enable waystones compat
     @ConfigEntry(id = "waystonesCompat", type = EntryType.BOOLEAN, translation = "config.tempad.waystones_compat")
     @Comment("Whether or not the Tempad should allow teleporting to waystones.")

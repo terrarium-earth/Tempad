@@ -56,13 +56,12 @@ public record ExportLocationPacket(UUID location) implements Packet<ExportLocati
             return player -> {
                 if (!TeleportUtils.hasTempad(player)) return;
                 ItemStack itemInHand = TeleportUtils.findTempad(player);
-                if ((itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand))) {
-                    if (!player.getAbilities().instabuild)
-                        tempadItem.getOption().onTimedoorOpen(player);
+                if (TeleportUtils.hasLocationCard(player) && itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand)) {
                     LocationData locationData = TempadLocationHandler.getLocation(player.level(), player.getUUID(), message.location);
                     if (locationData.isDownloadable() && TempadConfig.allowExporting) {
                         ItemStack stack = new ItemStack(TempadRegistry.LOCATION_CARD.get());
                         LocationCard.setLocation(stack, locationData, player.getDisplayName().getString());
+                        TeleportUtils.extractLocationCard(player);
                         player.getInventory().placeItemBackInInventory(stack);
                     }
                 }

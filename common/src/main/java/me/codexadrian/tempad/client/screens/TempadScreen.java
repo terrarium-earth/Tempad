@@ -97,7 +97,7 @@ public class TempadScreen extends BackgroundScreen {
             ItemStack itemInHand = TeleportUtils.findTempad(minecraft.player);
             boolean isTempadUsable = itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand);
             teleportButton.setActivated(selectedLocation.isTeleportable() && TeleportUtils.mayTeleport(selectedLocation.getLevelKey(), minecraft.player) && isTempadUsable);
-            downloadButton.setActivated(selectedLocation.isDownloadable() && ConfigCache.allowExporting && (!ConfigCache.consumeCooldown || isTempadUsable));
+            downloadButton.setActivated(selectedLocation.isDownloadable() && ConfigCache.allowExporting && TeleportUtils.hasLocationCard(minecraft.player));
             deleteButton.setActivated(selectedLocation.isDeletable());
         }
     }

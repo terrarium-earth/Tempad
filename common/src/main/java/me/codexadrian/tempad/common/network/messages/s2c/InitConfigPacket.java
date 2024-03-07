@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 public record InitConfigPacket(
     boolean allowInterdimensionalTravel,
     boolean allowExporting,
-    boolean consumeCooldown,
     String tempadFuelType,
     int tempadFuelConsumptionValue,
     int tempadFuelCapacityValue,
@@ -43,7 +42,6 @@ public record InitConfigPacket(
         public void encode(InitConfigPacket message, FriendlyByteBuf buffer) {
             buffer.writeBoolean(message.allowInterdimensionalTravel);
             buffer.writeBoolean(message.allowExporting);
-            buffer.writeBoolean(message.consumeCooldown);
             buffer.writeUtf(message.tempadFuelType);
             buffer.writeInt(message.tempadFuelConsumptionValue);
             buffer.writeInt(message.tempadFuelCapacityValue);
@@ -55,7 +53,6 @@ public record InitConfigPacket(
         @Override
         public InitConfigPacket decode(FriendlyByteBuf buffer) {
             return new InitConfigPacket(
-                buffer.readBoolean(),
                 buffer.readBoolean(),
                 buffer.readBoolean(),
                 buffer.readUtf(),
@@ -72,7 +69,6 @@ public record InitConfigPacket(
             return () -> {
                 ConfigCache.allowInterdimensionalTravel = message.allowInterdimensionalTravel;
                 ConfigCache.allowExporting = message.allowExporting;
-                ConfigCache.consumeCooldown = message.consumeCooldown;
                 ConfigCache.tempadFuelType = message.tempadFuelType;
                 ConfigCache.tempadFuelConsumptionValue = message.tempadFuelConsumptionValue;
                 ConfigCache.tempadFuelCapacityValue = message.tempadFuelCapacityValue;

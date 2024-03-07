@@ -47,13 +47,12 @@ public class ForgeTempad {
         bus.addListener(this::setup);
 
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
-            if (event.getTab() == BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.TOOLS_AND_UTILITIES)) TempadRegistry.ITEMS.stream().map(RegistryEntry::get).forEach(event::accept);
+            if (event.getTabKey() == Tempad.TAB) TempadRegistry.ITEMS.stream().map(RegistryEntry::get).forEach(event::accept);
         });
 
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
             NetworkHandler.CHANNEL.sendToPlayer(new InitConfigPacket(TempadConfig.allowInterdimensionalTravel,
                 TempadConfig.allowExporting,
-                TempadConfig.consumeCooldown,
                 TempadConfig.tempadFuelType,
                 TempadConfig.tempadFuelConsumptionValue,
                 TempadConfig.tempadFuelCapacityValue,

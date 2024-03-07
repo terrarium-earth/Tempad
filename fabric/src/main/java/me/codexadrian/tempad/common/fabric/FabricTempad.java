@@ -13,6 +13,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -39,7 +41,6 @@ public class FabricTempad implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             NetworkHandler.CHANNEL.sendToPlayer(new InitConfigPacket(TempadConfig.allowInterdimensionalTravel,
                 TempadConfig.allowExporting,
-                TempadConfig.consumeCooldown,
                 TempadConfig.tempadFuelType,
                 TempadConfig.tempadFuelConsumptionValue,
                 TempadConfig.tempadFuelCapacityValue,
@@ -56,7 +57,7 @@ public class FabricTempad implements ModInitializer {
             TempadTrinketHandler.init();
         }
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(group -> {
+        ItemGroupEvents.modifyEntriesEvent(Tempad.TAB).register(group -> {
             TempadRegistry.ITEMS.stream().map(RegistryEntry::get).forEach(group::accept);
         });
     }

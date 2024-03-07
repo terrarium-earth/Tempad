@@ -4,6 +4,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
+import me.codexadrian.tempad.common.items.LocationCard;
 import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -73,6 +74,32 @@ public class TeleportUtils {
 
     public static boolean hasTempad(Player player) {
         return !findTempad(player).isEmpty();
+    }
+
+    public static boolean hasLocationCard(Player player) {
+        if (player.isCreative()) return true;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.getItem() instanceof LocationCard && LocationCard.getLocation(stack) == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void extractLocationCard(Player player) {
+        if (player.isCreative()) return;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.getItem() instanceof LocationCard && LocationCard.getLocation(stack) == null) {
+                stack.shrink(1);
+                if (stack.getCount() == 0) {
+                    stack = ItemStack.EMPTY;
+                }
+                player.getInventory().setItem(i, stack);
+                return;
+            }
+        }
     }
 
     @ExpectPlatform

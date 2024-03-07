@@ -1,4 +1,4 @@
-# 2.3.7
-
-- Fix loottable issue on Neo
-- Increased odds of getting HWR Tempad
+- Location Cards are now craftable
+- Blank cards are needed to create a location card from the GUI
+- OP Tempad is now craftable
+- New crafting component: Temporal Sheilding (Will be used in future update with new content)

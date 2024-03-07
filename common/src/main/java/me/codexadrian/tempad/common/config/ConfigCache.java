@@ -3,7 +3,6 @@ package me.codexadrian.tempad.common.config;
 public class ConfigCache {
     public static boolean allowInterdimensionalTravel = TempadConfig.allowInterdimensionalTravel;
     public static boolean allowExporting = TempadConfig.allowExporting;
-    public static boolean consumeCooldown = TempadConfig.consumeCooldown;
 
     public static String tempadFuelType = TempadConfig.tempadFuelType;
     public static int tempadFuelConsumptionValue = TempadConfig.tempadFuelConsumptionValue;
