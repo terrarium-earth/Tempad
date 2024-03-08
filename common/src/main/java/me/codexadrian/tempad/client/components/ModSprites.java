@@ -6,7 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModSprites {
 
-    public static final ResourceLocation SCREEN = new ResourceLocation(Tempad.MODID, "screen/background");
+    public static final ResourceLocation TEMPAD_SCREEN = new ResourceLocation(Tempad.MODID, "screen/tempad");
+    public static final ResourceLocation PRINTER_SCREEN = new ResourceLocation(Tempad.MODID, "screen/printer");
     public static final ResourceLocation BAR = new ResourceLocation(Tempad.MODID, "screen/bar");
     public static final ResourceLocation MODAL = new ResourceLocation(Tempad.MODID, "modal/background");
 

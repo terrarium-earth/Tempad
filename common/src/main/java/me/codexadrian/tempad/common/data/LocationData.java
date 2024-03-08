@@ -1,11 +1,17 @@
 package me.codexadrian.tempad.common.data;
 
+import com.teamresourceful.bytecodecs.base.ByteCodec;
+import com.teamresourceful.bytecodecs.base.object.ObjectByteCodec;
+import me.codexadrian.tempad.common.utils.CodecUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +29,17 @@ public class LocationData implements Comparable<LocationData>{
     private boolean isDeletable;
     private boolean isDownloadable;
 
+    public static ByteCodec<LocationData> CODEC = ObjectByteCodec.create(
+        ByteCodec.STRING.fieldOf(LocationData::getName),
+        CodecUtils.DIMENSION.optionalFieldOf(LocationData::getLevelKeyOptional),
+        CodecUtils.BLOCK_POS.fieldOf(LocationData::getBlockPos),
+        ByteCodec.UUID.fieldOf(LocationData::getId),
+        ByteCodec.BOOLEAN.fieldOf(LocationData::isTeleportable),
+        ByteCodec.BOOLEAN.fieldOf(LocationData::isDeletable),
+        ByteCodec.BOOLEAN.fieldOf(LocationData::isDownloadable),
+        LocationData::new
+    );
+
     public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid, boolean isTeleportable, boolean isDeletable, boolean isDownloadable) {
         this.name = name;
         this.levelKey = levelKey;
@@ -35,6 +52,11 @@ public class LocationData implements Comparable<LocationData>{
 
     public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid) {
         this(name, levelKey, pos, uuid, true, true, true);
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public LocationData(String name, Optional<ResourceKey<Level>> levelKey, BlockPos pos, UUID uuid, boolean isTeleportable, boolean isDeletable, boolean isDownloadable) {
+        this(name, levelKey.orElse(null), pos, uuid, isTeleportable, isDeletable, isDownloadable);
     }
 
     public CompoundTag toTag() {
@@ -72,6 +94,10 @@ public class LocationData implements Comparable<LocationData>{
     @Nullable
     public ResourceKey<Level> getLevelKey() {
         return levelKey;
+    }
+
+    public Optional<ResourceKey<Level>> getLevelKeyOptional() {
+        return Optional.ofNullable(levelKey);
     }
 
     public String getName() {

@@ -6,6 +6,9 @@ import me.codexadrian.tempad.common.compat.botarium.BotariumTempadOptionRegistry
 import me.codexadrian.tempad.common.compat.waystones.WaystoneLocationGetter;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.registry.TempadBlockEntities;
+import me.codexadrian.tempad.common.registry.TempadBlocks;
+import me.codexadrian.tempad.common.registry.TempadMenus;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.minecraft.core.registries.Registries;
@@ -52,8 +55,12 @@ public class Tempad {
         }
 
         CONFIGURATOR.register(TempadConfig.class);
+        TempadBlocks.REGISTRY.init();
+        TempadBlockEntities.REGISTRY.init();
+        TempadMenus.REGISTRY.init();
         TempadRegistry.ITEMS.init();
         TempadRegistry.ENTITIES.init();
+        TempadRegistry.ITEM_GROUP.init();
         NetworkHandler.register();
 
         if (PlatformUtils.isModLoaded("botarium")) {

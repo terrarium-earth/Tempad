@@ -19,6 +19,7 @@ public class NetworkHandler {
         CHANNEL.register(OpenFavoritedLocationPacket.HANDLER);
         CHANNEL.register(OpenTempadByShortcutPacket.HANDLER);
         CHANNEL.register(SummonTimedoorPacket.HANDLER);
+        CHANNEL.register(WriteLocationCard.HANDLER);
 
         CHANNEL.register(InitConfigPacket.HANDLER);
         CHANNEL.register(OpenTempadScreenPacket.HANDLER);

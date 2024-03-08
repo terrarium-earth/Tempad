@@ -3,6 +3,7 @@ package me.codexadrian.tempad.client.screens;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.codexadrian.tempad.client.components.ModSprites;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
+import me.codexadrian.tempad.client.screens.base.BackgroundScreen;
 import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -65,6 +65,10 @@ public class TempadLocationHandler extends SaveHandler {
         return orDefault;
     }
 
+    public static ArrayList<LocationData> getLocationsList(Level level, UUID player) {
+        return new ArrayList<>(getLocations(level, player).values());
+    }
+
     public static LocationData getLocation(Level level, UUID player, UUID location) {
         return getLocations(level, player).get(location);
     }

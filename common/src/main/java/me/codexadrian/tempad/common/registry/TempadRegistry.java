@@ -12,6 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 
@@ -26,6 +27,9 @@ public class TempadRegistry {
     public static final RegistryEntry<Item> CREATIVE_TEMPAD = ITEMS.register("he_who_remains_tempad", () -> new AdvancedTempadItem(new Item.Properties().stacksTo(1)));
     public static final RegistryEntry<Item> LOCATION_CARD = ITEMS.register("location_card", () -> new LocationCard(new Item.Properties()));
     public static final RegistryEntry<Item> TEMPORAL_SHEILDING = ITEMS.register("temporal_shielding", () -> new Item(new Item.Properties()));
+
+    //blocks
+    public static final RegistryEntry<Item> PRINTER_BLOCK = ITEMS.register("printer_block", () -> new BlockItem(TempadBlocks.LOCATION_PRINTER.get(), new Item.Properties()));
 
     public static final RegistryEntry<CreativeModeTab> TEMPAD_GROUP = ITEM_GROUP.register("main", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0).title(Component.translatable("category.tempad")).icon(() -> TEMPAD.get().getDefaultInstance()).build());
 

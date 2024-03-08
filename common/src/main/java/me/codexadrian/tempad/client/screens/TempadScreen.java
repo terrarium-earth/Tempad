@@ -3,6 +3,7 @@ package me.codexadrian.tempad.client.screens;
 import me.codexadrian.tempad.api.options.TempadOption;
 import me.codexadrian.tempad.client.components.*;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
+import me.codexadrian.tempad.client.screens.base.BackgroundScreen;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.items.TempadItem;
@@ -17,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +39,8 @@ public class TempadScreen extends BackgroundScreen {
     private SpriteButton deleteButton;
     private SpriteButton teleportButton;
 
-    public TempadScreen(List<LocationData> locations, UUID favorite) {
-        super(249, 138, ModSprites.SCREEN);
+    public TempadScreen(List<LocationData> locations, @Nullable UUID favorite) {
+        super(249, 138, ModSprites.TEMPAD_SCREEN);
         this.locations = locations;
         this.favorite = favorite;
     }

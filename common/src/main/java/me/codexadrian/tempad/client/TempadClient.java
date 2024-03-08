@@ -3,9 +3,12 @@ package me.codexadrian.tempad.client;
 import com.teamresourceful.resourcefullib.common.utils.modinfo.ModInfoUtils;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
+import me.codexadrian.tempad.client.screens.PrinterScreen;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.registry.TempadMenus;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.items.TempadItem;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +27,7 @@ public class TempadClient {
 
     public static void init() {
         Tempad.CONFIGURATOR.register(TempadClientConfig.class);
+        MenuScreens.register(TempadMenus.PRINTER.get(), PrinterScreen::new);
     }
 
     public static void initItemProperties() {

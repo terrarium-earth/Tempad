@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.client.screens;
+package me.codexadrian.tempad.client.screens.base;
 
 import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen;
 import net.minecraft.client.gui.GuiGraphics;
