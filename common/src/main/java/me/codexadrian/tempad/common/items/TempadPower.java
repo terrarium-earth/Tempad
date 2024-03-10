@@ -1,9 +1,9 @@
 package me.codexadrian.tempad.common.items;
 
-import me.codexadrian.tempad.api.options.TempadOption;
+import me.codexadrian.tempad.api.options.FuelOption;
 
 public interface TempadPower {
-    TempadOption getOption();
+    FuelOption getOption();
     int getFuelCost();
     int getFuelCapacity();
 }

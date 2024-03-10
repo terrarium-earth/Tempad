@@ -3,10 +3,10 @@ package me.codexadrian.tempad.common.network.messages.c2s;
 import com.teamresourceful.resourcefullib.common.network.Packet;
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.items.LocationCard;
 import me.codexadrian.tempad.common.items.TempadItem;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
@@ -57,7 +57,7 @@ public record ExportLocationPacket(UUID location) implements Packet<ExportLocati
                 if (!TeleportUtils.hasTempad(player)) return;
                 ItemStack itemInHand = TeleportUtils.findTempad(player);
                 if (TeleportUtils.hasLocationCard(player) && itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand)) {
-                    LocationData locationData = TempadLocationHandler.getLocation(player.level(), player.getUUID(), message.location);
+                    LocationData locationData = LocationApi.API.get(player.level(), player.getUUID(), message.location);
                     if (locationData.isDownloadable() && TempadConfig.allowExporting) {
                         ItemStack stack = new ItemStack(TempadRegistry.LOCATION_CARD.get());
                         LocationCard.setLocation(stack, locationData, player.getDisplayName().getString());

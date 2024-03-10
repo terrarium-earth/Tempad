@@ -1,16 +1,12 @@
 package me.codexadrian.tempad.common.blocks;
 
-import com.teamresourceful.bytecodecs.base.ByteCodec;
 import earth.terrarium.botarium.common.menu.ExtraDataMenuProvider;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.menu.PrinterMenu;
 import me.codexadrian.tempad.common.registry.TempadBlockEntities;
-import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.CodecUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -21,15 +17,11 @@ import net.minecraft.world.WorldlyContainerHolder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
 
 public class LocationPrinterBlockEntity extends BlockEntity implements WorldlyContainerHolder, ExtraDataMenuProvider {
     public PrinterContainer container = new PrinterContainer(this);
@@ -57,7 +49,7 @@ public class LocationPrinterBlockEntity extends BlockEntity implements WorldlyCo
 
     @Override
     public void writeExtraData(ServerPlayer player, FriendlyByteBuf buffer) {
-        LocationData.CODEC.listOf().encode(TempadLocationHandler.getLocationsList(player.level(), player.getUUID()), buffer);
+        LocationData.BYTE_CODEC.listOf().encode(LocationApi.API.getAllAsList(player.level(), player.getUUID()), buffer);
         CodecUtils.BLOCK_POS.encode(this.getBlockPos(), buffer);
     }
 
@@ -69,6 +61,6 @@ public class LocationPrinterBlockEntity extends BlockEntity implements WorldlyCo
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new PrinterMenu(i, inventory, container, TempadLocationHandler.getLocationsList(player.level(), player.getUUID()), this.getBlockPos());
+        return new PrinterMenu(i, inventory, container, LocationApi.API.getAllAsList(player.level(), player.getUUID()), this.getBlockPos());
     }
 }

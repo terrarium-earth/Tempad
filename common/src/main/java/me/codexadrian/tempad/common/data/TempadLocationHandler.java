@@ -1,7 +1,6 @@
 package me.codexadrian.tempad.common.data;
 
 import com.teamresourceful.resourcefullib.common.utils.SaveHandler;
-import me.codexadrian.tempad.api.locations.LocationsApi;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -41,32 +40,21 @@ public class TempadLocationHandler extends SaveHandler {
 
     public static void favoriteLocation(Level level, UUID player, UUID location) {
         TempadLocationHandler handler = read(level);
-        if (handler.locations.containsKey(player)) {
-            handler.favorites.put(player, location);
-        }
+        handler.favorites.put(player, location);
     }
 
     public static void unfavoriteLocation(Level level, UUID player) {
         TempadLocationHandler handler = read(level);
-        if (handler.locations.containsKey(player)) {
-            handler.favorites.remove(player);
-        }
+        handler.favorites.remove(player);
     }
 
     public static UUID getFavorite(Level level, UUID player) {
-        TempadLocationHandler handler = read(level);
-        return handler.favorites.get(player);
+        return read(level).favorites.get(player);
     }
 
     public static Map<UUID, LocationData> getLocations(Level level, UUID player) {
         TempadLocationHandler handler = read(level);
-        Map<UUID, LocationData> orDefault = new HashMap<>(handler.locations.getOrDefault(player, Collections.emptyMap()));
-        LocationsApi.gatherLocations(level, player, orDefault);
-        return orDefault;
-    }
-
-    public static ArrayList<LocationData> getLocationsList(Level level, UUID player) {
-        return new ArrayList<>(getLocations(level, player).values());
+        return new HashMap<>(handler.locations.getOrDefault(player, Collections.emptyMap()));
     }
 
     public static LocationData getLocation(Level level, UUID player, UUID location) {

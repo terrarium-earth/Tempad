@@ -6,10 +6,10 @@ import com.teamresourceful.resourcefullib.common.network.Packet;
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.blocks.LocationPrinterBlockEntity;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.items.LocationCard;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.CodecUtils;
@@ -44,7 +44,7 @@ public record WriteLocationCard(BlockPos printerLocation, UUID locationId) imple
         @Override
         public Consumer<Player> handle(WriteLocationCard message) {
             return player -> {
-                LocationData location = TempadLocationHandler.getLocation(player.level(), player.getUUID(), message.locationId());
+                LocationData location = LocationApi.API.get(player.level(), player.getUUID(), message.locationId());
                 if (location == null) return;
                 if (player.level().getBlockEntity(message.printerLocation()) instanceof LocationPrinterBlockEntity printer) {
                     ItemStack input = printer.container.getItem(0);

@@ -3,8 +3,8 @@ package me.codexadrian.tempad.common.network.messages.c2s;
 import com.teamresourceful.resourcefullib.common.network.Packet;
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.common.Tempad;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -48,11 +48,11 @@ public record FavoriteLocationPacket(@Nullable UUID location) implements Packet<
         @Override
         public Consumer<Player> handle(FavoriteLocationPacket message) {
             return player -> {
-                TempadLocationHandler.getFavorite(player.level(), player.getUUID());
+                LocationApi.API.getFavorite(player.level(), player.getUUID());
                 if (message.location != null) {
-                    TempadLocationHandler.favoriteLocation(player.level(), player.getUUID(), message.location);
+                    LocationApi.API.favorite(player.level(), player.getUUID(), message.location);
                 } else {
-                    TempadLocationHandler.unfavoriteLocation(player.level(), player.getUUID());
+                    LocationApi.API.unfavorite(player.level(), player.getUUID());
                 }
             };
         }

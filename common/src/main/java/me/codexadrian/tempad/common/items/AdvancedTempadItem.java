@@ -1,8 +1,9 @@
 package me.codexadrian.tempad.common.items;
 
-import me.codexadrian.tempad.api.options.TempadOption;
-import me.codexadrian.tempad.api.options.TempadOptionApi;
+import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
 import me.codexadrian.tempad.common.config.ConfigCache;
+import net.minecraft.resources.ResourceLocation;
 
 public class AdvancedTempadItem extends TempadItem {
     public AdvancedTempadItem(Properties properties) {
@@ -10,8 +11,8 @@ public class AdvancedTempadItem extends TempadItem {
     }
 
     @Override
-    public TempadOption getOption() {
-        return TempadOptionApi.getOption(ConfigCache.advancedTempadFuelType);
+    public FuelOption getOption() {
+        return FuelOptionsApi.API.getOption(ResourceLocation.tryParse(ConfigCache.advancedTempadFuelType));
     }
 
     @Override

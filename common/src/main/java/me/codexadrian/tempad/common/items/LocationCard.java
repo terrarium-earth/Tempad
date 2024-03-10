@@ -1,8 +1,7 @@
 package me.codexadrian.tempad.common.items;
 
-import com.teamresourceful.resourcefullib.common.utils.CommonUtils;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
 public class LocationCard extends Item {
     public LocationCard(Properties properties) {
@@ -66,12 +64,12 @@ public class LocationCard extends Item {
         if (!level.isClientSide) {
             var location = getLocation(player.getItemInHand(usedHand));
             if (location != null) {
-                TempadLocationHandler.addLocation(level, player.getUUID(), location);
+                LocationApi.API.add(level, player.getUUID(), location);
                 player.getItemInHand(usedHand).shrink(1);
                 player.displayClientMessage(Component.translatable("item.tempad.location_card.added_location", Component.literal(location.getName()).withStyle(ChatFormatting.GOLD)), true);
             } else {
                 ItemStack cardStack = player.getItemInHand(usedHand);
-                var newLocation = new LocationData(cardStack.getHoverName().getString(), level.dimension(), player.blockPosition(), CommonUtils.generate(id -> !TempadLocationHandler.containsLocation(level, player.getUUID(), id), UUID::randomUUID));
+                var newLocation = new LocationData(cardStack.getHoverName().getString(), level.dimension(), player.blockPosition());
                 ItemStack stack = new ItemStack(this);
                 setLocation(stack, newLocation, player.getDisplayName().getString());
                 if (cardStack.getCount() > 1) {

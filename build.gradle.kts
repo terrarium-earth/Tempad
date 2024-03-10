@@ -74,6 +74,7 @@ subprojects {
         val resourcefulLibVersion: String by project
         val resourcefulConfigVersion: String by project
         val botariumVersion: String by project
+        val baublyVersion: String by project
         val jeiVersion: String by project
         val balmVersion: String by project
         val waystonesVersion: String by project
@@ -110,6 +111,8 @@ subprojects {
         }
 
         "modApi"(group = "earth.terrarium.botarium", name = "botarium-$modLoader-$minecraftVersion", version = botariumVersion)
+        "modImplementation"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-$minecraftVersion", version = prometheusVersion)
+        // "modApi"(group = "earth.terrarium.baubly", name = "baubly-$modLoader-$minecraftVersion", version = baublyVersion)
 
         "modCompileOnly"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")

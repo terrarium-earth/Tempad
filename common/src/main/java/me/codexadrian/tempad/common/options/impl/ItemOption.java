@@ -1,9 +1,8 @@
-package me.codexadrian.tempad.api.options.impl;
+package me.codexadrian.tempad.common.options.impl;
 
-import me.codexadrian.tempad.api.options.TempadOption;
+import me.codexadrian.tempad.api.options.FuelOption;
 import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -11,25 +10,20 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class ItemOption extends TempadOption {
+public class ItemOption implements FuelOption {
     @Override
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
         return player.getInventory().contains(Tempad.TEMPAD_FUEL_TAG);
     }
 
     @Override
-    public void onTimedoorOpen(Player player) {
+    public void onTimedoorOpen(Player player, ItemStack stack) {
         findItemStack(player).shrink(1);
     }
 
     @Override
     public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
         components.add(Component.translatable("tooltip.tempad.item_option_info"));
-    }
-
-    @Override
-    public boolean isDurabilityBarVisible(ItemStack stack) {
-        return false;
     }
 
     public ItemStack findItemStack(Player player) {

@@ -62,5 +62,9 @@
 
   "category.tempad": "Tempad",
   "key.tempad.favorite": "Open favorited location",
-  "key.tempad.shortcut": "Open Tempad screen"
+  "key.tempad.shortcut": "Open Tempad screen",
+
+  "app.tempad.new_location": "New Location",
+  "app.tempad.teleport": "Teleport",
+  "app.tempad.settings": "Settings"
 }

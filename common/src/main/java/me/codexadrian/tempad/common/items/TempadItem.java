@@ -1,21 +1,21 @@
 package me.codexadrian.tempad.common.items;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
-import me.codexadrian.tempad.api.options.TempadOption;
-import me.codexadrian.tempad.api.options.TempadOptionApi;
+import me.codexadrian.tempad.api.locations.LocationApi;
+import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.entity.TimedoorEntity;
 import me.codexadrian.tempad.common.network.NetworkHandler;
-import me.codexadrian.tempad.common.network.messages.c2s.OpenFavoritedLocationPacket;
 import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.ClientUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +27,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TempadItem extends Item implements TempadPower {
@@ -35,8 +34,8 @@ public class TempadItem extends Item implements TempadPower {
         super(properties);
     }
 
-    public TempadOption getOption() {
-        return TempadOptionApi.getOption(ConfigCache.tempadFuelType);
+    public FuelOption getOption() {
+        return FuelOptionsApi.API.getOption(ResourceLocation.tryParse(ConfigCache.tempadFuelType));
     }
 
     public int getFuelCost() {
@@ -52,7 +51,7 @@ public class TempadItem extends Item implements TempadPower {
         ItemStack stack = player.getItemInHand(interactionHand);
         if (!player.isShiftKeyDown()) {
             if (!level.isClientSide) {
-                OpenTempadScreenPacket packet = new OpenTempadScreenPacket(new ArrayList<>(TempadLocationHandler.getLocations(level, player.getUUID()).values()), TempadLocationHandler.getFavorite(level, player.getUUID()));
+                OpenTempadScreenPacket packet = new OpenTempadScreenPacket(LocationApi.API.getAllAsList(level, player.getUUID()), LocationApi.API.getFavorite(level, player.getUUID()));
                 NetworkHandler.CHANNEL.sendToPlayer(packet, player);
                 return InteractionResultHolder.success(stack);
             } else {
@@ -98,7 +97,7 @@ public class TempadItem extends Item implements TempadPower {
 
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
-        return this.getOption().durabilityBarWidth(stack);
+        return (int) (this.getOption().getPercentage(stack) * 13);
     }
 
     @Override

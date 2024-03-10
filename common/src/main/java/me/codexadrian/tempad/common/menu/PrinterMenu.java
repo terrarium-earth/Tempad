@@ -1,14 +1,11 @@
 package me.codexadrian.tempad.common.menu;
 
-import com.teamresourceful.bytecodecs.base.ByteCodec;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.registry.TempadMenus;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.CodecUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,11 +13,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.UUID;
 
 public class PrinterMenu extends AbstractContainerMenu {
     public static final int MAX_SLOTS = 2;
@@ -31,7 +26,7 @@ public class PrinterMenu extends AbstractContainerMenu {
     public BlockPos printerPos;
 
     public PrinterMenu(int containerId, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(containerId, playerInventory, new SimpleContainer(2), LocationData.CODEC.listOf().decode(buffer), CodecUtils.BLOCK_POS.decode(buffer));
+        this(containerId, playerInventory, new SimpleContainer(2), LocationData.BYTE_CODEC.listOf().decode(buffer), CodecUtils.BLOCK_POS.decode(buffer));
     }
 
     public PrinterMenu(int containerId, Inventory playerInventory, Container container, List<LocationData> locations, BlockPos pos) {

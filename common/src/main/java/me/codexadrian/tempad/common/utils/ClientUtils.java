@@ -1,16 +1,16 @@
 package me.codexadrian.tempad.common.utils;
 
 import me.codexadrian.tempad.client.config.TempadClientConfig;
-import me.codexadrian.tempad.client.screens.TempadScreen;
+import me.codexadrian.tempad.client.screens.TeleportScreen;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.c2s.OpenFavoritedLocationPacket;
-import me.codexadrian.tempad.common.network.messages.c2s.OpenTempadByShortcutPacket;
+import me.codexadrian.tempad.common.network.messages.c2s.RequestTeleportScreen;
 import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
 import net.minecraft.client.Minecraft;
 
 public class ClientUtils {
     public static void openScreen(OpenTempadScreenPacket packet) {
-        Minecraft.getInstance().setScreen(new TempadScreen(packet.locationData(), packet.favorite().orElse(null)));
+        Minecraft.getInstance().setScreen(new TeleportScreen(packet.locationData(), packet.favorite().orElse(null)));
     }
 
     public static int darkenColor(int color) {
@@ -26,7 +26,7 @@ public class ClientUtils {
     }
 
     public static void openTempadbyShortcut() {
-        OpenTempadByShortcutPacket packet = new OpenTempadByShortcutPacket();
+        RequestTeleportScreen packet = new RequestTeleportScreen();
         NetworkHandler.CHANNEL.sendToServer(packet);
     }
 

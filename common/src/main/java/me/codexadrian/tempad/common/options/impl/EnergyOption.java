@@ -1,9 +1,9 @@
-package me.codexadrian.tempad.common.compat.botarium.options;
+package me.codexadrian.tempad.common.options.impl;
 
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.item.ItemStackHolder;
-import me.codexadrian.tempad.api.options.TempadOption;
-import me.codexadrian.tempad.api.options.TempadOptionApi;
+import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -14,12 +14,12 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class EnergyOption extends TempadOption {
+public class EnergyOption implements FuelOption {
     @Override
     public boolean canTimedoorOpen(Player player, ItemStack stack) {
         EnergyContainer energyStorage = EnergyContainer.of(new ItemStackHolder(stack));
         if (energyStorage == null) return false;
-        return energyStorage.getStoredEnergy() >= TempadOptionApi.getFuelCost(stack);
+        return energyStorage.getStoredEnergy() >= FuelOptionsApi.API.getFuelCost(stack);
     }
 
     @Override
@@ -27,16 +27,15 @@ public class EnergyOption extends TempadOption {
         EnergyContainer energyStorage = EnergyContainer.of(new ItemStackHolder(stack));
         if (energyStorage == null) return;
         components.add(Component.translatable("tempad_option.tempad.energy", energyStorage.getStoredEnergy(), energyStorage.getMaxCapacity()).withStyle(ChatFormatting.GRAY));
-        components.add(Component.translatable("tempad_option.tempad.energy_cost", TempadOptionApi.getFuelCost(stack)).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("tempad_option.tempad.energy_cost", FuelOptionsApi.API.getFuelCost(stack)).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
-    public void onTimedoorOpen(Player player) {
-        ItemStack itemStack = TeleportUtils.findTempad(player);
-        ItemStackHolder holder = new ItemStackHolder(itemStack);
+    public void onTimedoorOpen(Player player, ItemStack stack) {
+        ItemStackHolder holder = new ItemStackHolder(stack);
         EnergyContainer energyStorage = EnergyContainer.of(holder);
         if (energyStorage == null) return;
-        energyStorage.internalExtract(TempadOptionApi.getFuelCost(itemStack), false);
+        energyStorage.internalExtract(FuelOptionsApi.API.getFuelCost(stack), false);
         if (holder.isDirty()) {
             TeleportUtils.findAndReplaceTempad(player, holder.getStack());
         }

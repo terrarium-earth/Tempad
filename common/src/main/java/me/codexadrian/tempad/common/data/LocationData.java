@@ -1,17 +1,22 @@
 package me.codexadrian.tempad.common.data;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamresourceful.bytecodecs.base.ByteCodec;
 import com.teamresourceful.bytecodecs.base.object.ObjectByteCodec;
+import com.teamresourceful.resourcefullib.common.codecs.CodecExtras;
+import com.teamresourceful.resourcefullib.common.utils.CommonUtils;
+import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.utils.CodecUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,44 +24,63 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class LocationData implements Comparable<LocationData>{
+public class LocationData implements Comparable<LocationData> {
 
     private final UUID id;
     private final String name;
     private final BlockPos blockPos;
     private final ResourceKey<Level> levelKey;
-    private boolean isTeleportable;
-    private boolean isDeletable;
-    private boolean isDownloadable;
+    private final boolean isTeleportable;
+    private final boolean isDeletable;
+    private final boolean isDownloadable;
+    private ResourceLocation providerId;
 
-    public static ByteCodec<LocationData> CODEC = ObjectByteCodec.create(
+    public static ByteCodec<LocationData> BYTE_CODEC = ObjectByteCodec.create(
         ByteCodec.STRING.fieldOf(LocationData::getName),
         CodecUtils.DIMENSION.optionalFieldOf(LocationData::getLevelKeyOptional),
         CodecUtils.BLOCK_POS.fieldOf(LocationData::getBlockPos),
         ByteCodec.UUID.fieldOf(LocationData::getId),
+        CodecUtils.RESOURCE_LOCATION.fieldOf(LocationData::getProviderId),
         ByteCodec.BOOLEAN.fieldOf(LocationData::isTeleportable),
         ByteCodec.BOOLEAN.fieldOf(LocationData::isDeletable),
         ByteCodec.BOOLEAN.fieldOf(LocationData::isDownloadable),
         LocationData::new
     );
 
-    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid, boolean isTeleportable, boolean isDeletable, boolean isDownloadable) {
+    public static Codec<LocationData> CODEC = RecordCodecBuilder.create(
+        instance -> instance.group(
+            Codec.STRING.fieldOf("name").forGetter(LocationData::getName),
+            Level.RESOURCE_KEY_CODEC.optionalFieldOf("levelKey").forGetter(LocationData::getLevelKeyOptional),
+            BlockPos.CODEC.fieldOf("blockPos").forGetter(LocationData::getBlockPos),
+            UUIDUtil.CODEC.fieldOf("id").forGetter(LocationData::getId),
+            ResourceLocation.CODEC.fieldOf("providerId").forGetter(LocationData::getProviderId),
+            Codec.BOOL.optionalFieldOf("isTeleportable", true).forGetter(LocationData::isTeleportable),
+            Codec.BOOL.optionalFieldOf("isDeletable", true).forGetter(LocationData::isDeletable),
+            Codec.BOOL.optionalFieldOf("isDownloadable", true).forGetter(LocationData::isDownloadable)
+        ).apply(instance, LocationData::new)
+    );
+
+    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid, ResourceLocation providerId, boolean isTeleportable, boolean isDeletable, boolean isDownloadable) {
         this.name = name;
         this.levelKey = levelKey;
         this.blockPos = pos;
         this.id = uuid;
+        this.providerId = providerId;
         this.isTeleportable = isTeleportable;
         this.isDeletable = isDeletable;
         this.isDownloadable = isDownloadable;
     }
 
-    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid) {
-        this(name, levelKey, pos, uuid, true, true, true);
+    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos) {
+        this(name, levelKey, pos, UUID.randomUUID());
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public LocationData(String name, Optional<ResourceKey<Level>> levelKey, BlockPos pos, UUID uuid, boolean isTeleportable, boolean isDeletable, boolean isDownloadable) {
-        this(name, levelKey.orElse(null), pos, uuid, isTeleportable, isDeletable, isDownloadable);
+    public LocationData(String name, @Nullable ResourceKey<Level> levelKey, BlockPos pos, UUID uuid) {
+        this(name, levelKey, pos, uuid, new ResourceLocation(Tempad.MODID, "location_provider"), true, true, true);
+    }
+
+    public LocationData(String name, @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ResourceKey<Level>> levelKey, BlockPos pos, UUID uuid, ResourceLocation providerId, boolean isTeleportable, boolean isDeletable, boolean isDownloadable) {
+        this(name, levelKey.orElse(null), pos, uuid, providerId, isTeleportable, isDeletable, isDownloadable);
     }
 
     public CompoundTag toTag() {
@@ -118,6 +142,14 @@ public class LocationData implements Comparable<LocationData>{
 
     public boolean isDownloadable() {
         return isDownloadable;
+    }
+
+    public ResourceLocation getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(ResourceLocation providerId) {
+        this.providerId = providerId;
     }
 
     @Override

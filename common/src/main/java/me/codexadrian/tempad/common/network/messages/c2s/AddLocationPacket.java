@@ -3,10 +3,9 @@ package me.codexadrian.tempad.common.network.messages.c2s;
 import com.teamresourceful.resourcefullib.common.network.Packet;
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
-import com.teamresourceful.resourcefullib.common.utils.CommonUtils;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -51,9 +50,8 @@ public record AddLocationPacket(String name) implements Packet<AddLocationPacket
         public Consumer<Player> handle(AddLocationPacket message) {
             return (player) -> {
                 if (!TeleportUtils.hasTempad(player)) return;
-                UUID uuid = CommonUtils.generate(id -> !TempadLocationHandler.containsLocation(player.level(), player.getUUID(), id), UUID::randomUUID);
-                var tempadLocation = new LocationData(message.name, player.level().dimension(), BlockPos.containing(player.getX(), Math.ceil(player.getY()), player.getZ()), uuid);
-                TempadLocationHandler.addLocation(player.level(), player.getUUID(), tempadLocation);
+                var tempadLocation = new LocationData(message.name, player.level().dimension(), BlockPos.containing(player.getX(), Math.ceil(player.getY()), player.getZ()));
+                LocationApi.API.add(player.level(), player.getUUID(), tempadLocation);
             };
         }
     }

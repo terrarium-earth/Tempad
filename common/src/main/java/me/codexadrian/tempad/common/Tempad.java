@@ -3,13 +3,12 @@ package me.codexadrian.tempad.common;
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.common.compat.botarium.BotariumTempadOptionRegistry;
-import me.codexadrian.tempad.common.compat.waystones.WaystoneLocationGetter;
+import me.codexadrian.tempad.common.compat.prometheus.PrometheusLocationProvider;
+import me.codexadrian.tempad.common.compat.waystones.WaystoneLocationProvider;
 import me.codexadrian.tempad.common.config.TempadConfig;
+import me.codexadrian.tempad.common.locations.TempadLocationProvider;
 import me.codexadrian.tempad.common.network.NetworkHandler;
-import me.codexadrian.tempad.common.registry.TempadBlockEntities;
-import me.codexadrian.tempad.common.registry.TempadBlocks;
-import me.codexadrian.tempad.common.registry.TempadMenus;
-import me.codexadrian.tempad.common.registry.TempadRegistry;
+import me.codexadrian.tempad.common.registry.*;
 import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +44,15 @@ public class Tempad {
     public static final Supplier<SoundEvent> TIMEDOOR_SOUND = registerSound("entity.timedoor.open");
 
     public static void init() {
-        if (PlatformUtils.isModLoaded("botarium")) {
-            BotariumTempadOptionRegistry.preInit();
-        }
+        TempadOptions.init();
+        TempadLocationProvider.init();
 
         if (PlatformUtils.isModLoaded("waystones")) {
-            WaystoneLocationGetter.init();
+            WaystoneLocationProvider.init();
+        }
+
+        if (PlatformUtils.isModLoaded("prometheus")) {
+            PrometheusLocationProvider.init();
         }
 
         CONFIGURATOR.register(TempadConfig.class);

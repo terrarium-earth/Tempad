@@ -3,6 +3,7 @@ package me.codexadrian.tempad.client.components;
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -33,6 +34,19 @@ public class InformationPanel extends SelectionList<TextEntry> {
                 new TextEntry(Component.translatable(LOCATION_Y, Mth.floor(location.getBlockPos().getY()))),
                 new TextEntry(Component.translatable(LOCATION_Z, Mth.floor(location.getBlockPos().getZ()))),
                 new TextEntry(Component.translatable(LOCATION_DIMENSION, Component.translatable(location.getLevelKey().location().toLanguageKey("dimension")))))
+            );
+        }
+    }
+
+    public void updateNameless(GlobalPos pos) {
+        if (pos == null) {
+            updateEntries(NO_SELECTION);
+        } else {
+            updateEntries(List.of(
+                new TextEntry(Component.translatable(LOCATION_X, Mth.floor(pos.pos().getX()))),
+                new TextEntry(Component.translatable(LOCATION_Y, Mth.floor(pos.pos().getY()))),
+                new TextEntry(Component.translatable(LOCATION_Z, Mth.floor(pos.pos().getZ()))),
+                new TextEntry(Component.translatable(LOCATION_DIMENSION, Component.translatable(pos.dimension().location().toLanguageKey("dimension")))))
             );
         }
     }

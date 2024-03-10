@@ -3,9 +3,9 @@ package me.codexadrian.tempad.common.network.messages.c2s;
 import com.teamresourceful.resourcefullib.common.network.Packet;
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
-import me.codexadrian.tempad.common.data.TempadLocationHandler;
 import me.codexadrian.tempad.common.items.TempadItem;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.network.FriendlyByteBuf;
@@ -52,9 +52,9 @@ public record SummonTimedoorPacket(UUID location, int color) implements Packet<S
         public Consumer<Player> handle(SummonTimedoorPacket message) {
             return player -> {
                 ItemStack itemInHand = TeleportUtils.findTempad(player);
-                LocationData locationData = TempadLocationHandler.getLocation(player.level(), player.getUUID(), message.location);
+                LocationData locationData = LocationApi.API.get(player.level(), player.getUUID(), message.location);
                 if (locationData != null && itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand) && TeleportUtils.mayTeleport(locationData.getLevelKey(), player)) {
-                    if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player);
+                    if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player, itemInHand);
                     TempadItem.summonTimeDoor(locationData, player, message.color);
                 }
             };
