@@ -39,7 +39,7 @@ public class LocationApiImpl implements LocationApi {
 
     @Override
     public LocationData get(Level level, UUID player, UUID location) {
-        return getAll(level, location).get(location);
+        return getAll(level, player).get(location);
     }
 
     @Override

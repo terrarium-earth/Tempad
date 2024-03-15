@@ -16,6 +16,7 @@ import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.ClientUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -69,13 +70,14 @@ public class TempadItem extends Item implements TempadPower {
 
     public static void summonTimeDoor(LocationData locationData, Player player, int color) {
         TimedoorEntity timedoor = new TimedoorEntity(TempadRegistry.TIMEDOOR_ENTITY.get(), player.level());
-        var dir = player.getDirection();
+        var angle = player.getYHeadRot();
+        float angleInRadians = (float) Math.toRadians(angle + 90);
         timedoor.setColor(color);
         timedoor.setLocation(locationData);
         timedoor.setOwner(player.getUUID());
         var position = player.position();
-        timedoor.setPos(position.x() + dir.getStepX() * TempadConfig.distanceFromPlayer, position.y(), position.z() + dir.getStepZ() * TempadConfig.distanceFromPlayer);
-        timedoor.setYRot(dir.getOpposite().toYRot());
+        timedoor.setPos(position.x() + Mth.cos(angleInRadians) * TempadConfig.distanceFromPlayer, position.y(), position.z() + Mth.sin(angleInRadians) * TempadConfig.distanceFromPlayer);
+        timedoor.setYRot(-angle);
         player.level().addFreshEntity(timedoor);
         timedoor.playSound(Tempad.TIMEDOOR_SOUND.get());
     }
@@ -111,7 +113,7 @@ public class TempadItem extends Item implements TempadPower {
         return false;
     }
 
-    @PlatformOnly(PlatformOnly.FORGE)
+    @PlatformOnly("neoforge")
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }

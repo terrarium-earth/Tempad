@@ -22,6 +22,8 @@ dependencies {
 
     neoForge(group = "net.neoforged", name = "neoforge", version = neoforgeVersion)
 
-    "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
-    "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}:api")
+    modCompileOnly("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
+    modCompileOnly("top.theillusivec4.curios:curios-neoforge:${curiosVersion}:api")
+    modLocalRuntime("com.teamresourceful:yabn:1.0.3")
+    modLocalRuntime("com.teamresourceful:bytecodecs:1.0.2")
 }

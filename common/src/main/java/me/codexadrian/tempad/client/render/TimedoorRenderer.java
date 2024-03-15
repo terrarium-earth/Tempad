@@ -61,7 +61,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         poseStack.translate(0, 1.15F, 0);
         var model = poseStack.last().pose();
         if (width >= 0)
-            renderTimedoor(model, multiBufferSource, width, height, depth, light, entity.getColor());
+            renderTimedoor(model, multiBufferSource, width, height, depth, entity.getColor());
         super.render(entity, yaw, deltaTime, poseStack, multiBufferSource, light);
         poseStack.popPose();
     }
@@ -71,7 +71,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         return new ResourceLocation(Tempad.MODID, "");
     }
 
-    public void renderTimedoor(Matrix4f model, MultiBufferSource multiBufferSource, float width, float height, float depth, int i, int color) {
+    public void renderTimedoor(Matrix4f model, MultiBufferSource multiBufferSource, float width, float height, float depth, int color) {
         float xBound = width * 0.5F;
         float yBound = height * 0.5F;
         float zBound = depth * -0.5F;

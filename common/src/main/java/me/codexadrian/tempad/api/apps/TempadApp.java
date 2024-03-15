@@ -6,4 +6,8 @@ public interface TempadApp {
     WidgetSprites getWidgetSprites();
 
     void open();
+
+    default int priority() {
+        return 0;
+    }
 }

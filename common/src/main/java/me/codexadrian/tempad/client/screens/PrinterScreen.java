@@ -1,5 +1,6 @@
 package me.codexadrian.tempad.client.screens;
 
+import com.teamresourceful.bytecodecs.base.ByteCodec;
 import me.codexadrian.tempad.client.components.*;
 import me.codexadrian.tempad.client.screens.base.BackgroundMenuScreen;
 import me.codexadrian.tempad.common.config.ConfigCache;
@@ -27,9 +28,7 @@ public class PrinterScreen extends BackgroundMenuScreen<PrinterMenu> {
     private EditBox search;
 
     public PrinterScreen(PrinterMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title, 190, 250, ModSprites.PRINTER_SCREEN);
-        this.inventoryLabelX = 14;
-        this.inventoryLabelY = 155;
+        super(menu, playerInventory, title, 206, 201, ModSprites.PRINTER_SCREEN);
     }
 
     @Override
@@ -37,7 +36,7 @@ public class PrinterScreen extends BackgroundMenuScreen<PrinterMenu> {
         super.init();
         this.informationPanel = addRenderableWidget(new InformationPanel(leftPos + 17, topPos + 34, 77, 71));
         this.locationPanel = addRenderableWidget(new LocationPanel(
-            leftPos + 100, topPos + 34, 74, 92, this.getMenu().locations, id -> false, this::select
+            leftPos + 99, topPos + 35, 92, 52, this.getMenu().locations, id -> false, this::select
         ));
 
         if (!this.getMenu().locations.isEmpty()) {
@@ -71,11 +70,5 @@ public class PrinterScreen extends BackgroundMenuScreen<PrinterMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xFF453d27, false);
-    }
-
-    @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
-        super.renderTooltip(guiGraphics, x, y);
     }
 }

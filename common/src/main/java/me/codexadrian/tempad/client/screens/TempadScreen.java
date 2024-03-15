@@ -20,6 +20,7 @@ import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class TempadScreen extends BackgroundScreen {
@@ -51,7 +52,7 @@ public class TempadScreen extends BackgroundScreen {
             if (appButton != null && !appButton.appId.equals(this.appId)) appButton.app.open();
         }));
 
-        apps.updateEntries(TempadAppApi.API.getApps().entrySet().stream().map(entry -> new AppButton(entry.getValue(), entry.getKey())).toList());
+        apps.updateEntries(TempadAppApi.API.getApps().entrySet().stream().map(entry -> new AppButton(entry.getValue(), entry.getKey())).sorted(Comparator.comparingInt(value -> value.app.priority())).toList());
     }
 
     public class FuelBar implements Renderable {

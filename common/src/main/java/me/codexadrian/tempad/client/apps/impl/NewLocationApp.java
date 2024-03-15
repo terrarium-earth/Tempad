@@ -26,4 +26,9 @@ public class NewLocationApp implements TempadApp {
     public void open() {
         Minecraft.getInstance().setScreen(new NewLocationScreen());
     }
+
+    @Override
+    public int priority() {
+        return -1;
+    }
 }

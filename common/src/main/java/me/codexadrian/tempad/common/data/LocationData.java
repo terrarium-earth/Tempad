@@ -51,8 +51,8 @@ public class LocationData implements Comparable<LocationData> {
         instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(LocationData::getName),
             Level.RESOURCE_KEY_CODEC.optionalFieldOf("levelKey").forGetter(LocationData::getLevelKeyOptional),
-            BlockPos.CODEC.fieldOf("blockPos").forGetter(LocationData::getBlockPos),
-            UUIDUtil.CODEC.fieldOf("id").forGetter(LocationData::getId),
+            BlockPos.CODEC.fieldOf("blockpos").forGetter(LocationData::getBlockPos),
+            UUIDUtil.CODEC.fieldOf("uuid").forGetter(LocationData::getId),
             ResourceLocation.CODEC.fieldOf("providerId").forGetter(LocationData::getProviderId),
             Codec.BOOL.optionalFieldOf("isTeleportable", true).forGetter(LocationData::isTeleportable),
             Codec.BOOL.optionalFieldOf("isDeletable", true).forGetter(LocationData::isDeletable),

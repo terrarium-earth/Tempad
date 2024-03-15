@@ -34,5 +34,5 @@ public class TempadRegistry {
     public static final RegistryEntry<CreativeModeTab> TEMPAD_GROUP = ITEM_GROUP.register("main", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0).title(Component.translatable("category.tempad")).icon(() -> TEMPAD.get().getDefaultInstance()).build());
 
     //the one entity in this mod
-    public static final RegistryEntry<EntityType<TimedoorEntity>> TIMEDOOR_ENTITY = ENTITIES.register("timedoor", () -> EntityType.Builder.of(TimedoorEntity::new, MobCategory.MISC).sized(0.4F, 2.3F).noSave().build("timedoor"));
+    public static final RegistryEntry<EntityType<TimedoorEntity>> TIMEDOOR_ENTITY = ENTITIES.register("timedoor", () -> EntityType.Builder.of(TimedoorEntity::new, MobCategory.MISC).sized(1.4F, 2.3F).noSave().build("timedoor"));
 }

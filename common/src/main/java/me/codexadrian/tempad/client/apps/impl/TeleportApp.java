@@ -25,4 +25,9 @@ public class TeleportApp implements TempadApp {
     public void open() {
         NetworkHandler.CHANNEL.sendToServer(new RequestTeleportScreen());
     }
+
+    @Override
+    public int priority() {
+        return -2;
+    }
 }

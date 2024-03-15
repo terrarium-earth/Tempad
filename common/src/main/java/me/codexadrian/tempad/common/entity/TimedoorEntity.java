@@ -87,12 +87,6 @@ public class TimedoorEntity extends Entity {
     @Override
     public void tick() {
         AABB box = getBoundingBox();
-        if (getDirection() == Direction.NORTH || getDirection() == Direction.SOUTH) {
-            box = box.inflate(0.5, 0, 0);
-        }
-        if (getDirection() == Direction.EAST || getDirection() == Direction.WEST) {
-            box = box.inflate(0, 0, 0.5);
-        }
         if (getLocation() != null) {
             Predicate<Entity> b = (entity) -> ((entity instanceof LivingEntity || entity instanceof ItemEntity) && !entity.getType().is(Tempad.TEMPAD_ENTITY_BLACKLIST)) || entity.getType().is(Tempad.TEMPAD_ENTITY_WHITELIST);
             List<Entity> entities = this.level().getEntitiesOfClass(Entity.class, box, b);
