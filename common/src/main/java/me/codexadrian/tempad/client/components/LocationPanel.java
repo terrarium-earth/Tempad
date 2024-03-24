@@ -26,7 +26,7 @@ public class LocationPanel extends SelectionList<TextEntry> {
         List<LocationData> locations, Predicate<UUID> isFavorite,
         Consumer<@Nullable TextEntry> onSelection
     ) {
-        super(x, y, width, height, 10, onSelection);
+        super(x, y, width, height, 11, onSelection);
         this.locations = locations;
         this.isFavorite = isFavorite;
     }
@@ -45,8 +45,8 @@ public class LocationPanel extends SelectionList<TextEntry> {
             updateEntries(EMPTY);
         } else {
             updateEntries(this.locations.stream()
-                .filter(data -> text.isBlank() || data.getName().toLowerCase().contains(text.toLowerCase()))
-                .map(locationData -> new TextEntry(locationData, locData -> this.isFavorite.test(locData.getId())))
+                .filter(data -> text.isBlank() || data.name().toLowerCase().contains(text.toLowerCase()))
+                .map(locationData -> new TextEntry(locationData, locData -> this.isFavorite.test(locData.id())))
                 .sorted(TextEntry::compareTo)
                 .toList());
         }

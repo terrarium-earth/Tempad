@@ -21,6 +21,7 @@
   "gui.tempad.x": "X: %s",
   "gui.tempad.y": "Y: %s",
   "gui.tempad.z": "Z: %s",
+  "gui.tempad.angle": "Angle: %s",
   "gui.tempad.ready": "Ready to teleport",
   "gui.tempad.not_ready": "Not ready to teleport",
   "gui.tempad.cancel": "Cancel",

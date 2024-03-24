@@ -2,13 +2,17 @@ package me.codexadrian.tempad.common;
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import me.codexadrian.tempad.common.compat.argonauts.ArgonautsTeamConfig;
 import me.codexadrian.tempad.common.compat.botarium.BotariumTempadOptionRegistry;
 import me.codexadrian.tempad.common.compat.prometheus.PrometheusLocationProvider;
 import me.codexadrian.tempad.common.compat.waystones.WaystoneLocationProvider;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.locations.TempadLocationProvider;
+import me.codexadrian.tempad.common.locations.WarpLocationProvider;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.registry.*;
+import me.codexadrian.tempad.common.teams.GlobalTeamConfig;
+import me.codexadrian.tempad.common.teams.SoleTeamConfig;
 import me.codexadrian.tempad.common.utils.PlatformUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -46,6 +50,9 @@ public class Tempad {
     public static void init() {
         TempadOptions.init();
         TempadLocationProvider.init();
+        WarpLocationProvider.init();
+        GlobalTeamConfig.init();
+        SoleTeamConfig.init();
 
         if (PlatformUtils.isModLoaded("waystones")) {
             WaystoneLocationProvider.init();
@@ -53,6 +60,10 @@ public class Tempad {
 
         if (PlatformUtils.isModLoaded("prometheus")) {
             PrometheusLocationProvider.init();
+        }
+
+        if (PlatformUtils.isModLoaded("argonauts")) {
+            ArgonautsTeamConfig.init();
         }
 
         CONFIGURATOR.register(TempadConfig.class);

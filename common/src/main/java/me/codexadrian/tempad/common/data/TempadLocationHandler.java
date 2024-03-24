@@ -19,7 +19,7 @@ public class TempadLocationHandler extends SaveHandler {
         if (!locations.containsKey(player)) {
             locations.put(player, new LinkedHashMap<>());
         }
-        locations.get(player).put(location.getId(), location);
+        locations.get(player).put(location.id(), location);
     }
 
     public static void addLocation(Level level, UUID player, LocationData location) {

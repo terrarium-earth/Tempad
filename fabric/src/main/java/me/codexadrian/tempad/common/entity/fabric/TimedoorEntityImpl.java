@@ -8,7 +8,7 @@ import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.Vec3;
 
 public class TimedoorEntityImpl {
-    public static void teleportEntity(ServerLevel destinationLevel, BlockPos pos, Vec3 deltaMovement, Entity entity) {
-        FabricDimensions.teleport(entity, destinationLevel, new PortalInfo(new Vec3(pos.getX(), pos.getY(), pos.getZ()), deltaMovement, entity.getYRot(), entity.getXRot()));
+    public static void teleportEntity(ServerLevel destinationLevel, Vec3 pos, Vec3 deltaMovement, int angle, Entity entity) {
+        FabricDimensions.teleport(entity, destinationLevel, new PortalInfo(pos, deltaMovement, angle, entity.getXRot()));
     }
 }

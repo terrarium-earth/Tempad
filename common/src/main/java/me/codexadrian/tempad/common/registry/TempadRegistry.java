@@ -7,6 +7,7 @@ import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.entity.TimedoorEntity;
 import me.codexadrian.tempad.common.items.AdvancedTempadItem;
 import me.codexadrian.tempad.common.items.LocationCard;
+import me.codexadrian.tempad.common.items.PrinterItem;
 import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -29,7 +30,9 @@ public class TempadRegistry {
     public static final RegistryEntry<Item> TEMPORAL_SHEILDING = ITEMS.register("temporal_shielding", () -> new Item(new Item.Properties()));
 
     //blocks
-    public static final RegistryEntry<Item> PRINTER_BLOCK = ITEMS.register("printer_block", () -> new BlockItem(TempadBlocks.LOCATION_PRINTER.get(), new Item.Properties()));
+    public static final RegistryEntry<Item> PRINTER_BLOCK = ITEMS.register("printer_block", () -> new PrinterItem(TempadBlocks.LOCATION_PRINTER.get(), new Item.Properties()));
+    public static final RegistryEntry<Item> WARP_PAD = ITEMS.register("warp_pad", () -> new BlockItem(TempadBlocks.WARP_PAD.get(), new Item.Properties()));
+    public static final RegistryEntry<Item> LOCATION_TERMINAL = ITEMS.register("location_terminal", () -> new BlockItem(TempadBlocks.LOCATION_TERMINAL.get(), new Item.Properties()));
 
     public static final RegistryEntry<CreativeModeTab> TEMPAD_GROUP = ITEM_GROUP.register("main", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0).title(Component.translatable("category.tempad")).icon(() -> TEMPAD.get().getDefaultInstance()).build());
 

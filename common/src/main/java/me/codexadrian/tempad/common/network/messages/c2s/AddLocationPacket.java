@@ -50,7 +50,7 @@ public record AddLocationPacket(String name) implements Packet<AddLocationPacket
         public Consumer<Player> handle(AddLocationPacket message) {
             return (player) -> {
                 if (!TeleportUtils.hasTempad(player)) return;
-                var tempadLocation = new LocationData(message.name, player.level().dimension(), BlockPos.containing(player.getX(), Math.ceil(player.getY()), player.getZ()));
+                var tempadLocation = new LocationData(message.name, player.level().dimension(), new BlockPos(player.getBlockX(), Math.round((float) player.getY()), player.getBlockZ()), player.getYHeadRot());
                 LocationApi.API.add(player.level(), player.getUUID(), tempadLocation);
             };
         }

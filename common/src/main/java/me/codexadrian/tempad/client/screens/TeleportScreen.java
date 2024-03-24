@@ -52,7 +52,7 @@ public class TeleportScreen extends TempadScreen {
 
         this.informationPanel = addRenderableWidget(new InformationPanel(this.left + 16, this.top + 33, 91, 78));
         this.locationPanel = addRenderableWidget(new LocationPanel(
-            left + 113, top + 33, 91, 92, this.locations, id -> id.equals(favorite), this::select
+            left + 111, top + 31, 92, 92, this.locations, id -> id.equals(favorite), this::select
         ));
 
         String searchValue = Optionull.mapOrDefault(search, EditBox::getValue, "");
@@ -60,7 +60,7 @@ public class TeleportScreen extends TempadScreen {
         this.search.setValue(searchValue);
 
         if (!locations.isEmpty()) {
-            informationPanel.update(null);
+            informationPanel.updateBlank();
         }
 
         favoriteButton = addRenderableWidget(ModWidgets.favorite(
@@ -85,7 +85,7 @@ public class TeleportScreen extends TempadScreen {
         selectedLocation = entry.data;
 
         informationPanel.update(selectedLocation);
-        favoriteButton.setSelected(selectedLocation.getId().equals(favorite));
+        favoriteButton.setSelected(selectedLocation.id().equals(favorite));
         favoriteButton.visible = true;
         downloadButton.visible = true;
         deleteButton.visible = true;
@@ -94,7 +94,7 @@ public class TeleportScreen extends TempadScreen {
         if (minecraft != null && minecraft.player != null) {
             ItemStack itemInHand = TeleportUtils.findTempad(minecraft.player);
             boolean isTempadUsable = itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand);
-            teleportButton.setActivated(selectedLocation.isTeleportable() && TeleportUtils.mayTeleport(selectedLocation.getLevelKey(), minecraft.player) && isTempadUsable);
+            teleportButton.setActivated(TeleportUtils.mayTeleport(selectedLocation.levelKey(), minecraft.player) && isTempadUsable);
             downloadButton.setActivated(selectedLocation.isDownloadable() && ConfigCache.allowExporting && TeleportUtils.hasLocationCard(minecraft.player));
             deleteButton.setActivated(selectedLocation.isDeletable());
         }
@@ -102,25 +102,25 @@ public class TeleportScreen extends TempadScreen {
 
     private void favoriteAction() {
         if (minecraft != null && minecraft.player != null) {
-            favorite = selectedLocation.getId().equals(favorite) ? null : selectedLocation.getId();
+            favorite = selectedLocation.id().equals(favorite) ? null : selectedLocation.id();
             NetworkHandler.CHANNEL.sendToServer(new FavoriteLocationPacket(favorite));
         }
     }
 
     private void teleportAction() {
         if (minecraft != null && minecraft.player != null) {
-            NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.getId(), TempadClientConfig.color));
+            NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.id(), TempadClientConfig.color));
             Minecraft.getInstance().setScreen(null);
         }
     }
 
     private void deleteAction() {
         if (minecraft != null && minecraft.player != null) {
-            NetworkHandler.CHANNEL.sendToServer(new DeleteLocationPacket(selectedLocation.getId()));
-            locations.removeIf(locationData -> locationData.getId().equals(selectedLocation.getId()));
+            NetworkHandler.CHANNEL.sendToServer(new DeleteLocationPacket(selectedLocation.id()));
+            locations.removeIf(locationData -> locationData.id().equals(selectedLocation.id()));
             selectedLocation = null;
             this.locationPanel.update(this.search.getValue());
-            informationPanel.update(null);
+            informationPanel.updateBlank();
 
             favoriteButton.visible = false;
             downloadButton.visible = false;
@@ -132,7 +132,7 @@ public class TeleportScreen extends TempadScreen {
     private void exportAction() {
         if (minecraft != null && minecraft.player != null && ConfigCache.allowExporting) {
             Minecraft.getInstance().setScreen(null);
-            NetworkHandler.CHANNEL.sendToServer(new ExportLocationPacket(selectedLocation.getId()));
+            NetworkHandler.CHANNEL.sendToServer(new ExportLocationPacket(selectedLocation.id()));
         }
     }
 }

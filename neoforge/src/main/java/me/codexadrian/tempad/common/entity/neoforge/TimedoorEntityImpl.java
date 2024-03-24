@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public class TimedoorEntityImpl {
-    public static void teleportEntity(ServerLevel destinationLevel, BlockPos pos, Vec3 deltaMovement, Entity entity) {
-        entity.changeDimension(destinationLevel, new TempadTeleporter(pos));
+    public static void teleportEntity(ServerLevel destinationLevel, Vec3 pos, Vec3 deltaMovement, int angle, Entity entity) {
+        entity.changeDimension(destinationLevel, new TempadTeleporter(pos, deltaMovement, angle));
     }
 }

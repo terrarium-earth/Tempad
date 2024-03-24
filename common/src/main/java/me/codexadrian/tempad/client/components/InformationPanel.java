@@ -1,6 +1,7 @@
 package me.codexadrian.tempad.client.components;
 
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
+import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
 import net.minecraft.core.GlobalPos;
@@ -18,36 +19,51 @@ public class InformationPanel extends SelectionList<TextEntry> {
     private static final String LOCATION_X = "gui." + Tempad.MODID + ".x";
     private static final String LOCATION_Y = "gui." + Tempad.MODID + ".y";
     private static final String LOCATION_Z = "gui." + Tempad.MODID + ".z";
+    private static final String ANGLE = "gui." + Tempad.MODID + ".angle";
     private static final String LOCATION_DIMENSION = "gui." + Tempad.MODID + ".dimension";
+    private final int color;
+    private final boolean shadow;
 
     public InformationPanel(int x, int y, int width, int height) {
+        this(x, y, width, height, TempadClientConfig.color, true);
+    }
+
+    public InformationPanel(int x, int y, int width, int height, int color, boolean shadow) {
         super(x, y, width, height, 10, entry -> {});
+        this.color = color;
+        this.shadow = shadow;
+    }
+
+    public void updateBlank() {
+        updateBlank(true);
+    }
+
+    public void updateBlank(boolean showNoSelection) {
+        if (showNoSelection) {
+            updateEntries(NO_SELECTION);
+        } else {
+            updateEntries(List.of());
+        }
     }
 
     public void update(LocationData location) {
-        if (location == null) {
-            updateEntries(NO_SELECTION);
-        } else {
-            updateEntries(List.of(
-                new TextEntry(Component.literal(location.getName())),
-                new TextEntry(Component.translatable(LOCATION_X, Mth.floor(location.getBlockPos().getX()))),
-                new TextEntry(Component.translatable(LOCATION_Y, Mth.floor(location.getBlockPos().getY()))),
-                new TextEntry(Component.translatable(LOCATION_Z, Mth.floor(location.getBlockPos().getZ()))),
-                new TextEntry(Component.translatable(LOCATION_DIMENSION, Component.translatable(location.getLevelKey().location().toLanguageKey("dimension")))))
-            );
-        }
+        updateEntries(List.of(
+            new TextEntry(Component.literal(location.name()), color, shadow),
+            new TextEntry(Component.translatable(LOCATION_X, Mth.floor(location.blockPos().getX())), color, shadow),
+            new TextEntry(Component.translatable(LOCATION_Y, Mth.floor(location.blockPos().getY())), color, shadow),
+            new TextEntry(Component.translatable(LOCATION_Z, Mth.floor(location.blockPos().getZ())), color, shadow),
+            new TextEntry(Component.translatable(ANGLE, location.angle()), color, shadow),
+            new TextEntry(Component.translatable(LOCATION_DIMENSION, Component.translatable(location.levelKey().location().toLanguageKey("dimension"))), color, shadow)
+            )
+        );
     }
 
     public void updateNameless(GlobalPos pos) {
-        if (pos == null) {
-            updateEntries(NO_SELECTION);
-        } else {
-            updateEntries(List.of(
-                new TextEntry(Component.translatable(LOCATION_X, Mth.floor(pos.pos().getX()))),
-                new TextEntry(Component.translatable(LOCATION_Y, Mth.floor(pos.pos().getY()))),
-                new TextEntry(Component.translatable(LOCATION_Z, Mth.floor(pos.pos().getZ()))),
-                new TextEntry(Component.translatable(LOCATION_DIMENSION, Component.translatable(pos.dimension().location().toLanguageKey("dimension")))))
-            );
-        }
+        updateEntries(List.of(
+            new TextEntry(Component.translatable(LOCATION_X, Mth.floor(pos.pos().getX())), color, shadow),
+            new TextEntry(Component.translatable(LOCATION_Y, Mth.floor(pos.pos().getY())), color, shadow),
+            new TextEntry(Component.translatable(LOCATION_Z, Mth.floor(pos.pos().getZ())), color, shadow),
+            new TextEntry(Component.translatable(LOCATION_DIMENSION, Component.translatable(pos.dimension().location().toLanguageKey("dimension"))), color, shadow))
+        );
     }
 }

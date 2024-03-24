@@ -30,7 +30,7 @@ public class WaystoneLocationProvider implements LocationProvider {
         if (!TempadConfig.waystonesCompat) return Map.of();
         Map<UUID, LocationData> locations = new HashMap<>();
         for (var waystone : getWaystones(level.getPlayerByUUID(uuid))) {
-            LocationData value = new LocationData(waystone.getName().getString(), waystone.getDimension(), waystone.getPos().above(2), waystone.getWaystoneUid(), ID, true, false, false);
+            LocationData value = new LocationData(waystone.getName().getString(), waystone.getDimension(), waystone.getPos().above(2), 0, waystone.getWaystoneUid(), false, false);
             locations.put(waystone.getWaystoneUid(), value);
         }
         return locations;

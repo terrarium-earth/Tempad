@@ -57,7 +57,7 @@ public class TimedoorRenderer extends EntityRenderer<TimedoorEntity> {
         }
 
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(entity.getYRot()));
+        poseStack.mulPose(Axis.YN.rotationDegrees(entity.getYRot()));
         poseStack.translate(0, 1.15F, 0);
         var model = poseStack.last().pose();
         if (width >= 0)

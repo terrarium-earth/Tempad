@@ -77,7 +77,7 @@ public class TempadItem extends Item implements TempadPower {
         timedoor.setOwner(player.getUUID());
         var position = player.position();
         timedoor.setPos(position.x() + Mth.cos(angleInRadians) * TempadConfig.distanceFromPlayer, position.y(), position.z() + Mth.sin(angleInRadians) * TempadConfig.distanceFromPlayer);
-        timedoor.setYRot(-angle);
+        timedoor.setYRot(angle);
         player.level().addFreshEntity(timedoor);
         timedoor.playSound(Tempad.TIMEDOOR_SOUND.get());
     }

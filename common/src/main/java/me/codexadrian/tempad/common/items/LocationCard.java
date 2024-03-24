@@ -43,11 +43,11 @@ public class LocationCard extends Item {
             tooltipComponents.add(Component.translatable("item.tempad.location_card.shift_toolip", Component.literal("SHIFT").withStyle(Screen.hasShiftDown() ? ChatFormatting.WHITE : ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY));
 
             if (Screen.hasShiftDown()) {
-                tooltipComponents.add(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
-                tooltipComponents.add(Component.translatable("gui.tempad.x", location.getBlockPos().getX()).withStyle(ChatFormatting.GRAY));
-                tooltipComponents.add(Component.translatable("gui.tempad.y", location.getBlockPos().getY()).withStyle(ChatFormatting.GRAY));
-                tooltipComponents.add(Component.translatable("gui.tempad.z", location.getBlockPos().getZ()).withStyle(ChatFormatting.GRAY));
-                tooltipComponents.add(Component.translatable("gui.tempad.dimension", Component.translatable(location.getLevelKey().location().toLanguageKey("dimension"))).withStyle(ChatFormatting.GRAY));
+                tooltipComponents.add(Component.literal(location.name()).withStyle(ChatFormatting.GRAY));
+                tooltipComponents.add(Component.translatable("gui.tempad.x", location.blockPos().getX()).withStyle(ChatFormatting.GRAY));
+                tooltipComponents.add(Component.translatable("gui.tempad.y", location.blockPos().getY()).withStyle(ChatFormatting.GRAY));
+                tooltipComponents.add(Component.translatable("gui.tempad.z", location.blockPos().getZ()).withStyle(ChatFormatting.GRAY));
+                tooltipComponents.add(Component.translatable("gui.tempad.dimension", Component.translatable(location.levelKey().location().toLanguageKey("dimension"))).withStyle(ChatFormatting.GRAY));
 
                 if (stack.hasTag() && stack.getTag().contains("Creator")) {
                     tooltipComponents.add(Component.translatable("item.tempad.location_card.creator_toolip", Component.translatable(stack.getTag().getString("Creator")).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY));
@@ -66,7 +66,7 @@ public class LocationCard extends Item {
             if (location != null) {
                 LocationApi.API.add(level, player.getUUID(), location);
                 player.getItemInHand(usedHand).shrink(1);
-                player.displayClientMessage(Component.translatable("item.tempad.location_card.added_location", Component.literal(location.getName()).withStyle(ChatFormatting.GOLD)), true);
+                player.displayClientMessage(Component.translatable("item.tempad.location_card.added_location", Component.literal(location.name()).withStyle(ChatFormatting.GOLD)), true);
             } else {
                 ItemStack cardStack = player.getItemInHand(usedHand);
                 var newLocation = new LocationData(cardStack.getHoverName().getString(), level.dimension(), player.blockPosition());
@@ -78,7 +78,7 @@ public class LocationCard extends Item {
                 } else {
                     player.setItemInHand(usedHand, stack);
                 }
-                player.displayClientMessage(Component.translatable("item.tempad.location_card.set_location", Component.literal(newLocation.getName()).withStyle(ChatFormatting.GOLD)), true);
+                player.displayClientMessage(Component.translatable("item.tempad.location_card.set_location", Component.literal(newLocation.name()).withStyle(ChatFormatting.GOLD)), true);
             }
             return InteractionResultHolder.success(player.getItemInHand(usedHand));
         } else {

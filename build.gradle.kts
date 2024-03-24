@@ -68,6 +68,12 @@ subprojects {
                 includeGroup("info.journeymap")
             }
         }
+        maven {
+            url = uri("https://maven.nucleoid.xyz/")
+            content {
+                includeGroup("eu.pb4")
+            }
+        }
     }
 
     dependencies {
@@ -112,6 +118,7 @@ subprojects {
 
         "modApi"(group = "earth.terrarium.botarium", name = "botarium-$modLoader-$minecraftVersion", version = botariumVersion)
         "modImplementation"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-$minecraftVersion", version = prometheusVersion)
+        "modImplementation"(group = "earth.terrarium.argonauts", name = "argonauts-$modLoader-$minecraftVersion", version = argonautsVersion)
         // "modApi"(group = "earth.terrarium.baubly", name = "baubly-$modLoader-$minecraftVersion", version = baublyVersion)
 
         "modCompileOnly"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {

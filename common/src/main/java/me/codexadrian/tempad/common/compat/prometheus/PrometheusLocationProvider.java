@@ -23,15 +23,15 @@ public class PrometheusLocationProvider implements LocationProvider {
     public Map<UUID, LocationData> getLocations(Level level, UUID player) {
         Map<UUID, LocationData> locations = new HashMap<>();
         LocationsApi.API.getWarps(level.getServer()).forEach((name, globalPos) -> {
-            UUID locationId = UUID.nameUUIDFromBytes(("warps" + globalPos.dimension().toString() + globalPos.pos()).getBytes());
-            locations.put(locationId, new LocationData(name, globalPos.dimension(), globalPos.pos(), locationId, ID, true, false, false));
+            UUID locationId = UUID.nameUUIDFromBytes(("warps" + globalPos.dimension() + globalPos.pos()).getBytes());
+            locations.put(locationId, new LocationData(name, globalPos.dimension(), globalPos.pos(), 0, locationId, false, false));
         });
         if (level.getServer() != null) {
             ServerPlayer serverPlayer = level.getServer().getPlayerList().getPlayer(player);
             if (serverPlayer == null) return locations;
             LocationsApi.API.getHomes(serverPlayer).forEach((name, globalPos) -> {
-                UUID locationId = UUID.nameUUIDFromBytes(("homes" + globalPos.dimension().toString() + globalPos.pos()).getBytes());
-                locations.put(locationId, new LocationData(name, globalPos.dimension(), globalPos.pos(), locationId, ID, true, true, false));
+                UUID locationId = UUID.nameUUIDFromBytes(("homes" + globalPos.dimension() + globalPos.pos()).getBytes());
+                locations.put(locationId, new LocationData(name, globalPos.dimension(), globalPos.pos(), 0, locationId, true, false));
             });
         }
         return locations;
