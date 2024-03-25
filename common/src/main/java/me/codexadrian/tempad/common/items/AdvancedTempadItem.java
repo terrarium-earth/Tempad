@@ -10,18 +10,4 @@ public class AdvancedTempadItem extends TempadItem {
         super(properties);
     }
 
-    @Override
-    public FuelOption getOption() {
-        return FuelOptionsApi.API.getOption(ResourceLocation.tryParse(ConfigCache.advancedTempadFuelType));
-    }
-
-    @Override
-    public int getFuelCost() {
-        return ConfigCache.advancedTempadfuelConsumptionValue;
-    }
-
-    @Override
-    public int getFuelCapacity() {
-        return ConfigCache.advancedTempadfuelCapacityValue;
-    }
 }

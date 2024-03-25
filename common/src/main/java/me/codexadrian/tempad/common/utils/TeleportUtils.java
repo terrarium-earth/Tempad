@@ -1,6 +1,12 @@
 package me.codexadrian.tempad.common.utils;
 
+import com.mojang.datafixers.util.Pair;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.baubly.common.BaubleUtils;
+import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.api.power.PowerSettingsApi;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
@@ -8,14 +14,13 @@ import me.codexadrian.tempad.common.items.LocationCard;
 import me.codexadrian.tempad.common.items.TempadItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.NotImplementedException;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
+import java.util.Map;
 
 public class TeleportUtils {
 
@@ -33,47 +38,55 @@ public class TeleportUtils {
         return level.equals(player.level().dimension()) || (player.level().isClientSide() ? ConfigCache.allowInterdimensionalTravel : TempadConfig.allowInterdimensionalTravel);
     }
 
-    public static ItemStack findAndReplaceTempad(Player player, @Nullable ItemStack replacementTempad) {
-        AtomicReference<ItemStack> tempad = new AtomicReference<>(ItemStack.EMPTY);
-        Consumer<ItemStack> setTempad = null;
+    public static Pair<ItemStack, LookupLocation> findTempad(Player player) {
+        Pair<ItemStack, LookupLocation> value = null;
 
         if (isBaubleModLoaded()) {
-            setTempad = BaubleUtils.findTempadInBaubles(player, tempad::set);
-        }
-
-        if (setTempad != null) {
-            if (replacementTempad != null) {
-                setTempad.accept(replacementTempad);
-            }
-            return tempad.get();
-        }
-
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (stack.getItem() instanceof TempadItem tempadItem) {
-                tempad.set(stack);
-                int finalI = i;
-                setTempad = (itemStack) -> player.getInventory().setItem(finalI, itemStack);
-
-                if (tempadItem.getOption().canTimedoorOpen(player, tempad.get())) {
-                    break;
+            Map<String, Container> baubleContainer = BaubleUtils.getBaubleContainer(player, TempadSlotIdentifier.INSTANCE);
+            for (var values : baubleContainer.entrySet()) {
+                for (int i = 0; i < values.getValue().getContainerSize(); i++) {
+                    ItemStack stack = values.getValue().getItem(i);
+                    FuelOption option = FuelOptionsApi.API.findItemOption(stack);
+                    PowerSettings settings = PowerSettingsApi.API.get(stack);
+                    if (option != null && settings != null) {
+                        value = Pair.of(stack, new LookupLocation(values.getKey(), i));
+                        if (option.canTimedoorOpen(stack, settings, player)) {
+                            return value;
+                        }
+                    }
                 }
             }
         }
 
-        if (replacementTempad != null && setTempad != null) {
-            setTempad.accept(replacementTempad);
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            FuelOption option = FuelOptionsApi.API.findItemOption(stack);
+            PowerSettings settings = PowerSettingsApi.API.get(stack);
+            if (option != null && settings != null) {
+                value = Pair.of(stack, new LookupLocation("main", i));
+                if (option.canTimedoorOpen(stack, settings, player)) {
+                    return value;
+                }
+            }
         }
 
-        return tempad.get();
+        return value;
     }
 
-    public static ItemStack findTempad(Player player) {
-        return findAndReplaceTempad(player, null);
+    public static ItemStack findTempad(Player player, LookupLocation location) {
+        if (location.id().equals("main")) {
+            return player.getInventory().getItem(location.slot());
+        } else if (isBaubleModLoaded()) {
+            Container baubleContainer = BaubleUtils.getBaubleContainer(player, location.id());
+            if (baubleContainer != null) {
+                return baubleContainer.getItem(location.slot());
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     public static boolean hasTempad(Player player) {
-        return !findTempad(player).isEmpty();
+        return findTempad(player) != null;
     }
 
     public static boolean hasLocationCard(Player player) {

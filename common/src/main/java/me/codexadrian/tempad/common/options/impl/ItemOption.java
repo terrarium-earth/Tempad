@@ -1,6 +1,7 @@
 package me.codexadrian.tempad.common.options.impl;
 
 import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.power.PowerSettings;
 import me.codexadrian.tempad.common.Tempad;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -12,29 +13,25 @@ import java.util.List;
 
 public class ItemOption implements FuelOption {
     @Override
-    public boolean canTimedoorOpen(Player player, ItemStack stack) {
+    public boolean canTimedoorOpen(Object dataHolder, PowerSettings attachment, Player player) {
         return player.getInventory().contains(Tempad.TEMPAD_FUEL_TAG);
     }
 
     @Override
-    public void onTimedoorOpen(Player player, ItemStack stack) {
+    public void onTimedoorOpen(Object dataHolder, PowerSettings attachment, Player player) {
         findItemStack(player).shrink(1);
     }
 
     @Override
-    public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
+    public void addToolTip(Object dataHolder, PowerSettings attachment, Level level, List<Component> components, TooltipFlag flag) {
         components.add(Component.translatable("tooltip.tempad.item_option_info"));
     }
 
     public ItemStack findItemStack(Player player) {
-        for (ItemStack item : player.getInventory().items) {
-            if (item.is(Tempad.TEMPAD_FUEL_TAG)) {
-                return item;
-            }
-        }
-        for (ItemStack item : player.getInventory().offhand) {
-            if (item.is(Tempad.TEMPAD_FUEL_TAG)) {
-                return item;
+        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
+            ItemStack stack = player.getInventory().getItem(index);
+            if (stack.is(Tempad.TEMPAD_FUEL_TAG)) {
+                return stack;
             }
         }
         return ItemStack.EMPTY;

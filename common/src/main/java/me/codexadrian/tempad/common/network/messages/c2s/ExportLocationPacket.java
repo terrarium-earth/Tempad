@@ -55,8 +55,7 @@ public record ExportLocationPacket(UUID location) implements Packet<ExportLocati
         public Consumer<Player> handle(ExportLocationPacket message) {
             return player -> {
                 if (!TeleportUtils.hasTempad(player)) return;
-                ItemStack itemInHand = TeleportUtils.findTempad(player);
-                if (TeleportUtils.hasLocationCard(player) && itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand)) {
+                if (TeleportUtils.hasLocationCard(player) && TeleportUtils.hasTempad(player)) {
                     LocationData locationData = LocationApi.API.get(player.level(), player.getUUID(), message.location);
                     if (locationData.isDownloadable() && TempadConfig.allowExporting) {
                         ItemStack stack = new ItemStack(TempadRegistry.LOCATION_CARD.get());

@@ -1,12 +1,12 @@
 package me.codexadrian.tempad.common.options.impl;
 
 import me.codexadrian.tempad.api.options.FuelOption;
-import me.codexadrian.tempad.api.options.FuelOptionsApi;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.common.registry.TempadData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -17,53 +17,43 @@ public class TimerOption implements FuelOption {
     public static final String ID = "Timer";
 
     @Override
-    public boolean canTimedoorOpen(Player player, ItemStack stack) {
-        return !stack.getOrCreateTag().contains(ID);
+    public boolean canTimedoorOpen(Object dataHolder, PowerSettings attachment, Player player) {
+        return TempadData.TIMER.getData(dataHolder).isFinished();
     }
 
     @Override
-    public void onTimedoorOpen(Player player, ItemStack stack) {
-        stack.getOrCreateTag().putLong(ID, FuelOptionsApi.API.getFuelCost(stack) * 20L);
+    public void onTimedoorOpen(Object dataHolder, PowerSettings attachment, Player player) {
+        TempadData.TIMER.getData(dataHolder).setTime(attachment.getFuelCost());
     }
 
     @Override
-    public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
-        long cooldown = timeLeft(stack);
+    public void addToolTip(Object dataHolder, PowerSettings attachment, Level level, List<Component> components, TooltipFlag flag) {
+        long cooldown = timeLeft(dataHolder);
         if (cooldown > 0) {
             components.add(Component.translatable("tooltip.tempad.timeleft", Component.literal(DurationFormatUtils.formatDuration(cooldown * 1000, "mm:ss", true)).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY));
         } else {
             components.add(Component.translatable("tooltip.tempad.fullycharged").withStyle(ChatFormatting.AQUA));
         }
-        components.add(Component.translatable("tooltip.tempad.timer_cost", Component.literal(DurationFormatUtils.formatDuration(FuelOptionsApi.API.getFuelCost(stack) * 1000L, "mm:ss", true)).withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("tooltip.tempad.timer_cost", Component.literal(DurationFormatUtils.formatDuration(attachment.getFuelCost() * 1000L, "mm:ss", true)).withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
-    public boolean isDurabilityBarVisible(ItemStack stack) {
-        return !this.canTimedoorOpen(null, stack);
+    public boolean isDurabilityBarVisible(Object dataHolder, PowerSettings attachment) {
+        return timeLeft(dataHolder) > 0;
     }
 
     @Override
-    public double getPercentage(ItemStack stack) {
-        return Math.max(0, 1 - (double) timeLeft(stack) / (double) FuelOptionsApi.API.getFuelCost(stack));
+    public double getPercentage(Object dataHolder, PowerSettings attachment) {
+        return Math.max(0, 1 - (double) timeLeft(dataHolder) / (double) attachment.getFuelCost());
     }
 
-    public static long timeLeft(ItemStack stack) {
-        if (stack.getTag() != null && stack.getTag().contains(ID)) {
-            return stack.getTag().getInt(ID) / 20;
-        }
-        return 0;
+    public long timeLeft(Object holder) {
+        return TempadData.TIMER.getData(holder).getTime();
     }
 
     @Override
-    public void tick(ItemStack stack, Entity entity) {
+    public void tick(Object dataHolder, PowerSettings attachment, Entity entity) {
         // tick the timer
-        if (stack.getTag() != null && stack.getTag().contains(ID)) {
-            long cooldownTimeTag = stack.getTag().getLong(ID);
-            if (cooldownTimeTag == 0) {
-                stack.getTag().remove(ID);
-            } else {
-                stack.getTag().putLong(ID, cooldownTimeTag - 1);
-            }
-        }
+        TempadData.TIMER.getData(dataHolder).tick();
     }
 }

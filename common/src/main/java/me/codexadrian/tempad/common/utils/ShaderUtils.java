@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.common.utils;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import me.codexadrian.tempad.common.BlurReloader;
+import me.codexadrian.tempad.client.BlurReloader;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.apache.commons.lang3.NotImplementedException;

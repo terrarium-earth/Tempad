@@ -1,12 +1,19 @@
 package me.codexadrian.tempad.client.apps.impl;
 
 import me.codexadrian.tempad.api.apps.TempadApp;
+import me.codexadrian.tempad.api.locations.LocationApi;
 import me.codexadrian.tempad.client.screens.NewLocationScreen;
+import me.codexadrian.tempad.client.screens.TempadScreen;
 import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.network.NetworkHandler;
+import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
+import me.codexadrian.tempad.common.utils.LookupLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class NewLocationApp implements TempadApp {
     public static final NewLocationApp INSTANCE = new NewLocationApp();
@@ -23,8 +30,13 @@ public class NewLocationApp implements TempadApp {
     }
 
     @Override
-    public void open() {
-        Minecraft.getInstance().setScreen(new NewLocationScreen());
+    public void openOnClient(Player player, LookupLocation lookup) {
+        Minecraft.getInstance().setScreen(new NewLocationScreen(lookup));
+    }
+
+    @Override
+    public void openOnServer(Player player, LookupLocation lookup) {
+        NetworkHandler.CHANNEL.sendToPlayer(new OpenTempadScreenPacket(LocationApi.API.getAllAsList(player.level(), player.getUUID()), LocationApi.API.getFavorite(player.level(), player.getUUID()), lookup), player);
     }
 
     @Override

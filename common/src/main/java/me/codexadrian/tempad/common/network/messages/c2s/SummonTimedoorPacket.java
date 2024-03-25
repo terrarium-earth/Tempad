@@ -1,14 +1,21 @@
 package me.codexadrian.tempad.common.network.messages.c2s;
 
+import com.teamresourceful.bytecodecs.base.ByteCodec;
+import com.teamresourceful.bytecodecs.base.object.ObjectByteCodec;
 import com.teamresourceful.resourcefullib.common.network.Packet;
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
+import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType;
 import me.codexadrian.tempad.api.locations.LocationApi;
+import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.api.power.PowerSettingsApi;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.items.TempadItem;
+import me.codexadrian.tempad.common.utils.LookupLocation;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public record SummonTimedoorPacket(UUID location, int color) implements Packet<SummonTimedoorPacket> {
+public record SummonTimedoorPacket(UUID location, int color, LookupLocation lookup) implements Packet<SummonTimedoorPacket> {
     public static final Handler HANDLER = new Handler();
 
     @Override
@@ -24,37 +31,27 @@ public record SummonTimedoorPacket(UUID location, int color) implements Packet<S
         return HANDLER;
     }
 
-    public static class Handler implements ServerboundPacketType<SummonTimedoorPacket> {
-        public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "timedoor");
+    public static class Handler extends CodecPacketType<SummonTimedoorPacket> implements ServerboundPacketType<SummonTimedoorPacket> {
+        public static final ByteCodec<SummonTimedoorPacket> CODEC = ObjectByteCodec.create(
+                ByteCodec.UUID.fieldOf(SummonTimedoorPacket::location),
+                ByteCodec.INT.fieldOf(SummonTimedoorPacket::color),
+                LookupLocation.CODEC.fieldOf(SummonTimedoorPacket::lookup),
+                SummonTimedoorPacket::new
+        );
 
-        @Override
-        public Class<SummonTimedoorPacket> type() {
-            return SummonTimedoorPacket.class;
-        }
-
-        @Override
-        public ResourceLocation id() {
-            return ID;
-        }
-
-        @Override
-        public SummonTimedoorPacket decode(FriendlyByteBuf buffer) {
-            return new SummonTimedoorPacket(buffer.readUUID(), buffer.readVarInt());
-        }
-
-        @Override
-        public void encode(SummonTimedoorPacket packet, FriendlyByteBuf buffer) {
-            buffer.writeUUID(packet.location);
-            buffer.writeVarInt(packet.color);
+        public Handler() {
+            super(SummonTimedoorPacket.class, new ResourceLocation(Tempad.MODID, "timedoor"), CODEC);
         }
 
         @Override
         public Consumer<Player> handle(SummonTimedoorPacket message) {
             return player -> {
-                ItemStack itemInHand = TeleportUtils.findTempad(player);
+                ItemStack itemInHand = TeleportUtils.findTempad(player, message.lookup);
                 LocationData locationData = LocationApi.API.get(player.level(), player.getUUID(), message.location);
-                if (locationData != null && itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(player, itemInHand) && TeleportUtils.mayTeleport(locationData.levelKey(), player)) {
-                    if (!player.getAbilities().instabuild) tempadItem.getOption().onTimedoorOpen(player, itemInHand);
+                FuelOption option = FuelOptionsApi.API.findItemOption(itemInHand);
+                PowerSettings attachment = PowerSettingsApi.API.get(itemInHand);
+                if (locationData != null && option != null && option.canTimedoorOpen(itemInHand, attachment, player) && TeleportUtils.mayTeleport(locationData.levelKey(), player)) {
+                    if (!player.getAbilities().instabuild) option.onTimedoorOpen(itemInHand, attachment, player);
                     TempadItem.summonTimeDoor(locationData, player, message.color);
                 }
             };

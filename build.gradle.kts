@@ -9,7 +9,7 @@ plugins {
     java
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("dev.architectury.loom") version "1.4-SNAPSHOT" apply false
+    id("dev.architectury.loom") version "1.5-SNAPSHOT" apply false
     id("architectury-plugin") version "3.4-SNAPSHOT"
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
@@ -119,7 +119,7 @@ subprojects {
         "modApi"(group = "earth.terrarium.botarium", name = "botarium-$modLoader-$minecraftVersion", version = botariumVersion)
         "modImplementation"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-$minecraftVersion", version = prometheusVersion)
         "modImplementation"(group = "earth.terrarium.argonauts", name = "argonauts-$modLoader-$minecraftVersion", version = argonautsVersion)
-        // "modApi"(group = "earth.terrarium.baubly", name = "baubly-$modLoader-$minecraftVersion", version = baublyVersion)
+        "modApi"(group = "earth.terrarium.baubly", name = "baubly-$modLoader-$minecraftVersion", version = baublyVersion)
 
         "modCompileOnly"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {
             exclude(group = "net.blay09.mods", module = "shared-bridge")

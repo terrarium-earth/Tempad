@@ -1,5 +1,6 @@
 package me.codexadrian.tempad.common.items;
 
+import dev.architectury.injectables.annotations.PlatformOnly;
 import earth.terrarium.botarium.common.item.base.BotariumItemItem;
 import earth.terrarium.botarium.common.menu.ExtraDataMenuProvider;
 import earth.terrarium.botarium.common.menu.MenuHooks;
@@ -22,6 +23,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -59,17 +61,26 @@ public class PrinterItem extends BlockItem implements BotariumItemItem<PrinterCo
                 return InteractionResultHolder.success(player.getItemInHand(usedHand));
             }
         }
-
         return super.use(level, player, usedHand);
     }
 
     @Override
     public InteractionResult place(BlockPlaceContext context) {
-        if (context.getPlayer() == null || !context.getPlayer().isShiftKeyDown()) {
+        if (context.getPlayer() == null || context.getPlayer().isShiftKeyDown()) {
             return super.place(context);
         } else {
-            return InteractionResult.FAIL;
+            return InteractionResult.PASS;
         }
+    }
+
+    @PlatformOnly(PlatformOnly.FABRIC)
+    public boolean allowNbtUpdateAnimation(Player player, InteractionHand hand, ItemStack oldStack, ItemStack newStack) {
+        return false;
+    }
+
+    @PlatformOnly("neoforge")
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
     }
 
     public class PrinterMenuData implements ExtraDataMenuProvider {

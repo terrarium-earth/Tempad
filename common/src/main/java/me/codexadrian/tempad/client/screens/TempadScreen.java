@@ -6,10 +6,13 @@ import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack;
 import me.codexadrian.tempad.api.apps.TempadApp;
 import me.codexadrian.tempad.api.apps.TempadAppApi;
 import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.api.power.PowerSettingsApi;
 import me.codexadrian.tempad.client.components.ModSprites;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.client.screens.base.BackgroundScreen;
-import me.codexadrian.tempad.common.items.TempadItem;
+import me.codexadrian.tempad.common.utils.LookupLocation;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -26,13 +29,22 @@ import java.util.List;
 public class TempadScreen extends BackgroundScreen {
     private final ResourceLocation appScreen;
     private final ResourceLocation appId;
+    private final LookupLocation lookup;
+
     protected int localLeft;
     protected int localTop;
+    private final ItemStack tempadItem;
+    private final FuelOption option;
+    private final PowerSettings attachment;
 
-    protected TempadScreen(ResourceLocation sprite, ResourceLocation appId) {
+    protected TempadScreen(ResourceLocation sprite, ResourceLocation appId, LookupLocation search) {
         super(249, 138, ModSprites.TEMPAD_SCREEN);
         this.appScreen = sprite;
         this.appId = appId;
+        this.lookup = search;
+        this.tempadItem = TeleportUtils.findTempad(minecraft.player, lookup);
+        this.option = FuelOptionsApi.API.findItemOption(getTempadItem());
+        this.attachment = PowerSettingsApi.API.get(getTempadItem());
     }
 
     @Override
@@ -49,34 +61,45 @@ public class TempadScreen extends BackgroundScreen {
         addRenderableOnly(new FuelBar());
 
         var apps = addRenderableWidget(new SelectionList<AppButton>(left + 210, top + 13, 12, 114, 12, (appButton) -> {
-            if (appButton != null && !appButton.appId.equals(this.appId)) appButton.app.open();
+            if (appButton != null && !appButton.appId.equals(this.appId)) appButton.app.openOnClient(minecraft.player, lookup);
         }));
 
         apps.updateEntries(TempadAppApi.API.getApps().entrySet().stream().map(entry -> new AppButton(entry.getValue(), entry.getKey())).sorted(Comparator.comparingInt(value -> value.app.priority())).toList());
+    }
+
+    public ItemStack getTempadItem() {
+        return tempadItem;
+    }
+
+    public LookupLocation getLookup() {
+        return lookup;
+    }
+
+    public FuelOption getOption() {
+        return option;
+    }
+
+    public PowerSettings getAttachment() {
+        return attachment;
     }
 
     public class FuelBar implements Renderable {
         @Override
         public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
             if (minecraft == null) return;
+            int barHeight;
+            if(option.isDurabilityBarVisible(tempadItem, attachment)) {
+                barHeight = (int) (option.getPercentage(tempadItem, attachment) * 54);
+            } else {
+                barHeight = option.canTimedoorOpen(tempadItem, attachment, minecraft.player) ? 54 : 0;
+            }
 
-            ItemStack tempad = TeleportUtils.findTempad(minecraft.player);
-            if (tempad.getItem() instanceof TempadItem item) {
-                FuelOption option = item.getOption();
-                int barHeight;
-                if(option.isDurabilityBarVisible(tempad)) {
-                    barHeight = (int) (option.getPercentage(tempad) * 54);
-                } else {
-                    barHeight = option.canTimedoorOpen(minecraft.player, tempad) ? 54 : 0;
-                }
+            guiGraphics.blitSprite(ModSprites.BAR, 6, 54, 0, 0, left + 234, top + 42 + 54 - barHeight, 6, barHeight);
 
-                guiGraphics.blitSprite(ModSprites.BAR, 6, 54, 0, 0, left + 234, top + 42 + 54 - barHeight, 6, barHeight);
-
-                if (mouseX >= left + 234 && mouseX <= left + 240 && mouseY >= top + 42 && mouseY <= top + 96) {
-                    List<Component> tooltip = new ArrayList<>();
-                    option.addToolTip(tempad, minecraft.level, tooltip, TooltipFlag.NORMAL);
-                    setTooltipForNextRenderPass(tooltip.stream().map(Component::getVisualOrderText).toList());
-                }
+            if (mouseX >= left + 234 && mouseX <= left + 240 && mouseY >= top + 42 && mouseY <= top + 96) {
+                List<Component> tooltip = new ArrayList<>();
+                option.addToolTip(tempadItem, attachment, minecraft.level, tooltip, TooltipFlag.NORMAL);
+                setTooltipForNextRenderPass(tooltip.stream().map(Component::getVisualOrderText).toList());
             }
         }
     }

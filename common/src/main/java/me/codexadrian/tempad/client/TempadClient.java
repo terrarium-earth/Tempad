@@ -1,8 +1,11 @@
 package me.codexadrian.tempad.client;
 
-import com.teamresourceful.resourcefullib.common.utils.modinfo.ModInfoUtils;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import me.codexadrian.tempad.api.apps.TempadAppApi;
+import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.api.power.PowerSettingsApi;
 import me.codexadrian.tempad.client.apps.impl.NewLocationApp;
 import me.codexadrian.tempad.client.apps.impl.SettingsApp;
 import me.codexadrian.tempad.client.apps.impl.TeleportApp;
@@ -12,10 +15,7 @@ import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.registry.TempadBlocks;
 import me.codexadrian.tempad.common.registry.TempadMenus;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
-import me.codexadrian.tempad.common.items.TempadItem;
-import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
@@ -23,12 +23,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-import java.util.List;
-
 public class TempadClient {
     private static final ClampedItemPropertyFunction CLAMPED_ITEM_PROPERTY_FUNCTION = (itemStack, clientLevel, livingEntity, i) -> {
-        if (livingEntity instanceof Player player && itemStack.getItem() instanceof TempadItem tempad) {
-            return tempad.getOption().canTimedoorOpen(player, itemStack) ? 1.0F : 0.0F;
+        if (livingEntity instanceof Player player) {
+            FuelOption option = FuelOptionsApi.API.findItemOption(itemStack);
+            PowerSettings attachment = PowerSettingsApi.API.get(itemStack);
+            return option.canTimedoorOpen(itemStack, attachment, player) ? 1.0F : 0.0F;
         }
         return 0.0F;
     };

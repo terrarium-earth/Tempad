@@ -3,7 +3,6 @@ package me.codexadrian.tempad.common.fabric;
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.compat.fabricwaystones.FabricWaystoneLocationGetter;
-import me.codexadrian.tempad.common.compat.trinkets.TempadTrinketHandler;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.s2c.InitConfigPacket;
@@ -13,9 +12,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -51,10 +48,6 @@ public class FabricTempad implements ModInitializer {
 
         if (PlatformUtils.isModLoaded("fwaystones")) {
             FabricWaystoneLocationGetter.init();
-        }
-
-        if (PlatformUtils.isModLoaded("trinkets")) {
-            TempadTrinketHandler.init();
         }
 
         ItemGroupEvents.modifyEntriesEvent(Tempad.TAB).register(group -> {

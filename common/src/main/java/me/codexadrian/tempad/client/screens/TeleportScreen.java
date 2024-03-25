@@ -10,6 +10,7 @@ import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.items.TempadItem;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.c2s.*;
+import me.codexadrian.tempad.common.utils.LookupLocation;
 import me.codexadrian.tempad.common.utils.TeleportUtils;
 import net.minecraft.Optionull;
 import net.minecraft.client.Minecraft;
@@ -40,8 +41,8 @@ public class TeleportScreen extends TempadScreen {
     private SpriteButton deleteButton;
     private SpriteButton teleportButton;
 
-    public TeleportScreen(List<LocationData> locations, @Nullable UUID favorite) {
-        super(ModSprites.TELEPORT_SCREEN, TeleportApp.ID);
+    public TeleportScreen(List<LocationData> locations, @Nullable UUID favorite, LookupLocation search) {
+        super(ModSprites.TELEPORT_SCREEN, TeleportApp.ID, search);
         this.locations = locations;
         this.favorite = favorite;
     }
@@ -92,8 +93,7 @@ public class TeleportScreen extends TempadScreen {
         teleportButton.visible = true;
 
         if (minecraft != null && minecraft.player != null) {
-            ItemStack itemInHand = TeleportUtils.findTempad(minecraft.player);
-            boolean isTempadUsable = itemInHand.getItem() instanceof TempadItem tempadItem && tempadItem.getOption().canTimedoorOpen(minecraft.player, itemInHand);
+            boolean isTempadUsable = getOption().canTimedoorOpen(getTempadItem(), getAttachment(), minecraft.player);
             teleportButton.setActivated(TeleportUtils.mayTeleport(selectedLocation.levelKey(), minecraft.player) && isTempadUsable);
             downloadButton.setActivated(selectedLocation.isDownloadable() && ConfigCache.allowExporting && TeleportUtils.hasLocationCard(minecraft.player));
             deleteButton.setActivated(selectedLocation.isDeletable());
@@ -109,7 +109,7 @@ public class TeleportScreen extends TempadScreen {
 
     private void teleportAction() {
         if (minecraft != null && minecraft.player != null) {
-            NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.id(), TempadClientConfig.color));
+            NetworkHandler.CHANNEL.sendToServer(new SummonTimedoorPacket(selectedLocation.id(), TempadClientConfig.color, getLookup()));
             Minecraft.getInstance().setScreen(null);
         }
     }

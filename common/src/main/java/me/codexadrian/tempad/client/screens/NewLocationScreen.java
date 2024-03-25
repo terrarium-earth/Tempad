@@ -10,6 +10,7 @@ import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.network.NetworkHandler;
 import me.codexadrian.tempad.common.network.messages.c2s.AddLocationPacket;
+import me.codexadrian.tempad.common.utils.LookupLocation;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.GlobalPos;
@@ -19,8 +20,8 @@ import net.minecraft.network.chat.Component;
 public class NewLocationScreen extends TempadScreen {
     private static final Component NAME_FIELD = Component.translatable("gui." + Tempad.MODID + ".name_field");
 
-    public NewLocationScreen() {
-        super(ModSprites.NEW_LOCATION, NewLocationApp.ID);
+    public NewLocationScreen(LookupLocation search) {
+        super(ModSprites.NEW_LOCATION, NewLocationApp.ID, search);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class NewLocationScreen extends TempadScreen {
             this.localLeft + 84, this.localTop + 100, 14, 14,
             ModSprites.SAVE, () -> {
             NetworkHandler.CHANNEL.sendToServer(new AddLocationPacket(box.getValue()));
-            TempadAppApi.API.getHomePage().open();
+            TempadAppApi.API.getHomePage().openOnClient(minecraft.player, getLookup());
         })).setTooltip(Tooltip.create(CommonComponents.GUI_DONE));
     }
 }

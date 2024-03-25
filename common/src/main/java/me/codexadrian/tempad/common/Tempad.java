@@ -2,11 +2,13 @@ package me.codexadrian.tempad.common;
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.baubly.Baubly;
 import me.codexadrian.tempad.common.compat.argonauts.ArgonautsTeamConfig;
 import me.codexadrian.tempad.common.compat.botarium.BotariumTempadOptionRegistry;
 import me.codexadrian.tempad.common.compat.prometheus.PrometheusLocationProvider;
 import me.codexadrian.tempad.common.compat.waystones.WaystoneLocationProvider;
 import me.codexadrian.tempad.common.config.TempadConfig;
+import me.codexadrian.tempad.common.items.TempadBaubly;
 import me.codexadrian.tempad.common.locations.TempadLocationProvider;
 import me.codexadrian.tempad.common.locations.WarpLocationProvider;
 import me.codexadrian.tempad.common.network.NetworkHandler;
@@ -44,7 +46,6 @@ public class Tempad {
     public static final TagKey<Fluid> TEMPAD_LIQUID_FUEL_TAG = TagKey.create(Registries.FLUID, new ResourceLocation(MODID, "tempad_liquid_fuel"));
     public static final TagKey<Level> TEMPAD_DIMENSION_BLACKLIST = TagKey.create(Registries.DIMENSION, new ResourceLocation(MODID, "tempad_dimension_blacklist"));
     public static final TagKey<EntityType<?>> TEMPAD_ENTITY_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "tempad_entity_blacklist"));
-    public static final TagKey<EntityType<?>> TEMPAD_ENTITY_WHITELIST = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "tempad_entity_whitelist"));
     public static final Supplier<SoundEvent> TIMEDOOR_SOUND = registerSound("entity.timedoor.open");
 
     public static void init() {
@@ -77,6 +78,11 @@ public class Tempad {
 
         if (PlatformUtils.isModLoaded("botarium")) {
             BotariumTempadOptionRegistry.postInit();
+        }
+
+        if (PlatformUtils.isModLoaded("curios") || PlatformUtils.isModLoaded("trinkets")) {
+            Baubly.registerBauble(TempadRegistry.TEMPAD.get(), TempadBaubly.INSTANCE);
+            Baubly.registerBauble(TempadRegistry.CREATIVE_TEMPAD.get(), TempadBaubly.INSTANCE);
         }
     }
 

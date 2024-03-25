@@ -17,7 +17,7 @@ public class NetworkHandler {
         CHANNEL.register(ExportLocationPacket.HANDLER);
         CHANNEL.register(FavoriteLocationPacket.HANDLER);
         CHANNEL.register(OpenFavoritedLocationPacket.HANDLER);
-        CHANNEL.register(RequestTeleportScreen.HANDLER);
+        CHANNEL.register(RequestAppScreen.HANDLER);
         CHANNEL.register(SummonTimedoorPacket.HANDLER);
         CHANNEL.register(WriteLocationCard.HANDLER);
 

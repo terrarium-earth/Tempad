@@ -1,54 +1,52 @@
 package me.codexadrian.tempad.common.options.impl;
 
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
-import earth.terrarium.botarium.common.item.ItemStackHolder;
 import me.codexadrian.tempad.api.options.FuelOption;
-import me.codexadrian.tempad.api.options.FuelOptionsApi;
-import me.codexadrian.tempad.common.utils.TeleportUtils;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.common.Tempad;
+import me.codexadrian.tempad.common.registry.TempadData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EnergyOption implements FuelOption {
+    public static final ResourceLocation ID = new ResourceLocation(Tempad.MODID, "energy");
+
     @Override
-    public boolean canTimedoorOpen(Player player, ItemStack stack) {
-        EnergyContainer energyStorage = EnergyContainer.of(new ItemStackHolder(stack));
+    public boolean canTimedoorOpen(Object dataHolder, PowerSettings attachment, Player player) {
+        EnergyContainer energyStorage = TempadData.ENERGY.getData(dataHolder);
         if (energyStorage == null) return false;
-        return energyStorage.getStoredEnergy() >= FuelOptionsApi.API.getFuelCost(stack);
+        return energyStorage.getStoredEnergy() >= attachment.getFuelCost();
     }
 
     @Override
-    public void addToolTip(ItemStack stack, Level level, List<Component> components, TooltipFlag flag) {
-        EnergyContainer energyStorage = EnergyContainer.of(new ItemStackHolder(stack));
+    public void addToolTip(Object dataHolder, PowerSettings attachment, Level level, List<Component> components, TooltipFlag flag) {
+        EnergyContainer energyStorage = TempadData.ENERGY.getData(dataHolder);
         if (energyStorage == null) return;
         components.add(Component.translatable("tempad_option.tempad.energy", energyStorage.getStoredEnergy(), energyStorage.getMaxCapacity()).withStyle(ChatFormatting.GRAY));
-        components.add(Component.translatable("tempad_option.tempad.energy_cost", FuelOptionsApi.API.getFuelCost(stack)).withStyle(ChatFormatting.GRAY));
+        components.add(Component.translatable("tempad_option.tempad.energy_cost", attachment.getFuelCost()).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
-    public void onTimedoorOpen(Player player, ItemStack stack) {
-        ItemStackHolder holder = new ItemStackHolder(stack);
-        EnergyContainer energyStorage = EnergyContainer.of(holder);
+    public void onTimedoorOpen(Object dataHolder, PowerSettings attachment, Player player) {
+        var energyStorage = TempadData.ENERGY.getData(dataHolder);
         if (energyStorage == null) return;
-        energyStorage.internalExtract(FuelOptionsApi.API.getFuelCost(stack), false);
-        if (holder.isDirty()) {
-            TeleportUtils.findAndReplaceTempad(player, holder.getStack());
-        }
+        energyStorage.internalExtract(attachment.getFuelCost(), false);
     }
 
     @Override
-    public boolean isDurabilityBarVisible(ItemStack stack) {
+    public boolean isDurabilityBarVisible(Object dataHolder, PowerSettings attachment) {
         return true;
     }
 
     @Override
-    public double getPercentage(ItemStack stack) {
-        EnergyContainer energyStorage = EnergyContainer.of(new ItemStackHolder(stack));
+    public double getPercentage(Object dataHolder, PowerSettings attachment) {
+        EnergyContainer energyStorage = TempadData.ENERGY.getData(dataHolder);
         if (energyStorage == null) return 0;
         return (double) energyStorage.getStoredEnergy() / energyStorage.getMaxCapacity();
     }

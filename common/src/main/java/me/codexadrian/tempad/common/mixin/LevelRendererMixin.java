@@ -1,7 +1,7 @@
 package me.codexadrian.tempad.common.mixin;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import me.codexadrian.tempad.common.BlurReloader;
+import me.codexadrian.tempad.client.BlurReloader;
 
 import me.codexadrian.tempad.common.utils.ShaderUtils;
 import net.minecraft.client.Minecraft;

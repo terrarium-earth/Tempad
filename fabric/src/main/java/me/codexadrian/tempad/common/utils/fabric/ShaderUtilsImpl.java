@@ -1,6 +1,6 @@
 package me.codexadrian.tempad.common.utils.fabric;
 
-import me.codexadrian.tempad.common.BlurReloader;
+import me.codexadrian.tempad.client.BlurReloader;
 import me.codexadrian.tempad.common.fabric.FabricTempadClient;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;

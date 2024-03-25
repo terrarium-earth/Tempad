@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import me.codexadrian.tempad.client.TempadClient;
 import me.codexadrian.tempad.client.render.TimedoorRenderer;
-import me.codexadrian.tempad.common.BlurReloader;
+import me.codexadrian.tempad.client.BlurReloader;
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.ClientUtils;
@@ -15,16 +15,13 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TickEvent;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 

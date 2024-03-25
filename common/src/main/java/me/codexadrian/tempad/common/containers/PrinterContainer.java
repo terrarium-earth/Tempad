@@ -3,11 +3,14 @@ package me.codexadrian.tempad.common.containers;
 import earth.terrarium.botarium.common.item.impl.SimpleItemContainer;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class PrinterContainer extends SimpleItemContainer {
+
+
     public PrinterContainer() {
         super(2);
     }
@@ -19,6 +22,8 @@ public class PrinterContainer extends SimpleItemContainer {
     public PrinterContainer(Level level, BlockPos blockPos) {
         super(2, level, blockPos);
     }
+
+
 
     @Override
     public int getSlotLimit(int slot) {

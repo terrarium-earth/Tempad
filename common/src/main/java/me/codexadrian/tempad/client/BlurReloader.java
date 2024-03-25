@@ -1,4 +1,4 @@
-package me.codexadrian.tempad.common;
+package me.codexadrian.tempad.client;
 
 import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.pipeline.RenderTarget;

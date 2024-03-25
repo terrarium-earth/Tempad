@@ -1,21 +1,20 @@
 package me.codexadrian.tempad.common.items;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
-import me.codexadrian.tempad.api.locations.LocationApi;
+import me.codexadrian.tempad.api.apps.TempadAppApi;
 import me.codexadrian.tempad.api.options.FuelOption;
 import me.codexadrian.tempad.api.options.FuelOptionsApi;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.api.power.PowerSettingsApi;
 import me.codexadrian.tempad.client.config.TempadClientConfig;
 import me.codexadrian.tempad.common.Tempad;
-import me.codexadrian.tempad.common.config.ConfigCache;
 import me.codexadrian.tempad.common.config.TempadConfig;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.entity.TimedoorEntity;
-import me.codexadrian.tempad.common.network.NetworkHandler;
-import me.codexadrian.tempad.common.network.messages.s2c.OpenTempadScreenPacket;
 import me.codexadrian.tempad.common.registry.TempadRegistry;
 import me.codexadrian.tempad.common.utils.ClientUtils;
+import me.codexadrian.tempad.common.utils.LookupLocation;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -30,37 +29,25 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class TempadItem extends Item implements TempadPower {
+public class TempadItem extends Item {
     public TempadItem(Properties properties) {
         super(properties);
-    }
-
-    public FuelOption getOption() {
-        return FuelOptionsApi.API.getOption(ResourceLocation.tryParse(ConfigCache.tempadFuelType));
-    }
-
-    public int getFuelCost() {
-        return ConfigCache.tempadFuelConsumptionValue;
-    }
-
-    public int getFuelCapacity() {
-        return ConfigCache.tempadFuelCapacityValue;
     }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
+        var lookup = new LookupLocation("main", player.getInventory().findSlotMatchingItem(stack));
         if (!player.isShiftKeyDown()) {
-            if (!level.isClientSide) {
-                OpenTempadScreenPacket packet = new OpenTempadScreenPacket(LocationApi.API.getAllAsList(level, player.getUUID()), LocationApi.API.getFavorite(level, player.getUUID()));
-                NetworkHandler.CHANNEL.sendToPlayer(packet, player);
-                return InteractionResultHolder.success(stack);
-            } else {
+            if (level.isClientSide) {
+                TempadAppApi.API.getHomePage().openOnClient(player, lookup);
                 return InteractionResultHolder.pass(stack);
+            } else {
+                return InteractionResultHolder.success(stack);
             }
         } else {
             if (level.isClientSide) {
-                ClientUtils.openFavorited();
+                ClientUtils.openFavorited(lookup);
                 return InteractionResultHolder.pass(stack);
             } else {
                 return InteractionResultHolder.success(stack);
@@ -84,7 +71,9 @@ public class TempadItem extends Item implements TempadPower {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> components, @NotNull TooltipFlag flag) {
-        this.getOption().addToolTip(stack, level, components, flag);
+        FuelOption option = FuelOptionsApi.API.findItemOption(stack);
+        PowerSettings attachment = PowerSettingsApi.API.get(stack);
+        option.addToolTip(stack, attachment, level, components, flag);
     }
 
     @Override
@@ -94,18 +83,18 @@ public class TempadItem extends Item implements TempadPower {
 
     @Override
     public boolean isBarVisible(@NotNull ItemStack stack) {
-        return this.getOption().isDurabilityBarVisible(stack);
+        return FuelOptionsApi.API.findItemOption(stack).isDurabilityBarVisible(stack, PowerSettingsApi.API.get(stack));
     }
 
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
-        return (int) (this.getOption().getPercentage(stack) * 13);
+        return (int) (FuelOptionsApi.API.findItemOption(stack).getPercentage(stack, PowerSettingsApi.API.get(stack)) * 13);
     }
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
-        this.getOption().tick(stack, entity);
+        FuelOptionsApi.API.findItemOption(stack).tick(stack, PowerSettingsApi.API.get(stack), entity);
     }
 
     @PlatformOnly(PlatformOnly.FABRIC)

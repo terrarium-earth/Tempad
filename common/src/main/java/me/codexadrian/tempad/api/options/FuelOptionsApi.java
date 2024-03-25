@@ -1,11 +1,21 @@
 package me.codexadrian.tempad.api.options;
 
+import earth.terrarium.botarium.common.generic.base.BlockContainerLookup;
+import earth.terrarium.botarium.common.generic.base.ItemContainerLookup;
 import me.codexadrian.tempad.api.ApiHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public interface FuelOptionsApi {
     FuelOptionsApi API = ApiHelper.load(FuelOptionsApi.class);
@@ -26,43 +36,17 @@ public interface FuelOptionsApi {
      */
     FuelOption getOption(ResourceLocation id);
 
-    /**
-     * Retrieves the selected TempadOption for the given ItemStack.
-     *
-     * @param stack The ItemStack to retrieve the selected TempadOption from.
-     * @return The selected TempadOption for the given ItemStack.
-     */
-    FuelOption getSelected(ItemStack stack);
+    void attachItemOption(ItemContainerLookup.ItemGetter<FuelOption, Void> getter, Supplier<Item> ... items);
 
-    /**
-     * Retrieves the resource location identifier of the selected TempadOption for the given ItemStack.
-     *
-     * @param stack The ItemStack to retrieve the selected TempadOption from.
-     * @return The resource location identifier of the selected TempadOption.
-     */
-    ResourceLocation getSelectedId(ItemStack stack);
+    FuelOption findItemOption(ItemStack stack);
 
+    void attachBlockOptions(BlockContainerLookup.BlockGetter<FuelOption, Void> getter, Supplier<Block> ... items);
 
-    /**
-     * Retrieves the options available for fuel.
-     *
-     * @return A map of resource locations to FuelOptions.
-     */
-    Map<ResourceLocation, FuelOption> getOptions();
+    void attachBEOptions(BlockContainerLookup.BlockGetter<FuelOption, Void> getter, Supplier<BlockEntityType<?>> ... items);
 
-    /**
-     * Retrieves the fuel cost for the given ItemStack.
-     *
-     * @param stack The ItemStack to retrieve the fuel cost from.
-     * @return The fuel cost for the given ItemStack.
-     */
-    int getFuelCost(ItemStack stack);
+    FuelOption findBlockOption(Level level, BlockPos pos, BlockState state, BlockEntity entity);
 
-    /**
-     * Retrieves the fuel capacity for the given ItemStack.
-     *
-     * @param stack The ItemStack to retrieve the fuel capacity from.
-     * @return The fuel capacity for the given ItemStack.
-     */
-    int getFuelCapacity(ItemStack stack);
+    FuelOption findBlockOption(Level level, BlockPos pos);
+
+    FuelOption findBlockOption(BlockEntity entity);
 }

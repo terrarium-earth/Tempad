@@ -9,6 +9,7 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import me.codexadrian.tempad.common.Tempad;
 import me.codexadrian.tempad.common.data.LocationData;
 import me.codexadrian.tempad.common.utils.ClientUtils;
+import me.codexadrian.tempad.common.utils.LookupLocation;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,11 +18,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public record OpenTempadScreenPacket(List<LocationData> locationData,
-                                     Optional<UUID> favorite) implements Packet<OpenTempadScreenPacket> {
+                                     Optional<UUID> favorite,
+                                     LookupLocation lookup) implements Packet<OpenTempadScreenPacket> {
     public static final Handler HANDLER = new Handler();
 
-    public OpenTempadScreenPacket(List<LocationData> locationData, @Nullable UUID favorite) {
-        this(locationData, Optional.ofNullable(favorite));
+    public OpenTempadScreenPacket(List<LocationData> locationData, @Nullable UUID favorite, LookupLocation lookup) {
+        this(locationData, Optional.ofNullable(favorite), lookup);
     }
 
     @Override
@@ -34,6 +36,7 @@ public record OpenTempadScreenPacket(List<LocationData> locationData,
         public static final ByteCodec<OpenTempadScreenPacket> CODEC = ObjectByteCodec.create(
                 LocationData.BYTE_CODEC.listOf().fieldOf(OpenTempadScreenPacket::locationData),
                 ByteCodec.UUID.optionalFieldOf(OpenTempadScreenPacket::favorite),
+                LookupLocation.CODEC.fieldOf(OpenTempadScreenPacket::lookup),
                 OpenTempadScreenPacket::new
         );
 
