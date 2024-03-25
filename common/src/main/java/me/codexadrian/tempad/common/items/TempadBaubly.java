@@ -2,6 +2,10 @@ package me.codexadrian.tempad.common.items;
 
 import earth.terrarium.baubly.common.Bauble;
 import earth.terrarium.baubly.common.SlotInfo;
+import me.codexadrian.tempad.api.options.FuelOption;
+import me.codexadrian.tempad.api.options.FuelOptionsApi;
+import me.codexadrian.tempad.api.power.PowerSettings;
+import me.codexadrian.tempad.api.power.PowerSettingsApi;
 import net.minecraft.world.item.ItemStack;
 
 public class TempadBaubly implements Bauble {
@@ -9,8 +13,10 @@ public class TempadBaubly implements Bauble {
 
     @Override
     public void tick(ItemStack stack, SlotInfo slot) {
-        if (stack.getItem() instanceof TempadItem tempadItem) {
-            tempadItem.getOption().tick(stack, slot.wearer());
+        FuelOption option = FuelOptionsApi.API.findItemOption(stack);
+        PowerSettings settings = PowerSettingsApi.API.get(stack);
+        if (option != null && settings != null) {
+            option.tick(stack, settings, slot.wearer());
         }
     }
 }
