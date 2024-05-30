@@ -14,196 +14,163 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
-architectury {
-    val minecraftVersion: String by project
-    minecraft = minecraftVersion
+apply(plugin = "maven-publish")
+apply(plugin = "dev.architectury.loom")
+apply(plugin = "architectury-plugin")
+
+val minecraftVersion: String by project
+val modId: String by project
+
+base {
+    archivesName.set("$modId-$minecraftVersion")
 }
 
-subprojects {
-    apply(plugin = "maven-publish")
-    apply(plugin = "dev.architectury.loom")
-    apply(plugin = "architectury-plugin")
+configure<LoomGradleExtensionAPI> {
+    silentMojangMappingsLicense()
+}
 
-    val minecraftVersion: String by project
-    val modId: String by project
-    val modLoader = project.name
-    val isCommon = modLoader == rootProject.projects.common.name
-
-    base {
-        archivesName.set("$modId-$modLoader-$minecraftVersion")
-    }
-
-    configure<LoomGradleExtensionAPI> {
-        silentMojangMappingsLicense()
-    }
-
-    repositories {
-        maven(url = "https://maven.architectury.dev/")
-        maven(url = "https://maven.neoforged.net/releases")
-        maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
-        maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
-        maven(url = "https://maven.terraformersmc.com/")
-        maven(url = "https://maven.ladysnake.org/releases")
-        maven {
-            url = URI("https://jitpack.io")
-            content {
-                includeGroup("com.github.LlamaLad7")
-                includeGroup("com.github.llamalad7.mixinextras")
-            }
-        }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = "Modrinth"
-                    url = uri("https://api.modrinth.com/maven")
-                }
-            }
-            filter {
-                includeGroup("maven.modrinth")
-            }
-        }
-        maven {
-            url = uri("https://jm.gserv.me/repository/maven-public/")
-            content {
-                includeGroup("info.journeymap")
-            }
-        }
-        maven {
-            url = uri("https://maven.nucleoid.xyz/")
-            content {
-                includeGroup("eu.pb4")
-            }
+repositories {
+    maven(url = "https://maven.architectury.dev/")
+    maven(url = "https://maven.neoforged.net/releases")
+    maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
+    maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
+    maven(url = "https://maven.terraformersmc.com/")
+    maven(url = "https://maven.ladysnake.org/releases")
+    maven {
+        url = URI("https://jitpack.io")
+        content {
+            includeGroup("com.github.LlamaLad7")
+            includeGroup("com.github.llamalad7.mixinextras")
         }
     }
-
-    dependencies {
-        val resourcefulLibVersion: String by project
-        val resourcefulConfigVersion: String by project
-        val botariumVersion: String by project
-        val baublyVersion: String by project
-        val jeiVersion: String by project
-        val balmVersion: String by project
-        val waystonesVersion: String by project
-        val prometheusVersion: String by project
-        val argonautsVersion: String by project
-        val reiVersion: String by project
-        val parchmentMcVersion: String by project
-
-        "minecraft"("::$minecraftVersion")
-
-        @Suppress("UnstableApiUsage")
-        "mappings"(project.the<LoomGradleExtensionAPI>().layered {
-            val parchmentVersion: String by project
-
-            officialMojangMappings()
-
-            parchment(create(group = "org.parchmentmc.data", name = "parchment-$parchmentMcVersion", version = parchmentVersion))
-        })
-
-        compileOnly(group = "com.teamresourceful", name = "yabn", version = "1.0.3")
-        "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-$modLoader-$minecraftVersion", version = resourcefulLibVersion)
-        "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-$modLoader-$minecraftVersion", version = resourcefulConfigVersion)
-
-        if (isCommon) {
-            // "modCompileOnly"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-1.20", version = prometheusVersion) { isTransitive = false }
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api", version = reiVersion)
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin", version = reiVersion)
-            implementation("io.github.llamalad7:mixinextras-common:0.3.2")
-        } else {
-            // "modLocalRuntime"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-1.20", version = prometheusVersion)
-            "modImplementation"(group = "me.shedaniel", name = "RoughlyEnoughItems-$modLoader", version = reiVersion)
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-$modLoader", version = reiVersion)
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-$modLoader", version = reiVersion)
-        }
-
-        "modApi"(group = "earth.terrarium.botarium", name = "botarium-$modLoader-$minecraftVersion", version = botariumVersion)
-        "modImplementation"(group = "earth.terrarium.prometheus", name = "prometheus-$modLoader-$minecraftVersion", version = prometheusVersion)
-        "modImplementation"(group = "earth.terrarium.argonauts", name = "argonauts-$modLoader-$minecraftVersion", version = argonautsVersion)
-        "modApi"(group = "earth.terrarium.baubly", name = "baubly-$modLoader-$minecraftVersion", version = baublyVersion)
-
-        "modCompileOnly"(group = "net.blay09.mods", name = "balm-$modLoader", version = balmVersion) {
-            exclude(group = "net.blay09.mods", module = "shared-bridge")
-        }
-
-        "modCompileOnly"(group = "net.blay09.mods", name = "waystones-$modLoader", version = waystonesVersion) {
-            exclude(group = "net.blay09.mods", module = "shared-bridge")
-        }
-    }
-
-    java {
-        withSourcesJar()
-    }
-
-    tasks.jar {
-        archiveClassifier.set("dev")
-    }
-
-    tasks.named<RemapJarTask>("remapJar") {
-        archiveClassifier.set(null as String?)
-    }
-
-    tasks.processResources {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        filesMatching(listOf("META-INF/mods.toml", "fabric.mod.json")) {
-            expand("version" to project.version)
-        }
-    }
-
-    if (!isCommon) {
-        apply(plugin = "com.github.johnrengelman.shadow")
-        configure<ArchitectPluginExtension> {
-            platformSetupLoomIde()
-        }
-
-        val shadowCommon by configurations.creating {
-            isCanBeConsumed = false
-            isCanBeResolved = true
-        }
-
-        tasks {
-            "shadowJar"(ShadowJar::class) {
-                archiveClassifier.set("dev-shadow")
-                configurations = listOf(shadowCommon)
-            }
-
-            "remapJar"(RemapJarTask::class) {
-                dependsOn("shadowJar")
-                inputFile.set(named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
-            }
-        }
-    }
-
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                artifactId = "$modId-$modLoader-$minecraftVersion"
-                from(components["java"])
-
-                pom {
-                    name.set("Tempad $modLoader")
-                    url.set("https://github.com/terrarium-earth/$modId")
-
-                    scm {
-                        connection.set("git:https://github.com/terrarium-earth/$modId.git")
-                        developerConnection.set("git:https://github.com/terrarium-earth/$modId.git")
-                        url.set("https://github.com/terrarium-earth/$modId")
-                    }
-
-                    licenses {
-                        license {
-                            name.set("ARR")
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
+    exclusiveContent {
+        forRepository {
             maven {
-                setUrl("https://maven.resourcefulbees.com/repository/terrarium/")
-                credentials {
-                    username = System.getenv("MAVEN_USER")
-                    password = System.getenv("MAVEN_PASS")
+                name = "Modrinth"
+                url = uri("https://api.modrinth.com/maven")
+            }
+        }
+        filter {
+            includeGroup("maven.modrinth")
+        }
+    }
+    maven {
+        url = uri("https://jm.gserv.me/repository/maven-public/")
+        content {
+            includeGroup("info.journeymap")
+        }
+    }
+    maven {
+        url = uri("https://maven.nucleoid.xyz/")
+        content {
+            includeGroup("eu.pb4")
+        }
+    }
+}
+
+dependencies {
+    val resourcefulLibVersion: String by project
+    val resourcefulConfigVersion: String by project
+    val botariumVersion: String by project
+    val baublyVersion: String by project
+    val jeiVersion: String by project
+    val balmVersion: String by project
+    val waystonesVersion: String by project
+    val prometheusVersion: String by project
+    val argonautsVersion: String by project
+    val reiVersion: String by project
+    val parchmentMcVersion: String by project
+    val minecraftVersion: String by project
+    val neoforgeVersion: String by project
+    val curiosVersion: String by project
+
+    "minecraft"("::$minecraftVersion")
+
+    @Suppress("UnstableApiUsage")
+    "mappings"(project.the<LoomGradleExtensionAPI>().layered {
+        val parchmentVersion: String by project
+
+        officialMojangMappings()
+
+        parchment(create(group = "org.parchmentmc.data", name = "parchment-$parchmentMcVersion", version = parchmentVersion))
+    })
+
+    "neoForge"(group = "net.neoforged", name = "neoforge", version = neoforgeVersion)
+
+    "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
+    "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}:api")
+
+    compileOnly(group = "com.teamresourceful", name = "yabn", version = "1.0.3")
+    "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-neoforge-$minecraftVersion", version = resourcefulLibVersion)
+    "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-neoforge-$minecraftVersion", version = resourcefulConfigVersion)
+
+    "modImplementation"(group = "me.shedaniel", name = "RoughlyEnoughItems-neoforge", version = reiVersion)
+    "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-neoforge", version = reiVersion)
+    "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-neoforge", version = reiVersion)
+
+    "modApi"(group = "earth.terrarium.botarium", name = "botarium-neoforge-$minecraftVersion", version = botariumVersion)
+    "modImplementation"(group = "earth.terrarium.prometheus", name = "prometheus-neoforge-$minecraftVersion", version = prometheusVersion)
+    "modImplementation"(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-$minecraftVersion", version = argonautsVersion)
+    "modApi"(group = "earth.terrarium.baubly", name = "baubly-neoforge-$minecraftVersion", version = baublyVersion)
+
+    "modCompileOnly"(group = "net.blay09.mods", name = "balm-neoforge", version = balmVersion) {
+        exclude(group = "net.blay09.mods", module = "shared-bridge")
+    }
+
+    "modCompileOnly"(group = "net.blay09.mods", name = "waystones-neoforge", version = waystonesVersion) {
+        exclude(group = "net.blay09.mods", module = "shared-bridge")
+    }
+}
+
+java {
+    withSourcesJar()
+}
+
+tasks.jar {
+    archiveClassifier.set("dev")
+}
+
+tasks.named<RemapJarTask>("remapJar") {
+    archiveClassifier.set(null as String?)
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    filesMatching(listOf("META-INF/mods.toml", "fabric.mod.json")) {
+        expand("version" to project.version)
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "$modId-$minecraftVersion"
+            from(components["java"])
+
+            pom {
+                name.set("Tempad")
+                url.set("https://github.com/terrarium-earth/$modId")
+
+                scm {
+                    connection.set("git:https://github.com/terrarium-earth/$modId.git")
+                    developerConnection.set("git:https://github.com/terrarium-earth/$modId.git")
+                    url.set("https://github.com/terrarium-earth/$modId")
                 }
+
+                licenses {
+                    license {
+                        name.set("ARR")
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            setUrl("https://maven.resourcefulbees.com/repository/terrarium/")
+            credentials {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_PASS")
             }
         }
     }

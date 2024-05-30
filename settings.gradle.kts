@@ -10,7 +10,3 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
-include("common")
-include("fabric")
-include("neoforge")
