@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import dev.architectury.plugin.ArchitectPluginExtension
 import groovy.json.StringEscapeUtils
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
@@ -120,6 +118,8 @@ dependencies {
     "modCompileOnly"(group = "net.blay09.mods", name = "waystones-neoforge", version = waystonesVersion) {
         exclude(group = "net.blay09.mods", module = "shared-bridge")
     }
+
+    implementation("thedarkcolour:kotlinforforge-neoforge:5.2.0")
 }
 
 java {
