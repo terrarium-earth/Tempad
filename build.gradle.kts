@@ -1,20 +1,13 @@
 import groovy.json.StringEscapeUtils
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.task.RemapJarTask
-import java.net.URI
 
 plugins {
     java
+    idea
+    kotlin("jvm") version "2.0.0"
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("dev.architectury.loom") version "1.5-SNAPSHOT" apply false
-    id("architectury-plugin") version "3.4-SNAPSHOT"
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    id("net.neoforged.gradle.userdev") version "7.0.133"
 }
-
-apply(plugin = "maven-publish")
-apply(plugin = "dev.architectury.loom")
-apply(plugin = "architectury-plugin")
 
 val minecraftVersion: String by project
 val modId: String by project
@@ -23,103 +16,32 @@ base {
     archivesName.set("$modId-$minecraftVersion")
 }
 
-configure<LoomGradleExtensionAPI> {
-    silentMojangMappingsLicense()
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
     maven(url = "https://maven.architectury.dev/")
     maven(url = "https://maven.neoforged.net/releases")
-    maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
+    maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
     maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
-    maven(url = "https://maven.terraformersmc.com/")
-    maven(url = "https://maven.ladysnake.org/releases")
-    maven {
-        url = URI("https://jitpack.io")
-        content {
-            includeGroup("com.github.LlamaLad7")
-            includeGroup("com.github.llamalad7.mixinextras")
-        }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Modrinth"
-                url = uri("https://api.modrinth.com/maven")
-            }
-        }
-        filter {
-            includeGroup("maven.modrinth")
-        }
-    }
-    maven {
-        url = uri("https://jm.gserv.me/repository/maven-public/")
-        content {
-            includeGroup("info.journeymap")
-        }
-    }
-    maven {
-        url = uri("https://maven.nucleoid.xyz/")
-        content {
-            includeGroup("eu.pb4")
-        }
-    }
 }
 
 dependencies {
-    val resourcefulLibVersion: String by project
-    val resourcefulConfigVersion: String by project
-    val botariumVersion: String by project
-    val baublyVersion: String by project
-    val jeiVersion: String by project
-    val balmVersion: String by project
-    val waystonesVersion: String by project
-    val prometheusVersion: String by project
-    val argonautsVersion: String by project
-    val reiVersion: String by project
-    val parchmentMcVersion: String by project
-    val minecraftVersion: String by project
     val neoforgeVersion: String by project
-    val curiosVersion: String by project
+    val minecraft_version: String by project
 
-    "minecraft"("::$minecraftVersion")
+    val resourcefulConfigVersion: String by project
+    val resourcefulLibVersion: String by project
+    val resourcefulLibKtVersion: String by project
+    val kotlinForForgeVersion: String by project
 
-    @Suppress("UnstableApiUsage")
-    "mappings"(project.the<LoomGradleExtensionAPI>().layered {
-        val parchmentVersion: String by project
+    implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
-        officialMojangMappings()
+    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-1.20.5:${resourcefulConfigVersion}")
+    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-1.20.5:${resourcefulLibVersion}")
+    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}")
 
-        parchment(create(group = "org.parchmentmc.data", name = "parchment-$parchmentMcVersion", version = parchmentVersion))
-    })
+    implementation("thedarkcolour:kotlinforforge:${kotlinForForgeVersion}")
 
-    "neoForge"(group = "net.neoforged", name = "neoforge", version = neoforgeVersion)
-
-    "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
-    "modCompileOnly"("top.theillusivec4.curios:curios-neoforge:${curiosVersion}:api")
-
-    compileOnly(group = "com.teamresourceful", name = "yabn", version = "1.0.3")
-    "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-neoforge-$minecraftVersion", version = resourcefulLibVersion)
-    "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-neoforge-$minecraftVersion", version = resourcefulConfigVersion)
-
-    "modImplementation"(group = "me.shedaniel", name = "RoughlyEnoughItems-neoforge", version = reiVersion)
-    "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-neoforge", version = reiVersion)
-    "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-neoforge", version = reiVersion)
-
-    "modApi"(group = "earth.terrarium.botarium", name = "botarium-neoforge-$minecraftVersion", version = botariumVersion)
-    "modImplementation"(group = "earth.terrarium.prometheus", name = "prometheus-neoforge-$minecraftVersion", version = prometheusVersion)
-    "modImplementation"(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-$minecraftVersion", version = argonautsVersion)
-    "modApi"(group = "earth.terrarium.baubly", name = "baubly-neoforge-$minecraftVersion", version = baublyVersion)
-
-    "modCompileOnly"(group = "net.blay09.mods", name = "balm-neoforge", version = balmVersion) {
-        exclude(group = "net.blay09.mods", module = "shared-bridge")
-    }
-
-    "modCompileOnly"(group = "net.blay09.mods", name = "waystones-neoforge", version = waystonesVersion) {
-        exclude(group = "net.blay09.mods", module = "shared-bridge")
-    }
-
-    implementation("thedarkcolour:kotlinforforge-neoforge:5.2.0")
 }
 
 java {
@@ -130,13 +52,9 @@ tasks.jar {
     archiveClassifier.set("dev")
 }
 
-tasks.named<RemapJarTask>("remapJar") {
-    archiveClassifier.set(null as String?)
-}
-
 tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    filesMatching(listOf("META-INF/mods.toml", "fabric.mod.json")) {
+    filesMatching(listOf("META-INF/neoforge.mods.toml")) {
         expand("version" to project.version)
     }
 }
