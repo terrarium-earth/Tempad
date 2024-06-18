@@ -2,9 +2,7 @@ package earth.terrarium.tempad.common.config;
 
 import com.teamresourceful.resourcefulconfig.api.annotations.*;
 import com.teamresourceful.resourcefulconfig.api.types.options.EntryType;
-import earth.terrarium.tempad.common.Tempad;
 
-@Config(Tempad.MODID)
 @ConfigInfo(
         icon = "watch",
         title = "Tempad",
@@ -28,8 +26,8 @@ public final class TempadConfig {
     public static int timedoorWait = 60;
 
     @ConfigEntry(id = "timedoorAddWaitTime", type = EntryType.INTEGER, translation = "config.tempad.timedoor_add_wait_time")
-    @Comment("The amount of time in ticks that the Tempad will add to the wait time when the player is in the Tempad.")
-    public static int timedoorAddWaitTime = 40;
+    @Comment("The amount of time in ticks that the.")
+    public static int timedoorOwnerCloseBehindTime = 20;
 
     // allow interdimensional travel
     @ConfigEntry(id = "allowInterdimensionalTravel", type = EntryType.BOOLEAN, translation = "config.tempad.allow_interdimensional_travel")

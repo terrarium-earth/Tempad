@@ -52,7 +52,7 @@ public record FavoriteLocationPacket(@Nullable UUID location) implements Packet<
                 if (message.location != null) {
                     LocationApi.API.favorite(player.level(), player.getUUID(), message.location);
                 } else {
-                    LocationApi.API.unfavorite(player.level(), player.getUUID());
+                    LocationApi.API.clearFavorite(player.level(), player.getUUID());
                 }
             };
         }

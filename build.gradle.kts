@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm") version "2.0.0"
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("net.neoforged.gradle.userdev") version "7.0.133"
+    id("net.neoforged.gradle.userdev") version "7.0.142"
 }
 
 val minecraftVersion: String by project
@@ -38,6 +38,8 @@ dependencies {
 
     implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-1.20.5:${resourcefulConfigVersion}")
     implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-1.20.5:${resourcefulLibVersion}")
+    compileOnly("com.teamresourceful:bytecodecs:1.1.0")
+    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-common-${minecraft_version}:${resourcefulLibKtVersion}")
     implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}")
 
     implementation("thedarkcolour:kotlinforforge:${kotlinForForgeVersion}")
@@ -112,5 +114,12 @@ resourcefulGradle {
                     "forge_link" to forgeLink
             ))
         }
+    }
+}
+
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
     }
 }

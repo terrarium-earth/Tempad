@@ -60,7 +60,7 @@ public class LocationApiImpl implements LocationApi {
     }
 
     @Override
-    public void unfavorite(Level level, UUID player) {
+    public void clearFavorite(Level level, UUID player) {
         TempadLocationHandler.unfavoriteLocation(level, player);
     }
 

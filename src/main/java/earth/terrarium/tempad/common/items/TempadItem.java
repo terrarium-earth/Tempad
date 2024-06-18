@@ -60,7 +60,7 @@ public class TempadItem extends Item {
         var angle = player.getYHeadRot();
         float angleInRadians = (float) Math.toRadians(angle + 90);
         timedoor.setColor(color);
-        timedoor.setLocation(locationData);
+        timedoor.setTargetLocation(locationData);
         timedoor.setOwner(player.getUUID());
         var position = player.position();
         timedoor.setPos(position.x() + Mth.cos(angleInRadians) * TempadConfig.distanceFromPlayer, position.y(), position.z() + Mth.sin(angleInRadians) * TempadConfig.distanceFromPlayer);
