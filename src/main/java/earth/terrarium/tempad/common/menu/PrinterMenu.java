@@ -1,18 +1,16 @@
 package earth.terrarium.tempad.common.menu;
 
+import com.mojang.serialization.Codec;
 import earth.terrarium.botarium.common.item.impl.SimpleItemContainer;
 import earth.terrarium.botarium.common.item.utils.SlotItemContainer;
 import earth.terrarium.tempad.common.containers.AutoUpdatingWrapper;
 import earth.terrarium.tempad.common.containers.PrinterContainer;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.registry.TempadMenus;
-import earth.terrarium.tempad.common.utils.CodecUtils;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +39,13 @@ public class PrinterMenu extends AbstractContainerMenu {
         this.addPlayerInvSlots(this.playerInventory);
     }
 
+    public static void test(Codec<? extends Integer> boo) {
+
+    }
+
     @Override
     public @NotNull ItemStack quickMoveStack(Player player, int index) {
+        test(Codec.INT);
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot.hasItem()) {
@@ -79,7 +82,7 @@ public class PrinterMenu extends AbstractContainerMenu {
             while (!stack.isEmpty() && (reverseDirection ? i >= startIndex : i < endIndex)) {
                 slot = this.slots.get(i);
                 itemStack = slot.getItem();
-                if (!itemStack.isEmpty() && ItemStack.isSameItemSameTags(stack, itemStack)) {
+                if (!itemStack.isEmpty() && ItemStack.isSameItemSameComponents(stack, itemStack)) {
                     int j = itemStack.getCount() + stack.getCount();
                     if (j <= slot.getMaxStackSize()) {
                         stack.setCount(0);

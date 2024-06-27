@@ -8,13 +8,10 @@ import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketT
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType;
 import earth.terrarium.tempad.api.locations.LocationApi;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.blocks.LocationPrinterBlockEntity;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.items.LocationCard;
 import earth.terrarium.tempad.common.menu.PrinterMenu;
 import earth.terrarium.tempad.common.registry.TempadRegistry;
-import earth.terrarium.tempad.common.utils.CodecUtils;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

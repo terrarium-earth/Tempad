@@ -1,6 +1,6 @@
 package earth.terrarium.tempad.common.entity
 
-import earth.terrarium.tempad.common.data.LocationData
+import earth.terrarium.tempad.api.locations.LocationData
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.portal.PortalInfo

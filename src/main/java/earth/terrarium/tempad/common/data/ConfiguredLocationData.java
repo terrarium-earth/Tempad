@@ -2,6 +2,7 @@ package earth.terrarium.tempad.common.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.api.teams.TeamConfig;
 import earth.terrarium.tempad.api.teams.TeamConfigApi;
 import net.minecraft.core.UUIDUtil;

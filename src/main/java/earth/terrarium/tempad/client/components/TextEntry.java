@@ -3,7 +3,7 @@ package earth.terrarium.tempad.client.components;
 import com.teamresourceful.resourcefullib.client.components.selection.ListEntry;
 import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack;
 import earth.terrarium.tempad.client.config.TempadClientConfig;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.utils.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

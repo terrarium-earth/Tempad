@@ -12,7 +12,7 @@ import earth.terrarium.tempad.api.options.FuelOptionsApi;
 import earth.terrarium.tempad.api.power.PowerSettings;
 import earth.terrarium.tempad.api.power.PowerSettingsApi;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.items.TempadItem;
 import earth.terrarium.tempad.common.utils.LookupLocation;
 import earth.terrarium.tempad.common.utils.TeleportUtils;

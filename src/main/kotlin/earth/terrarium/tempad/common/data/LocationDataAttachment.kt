@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.data
 
 import com.mojang.serialization.Codec
+import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.registries.ModAttachments
 import earth.terrarium.tempad.common.utils.AttachmentDelegate
 import net.minecraft.core.UUIDUtil

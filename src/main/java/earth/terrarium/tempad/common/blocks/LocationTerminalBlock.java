@@ -1,8 +1,7 @@
 package earth.terrarium.tempad.common.blocks;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.data.TempadLocationHandler;
 import earth.terrarium.tempad.common.items.LocationCard;
 import earth.terrarium.tempad.common.items.TempadItem;
@@ -27,10 +26,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 public class LocationTerminalBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;

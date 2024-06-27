@@ -1,28 +1,19 @@
 package earth.terrarium.tempad.client.screens;
 
-import earth.terrarium.tempad.api.options.FuelOption;
 import earth.terrarium.tempad.client.apps.impl.TeleportApp;
 import earth.terrarium.tempad.client.components.*;
 import earth.terrarium.tempad.client.config.TempadClientConfig;
-import earth.terrarium.tempad.client.screens.base.BackgroundScreen;
-import earth.terrarium.tempad.common.config.ConfigCache;
-import earth.terrarium.tempad.common.data.LocationData;
-import earth.terrarium.tempad.common.items.TempadItem;
+import earth.terrarium.tempad.common.config.CommonConfigCache;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.network.NetworkHandler;
 import earth.terrarium.tempad.common.network.messages.c2s.*;
 import earth.terrarium.tempad.common.utils.LookupLocation;
 import earth.terrarium.tempad.common.utils.TeleportUtils;
 import net.minecraft.Optionull;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,7 +86,7 @@ public class TeleportScreen extends TempadScreen {
         if (minecraft != null && minecraft.player != null) {
             boolean isTempadUsable = getOption().canTimedoorOpen(getTempadItem(), getAttachment(), minecraft.player);
             teleportButton.setActivated(TeleportUtils.mayTeleport(selectedLocation.levelKey(), minecraft.player) && isTempadUsable);
-            downloadButton.setActivated(selectedLocation.isDownloadable() && ConfigCache.allowExporting && TeleportUtils.hasLocationCard(minecraft.player));
+            downloadButton.setActivated(selectedLocation.isDownloadable() && CommonConfigCache.allowExporting && TeleportUtils.hasLocationCard(minecraft.player));
             deleteButton.setActivated(selectedLocation.isDeletable());
         }
     }
@@ -130,7 +121,7 @@ public class TeleportScreen extends TempadScreen {
     }
 
     private void exportAction() {
-        if (minecraft != null && minecraft.player != null && ConfigCache.allowExporting) {
+        if (minecraft != null && minecraft.player != null && CommonConfigCache.allowExporting) {
             Minecraft.getInstance().setScreen(null);
             NetworkHandler.CHANNEL.sendToServer(new ExportLocationPacket(selectedLocation.id()));
         }

@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.compat.prometheus;
 import earth.terrarium.tempad.api.locations.LocationApi;
 import earth.terrarium.tempad.api.locations.LocationProvider;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;

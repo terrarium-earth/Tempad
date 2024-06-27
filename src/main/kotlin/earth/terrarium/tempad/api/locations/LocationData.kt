@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.common.data
+package earth.terrarium.tempad.api.locations
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import thedarkcolour.kotlinforforge.forge.vectorutil.plus
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 
 data class LocationData(val name: String, val pos: Vec3, val dimension: ResourceKey<Level>, val angle: Float, val color: Color) {
     companion object {
@@ -38,9 +38,9 @@ data class LocationData(val name: String, val pos: Vec3, val dimension: Resource
             ::LocationData
         )
 
-        fun offsetLocation(pos: Vec3, angle: Float): Vec3 {
+        fun offsetLocation(pos: Vec3, angle: Float, distance: Int = 1): Vec3 {
             val angleInRadians = (angle + 270) * Mth.DEG_TO_RAD
-            return pos + Vec3(Mth.cos(angleInRadians).toDouble(), 0.0, Mth.sin(angleInRadians).toDouble())
+            return pos + Vec3(Mth.cos(angleInRadians).toDouble() * distance, 0.0, Mth.sin(angleInRadians).toDouble() * distance)
         }
     }
 

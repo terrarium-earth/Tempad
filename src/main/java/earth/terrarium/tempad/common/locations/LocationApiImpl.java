@@ -2,7 +2,7 @@ package earth.terrarium.tempad.common.locations;
 
 import earth.terrarium.tempad.api.locations.LocationProvider;
 import earth.terrarium.tempad.api.locations.LocationApi;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.data.TempadLocationHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;

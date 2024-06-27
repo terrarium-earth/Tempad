@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.data;
 
 import com.teamresourceful.resourcefullib.common.utils.SaveHandler;
+import earth.terrarium.tempad.api.locations.LocationData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;

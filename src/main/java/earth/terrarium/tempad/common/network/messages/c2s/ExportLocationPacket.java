@@ -5,10 +5,9 @@ import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
 import earth.terrarium.tempad.api.locations.LocationApi;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.config.TempadConfig;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.common.config.CommonConfig;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.items.LocationCard;
-import earth.terrarium.tempad.common.items.TempadItem;
 import earth.terrarium.tempad.common.registry.TempadRegistry;
 import earth.terrarium.tempad.common.utils.TeleportUtils;
 import net.minecraft.network.FriendlyByteBuf;
@@ -57,7 +56,7 @@ public record ExportLocationPacket(UUID location) implements Packet<ExportLocati
                 if (!TeleportUtils.hasTempad(player)) return;
                 if (TeleportUtils.hasLocationCard(player) && TeleportUtils.hasTempad(player)) {
                     LocationData locationData = LocationApi.API.get(player.level(), player.getUUID(), message.location);
-                    if (locationData.isDownloadable() && TempadConfig.allowExporting) {
+                    if (locationData.isDownloadable() && CommonConfig.allowExporting) {
                         ItemStack stack = new ItemStack(TempadRegistry.LOCATION_CARD.get());
                         LocationCard.setLocation(stack, locationData, player.getDisplayName().getString());
                         TeleportUtils.extractLocationCard(player);

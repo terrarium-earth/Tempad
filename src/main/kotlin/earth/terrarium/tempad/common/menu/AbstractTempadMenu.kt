@@ -7,7 +7,14 @@ import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 
-open class AbstractTempadMenu(type: MenuType<*>?, id: Int) : AbstractContainerMenu(type, id) {
+abstract class AbstractTempadMenu(id: Int, inventory: Inventory, type: MenuType<*>?) : AbstractContainerMenu(type, id) {
+    init {
+        this.addSlots()
+        this.addPlayerInvSlots(inventory)
+    }
+
+    abstract fun addSlots()
+
     override fun quickMoveStack(player: Player, index: Int): ItemStack {
         var itemStack = ItemStack.EMPTY
         val slot = slots[index]
@@ -92,16 +99,15 @@ open class AbstractTempadMenu(type: MenuType<*>?, id: Int) : AbstractContainerMe
         return bl
     }
 
-
-    protected fun addPlayerInvSlots(inventory: Inventory) {
-        for (i in 0..2) {
-            for (j in 0..8) {
-                this.addSlot(Slot(inventory, j + i * 9 + 9, 24 + j * 18, 119 + i * 18))
+    private fun addPlayerInvSlots(inventory: Inventory, x: Int = 48, y: Int = 157) {
+        for (row in 0..2) {
+            for (column in 0..8) {
+                this.addSlot(Slot(inventory, column + row * 9 + 9 /* Hotbar is the first 9 */, x + column * 18, y + row * 18))
             }
         }
 
         for (k in 0..8) {
-            this.addSlot(Slot(inventory, k, 24 + k * 18, 177))
+            this.addSlot(Slot(inventory, k, x + k * 18, y + 18 * 3 + 5))
         }
     }
 }

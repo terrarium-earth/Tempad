@@ -7,7 +7,7 @@ import com.teamresourceful.resourcefullib.common.network.base.ClientboundPacketT
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.utils.ClientUtils;
 import earth.terrarium.tempad.common.utils.LookupLocation;
 import net.minecraft.resources.ResourceLocation;

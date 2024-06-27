@@ -3,8 +3,8 @@ package earth.terrarium.tempad.common.compat.waystones;
 import earth.terrarium.tempad.api.locations.LocationApi;
 import earth.terrarium.tempad.api.locations.LocationProvider;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.config.TempadConfig;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.common.config.CommonConfig;
+import earth.terrarium.tempad.api.locations.LocationData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -28,7 +28,7 @@ public class WaystoneLocationProvider implements LocationProvider {
 
     @Override
     public Map<UUID, LocationData> getLocations(Level level, UUID uuid) {
-        if (!TempadConfig.waystonesCompat) return Map.of();
+        if (!CommonConfig.waystonesCompat) return Map.of();
         Map<UUID, LocationData> locations = new HashMap<>();
         for (var waystone : getWaystones(level.getPlayerByUUID(uuid))) {
             LocationData value = new LocationData(waystone.getName().getString(), waystone.getDimension(), waystone.getPos().above(2), 0, waystone.getWaystoneUid(), false, false);

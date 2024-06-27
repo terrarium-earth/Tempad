@@ -4,7 +4,7 @@ import com.teamresourceful.resourcefullib.common.network.Packet;
 import com.teamresourceful.resourcefullib.common.network.base.ClientboundPacketType;
 import com.teamresourceful.resourcefullib.common.network.base.PacketType;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.config.ConfigCache;
+import earth.terrarium.tempad.common.config.CommonConfigCache;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -67,14 +67,14 @@ public record InitConfigPacket(
         @Override
         public Runnable handle(InitConfigPacket message) {
             return () -> {
-                ConfigCache.allowInterdimensionalTravel = message.allowInterdimensionalTravel;
-                ConfigCache.allowExporting = message.allowExporting;
-                ConfigCache.tempadFuelType = message.tempadFuelType;
-                ConfigCache.tempadFuelConsumptionValue = message.tempadFuelConsumptionValue;
-                ConfigCache.tempadFuelCapacityValue = message.tempadFuelCapacityValue;
-                ConfigCache.advancedTempadFuelType = message.advancedTempadFuelType;
-                ConfigCache.advancedTempadfuelConsumptionValue = message.advancedTempadfuelConsumptionValue;
-                ConfigCache.advancedTempadfuelCapacityValue = message.advancedTempadfuelCapacityValue;
+                CommonConfigCache.allowInterdimensionalTravel = message.allowInterdimensionalTravel;
+                CommonConfigCache.allowExporting = message.allowExporting;
+                CommonConfigCache.tempadFuelType = message.tempadFuelType;
+                CommonConfigCache.tempadFuelConsumptionValue = message.tempadFuelConsumptionValue;
+                CommonConfigCache.tempadFuelCapacityValue = message.tempadFuelCapacityValue;
+                CommonConfigCache.advancedTempadFuelType = message.advancedTempadFuelType;
+                CommonConfigCache.advancedTempadfuelConsumptionValue = message.advancedTempadfuelConsumptionValue;
+                CommonConfigCache.advancedTempadfuelCapacityValue = message.advancedTempadfuelCapacityValue;
             };
         }
     }

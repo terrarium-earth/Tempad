@@ -8,10 +8,9 @@ import earth.terrarium.tempad.api.options.FuelOptionsApi;
 import earth.terrarium.tempad.api.power.PowerSettings;
 import earth.terrarium.tempad.api.power.PowerSettingsApi;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.config.ConfigCache;
-import earth.terrarium.tempad.common.config.TempadConfig;
+import earth.terrarium.tempad.common.config.CommonConfigCache;
+import earth.terrarium.tempad.common.config.CommonConfig;
 import earth.terrarium.tempad.common.items.LocationCard;
-import earth.terrarium.tempad.common.items.TempadItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
@@ -35,7 +34,7 @@ public class TeleportUtils {
                 };
             }
         }
-        return level.equals(player.level().dimension()) || (player.level().isClientSide() ? ConfigCache.allowInterdimensionalTravel : TempadConfig.allowInterdimensionalTravel);
+        return level.equals(player.level().dimension()) || (player.level().isClientSide() ? CommonConfigCache.allowInterdimensionalTravel : CommonConfig.allowInterdimensionalTravel);
     }
 
     public static Pair<ItemStack, LookupLocation> findTempad(Player player) {

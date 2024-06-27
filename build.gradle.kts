@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm") version "2.0.0"
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("net.neoforged.gradle.userdev") version "7.0.142"
+    id("net.neoforged.gradle.userdev") version "7.0.145"
 }
 
 val minecraftVersion: String by project
@@ -36,8 +36,8 @@ dependencies {
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
-    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-1.20.5:${resourcefulConfigVersion}")
-    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-1.20.5:${resourcefulLibVersion}")
+    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraft_version}:${resourcefulConfigVersion}")
+    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraft_version}:${resourcefulLibVersion}")
     compileOnly("com.teamresourceful:bytecodecs:1.1.0")
     implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-common-${minecraft_version}:${resourcefulLibKtVersion}")
     implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}")

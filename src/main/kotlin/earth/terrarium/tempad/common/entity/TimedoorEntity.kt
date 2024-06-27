@@ -2,8 +2,10 @@ package earth.terrarium.tempad.common.entity
 
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.config.TempadConfig
-import earth.terrarium.tempad.common.data.LocationData
+import earth.terrarium.tempad.api.fuel.FuelConsumer
+import earth.terrarium.tempad.common.config.CommonConfig
+import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.nbt.CompoundTag
@@ -18,7 +20,6 @@ import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.common.Tags
-import thedarkcolour.kotlinforforge.forge.vectorutil.clone
 import java.util.UUID
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
@@ -26,6 +27,20 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private const val ANIMATION_LENGTH = 8
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.COLOR_SERIALIZER)
+
+        fun openTimedoor(player: Player, slotId: Int, location: LocationData) {
+            val stack = player.inventory[slotId]
+            if (stack.item !is TempadItem) return
+            val fuelConsumer = stack.getCapability(FuelConsumer.ITEM_CAP) ?: return
+            if (!fuelConsumer.canConsumeFuel()) return
+            fuelConsumer.consumeFuel()
+            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
+            timedoor.owner = player.uuid
+            timedoor.pos = LocationData.offsetLocation(player.position(), location.angle, CommonConfig.TimeDoor.placement_distance)
+            timedoor.yRot = player.yHeadRot
+            timedoor.targetLocation = location
+            player.level().addFreshEntity(timedoor)
+        }
     }
 
     private fun isInside(entity: Entity): Boolean {
@@ -43,6 +58,10 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var color by DataDelegate(COLOR)
     var closingTime by DataDelegate(CLOSING_TIME)
     var targetLocation: LocationData? = null
+        set(value) {
+            field = value
+            color = value?.color ?: Tempad.ORANGE
+        }
     var linkedPortalEntity: TimedoorEntity? = null
         private set
     private var owner: UUID? = null
@@ -52,7 +71,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         get() = LocationData("Return from ${targetLocation?.name}", LocationData.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
 
     override fun defineSynchedData(pBuilder: SynchedEntityData.Builder) {
-        pBuilder.define(CLOSING_TIME, TempadConfig.timedoorWait)
+        pBuilder.define(CLOSING_TIME, CommonConfig.timedoorWait)
         pBuilder.define(COLOR, Tempad.ORANGE)
     }
 
@@ -72,9 +91,9 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         linkedPortalEntity.resetClosingTime()
         this.resetClosingTime()
         for (entity in entities) {
-            entity.changeDimension(targetLevel, TimedoorTeleporter(location, entity.deltaMovement.clone()))
+            // entity.changeDimension(targetLevel, TimedoorTeleporter(location, entity.deltaMovement))
             if (entity is Player && entity.uuid == owner) {
-                this.closingTime = this.tickCount + TempadConfig.timedoorOwnerCloseBehindTime
+                this.closingTime = this.tickCount + CommonConfig.timedoorOwnerCloseBehindTime
                 entity.teleportTo(linkedPortalEntity.x, linkedPortalEntity.y, linkedPortalEntity.z)
             }
         }
@@ -89,7 +108,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         targetPortal.pos = location.offsetLocation
         targetPortal.linkedPortalEntity = this
         targetPortal.color = color
-        targetPortal.closingTime = TempadConfig.timedoorOwnerCloseBehindTime
+        targetPortal.closingTime = CommonConfig.timedoorOwnerCloseBehindTime
         targetPortal.targetLocation = selfLocation
         targetPortal.yRot = location.angle
         linkedPortalEntity = targetPortal
@@ -111,7 +130,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     fun resetClosingTime() {
         if (closingTime != -1) {
-            closingTime = this.tickCount + TempadConfig.timedoorWait
+            closingTime = this.tickCount + CommonConfig.timedoorWait
         }
     }
 

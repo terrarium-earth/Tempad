@@ -2,7 +2,7 @@ package earth.terrarium.tempad.common.registry;
 
 import earth.terrarium.tempad.api.options.FuelOptionsApi;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.config.ConfigCache;
+import earth.terrarium.tempad.common.config.CommonConfigCache;
 import earth.terrarium.tempad.common.options.impl.*;
 import net.minecraft.resources.ResourceLocation;
 
@@ -19,7 +19,7 @@ public class TempadOptions {
         FuelOptionsApi.API.register(EnergyOption.ID, new EnergyOption());
         FuelOptionsApi.API.register(FluidOption.ID, new FluidOption());
 
-        FuelOptionsApi.API.attachItemOption((stack, context) -> FuelOptionsApi.API.getOption(ResourceLocation.tryParse(ConfigCache.tempadFuelType)), TempadRegistry.TEMPAD);
-        FuelOptionsApi.API.attachItemOption((stack, context) -> FuelOptionsApi.API.getOption(ResourceLocation.tryParse(ConfigCache.advancedTempadFuelType)), TempadRegistry.CREATIVE_TEMPAD);
+        FuelOptionsApi.API.attachItemOption((stack, context) -> FuelOptionsApi.API.getOption(ResourceLocation.tryParse(CommonConfigCache.tempadFuelType)), TempadRegistry.TEMPAD);
+        FuelOptionsApi.API.attachItemOption((stack, context) -> FuelOptionsApi.API.getOption(ResourceLocation.tryParse(CommonConfigCache.advancedTempadFuelType)), TempadRegistry.CREATIVE_TEMPAD);
     }
 }

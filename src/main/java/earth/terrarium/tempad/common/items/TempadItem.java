@@ -8,8 +8,8 @@ import earth.terrarium.tempad.api.power.PowerSettings;
 import earth.terrarium.tempad.api.power.PowerSettingsApi;
 import earth.terrarium.tempad.client.config.TempadClientConfig;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.config.TempadConfig;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.common.config.CommonConfig;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.entity.TimedoorEntity;
 import earth.terrarium.tempad.common.registry.TempadRegistry;
 import earth.terrarium.tempad.common.utils.ClientUtils;
@@ -63,7 +63,7 @@ public class TempadItem extends Item {
         timedoor.setTargetLocation(locationData);
         timedoor.setOwner(player.getUUID());
         var position = player.position();
-        timedoor.setPos(position.x() + Mth.cos(angleInRadians) * TempadConfig.distanceFromPlayer, position.y(), position.z() + Mth.sin(angleInRadians) * TempadConfig.distanceFromPlayer);
+        timedoor.setPos(position.x() + Mth.cos(angleInRadians) * CommonConfig.distanceFromPlayer, position.y(), position.z() + Mth.sin(angleInRadians) * CommonConfig.distanceFromPlayer);
         timedoor.setYRot(angle);
         player.level().addFreshEntity(timedoor);
         timedoor.playSound(Tempad.TIMEDOOR_SOUND.get());
@@ -97,12 +97,6 @@ public class TempadItem extends Item {
         FuelOptionsApi.API.findItemOption(stack).tick(stack, PowerSettingsApi.API.get(stack), entity);
     }
 
-    @PlatformOnly(PlatformOnly.FABRIC)
-    public boolean allowNbtUpdateAnimation(Player player, InteractionHand hand, ItemStack oldStack, ItemStack newStack) {
-        return false;
-    }
-
-    @PlatformOnly("neoforge")
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }

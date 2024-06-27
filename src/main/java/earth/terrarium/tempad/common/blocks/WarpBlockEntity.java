@@ -1,12 +1,11 @@
 package earth.terrarium.tempad.common.blocks;
 
 import earth.terrarium.tempad.common.data.ConfiguredLocationData;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.data.WarpHandler;
 import earth.terrarium.tempad.common.registry.TempadBlockEntities;
 import earth.terrarium.tempad.common.teams.GlobalTeamConfig;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;

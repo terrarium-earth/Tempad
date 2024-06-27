@@ -3,7 +3,7 @@ package earth.terrarium.tempad.client.components;
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList;
 import earth.terrarium.tempad.client.config.TempadClientConfig;
 import earth.terrarium.tempad.common.Tempad;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;

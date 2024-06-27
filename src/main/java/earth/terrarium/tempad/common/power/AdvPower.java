@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.power;
 
 import earth.terrarium.tempad.api.power.PowerSettings;
-import earth.terrarium.tempad.common.config.ConfigCache;
+import earth.terrarium.tempad.common.config.CommonConfigCache;
 import net.minecraft.resources.ResourceLocation;
 
 public class AdvPower implements PowerSettings {
@@ -9,16 +9,16 @@ public class AdvPower implements PowerSettings {
 
     @Override
     public ResourceLocation getOptionId() {
-        return ResourceLocation.tryParse(ConfigCache.advancedTempadFuelType);
+        return ResourceLocation.tryParse(CommonConfigCache.advancedTempadFuelType);
     }
 
     @Override
     public int getFuelCost() {
-        return ConfigCache.advancedTempadfuelConsumptionValue;
+        return CommonConfigCache.advancedTempadfuelConsumptionValue;
     }
 
     @Override
     public int getFuelCapacity() {
-        return ConfigCache.advancedTempadfuelCapacityValue;
+        return CommonConfigCache.advancedTempadfuelCapacityValue;
     }
 }

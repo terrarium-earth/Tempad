@@ -2,8 +2,8 @@ package earth.terrarium.tempad.client.screens;
 
 import earth.terrarium.tempad.client.components.*;
 import earth.terrarium.tempad.client.screens.base.BackgroundMenuScreen;
-import earth.terrarium.tempad.common.config.ConfigCache;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.common.config.CommonConfigCache;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.menu.PrinterMenu;
 import earth.terrarium.tempad.common.network.NetworkHandler;
 import earth.terrarium.tempad.common.network.messages.c2s.WriteLocationCard;
@@ -53,7 +53,7 @@ public class PrinterScreen extends BackgroundMenuScreen<PrinterMenu> {
         selectedLocation = entry.data;
 
         informationPanel.update(selectedLocation);
-        writeButton.setActivated(selectedLocation.isDownloadable() && ConfigCache.allowExporting);
+        writeButton.setActivated(selectedLocation.isDownloadable() && CommonConfigCache.allowExporting);
     }
 
     private void write() {

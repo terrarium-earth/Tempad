@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.entity;
 
-import earth.terrarium.tempad.common.config.TempadConfig;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.common.config.CommonConfig;
+import earth.terrarium.tempad.api.locations.LocationData;
 import earth.terrarium.tempad.common.registry.TempadRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -48,7 +48,7 @@ public class TimedoorEntity extends Entity {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
-        pBuilder.define(CLOSING_TIME, TempadConfig.timedoorWait);
+        pBuilder.define(CLOSING_TIME, CommonConfig.timedoorWait);
         pBuilder.define(COLOR, Tempad.ORANGE);
     }
 
@@ -80,16 +80,16 @@ public class TimedoorEntity extends Entity {
                         this.resetClosingTime();
                         if (entity instanceof Player player) {
                             if (player.getUUID().equals(getOwner())) {
-                                this.setClosingTime(this.tickCount + TempadConfig.timedoorOwnerCloseBehindTime);
+                                this.setClosingTime(this.tickCount + CommonConfig.timedoorOwnerCloseBehindTime);
                                 if (getLinkedPortalEntity() != null)
-                                    this.getLinkedPortalEntity().setClosingTime(getLinkedPortalEntity().tickCount + TempadConfig.timedoorOwnerCloseBehindTime);
+                                    this.getLinkedPortalEntity().setClosingTime(getLinkedPortalEntity().tickCount + CommonConfig.timedoorOwnerCloseBehindTime);
                             }
                         }
                     });
                     if (getLinkedPortalEntity() == null) {
                         TimedoorEntity recipientPortal = new TimedoorEntity(TempadRegistry.TIMEDOOR_ENTITY.get(), destinationLevel);
                         recipientPortal.setOwner(this.getOwner());
-                        recipientPortal.setClosingTime(TempadConfig.timedoorOwnerCloseBehindTime);
+                        recipientPortal.setClosingTime(CommonConfig.timedoorOwnerCloseBehindTime);
                         recipientPortal.setTargetLocation(null);
                         recipientPortal.setColor(this.getColor());
                         this.setLinkedPortalId(recipientPortal.getUUID());
@@ -170,7 +170,7 @@ public class TimedoorEntity extends Entity {
 
     public void resetClosingTime() {
         if (getClosingTime() != -1) {
-            this.setClosingTime(this.tickCount + TempadConfig.timedoorWait);
+            this.setClosingTime(this.tickCount + CommonConfig.timedoorWait);
         }
     }
 

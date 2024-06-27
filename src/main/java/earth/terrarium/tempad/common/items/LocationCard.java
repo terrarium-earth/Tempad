@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.items;
 
 import earth.terrarium.tempad.api.locations.LocationApi;
-import earth.terrarium.tempad.common.data.LocationData;
+import earth.terrarium.tempad.api.locations.LocationData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
