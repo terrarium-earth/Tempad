@@ -10,13 +10,14 @@ import net.minecraft.world.entity.player.Player
 import java.util.UUID
 
 @JvmRecord
-data class ProviderSettings(val id: ResourceLocation, val exportable: Boolean = true, val downloadable: Boolean = true) {
+data class ProviderSettings(val id: ResourceLocation, val exportable: Boolean = true, val downloadable: Boolean = true, val deletable: Boolean = true) {
     companion object {
         val CODEC: Codec<ProviderSettings> = RecordCodecBuilder.create {
             it.group(
                 ResourceLocation.CODEC.fieldOf("id").forGetter { it.id },
                 Codec.BOOL.optionalFieldOf("exportable", true).forGetter { it.exportable },
-                Codec.BOOL.optionalFieldOf("downloadable", true).forGetter { it.downloadable }
+                Codec.BOOL.optionalFieldOf("downloadable", true).forGetter { it.downloadable },
+                Codec.BOOL.optionalFieldOf("deletable", true).forGetter { it.deletable }
             ).apply(it, ::ProviderSettings)
         }
 
@@ -24,6 +25,7 @@ data class ProviderSettings(val id: ResourceLocation, val exportable: Boolean = 
             ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.id },
             ByteCodec.BOOLEAN.fieldOf { it.exportable },
             ByteCodec.BOOLEAN.fieldOf { it.downloadable },
+            ByteCodec.BOOLEAN.fieldOf { it.deletable },
             ::ProviderSettings
         )
     }
@@ -47,6 +49,8 @@ object TempadLocations: Iterable<Map.Entry<ProviderSettings, LocationHandler>> {
 
     @JvmStatic
     operator fun get(id: ResourceLocation): LocationHandler? = providers.keys.find { it.id == id }?.let { providers[it] }
+
+    fun getAllForPlayer(player: Player): Map<ProviderSettings, Map<UUID, LocationData>> = providers.mapValues { it.value.getLocations(player) }
 
     fun getProviders(): Set<ProviderSettings> = providers.keys
 

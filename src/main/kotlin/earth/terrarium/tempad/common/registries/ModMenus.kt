@@ -5,7 +5,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.createRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.apps.AvailableTeleportData
+import earth.terrarium.tempad.common.apps.TeleportData
 import earth.terrarium.tempad.common.apps.SettingsData
 import earth.terrarium.tempad.common.menu.TeleportMenu
 import earth.terrarium.tempad.common.menu.TempadSettingsMenu
@@ -19,7 +19,7 @@ object ModMenus {
     val TELEPORT_MENU by REGISTRY.register("teleport") {
         MenuContentHelper.create(
             ::TeleportMenu,
-            RecordCodecMenuContentSerializer(AvailableTeleportData.CODEC)
+            RecordCodecMenuContentSerializer(TeleportData.CODEC)
         )
     }
 

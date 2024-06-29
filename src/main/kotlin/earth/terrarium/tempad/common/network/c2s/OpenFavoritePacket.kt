@@ -5,7 +5,7 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
-import earth.terrarium.tempad.Tempad.tempadId
+import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.common.data.favoriteLocation
 import earth.terrarium.tempad.common.data.favoriteLocationData
 import earth.terrarium.tempad.common.entity.TimedoorEntity

@@ -2,37 +2,33 @@ package earth.terrarium.tempad.common.apps
 
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
-import com.teamresourceful.resourcefullib.common.menu.MenuContent
-import com.teamresourceful.resourcefullib.common.menu.MenuContentSerializer
 import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.app.TempadApp
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.menu.TeleportMenu
-import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.item.ItemStack
 import java.util.*
 
-object TeleportApp: TempadApp<AvailableTeleportData> {
-    override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
-        return TeleportMenu(pContainerId, pPlayerInventory, Optional.of(AvailableTeleportData(TempadLocations.get(pPlayer).getAll())))
+data class TeleportApp(val slotId: Int): TempadApp<TeleportData> {
+    override fun createMenu(pContainerId: Int, inventory: Inventory, player: Player): AbstractContainerMenu {
+        return TeleportMenu(pContainerId, inventory, Optional.of(TeleportData(TempadLocations.getAllForPlayer(player), slotId)))
     }
 
     override fun getDisplayName(): Component = Component.translatable("menu.tempad.teleport")
 
-    override fun createContent(player: ServerPlayer): AvailableTeleportData = AvailableTeleportData(TempadLocations.get(player).getAll())
+    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations.getAllForPlayer(player), slotId)
 
-    override fun isAppAvailable(player: Player, stack: ItemStack): Boolean = true
+    override fun isEnabled(player: Player): Boolean = true
 }
 
-data class AvailableTeleportData(val locations: Map<ProviderSettings, Map<UUID, LocationData>>): MenuContent<AvailableTeleportData> {
+class TeleportData(val locations: Map<ProviderSettings, Map<UUID, LocationData>>, slotId: Int): AppContent<TeleportData>(slotId, CODEC) {
     companion object {
-        val CODEC = ObjectByteCodec.create(
+        val CODEC: ByteCodec<TeleportData> = ObjectByteCodec.create(
             ByteCodec.mapOf(
                 ProviderSettings.BYTE_CODEC,
                 ByteCodec.mapOf(
@@ -40,11 +36,8 @@ data class AvailableTeleportData(val locations: Map<ProviderSettings, Map<UUID, 
                     LocationData.BYTE_CODEC
                 )
             ).fieldOf { it.locations },
-            ::AvailableTeleportData
+            ByteCodec.INT.fieldOf { it.slotId },
+            ::TeleportData
         )
-
-        val SERIALIZER = RecordCodecMenuContentSerializer(CODEC)
     }
-
-    override fun serializer(): MenuContentSerializer<AvailableTeleportData> = SERIALIZER
 }

@@ -8,7 +8,7 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.Tempad.tempadId
+import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.TempadApp
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.utils.get
@@ -25,7 +25,7 @@ data class OpenAppPacket(val app: TempadApp<*>, val slotId: Int) : Packet<OpenAp
             ),
             NetworkHandle.handle { message, player ->
                 val stack = player.inventory[message.slotId]
-                if (!stack.`is`(ModItems.TEMPAD) || !message.app.isAppAvailable(player, stack)) return@handle
+                if (!stack.`is`(ModItems.TEMPAD) || !message.app.isEnabled(player)) return@handle
                 message.app.openMenu(player as ServerPlayer)
             }
         )

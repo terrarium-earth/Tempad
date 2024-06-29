@@ -1,6 +1,6 @@
 package earth.terrarium.tempad.common.registries
 
-import earth.terrarium.tempad.Tempad.tempadId
+import earth.terrarium.tempad.Tempad.Companion.tempadId
 import net.minecraft.core.registries.Registries
 import net.minecraft.tags.TagKey
 import net.minecraft.world.level.Level

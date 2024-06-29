@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.apps
 
+import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.menu.MenuContent
 import com.teamresourceful.resourcefullib.common.menu.MenuContentSerializer
@@ -15,27 +16,24 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.ItemStack
 
-object SettingsApp: TempadApp<SettingsData> {
+data class SettingsApp(val slotId: Int): TempadApp<SettingsData> {
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
-        return TempadSettingsMenu(pContainerId, pPlayerInventory, SettingsData(TempadLocations.getProviders()))
+        return TempadSettingsMenu(pContainerId, pPlayerInventory, SettingsData(TempadLocations.getProviders(), slotId))
     }
 
     override fun getDisplayName(): Component = Component.translatable("menu.tempad.settings")
 
-    override fun createContent(player: ServerPlayer): SettingsData = SettingsData(TempadLocations.getProviders())
+    override fun createContent(player: ServerPlayer): SettingsData = SettingsData(TempadLocations.getProviders(), slotId)
 
-    override fun isAppAvailable(player: Player, stack: ItemStack): Boolean = true
+    override fun isEnabled(player: Player): Boolean = true
 }
 
-data class SettingsData(val providers: Set<ProviderSettings>): MenuContent<SettingsData> {
+class SettingsData(val providers: Set<ProviderSettings>, slotId: Int): AppContent<SettingsData>(slotId, CODEC) {
     companion object {
-        val CODEC = ObjectByteCodec.create(
+        val CODEC: ByteCodec<SettingsData> = ObjectByteCodec.create(
             ProviderSettings.BYTE_CODEC.setOf().fieldOf { it.providers },
+            ByteCodec.INT.fieldOf { it.slotId },
             ::SettingsData
         )
-
-        val SERIALIZER = RecordCodecMenuContentSerializer(CODEC)
     }
-
-    override fun serializer(): MenuContentSerializer<SettingsData> = SERIALIZER
 }

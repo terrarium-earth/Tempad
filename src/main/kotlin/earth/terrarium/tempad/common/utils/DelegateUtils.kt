@@ -33,15 +33,11 @@ class OptionalAttachmentDelegate<T : Any>(private val key: AttachmentType<T>) :
     }
 }
 
-class ComponentDelegate<T : Any>(private val key: DataComponentType<T>) :
-    ReadWriteProperty<MutableDataComponentHolder, T?> {
-    override operator fun getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T? = thisRef[key]
-    override operator fun setValue(thisRef: MutableDataComponentHolder, property: KProperty<*>, value: T?) {
-        if (value == null) {
-            thisRef.remove(key)
-        } else {
-            thisRef[key] = value
-        }
+class ComponentDelegate<T : Any>(private val key: DataComponentType<T>, private val default: T) {
+    operator fun getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T = thisRef[key] ?: default
+    operator fun setValue(thisRef: MutableDataComponentHolder, property: KProperty<*>, value: T) { thisRef[key] = value }
+    fun clear(thisRef: MutableDataComponentHolder) {
+        thisRef.remove(key)
     }
 }
 

@@ -1,6 +1,6 @@
 package earth.terrarium.tempad.api.fuel
 
-import earth.terrarium.tempad.Tempad.tempadId
+import earth.terrarium.tempad.Tempad.Companion.tempadId
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.capabilities.ItemCapability
 

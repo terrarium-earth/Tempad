@@ -4,6 +4,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.TempadLocations
+import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.registries.ModAttachments
 import earth.terrarium.tempad.common.utils.OptionalAttachmentDelegate
 import net.minecraft.Util
@@ -30,6 +31,6 @@ data class FavoriteLocationAttachment(val providerId: ResourceLocation, val loca
         }
 
         @JvmField
-        val EMPTY = FavoriteLocationAttachment(Tempad.TEMPAD_PROVIDER_SETTINGS.id, Util.NIL_UUID)
+        val EMPTY = FavoriteLocationAttachment(DefaultLocationHandler.settings.id, Util.NIL_UUID)
     }
 }

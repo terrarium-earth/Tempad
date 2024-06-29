@@ -4,8 +4,11 @@ import com.teamresourceful.resourcefulconfig.api.types.entries.Observable
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.core.Holder
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
@@ -62,3 +65,11 @@ operator fun Inventory.set(slot: Int, stack: ItemStack) = this.setItem(slot, sta
 var Entity.pos: Vec3
     get() = this.position()
     set(value) = this.setPos(value)
+
+fun ResourceLocation.appSprites(): WidgetSprites = WidgetSprites(
+    ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/normal"),
+    ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/disabled"),
+    ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/hover"),
+)
+
+fun ResourceLocation.appTitle(): Component = Component.translatable(this.toLanguageKey("app"))

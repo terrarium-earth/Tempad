@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.config
 
+import com.google.common.base.CaseFormat
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefulconfig.api.types.entries.Observable
 import com.teamresourceful.resourcefullib.common.network.Network
@@ -7,16 +8,11 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.ClientboundPacketType
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
-import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
-import earth.terrarium.tempad.Tempad.tempadId
-import earth.terrarium.tempad.common.network.c2s.ConfigSync
-import earth.terrarium.tempad.common.network.c2s.ConfigSync.ConfigSyncData
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import net.neoforged.neoforge.server.ServerLifecycleHooks
-import java.util.function.Consumer
 import kotlin.reflect.KProperty
 
 typealias Data<T> = ConfigCache.ConfigEntry<T>.ConfigSyncData
@@ -67,7 +63,7 @@ class ConfigCache(val modId: String, val network: Network) {
     inner class ConfigEntry<T>(private val observable: KProperty<Observable<T>>, val codec: ByteCodec<T>) {
         var value: T = observable.getter.call().get()
         val syncType: CodecPacketType.Client<ConfigSyncData> = CodecPacketType.Client.create(
-            ResourceLocation.fromNamespaceAndPath(modId, observable.name),
+            ResourceLocation.fromNamespaceAndPath(modId, CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, observable.name)),
             codec.map({ ConfigSyncData(it) }, { it.config }),
             NetworkHandle.handle { message ->
                 value = message.config

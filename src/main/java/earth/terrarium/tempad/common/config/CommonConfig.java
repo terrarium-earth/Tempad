@@ -19,38 +19,38 @@ import com.teamresourceful.resourcefulconfig.api.types.options.EntryType;
 public final class CommonConfig {
     @ConfigEntry(id = "allow_interdimensional_travel", type = EntryType.BOOLEAN)
     @Comment("Whether or not Time Doors are allowed to be opened to dimensions other than the one they are in.")
-    public static Observable<Boolean> allow_interdimensional_travel = Observable.of(false);
+    public static boolean allowInterdimensionalTravel = true;
 
     @ConfigEntry(id = "allow_exporting", type = EntryType.BOOLEAN)
     @Comment("Whether or not Tempads are allowed to export their stored locations.")
-    public static Observable<Boolean> allow_exporting = Observable.of(true);
+    public static boolean allowExporting = true;
 
     @ConfigEntry(id = "allow_location_saving", type = EntryType.BOOLEAN)
     @Comment("Whether or not locations can be saved to the Tempad.")
-    public static Observable<Boolean> allow_location_saving = Observable.of(true);
+    public static boolean allowLocationSaving = true;
 
     public static final class TimeDoor {
         @ConfigEntry(id = "placement_distance", type = EntryType.INTEGER)
         @Comment("The distance between the Time Door and the player when placed.")
-        public static Observable<Integer> placement_distance = Observable.of(3);
+        public static int placementDistance = 3;
 
         @ConfigEntry(id = "idle_after_enter", type = EntryType.INTEGER)
         @Comment("The amount of time in ticks that a Time Door will remain open after an entity (that isn't the owner) enters it.")
-        public static Observable<Integer> idle_after_enter = Observable.of(20);
+        public static int idleAfterEnter = 20;
 
         @ConfigEntry(id = "idle_after_owner_enter", type = EntryType.INTEGER)
         @Comment("The amount of time in ticks that a Time Door will remain open after the owner enters it.")
-        public static Observable<Integer> idle_after_owner_enter = Observable.of(20);
+        public static int idleAfterOwnerEnter = 20;
     }
 
     public static final class Tempad {
         @ConfigEntry(id = "fuel_type", type = EntryType.STRING)
         @Comment("The type of fuel that the Tempad uses.")
-        public static Observable<String> fuel_type = Observable.of("tempad:none");
+        public static Observable<String> fuelType = Observable.of("tempad:none");
 
         @ConfigEntry(id = "consume_amount", type = EntryType.INTEGER)
         @Comment("The amount of fuel that the Tempad consumes per teleport.")
-        public static Observable<Integer> consume_amount = Observable.of(0);
+        public static Observable<Integer> consumeAmount = Observable.of(0);
 
         @ConfigEntry(id = "capacity", type = EntryType.INTEGER)
         @Comment("The amount of fuel that the Tempad can store.")
@@ -64,11 +64,11 @@ public final class CommonConfig {
     public static final class AdvancedTempad {
         @ConfigEntry(id = "fuel_type", type = EntryType.STRING)
         @Comment("The type of fuel that the Advanced Tempad uses.")
-        public static Observable<String> fuel_type = Observable.of("tempad:none");
+        public static Observable<String> fuelType = Observable.of("tempad:none");
 
         @ConfigEntry(id = "consume_amount", type = EntryType.INTEGER)
         @Comment("The amount of fuel that the Advanced Tempad consumes per teleport.")
-        public static Observable<Integer> consume_amount = Observable.of(0);
+        public static Observable<Integer> consumeAmount = Observable.of(0);
 
         @ConfigEntry(id = "capacity", type = EntryType.INTEGER)
         @Comment("The amount of fuel that the Advanced Tempad can store.")
@@ -82,6 +82,6 @@ public final class CommonConfig {
     public static final class ModCompat {
         @ConfigEntry(id = "enable_waystones", type = EntryType.BOOLEAN)
         @Comment("Whether or not compat with Waystones are enabled.")
-        public static Observable<Boolean> enable_waystones = Observable.of(true);
+        public static boolean enableWaystones = true;
     }
 }
