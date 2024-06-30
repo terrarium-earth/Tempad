@@ -13,4 +13,12 @@ object AppRegistry {
     fun register(id: ResourceLocation, provider: AppProvider) {
         apps[id] = provider
     }
+
+    fun get(id: ResourceLocation, slotId: Int): TempadApp<*>? {
+        return apps[id]?.invoke(slotId)
+    }
+
+    fun getAll(slotId: Int): Map<ResourceLocation, TempadApp<*>> {
+        return apps.mapValues { it.value(slotId) }
+    }
 }

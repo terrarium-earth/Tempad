@@ -1,9 +1,13 @@
 package earth.terrarium.tempad.common.utils
 
 import com.teamresourceful.resourcefulconfig.api.types.entries.Observable
+import com.teamresourceful.resourcefullib.common.network.Network
+import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.core.Holder
 import net.minecraft.network.chat.Component
@@ -17,6 +21,7 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EntityType.EntityFactory
 import net.minecraft.world.entity.MobCategory
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.enchantment.Enchantment
@@ -72,4 +77,16 @@ fun ResourceLocation.appSprites(): WidgetSprites = WidgetSprites(
     ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/hover"),
 )
 
+fun String.btnSprites(): WidgetSprites = WidgetSprites(
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "textures/gui/button/${this}/normal"),
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "textures/gui/button/${this}/disabled"),
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "textures/gui/button/${this}/hover"),
+)
+
 fun ResourceLocation.appTitle(): Component = Component.translatable(this.toLanguageKey("app"))
+
+fun String.toLanguageKey(type: String): Component = Component.translatable("${type}.${Tempad.MOD_ID}.${this}")
+
+fun <T: Packet<T>> T.sendToServer() = ModNetworking.CHANNEL.sendToServer(this)
+
+fun <T: Packet<T>> T.sendToClient(player: Player) = ModNetworking.CHANNEL.sendToPlayer(this, player)

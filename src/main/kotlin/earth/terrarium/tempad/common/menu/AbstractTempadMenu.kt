@@ -1,19 +1,22 @@
 package earth.terrarium.tempad.common.menu
 
+import earth.terrarium.tempad.common.apps.AppContent
+import earth.terrarium.tempad.common.apps.NewLocationData
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
-abstract class AbstractTempadMenu(id: Int, inventory: Inventory, type: MenuType<*>?) : AbstractContainerMenu(type, id) {
+open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, type: MenuType<*>?, val appContent: T?) : AbstractContainerMenu(type, id) {
     init {
-        this.addSlots()
         this.addPlayerInvSlots(inventory)
     }
 
-    abstract fun addSlots()
+    constructor(id: Int, inventory: Inventory, type: MenuType<*>?, locations: Optional<T>) : this(id, inventory, type, locations.getOrNull())
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack {
         var itemStack = ItemStack.EMPTY
@@ -102,12 +105,20 @@ abstract class AbstractTempadMenu(id: Int, inventory: Inventory, type: MenuType<
     private fun addPlayerInvSlots(inventory: Inventory, x: Int = 48, y: Int = 157) {
         for (row in 0..2) {
             for (column in 0..8) {
-                this.addSlot(Slot(inventory, column + row * 9 + 9 /* Hotbar is the first 9 */, x + column * 18, y + row * 18))
+                this.addSlot(makeInvSlot(inventory, column + row * 9 + 9 /* Hotbar is the first 9 */, x + column * 18, y + row * 18))
             }
         }
 
         for (k in 0..8) {
-            this.addSlot(Slot(inventory, k, x + k * 18, y + 18 * 3 + 5))
+            this.addSlot(makeInvSlot(inventory, k, x + k * 18, y + 18 * 3 + 5))
         }
+    }
+
+    private fun makeInvSlot(inventory: Inventory, x: Int, y: Int, slotIndex: Int): Slot {
+        return if(slotIndex == appContent?.slotId) LockedSlot(inventory, slotIndex, x, y) else Slot(inventory, slotIndex, x, y)
+    }
+
+    class LockedSlot(inventory: Inventory, slotIndex: Int, x: Int, y: Int) : Slot(inventory, slotIndex, x, y) {
+        override fun mayPlace(stack: ItemStack): Boolean = false
     }
 }

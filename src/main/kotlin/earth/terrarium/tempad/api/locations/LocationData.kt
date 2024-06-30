@@ -9,6 +9,7 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.VEC3_BYTE_CODEC
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
@@ -45,4 +46,10 @@ data class LocationData(val name: String, val pos: Vec3, val dimension: Resource
     }
 
     val offsetLocation = offsetLocation(pos, angle)
+
+    val x = pos.x
+    val y = pos.y
+    val z = pos.z
+
+    val dimComponent: Component = Component.translatable(dimension.location().toLanguageKey("dimension"))
 }

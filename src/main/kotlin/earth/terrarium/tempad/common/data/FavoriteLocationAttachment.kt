@@ -33,4 +33,8 @@ data class FavoriteLocationAttachment(val providerId: ResourceLocation, val loca
         @JvmField
         val EMPTY = FavoriteLocationAttachment(DefaultLocationHandler.settings.id, Util.NIL_UUID)
     }
+
+    fun matches(providerId: ResourceLocation?, locationId: UUID?): Boolean {
+        return this.providerId == providerId && this.locationId == locationId
+    }
 }
