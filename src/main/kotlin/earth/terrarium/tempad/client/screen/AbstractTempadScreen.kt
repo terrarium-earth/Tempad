@@ -4,7 +4,6 @@ import com.teamresourceful.resourcefullib.client.components.selection.SelectionL
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.fuel.FuelConsumer
-import earth.terrarium.tempad.client.components.ModSprites
 import earth.terrarium.tempad.client.widgets.AppButton
 import earth.terrarium.tempad.client.widgets.FuelBarWidget
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
@@ -23,12 +22,19 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         this.imageHeight = 256
     }
 
+    var localLeft: Int = 0
+    var localTop: Int = 0
+
     companion object {
         val SPRITE = "screen/tempad".tempadId
     }
 
     override fun init() {
         super.init()
+
+
+        this.localTop = this.leftPos + 30
+        this.localLeft = this.topPos + 20
 
         val appList = SelectionList<AppButton>(14, 21, 16, 116, 16) { button ->
             ModNetworking.CHANNEL.sendToServer(OpenAppPacket(button!!.app, menu.appContent?.slotId ?: -1))
@@ -38,7 +44,7 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
             appList.addEntry(AppButton(app, id))
         }
 
-        val fuelConsumer = inv[menu.appContent?.slotId ?: -1].getCapability(FuelConsumer.ITEM_CAP) ?: return
+        val fuelConsumer = inv[menu.appContent?.slotId ?: -1].getCapability(FuelConsumer.CAPABILITY) ?: return
 
         addRenderableOnly(FuelBarWidget(fuelConsumer, 237, 52))
     }

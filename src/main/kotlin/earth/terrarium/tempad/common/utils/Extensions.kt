@@ -9,6 +9,7 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
+import net.minecraft.core.GlobalPos
 import net.minecraft.core.Holder
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
@@ -70,6 +71,8 @@ operator fun Inventory.set(slot: Int, stack: ItemStack) = this.setItem(slot, sta
 var Entity.pos: Vec3
     get() = this.position()
     set(value) = this.setPos(value)
+
+val Entity.globalPos: GlobalPos get() = GlobalPos(this.level().dimension(), this.blockPosition())
 
 fun ResourceLocation.appSprites(): WidgetSprites = WidgetSprites(
     ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/normal"),

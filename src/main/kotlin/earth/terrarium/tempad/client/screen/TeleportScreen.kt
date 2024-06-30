@@ -35,9 +35,6 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
         }
     }
 
-    private var relativeLeft: Int = 0
-    private var relativeTop: Int = 0
-
     private var locationButtons: LinearLayout? = null
     private var selected: Triple<ProviderSettings, UUID, LocationData>? = null
     private var infoPanel: InformationPanel? = null
@@ -47,14 +44,10 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
 
     override fun init() {
         super.init()
-
-        this.relativeTop = this.leftPos + 30
-        this.relativeLeft = this.topPos + 20
-
-        infoPanel = InformationPanel(relativeLeft + 4, relativeTop + 4, 100, 100)
+        infoPanel = InformationPanel(localLeft + 4, localTop + 4, 100, 100)
 
         locationPanel = LocationPanel(
-            relativeLeft + 4, relativeTop + 4, 100, 100,
+            localLeft + 4, localTop + 4, 100, 100,
             menu.appContent?.locations ?: emptyMap(),
             { provider, locationId -> menu.appContent?.favoriteLocation?.matches(provider?.id, locationId) ?: false }
         ) { entry ->
@@ -73,8 +66,8 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
 
         this.search = addRenderableWidget(
             ModWidgets.search(
-                relativeLeft + 113,
-                relativeTop + 7,
+                localLeft + 113,
+                localTop + 7,
                 66,
                 12
             ) { text -> locationPanel?.update(text) })
@@ -82,8 +75,8 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
         search?.setValue(searchValue)
 
         locationButtons = LinearLayout(
-            relativeLeft + 4,
-            relativeTop + 100,
+            localLeft + 4,
+            localTop + 100,
             LinearLayout.Orientation.HORIZONTAL
         ).spacing(2)
 

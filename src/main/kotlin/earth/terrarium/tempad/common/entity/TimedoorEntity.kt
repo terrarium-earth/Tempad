@@ -31,7 +31,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         fun openTimedoor(player: Player, slotId: Int, location: LocationData) {
             val stack = player.inventory[slotId]
             if (stack.item !is TempadItem) return
-            val fuelConsumer = stack.getCapability(FuelConsumer.ITEM_CAP) ?: return
+            val fuelConsumer = stack.getCapability(FuelConsumer.CAPABILITY) ?: return
             if (!fuelConsumer.canConsumeFuel()) return
             fuelConsumer.consumeFuel()
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
