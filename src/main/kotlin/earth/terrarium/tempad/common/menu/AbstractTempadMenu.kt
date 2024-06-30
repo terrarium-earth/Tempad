@@ -102,15 +102,16 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
         }
 
         for (k in 0..8) {
-            this.addSlot(makeInvSlot(inventory, k, x + k * 18, y + 18 * 3 + 5))
+            this.addSlot(makeInvSlot(inventory, k, x + k * 18, y + 18 * 3 + 4))
         }
     }
 
-    private fun makeInvSlot(inventory: Inventory, x: Int, y: Int, slotIndex: Int): Slot {
+    private fun makeInvSlot(inventory: Inventory, slotIndex: Int, x: Int, y: Int): Slot {
         return if(slotIndex == appContent?.slotId) LockedSlot(inventory, slotIndex, x, y) else Slot(inventory, slotIndex, x, y)
     }
 
     class LockedSlot(inventory: Inventory, slotIndex: Int, x: Int, y: Int) : Slot(inventory, slotIndex, x, y) {
         override fun mayPlace(stack: ItemStack): Boolean = false
+        override fun mayPickup(pPlayer: Player): Boolean = false
     }
 }

@@ -67,5 +67,10 @@
 
   "app.tempad.new_location": "New Location",
   "app.tempad.teleport": "Teleport",
-  "app.tempad.settings": "Settings"
+  "app.tempad.settings": "Settings",
+
+
+  "menu.tempad.teleport": "Teleport",
+  "menu.tempad.settings": "Settings",
+  "menu.tempad.new_location": "New Location"
 }

@@ -76,15 +76,15 @@ var Entity.pos: Vec3
 val Entity.globalPos: GlobalPos get() = GlobalPos(this.level().dimension(), this.blockPosition())
 
 fun ResourceLocation.appSprites(): WidgetSprites = WidgetSprites(
-    ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/normal"),
-    ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/disabled"),
-    ResourceLocation.fromNamespaceAndPath(this.namespace, "textures/gui/app/${this.path}/hover"),
+    ResourceLocation.fromNamespaceAndPath(this.namespace, "app/${this.path}/normal"),
+    ResourceLocation.fromNamespaceAndPath(this.namespace, "app/${this.path}/disabled"),
+    ResourceLocation.fromNamespaceAndPath(this.namespace, "app/${this.path}/hover"),
 )
 
 fun String.btnSprites(): WidgetSprites = WidgetSprites(
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "textures/gui/button/${this}/normal"),
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "textures/gui/button/${this}/disabled"),
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "textures/gui/button/${this}/hover"),
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "button/${this}/normal"),
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "button/${this}/disabled"),
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "button/${this}/hover"),
 )
 
 fun ResourceLocation.appTitle(): Component = Component.translatable(this.toLanguageKey("app"))

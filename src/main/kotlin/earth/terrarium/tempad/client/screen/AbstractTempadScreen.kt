@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.client.screen
 
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.fuel.FuelConsumer
@@ -20,6 +21,8 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
     init {
         this.imageWidth = 256
         this.imageHeight = 256
+        this.titleLabelX = 36
+        this.titleLabelY = 27
     }
 
     var localLeft: Int = 0
@@ -31,12 +34,10 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
 
     override fun init() {
         super.init()
+        this.localTop = this.topPos + 20
+        this.localLeft = this.leftPos + 30
 
-
-        this.localTop = this.leftPos + 30
-        this.localLeft = this.topPos + 20
-
-        val appList = SelectionList<AppButton>(14, 21, 16, 116, 16) { button ->
+        val appList = SelectionList<AppButton>(localLeft - 16, localTop + 1, 16, 116, 16) { button ->
             ModNetworking.CHANNEL.sendToServer(OpenAppPacket(button!!.appId, menu.appContent?.slotId ?: -1))
         }
 
@@ -44,14 +45,19 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
             appList.addEntry(AppButton(app, id))
         }
 
+        addRenderableWidget(appList)
+
         val fuelConsumer = inv[menu.appContent?.slotId ?: -1].getCapability(FuelConsumer.CAPABILITY) ?: return
 
         addRenderableOnly(FuelBarWidget(fuelConsumer, 237, 52))
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick)
         graphics.blitSprite(SPRITE, this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
         graphics.blitSprite(appSprite, this.leftPos + 30, this.topPos + 20, 198, 118)
+    }
+
+    override fun renderLabels(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {
+        pGuiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, Tempad.ORANGE.value, true)
     }
 }

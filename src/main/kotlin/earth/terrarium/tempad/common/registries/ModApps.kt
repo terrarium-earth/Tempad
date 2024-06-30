@@ -13,7 +13,7 @@ object ModApps {
 
     fun init() {
         AppRegistry.register(TELEPORT, ::TeleportApp)
-        AppRegistry.register(SETTINGS, ::SettingsApp)
         AppRegistry.register(NEW_LOCATION, ::NewLocationApp)
+        AppRegistry.register(SETTINGS, ::SettingsApp)
     }
 }

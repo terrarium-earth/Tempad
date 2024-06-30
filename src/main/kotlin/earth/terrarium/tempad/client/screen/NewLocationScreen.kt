@@ -54,6 +54,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             "save".btnSprites()
         ) {
             CreateLocationPacket(box.value, Color.DEFAULT)
+            minecraft?.setScreen(null)
         }).setTooltip(Tooltip.create(CommonComponents.GUI_DONE))
     }
 }
