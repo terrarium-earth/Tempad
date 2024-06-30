@@ -1,7 +1,6 @@
 package earth.terrarium.tempad.client.widgets
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.client.config.TempadClientConfig
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.EditBox
 import net.minecraft.network.chat.Component
@@ -14,7 +13,7 @@ object ModWidgets {
         val editBox = EditBox(Minecraft.getInstance().font, x, y, width, height, SEARCH)
         editBox.isBordered = false
         editBox.setHint(SEARCH)
-        editBox.setTextColor(TempadClientConfig.color)
+        editBox.setTextColor(Tempad.ORANGE.value)
         editBox.setResponder(updater)
         return editBox
     }

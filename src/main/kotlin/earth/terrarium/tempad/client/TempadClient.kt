@@ -5,16 +5,16 @@ import earth.terrarium.tempad.client.screen.TeleportScreen
 import earth.terrarium.tempad.common.registries.ModMenus
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 
-@Mod(Tempad.MOD_ID, dist = [Dist.CLIENT])
-class TempadClient(bus: IEventBus) {
-    init {
-        bus.register(this::registerScreens)
-    }
+@EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+object TempadClient {
 
-    private fun registerScreens(event: RegisterMenuScreensEvent) {
+    @SubscribeEvent @JvmStatic
+    fun registerScreens(event: RegisterMenuScreensEvent) {
         event.register(ModMenus.TELEPORT_MENU, ::TeleportScreen)
     }
 }

@@ -1,9 +1,8 @@
 package earth.terrarium.tempad.client.screen
 
 import com.teamresourceful.resourcefullib.common.color.Color
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.client.config.TempadClientConfig
-import earth.terrarium.tempad.client.screens.NewLocationScreen
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.MapWidget
 import earth.terrarium.tempad.common.network.c2s.CreateLocationPacket
@@ -48,7 +47,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         box.setMaxLength(32)
         box.isBordered = false
         box.setHint(NAME_FIELD)
-        box.setTextColor(TempadClientConfig.color)
+        box.setTextColor(Tempad.ORANGE.value)
 
         addRenderableWidget(ImageButton(
             this.localLeft + 84, this.localTop + 100, 14, 14,

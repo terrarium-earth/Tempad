@@ -39,11 +39,10 @@ dependencies {
     implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraft_version}:${resourcefulConfigVersion}")
     implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraft_version}:${resourcefulLibVersion}")
     compileOnly("com.teamresourceful:bytecodecs:1.1.0")
-    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-common-${minecraft_version}:${resourcefulLibKtVersion}")
-    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}")
-
-    implementation("thedarkcolour:kotlinforforge:${kotlinForForgeVersion}")
-
+    implementation("thedarkcolour:kotlinforforge-neoforge:${kotlinForForgeVersion}")
+    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}") {
+        isTransitive = false
+    }
 }
 
 java {

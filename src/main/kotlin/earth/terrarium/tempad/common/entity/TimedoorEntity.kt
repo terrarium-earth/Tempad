@@ -19,6 +19,8 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.portal.DimensionTransition
+import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.Tags
 import java.util.UUID
 
@@ -91,7 +93,17 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         linkedPortalEntity.resetClosingTime()
         this.resetClosingTime()
         for (entity in entities) {
-            // entity.changeDimension(targetLevel, TimedoorTeleporter(location, entity.deltaMovement))
+            entity.changeDimension(
+                DimensionTransition(
+                    targetLevel,
+                    location.pos,
+                    Vec3.ZERO,
+                    location.angle,
+                    0.0F,
+                    true,
+                    DimensionTransition.DO_NOTHING
+                )
+            )
             if (entity is Player && entity.uuid == owner) {
                 this.closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterOwnerEnter
                 entity.teleportTo(linkedPortalEntity.x, linkedPortalEntity.y, linkedPortalEntity.z)

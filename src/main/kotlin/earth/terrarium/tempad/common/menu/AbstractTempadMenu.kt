@@ -25,14 +25,6 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
             val slotItem = slot.item
             itemStack = slotItem.copy()
 
-            if (index < PrinterMenu.MAX_SLOTS) {
-                if (!this.moveItemStackTo(slotItem, PrinterMenu.MAX_SLOTS, slots.size, true)) {
-                    return ItemStack.EMPTY
-                }
-            } else if (!this.moveItemStackTo(slotItem, 0, PrinterMenu.MAX_SLOTS, false)) {
-                return ItemStack.EMPTY
-            }
-
             if (slotItem.isEmpty) {
                 slot.set(ItemStack.EMPTY)
             } else {

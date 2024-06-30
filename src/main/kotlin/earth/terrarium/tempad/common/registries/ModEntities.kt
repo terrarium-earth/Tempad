@@ -2,6 +2,8 @@ package earth.terrarium.tempad.common.registries
 
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
+import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
+import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.createRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
@@ -11,12 +13,13 @@ import earth.terrarium.tempad.common.utils.entityType
 import earth.terrarium.tempad.common.utils.register
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.syncher.EntityDataSerializer
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
 import net.neoforged.neoforge.registries.NeoForgeRegistries
 
 object ModEntities {
-    val DATA_SERIALIZERS = NeoForgeRegistries.ENTITY_DATA_SERIALIZERS.createRegistry(Tempad.MOD_ID)
-    val ENTITIES = BuiltInRegistries.ENTITY_TYPE.createRegistry(Tempad.MOD_ID)
+    val DATA_SERIALIZERS: ResourcefulRegistry<EntityDataSerializer<*>> = ResourcefulRegistries.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, Tempad.MOD_ID)
+    val ENTITIES: ResourcefulRegistry<EntityType<*>> = ResourcefulRegistries.create(BuiltInRegistries.ENTITY_TYPE, Tempad.MOD_ID)
 
     val COLOR_SERIALIZER by DATA_SERIALIZERS.register("color") { createSerializer(COLOR_BYTE_CODEC) }
 
@@ -25,8 +28,6 @@ object ModEntities {
     }
 
     val TIMEDOOR_ENTITY by ENTITIES.register("timedoor",
-        entityType(::TimedoorEntity, MobCategory.MISC) {
-
-        }
+        entityType(::TimedoorEntity, MobCategory.MISC) {}
     )
 }

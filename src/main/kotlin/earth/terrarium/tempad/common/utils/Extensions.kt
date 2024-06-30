@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EntityType.EntityFactory
@@ -93,3 +94,5 @@ fun String.toLanguageKey(type: String): Component = Component.translatable("${ty
 fun <T: Packet<T>> T.sendToServer() = ModNetworking.CHANNEL.sendToServer(this)
 
 fun <T: Packet<T>> T.sendToClient(player: Player) = ModNetworking.CHANNEL.sendToPlayer(this, player)
+
+fun InteractionHand.getSlot(player: Player): Int = if (this == InteractionHand.MAIN_HAND) player.inventory.selected else 40

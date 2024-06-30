@@ -2,10 +2,10 @@ package earth.terrarium.tempad.client.widgets
 
 import com.teamresourceful.resourcefullib.client.components.selection.ListEntry
 import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack
+import com.teamresourceful.resourcefullib.common.color.ConstantColors
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.ProviderSettings
-import earth.terrarium.tempad.client.config.TempadClientConfig
-import earth.terrarium.tempad.common.utils.ClientUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
@@ -23,7 +23,7 @@ class TextEntry : KListEntry, Comparable<TextEntry?> {
     val isFavorite: Boolean
         get() = favoritePredicate(settings, id)
 
-    override var focused = false
+    override var isFocusedOn = false
 
     constructor(settings: ProviderSettings, id: UUID, data: LocationData, isFavorite: (ProviderSettings?, UUID?) -> Boolean) {
         this.settings = settings
@@ -32,7 +32,7 @@ class TextEntry : KListEntry, Comparable<TextEntry?> {
         this.component = Component.translatable(data.name)
         this.favoritePredicate = isFavorite
         isSelectable = true
-        this.color = TempadClientConfig.color
+        this.color = Tempad.ORANGE.value
     }
 
     constructor(component: Component) {
@@ -41,7 +41,7 @@ class TextEntry : KListEntry, Comparable<TextEntry?> {
         this.data = null
         this.component = component
         isSelectable = false
-        this.color = TempadClientConfig.color
+        this.color = Tempad.ORANGE.value
     }
 
     constructor(component: Component, color: Int, shadow: Boolean) {
@@ -71,14 +71,12 @@ class TextEntry : KListEntry, Comparable<TextEntry?> {
         val isMouseOver = mouseX > left && mouseX < left + width && mouseY > top && mouseY < top + height
 
         if (isSelectable && selected) {
-            graphics.fill(left, top, left + width, top + height, TempadClientConfig.color)
+            graphics.fill(left, top, left + width, top + height, color)
         }
 
         val renderedComponent = if (isFavorite) Component.literal("❤ ").append(component) else component
         val color =
-            if ((selected && isSelectable)) -0x56000000 else if (isMouseOver || !isSelectable) this.color else ClientUtils.darkenColor(
-                this.color
-            )
+            if ((selected && isSelectable)) -0x56000000 else if (isMouseOver || !isSelectable) this.color else ConstantColors.black.value
 
         graphics.drawString(
             Minecraft.getInstance().font,

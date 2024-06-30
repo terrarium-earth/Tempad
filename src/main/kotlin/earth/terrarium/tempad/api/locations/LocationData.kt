@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 
 data class LocationData(val name: String, val pos: Vec3, val dimension: ResourceKey<Level>, val angle: Float, val color: Color) {
     companion object {

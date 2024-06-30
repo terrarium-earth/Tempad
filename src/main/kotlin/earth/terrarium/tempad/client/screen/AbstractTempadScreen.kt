@@ -37,7 +37,7 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         this.localLeft = this.topPos + 20
 
         val appList = SelectionList<AppButton>(14, 21, 16, 116, 16) { button ->
-            ModNetworking.CHANNEL.sendToServer(OpenAppPacket(button!!.app, menu.appContent?.slotId ?: -1))
+            ModNetworking.CHANNEL.sendToServer(OpenAppPacket(button!!.appId, menu.appContent?.slotId ?: -1))
         }
 
         for ((id, app) in AppRegistry.getAll(menu.appContent?.slotId ?: -1)) {

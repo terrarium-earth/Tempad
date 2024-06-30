@@ -116,3 +116,5 @@ run/
 
 # Architectury Garbage
 *.architectury-transformer
+/runs/
+/runs

@@ -3,7 +3,6 @@ package earth.terrarium.tempad.client.widgets
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
-import earth.terrarium.tempad.client.config.TempadClientConfig
 import net.minecraft.core.GlobalPos
 import net.minecraft.network.chat.Component
 import net.minecraft.util.Mth
@@ -14,7 +13,7 @@ class InformationPanel @JvmOverloads constructor(
     y: Int,
     width: Int,
     height: Int,
-    private val color: Int = TempadClientConfig.color,
+    private val color: Int = Tempad.ORANGE.value,
     private val shadow: Boolean = true
 ) :
     SelectionList<TextEntry?>(x, y, width, height, 10, Consumer { _ -> }) {

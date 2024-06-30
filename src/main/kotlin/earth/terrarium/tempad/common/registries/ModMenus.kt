@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.registries
 
 import com.teamresourceful.resourcefullib.common.menu.MenuContentHelper
+import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.createRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
@@ -16,11 +17,11 @@ import net.minecraft.world.inventory.MenuType
 import java.util.Optional
 
 object ModMenus {
-    val REGISTRY: ResourcefulRegistry<MenuType<*>> = BuiltInRegistries.MENU.createRegistry(Tempad.MOD_ID)
+    val REGISTRY: ResourcefulRegistry<MenuType<*>> = ResourcefulRegistries.create(BuiltInRegistries.MENU, Tempad.MOD_ID)
 
     class TeleportMenu(id: Int, inv: Inventory, data: Optional<TeleportData>): AbstractTempadMenu<TeleportData>(id, inv, TELEPORT_MENU, data)
 
-    val TELEPORT_MENU by REGISTRY.register("teleport") {
+    val TELEPORT_MENU: MenuType<TeleportMenu> by REGISTRY.register("teleport") {
         MenuContentHelper.create(
             ::TeleportMenu,
             RecordCodecMenuContentSerializer(TeleportData.CODEC)
@@ -29,7 +30,7 @@ object ModMenus {
 
     class TempadSettingsMenu(id: Int, inv: Inventory, data: Optional<SettingsData>): AbstractTempadMenu<SettingsData>(id, inv, SETTINGS_MENU, data)
 
-    val SETTINGS_MENU by REGISTRY.register("settings") {
+    val SETTINGS_MENU: MenuType<TempadSettingsMenu> by REGISTRY.register("settings") {
         MenuContentHelper.create(
             ::TempadSettingsMenu,
             RecordCodecMenuContentSerializer(SettingsData.CODEC)
@@ -38,7 +39,7 @@ object ModMenus {
 
     class NewLocationMenu(id: Int, inv: Inventory, data: Optional<NewLocationData>): AbstractTempadMenu<NewLocationData>(id, inv, NEW_LOCATION_MENU, data)
 
-    val NEW_LOCATION_MENU by REGISTRY.register("new_location") {
+    val NEW_LOCATION_MENU: MenuType<NewLocationMenu> by REGISTRY.register("new_location") {
         MenuContentHelper.create(
             ::NewLocationMenu,
             RecordCodecMenuContentSerializer(NewLocationData.CODEC)

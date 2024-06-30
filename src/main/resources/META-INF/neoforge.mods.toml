@@ -13,9 +13,6 @@ authors = "CodexAdrian"
 credits = "MsRandom1, ThatGravyBoat, Kekie6, AlexNijjar, ShrimpPixels, Jooosh, abused_master"
 description = "Create a portal to anywhere from anywhere!"
 
-[[mixins]]
-config = "tempad-common.mixins.json"
-
 [[dependencies.tempad]]
 modId = "neoforge"
 type = "required"
