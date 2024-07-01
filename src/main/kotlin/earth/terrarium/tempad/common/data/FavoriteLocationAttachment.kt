@@ -30,7 +30,6 @@ data class FavoriteLocationAttachment(val providerId: ResourceLocation, val loca
             ).apply(instance, ::FavoriteLocationAttachment)
         }
 
-        @JvmField
         val EMPTY = FavoriteLocationAttachment(DefaultLocationHandler.settings.id, Util.NIL_UUID)
     }
 

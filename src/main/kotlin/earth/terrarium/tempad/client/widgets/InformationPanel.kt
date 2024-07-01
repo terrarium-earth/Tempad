@@ -5,6 +5,7 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
 import net.minecraft.core.GlobalPos
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.util.Mth
 import java.util.function.Consumer
 
@@ -27,6 +28,14 @@ class InformationPanel @JvmOverloads constructor(
         private val LOCATION_Z = "gui.${Tempad.MOD_ID}.z"
         private val ANGLE = "gui.${Tempad.MOD_ID}.angle"
         private val LOCATION_DIMENSION = "gui.${Tempad.MOD_ID}.dimension"
+
+        fun getEntries(pos: GlobalPos): List<MutableComponent> {
+            return listOf(
+                Component.translatable(LOCATION_X, pos.pos().x),
+                Component.translatable(LOCATION_Y, pos.pos().y),
+                Component.translatable(LOCATION_Z, pos.pos().z),
+            )
+        }
     }
 
     fun updateBlank(showNoSelection: Boolean = true) {
@@ -52,18 +61,14 @@ class InformationPanel @JvmOverloads constructor(
 
     fun updateNameless(pos: GlobalPos) {
         updateEntries(
-            java.util.List.of(
-                TextEntry(Component.translatable(LOCATION_X, pos.pos().x), color, shadow),
-                TextEntry(Component.translatable(LOCATION_Y, pos.pos().y), color, shadow),
-                TextEntry(Component.translatable(LOCATION_Z, pos.pos().z), color, shadow),
-                TextEntry(
-                    Component.translatable(
-                        LOCATION_DIMENSION,
-                        Component.translatable(pos.dimension().location().toLanguageKey("dimension"))
-                    ),
-                    color,
-                    shadow
-                )
+            getEntries(pos).map { TextEntry(it, color, shadow) } +
+            TextEntry(
+                Component.translatable(
+                    LOCATION_DIMENSION,
+                    Component.translatable(pos.dimension().location().toLanguageKey("dimension"))
+                ),
+                color,
+                shadow
             )
         )
     }

@@ -1,9 +1,11 @@
 package earth.terrarium.tempad.common.utils
 
+import com.mojang.serialization.Codec
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
 import net.minecraft.world.phys.Vec3
+import java.util.*
 
 val COLOR_BYTE_CODEC: ByteCodec<Color> = ByteCodec.BYTE.dispatch(
     { aByte: Byte ->
@@ -27,3 +29,5 @@ val VEC3_BYTE_CODEC: ByteCodec<Vec3> = ObjectByteCodec.create(
     ByteCodec.DOUBLE.fieldOf { it.z },
     ::Vec3
 )
+
+val STRING_UUID_BYTE_CODEC: ByteCodec<UUID> = ByteCodec.STRING.map(UUID::fromString, UUID::toString)

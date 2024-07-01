@@ -6,12 +6,14 @@ import com.teamresourceful.resourcefullib.common.color.ConstantColors
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.ProviderSettings
+import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import java.util.UUID
 
-class TextEntry : KListEntry, Comparable<TextEntry?> {
+class TextEntry : KListEntry {
     val data: LocationData?
     val id: UUID?
     val settings: ProviderSettings?
@@ -25,7 +27,12 @@ class TextEntry : KListEntry, Comparable<TextEntry?> {
 
     override var isFocusedOn = false
 
-    constructor(settings: ProviderSettings, id: UUID, data: LocationData, isFavorite: (ProviderSettings?, UUID?) -> Boolean) {
+    constructor(
+        settings: ProviderSettings,
+        id: UUID,
+        data: LocationData,
+        isFavorite: (ProviderSettings?, UUID?) -> Boolean
+    ) {
         this.settings = settings
         this.id = id
         this.data = data
@@ -74,9 +81,15 @@ class TextEntry : KListEntry, Comparable<TextEntry?> {
             graphics.fill(left, top, left + width, top + height, color)
         }
 
-        val renderedComponent = if (isFavorite) Component.literal("❤ ").append(component) else component
+        val renderedComponent =
+            if (isFavorite) Component.literal("❤ ").append(component) else if (!isSelectable) MutableComponent.create(
+                component.contents
+            ).withStyle(
+                ChatFormatting.UNDERLINE
+            ) else component
+
         val color =
-            if ((selected && isSelectable)) -0x56000000 else if (isMouseOver || !isSelectable) this.color else ConstantColors.black.value
+            if ((selected && isSelectable)) ConstantColors.black.value else if (isMouseOver || !isSelectable) this.color else ConstantColors.darkorange.value
 
         graphics.drawString(
             Minecraft.getInstance().font,
@@ -86,14 +99,5 @@ class TextEntry : KListEntry, Comparable<TextEntry?> {
             color,
             shadow && !(selected && isSelectable)
         )
-    }
-
-    override fun compareTo(other: TextEntry?): Int {
-        val compare = java.lang.Boolean.compare(
-            this.data != null && isFavorite,
-            other?.data != null && other.isFavorite
-        )
-        if (compare != 0) return compare
-        return component.string.compareTo(other?.component?.string ?: "")
     }
 }

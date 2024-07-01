@@ -11,6 +11,7 @@ import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
 import earth.terrarium.tempad.common.registries.ModNetworking
 import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
@@ -21,7 +22,7 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
     init {
         this.imageWidth = 256
         this.imageHeight = 256
-        this.titleLabelX = 36
+        this.titleLabelX = 34
         this.titleLabelY = 27
     }
 
@@ -37,17 +38,17 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         this.localTop = this.topPos + 20
         this.localLeft = this.leftPos + 30
 
-        val appList = SelectionList<AppButton>(localLeft - 16, localTop + 1, 16, 116, 16) { button ->
-            ModNetworking.CHANNEL.sendToServer(OpenAppPacket(button!!.appId, menu.appContent?.slotId ?: -1))
+        val appList = SelectionList<AppButton>(localLeft - 16, localTop + 1, 16, 116, 15) { button ->
+            OpenAppPacket(button!!.appId, menu.appContent!!.slotId).sendToServer()
         }
 
-        for ((id, app) in AppRegistry.getAll(menu.appContent?.slotId ?: -1)) {
+        for ((id, app) in AppRegistry.getAll(menu.appContent!!.slotId)) {
             appList.addEntry(AppButton(app, id))
         }
 
         addRenderableWidget(appList)
 
-        val fuelConsumer = inv[menu.appContent?.slotId ?: -1].getCapability(FuelConsumer.CAPABILITY) ?: return
+        val fuelConsumer = inv[menu.appContent!!.slotId].getCapability(FuelConsumer.CAPABILITY) ?: return
 
         addRenderableOnly(FuelBarWidget(fuelConsumer, 237, 52))
     }

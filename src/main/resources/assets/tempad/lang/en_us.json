@@ -72,5 +72,10 @@
 
   "menu.tempad.teleport": "Teleport",
   "menu.tempad.settings": "Settings",
-  "menu.tempad.new_location": "New Location"
+  "menu.tempad.new_location": "New Location",
+  "menu.tempad.new_location.name": "Name:",
+  "menu.tempad.new_location.color": "Color:",
+
+  "provider.tempad.default": "On Device",
+  "provider.tempad.warps": "From Warps"
 }

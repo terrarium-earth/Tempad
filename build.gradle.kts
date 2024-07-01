@@ -43,6 +43,10 @@ dependencies {
     implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}") {
         isTransitive = false
     }
+
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "latest.release") {
+        isTransitive = false
+    }
 }
 
 java {

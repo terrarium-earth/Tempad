@@ -36,14 +36,10 @@ class OptionalAttachmentDelegate<T : Any>(private val key: AttachmentType<T>) :
 class ComponentDelegate<T : Any>(private val key: DataComponentType<T>, private val default: T) {
     operator fun getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T = thisRef[key] ?: default
     operator fun setValue(thisRef: MutableDataComponentHolder, property: KProperty<*>, value: T) { thisRef[key] = value }
-    fun clear(thisRef: MutableDataComponentHolder) {
-        thisRef.remove(key)
-    }
 }
 
 inline fun <reified T : Entity, U> createDataKey(serializer: EntityDataSerializer<U>): EntityDataAccessor<U> =
     SynchedEntityData.defineId(T::class.java, serializer)
-
 
 class DataDelegate<T : Any>(private val key: EntityDataAccessor<T>) : ReadWriteProperty<Entity, T> {
     override operator fun getValue(thisRef: Entity, property: KProperty<*>): T = thisRef.entityData[key]

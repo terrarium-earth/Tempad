@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.utils
 
 import com.teamresourceful.resourcefulconfig.api.types.entries.Observable
+import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.network.Network
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
@@ -81,10 +82,12 @@ fun ResourceLocation.appSprites(): WidgetSprites = WidgetSprites(
     ResourceLocation.fromNamespaceAndPath(this.namespace, "app/${this.path}/hover"),
 )
 
-fun String.btnSprites(): WidgetSprites = WidgetSprites(
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "button/${this}/normal"),
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "button/${this}/disabled"),
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "button/${this}/hover"),
+fun String.btnSprites(): WidgetSprites = sprites("button")
+
+fun String.sprites(type: String) = WidgetSprites(
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/normal"),
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/disabled"),
+    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/hover"),
 )
 
 fun ResourceLocation.appTitle(): Component = Component.translatable(this.toLanguageKey("app"))
@@ -96,3 +99,6 @@ fun <T: Packet<T>> T.sendToServer() = ModNetworking.CHANNEL.sendToServer(this)
 fun <T: Packet<T>> T.sendToClient(player: Player) = ModNetworking.CHANNEL.sendToPlayer(this, player)
 
 fun InteractionHand.getSlot(player: Player): Int = if (this == InteractionHand.MAIN_HAND) player.inventory.selected else 40
+
+fun Color.darken(factor: Float): Color = Color((this.intRed * factor).toInt(),
+    (this.intGreen * factor).toInt(), (this.intBlue * factor).toInt(), this.intAlpha)

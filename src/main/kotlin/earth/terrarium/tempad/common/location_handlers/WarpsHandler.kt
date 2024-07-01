@@ -24,7 +24,6 @@ object WarpsHandler: LocationHandler {
     }
 
     override fun getLocations(player: Player): Map<UUID, LocationData> {
-        val warps = DATA.create(player.level() as ServerLevel)
-        return warps.get()
+        return emptyMap()
     }
 }

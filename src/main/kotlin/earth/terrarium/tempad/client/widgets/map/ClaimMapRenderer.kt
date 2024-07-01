@@ -34,7 +34,7 @@ class ClaimMapRenderer(colors: Array<IntArray>, scale: Int) {
         RenderSystem.setShaderTexture(0, TEXTURE)
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
         CloseablePoseStack(graphics).use { pose ->
-            pose.translate(x.toDouble(), y.toDouble(), 1.0)
+            pose.translate(x.toDouble(), y.toDouble(), 0.01)
             val matrix4f = pose.last().pose()
             val builder =
                 Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX)

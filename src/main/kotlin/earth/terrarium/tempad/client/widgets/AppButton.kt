@@ -29,7 +29,7 @@ data class AppButton(val app: TempadApp<*>, val appId: ResourceLocation): ListEn
         partialTick: Float,
         selected: Boolean
     ) {
-        graphics.blitSprite(appId.appSprites().get(app.isEnabled(Minecraft.getInstance().player!!), hovered), left, top, width, height)
+        graphics.blitSprite(appId.appSprites().get(app.isEnabled(Minecraft.getInstance().player!!), hovered), left + 1, top + 1, 14, 14)
         if (hovered) {
             ScreenUtils.setTooltip(appId.appTitle())
         }
