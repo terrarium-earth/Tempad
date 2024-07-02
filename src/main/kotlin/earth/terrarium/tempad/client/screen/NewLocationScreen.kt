@@ -1,14 +1,12 @@
 package earth.terrarium.tempad.client.screen
 
-import com.teamresourceful.resourcefulconfig.client.components.options.types.ColorOptionWidget
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.color.ConstantColors
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.client.widgets.ColorButton
+import earth.terrarium.tempad.client.widgets.buttons.ColorButton
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.MapWidget
-import earth.terrarium.tempad.client.widgets.TextEntry
 import earth.terrarium.tempad.common.network.c2s.CreateLocationPacket
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.btnSprites
@@ -17,8 +15,6 @@ import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
 import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.components.ImageButton
-import net.minecraft.client.gui.components.MultiLineTextWidget
-import net.minecraft.client.gui.components.MultilineTextField
 import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.layouts.FrameLayout
@@ -27,7 +23,6 @@ import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
-import javax.sound.sampled.Line
 
 class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.NewLocationMenu>(SPRITE, menu, inv, title) {

@@ -3,7 +3,6 @@ package earth.terrarium.tempad.common.registries
 import com.teamresourceful.resourcefullib.common.menu.MenuContentHelper
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
-import com.teamresourceful.resourcefullibkt.common.createRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.apps.NewLocationData
@@ -28,11 +27,11 @@ object ModMenus {
         )
     }
 
-    class TempadSettingsMenu(id: Int, inv: Inventory, data: Optional<SettingsData>): AbstractTempadMenu<SettingsData>(id, inv, SETTINGS_MENU, data)
+    class SettingsMenu(id: Int, inv: Inventory, data: Optional<SettingsData>): AbstractTempadMenu<SettingsData>(id, inv, SETTINGS_MENU, data)
 
-    val SETTINGS_MENU: MenuType<TempadSettingsMenu> by REGISTRY.register("settings") {
+    val SETTINGS_MENU: MenuType<SettingsMenu> by REGISTRY.register("settings") {
         MenuContentHelper.create(
-            ::TempadSettingsMenu,
+            ::SettingsMenu,
             RecordCodecMenuContentSerializer(SettingsData.CODEC)
         )
     }

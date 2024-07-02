@@ -32,4 +32,8 @@ object AppRegistry {
     fun getAll(slotId: Int): Map<ResourceLocation, TempadApp<*>> {
         return apps.mapValues { it.value(slotId) }
     }
+
+    fun getIds(): Set<ResourceLocation> {
+        return apps.keys
+    }
 }

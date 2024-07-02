@@ -2,6 +2,7 @@ package earth.terrarium.tempad.client
 
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.client.screen.NewLocationScreen
+import earth.terrarium.tempad.client.screen.SettingsScreen
 import earth.terrarium.tempad.client.screen.TeleportScreen
 import earth.terrarium.tempad.common.registries.ModMenus
 import net.neoforged.api.distmarker.Dist
@@ -18,5 +19,6 @@ object TempadClient {
     fun registerScreens(event: RegisterMenuScreensEvent) {
         event.register(ModMenus.TELEPORT_MENU, ::TeleportScreen)
         event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
+        event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
     }
 }

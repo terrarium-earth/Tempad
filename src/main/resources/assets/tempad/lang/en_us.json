@@ -40,7 +40,7 @@
   "item.tempad.he_who_remains_tempad.tooltip": "Property of 'He Who Remains'",
   "advancements.tempad.tempad": "For All Time. Always.",
   "advancements.tempad.tempad.description": "Obtain a Tempad",
-  "advancements.tempad.he_who_remains": "The Citadel at the End of Time",
+  "advancements.tempad.he_who_remains": "Glorious purpose!",
   "advancements.tempad.he_who_remains.description": "Obtain 'He Who Remains'' Tempad",
   "subtitles.tempad.entity.timedoor.open": "Timedoor opens",
   "dimension.minecraft.overworld": "Overworld",
@@ -71,11 +71,29 @@
 
 
   "menu.tempad.teleport": "Teleport",
+
   "menu.tempad.settings": "Settings",
+
+  "menu.tempad.settings.default_macro": "Default Macro",
+  "menu.tempad.settings.default_macro.subtitle": "Default macro to use when shift-clicking Tempad or pressing [F] key",
+
+  "menu.tempad.settings.default_app": "Default App",
+  "menu.tempad.settings.default_app.subtitle": "Default app to open when right-clicking Tempad",
+
+  "menu.tempad.settings.organization_method": "Organization",
+  "menu.tempad.settings.organization_method.subtitle": "Default way to organize shown locations on the Tempad",
+
   "menu.tempad.new_location": "New Location",
   "menu.tempad.new_location.name": "Name:",
   "menu.tempad.new_location.color": "Color:",
 
   "provider.tempad.default": "On Device",
-  "provider.tempad.warps": "From Warps"
+  "provider.tempad.warps": "From Warps",
+
+  "macro.tempad.default": "Open Fav",
+  "macro.tempad.default.description": "Teleport to the favorite location",
+
+  "organization_method.tempad.by_provider": "By Provider",
+  "organization_method.tempad.alphabetical": "Alphabetical",
+  "organization_method.tempad.by_dimension": "By Dimension"
 }

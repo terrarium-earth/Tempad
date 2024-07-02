@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.client.widgets
+package earth.terrarium.tempad.client.widgets.buttons
 
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad

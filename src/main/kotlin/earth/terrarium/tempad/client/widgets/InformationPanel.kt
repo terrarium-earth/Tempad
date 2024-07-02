@@ -1,27 +1,27 @@
 package earth.terrarium.tempad.client.widgets
 
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
+import earth.terrarium.olympus.client.components.base.ListWidget
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.core.GlobalPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.util.Mth
 import java.util.function.Consumer
 
-class InformationPanel @JvmOverloads constructor(
+class InformationPanel constructor(
     x: Int,
     y: Int,
-    width: Int,
-    height: Int,
-    private val color: Int = Tempad.ORANGE.value,
-    private val shadow: Boolean = true
-) :
-    SelectionList<TextEntry?>(x, y, width, height, 10, Consumer { _ -> }) {
+) : ListWidget(92, 76) {
     companion object {
-        private val EMPTY_LINE_1 = TextEntry(Component.translatable(("gui.${Tempad.MOD_ID}.no_selection.first_line")))
-        private val EMPTY_LINE_2 = TextEntry(Component.translatable(("gui.${Tempad.MOD_ID}.no_selection.second_line")))
-        private val NO_SELECTION: List<TextEntry> = listOf(EMPTY_LINE_1, EMPTY_LINE_2)
+        private val EMPTY_LINE_1 = StringEntry(Component.translatable(("gui.${Tempad.MOD_ID}.no_selection.first_line")))
+        private val EMPTY_LINE_2 = StringEntry(Component.translatable(("gui.${Tempad.MOD_ID}.no_selection.second_line")))
+        private val NO_SELECTION = listOf(EMPTY_LINE_1, EMPTY_LINE_2)
 
         private val LOCATION_X = "gui.${Tempad.MOD_ID}.x"
         private val LOCATION_Y = "gui.${Tempad.MOD_ID}.y"
@@ -38,38 +38,39 @@ class InformationPanel @JvmOverloads constructor(
         }
     }
 
-    fun updateBlank(showNoSelection: Boolean = true) {
-        if (showNoSelection) {
-            updateEntries(NO_SELECTION)
-        } else {
-            updateEntries(emptyList())
-        }
+    init {
+        gap = 2
+        set(NO_SELECTION)
     }
 
     fun update(location: LocationData) {
-        updateEntries(
-            java.util.List.of(
-                TextEntry(Component.literal(location.name), color, shadow),
-                TextEntry(Component.translatable(LOCATION_X, Mth.floor(location.x)), color, shadow),
-                TextEntry(Component.translatable(LOCATION_Y, Mth.floor(location.y)), color, shadow),
-                TextEntry(Component.translatable(LOCATION_Z, Mth.floor(location.z)), color, shadow),
-                TextEntry(Component.translatable(ANGLE, location.angle), color, shadow),
-                TextEntry(Component.translatable(LOCATION_DIMENSION, location.dimComponent, color, shadow))
-            )
-        )
+        set(listOf(
+            StringEntry(Component.literal(location.name)),
+            StringEntry(Component.translatable(LOCATION_X, Mth.floor(location.x))),
+            StringEntry(Component.translatable(LOCATION_Y, Mth.floor(location.y))),
+            StringEntry(Component.translatable(LOCATION_Z, Mth.floor(location.z))),
+            StringEntry(Component.translatable(ANGLE, location.angle)),
+            StringEntry(Component.translatable(LOCATION_DIMENSION, location.dimComponent))
+        ))
     }
 
-    fun updateNameless(pos: GlobalPos) {
-        updateEntries(
-            getEntries(pos).map { TextEntry(it, color, shadow) } +
-            TextEntry(
-                Component.translatable(
-                    LOCATION_DIMENSION,
-                    Component.translatable(pos.dimension().location().toLanguageKey("dimension"))
-                ),
-                color,
-                shadow
-            )
-        )
+    fun clearLines() {
+        set(NO_SELECTION)
     }
+}
+
+class StringEntry(
+    text: Component,
+) : StringWidget(text, Minecraft.getInstance().font), ListWidget.Item {
+    override fun getRectangle(): ScreenRectangle {
+        return super<StringWidget>.getRectangle()
+    }
+
+    init {
+        setColor(Tempad.ORANGE.value)
+        alignLeft()
+    }
+
+    override fun getX(): Int = super.getX() + 4
+    override fun getY(): Int = super.getY() + 4
 }

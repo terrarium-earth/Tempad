@@ -16,4 +16,8 @@ object MacroRegistry: Map<ResourceLocation, TempadMacro> by macros {
     fun getOrDefault(id: ResourceLocation): TempadMacro {
         return macros[id] ?: ModMacros.DEFAULT_MACRO
     }
+
+    fun getIds(): Set<ResourceLocation> {
+        return macros.keys
+    }
 }

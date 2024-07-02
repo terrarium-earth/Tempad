@@ -13,7 +13,7 @@ object ModMacros {
         }
     }
 
-    val DEFAULT_MACRO_ID = "default_macro".tempadId
+    val DEFAULT_MACRO_ID = "default".tempadId
 
     fun init() {
         MacroRegistry.register(DEFAULT_MACRO_ID, DEFAULT_MACRO)

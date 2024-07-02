@@ -23,6 +23,7 @@ repositories {
     maven(url = "https://maven.neoforged.net/releases")
     maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
     maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
+    mavenLocal()
 }
 
 dependencies {

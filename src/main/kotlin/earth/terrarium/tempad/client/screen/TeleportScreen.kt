@@ -6,7 +6,7 @@ import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.ModWidgets
-import earth.terrarium.tempad.client.widgets.ToggleButton
+import earth.terrarium.tempad.client.widgets.buttons.ToggleButton
 import earth.terrarium.tempad.client.widgets.location_panel.PanelWidget
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.network.c2s.DeleteLocationPacket
@@ -52,12 +52,14 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
     private var favBtn: ToggleButton? = null
     private var search: EditBox? = null
     private var favorite: FavoriteLocationAttachment? = menu.appContent?.favoriteLocation
+    private var panel: PanelWidget? = null
 
     override fun init() {
         super.init()
-        infoPanel = addRenderableWidget(InformationPanel(localLeft + 4, localTop + 4, 100, 100))
+        infoPanel = addRenderableWidget(InformationPanel(localLeft + 4, localTop + 4))
+        infoPanel!!.setPosition(localLeft + 4, localTop + 21)
 
-        val panel = addRenderableWidget(PanelWidget(
+        panel = addRenderableWidget(PanelWidget(
             menu.appContent?.locations ?: emptyMap(),
             this::selected,
             { selected = it },
@@ -65,8 +67,8 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             { provider, locationId -> favorite?.matches(provider.id, locationId) ?: false }
         ))
 
-        panel.update()
-        panel.setPosition(localLeft + 101, localTop + 21)
+        panel?.update()
+        panel?.setPosition(localLeft + 101, localTop + 21)
 
         val searchValue = Optionull.mapOrDefault(
             search,
@@ -79,7 +81,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
                 localTop + 7,
                 66,
                 12
-            ) { text -> panel.update() })
+            ) { text -> panel?.update() })
 
         search?.setValue(searchValue)
 
@@ -121,12 +123,15 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             ))
         }
 
+        favBtn?.setTooltip(Tooltip.create(Component.translatable("gui.${Tempad.MOD_ID}.favorite.button")))
+
         btns.addChild(
             imgBtn("delete") {
                 if (minecraft == null || selected == null) return@imgBtn
                 val (provider, locationId, _) = selected!!
                 DeleteLocationPacket(provider.id, locationId).sendToServer()
-                panel.deleteSelected()
+                panel?.deleteSelected()
+                infoPanel?.clearLines()
             },
             CENTERED
         )
@@ -144,5 +149,13 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             addRenderableWidget(widget)
             widget.active = false
         }
+    }
+
+    override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
+        super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+        if (panel?.isScrolling == true) {
+            panel?.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+        }
+        return true
     }
 }

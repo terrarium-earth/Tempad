@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.client.widgets
+package earth.terrarium.tempad.client.widgets.buttons
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button

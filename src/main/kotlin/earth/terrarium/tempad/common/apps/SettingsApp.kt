@@ -11,12 +11,11 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.item.ItemStack
 import java.util.*
 
 data class SettingsApp(val slotId: Int): TempadApp<SettingsData> {
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
-        return ModMenus.TempadSettingsMenu(
+        return ModMenus.SettingsMenu(
             pContainerId,
             pPlayerInventory,
             Optional.empty()

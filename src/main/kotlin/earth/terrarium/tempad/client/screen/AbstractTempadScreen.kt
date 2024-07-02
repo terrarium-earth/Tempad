@@ -5,20 +5,20 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.fuel.FuelConsumer
-import earth.terrarium.tempad.client.widgets.AppButton
+import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.client.widgets.FuelBarWidget
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
-import earth.terrarium.tempad.common.registries.ModNetworking
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.events.ContainerEventHandler
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 
-abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: ResourceLocation, menu: T, val inv: Inventory, title: Component): AbstractContainerScreen<T>(menu, inv, title) {
+abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: ResourceLocation?, menu: T, val inv: Inventory, title: Component): AbstractContainerScreen<T>(menu, inv, title) {
     init {
         this.imageWidth = 256
         this.imageHeight = 256
@@ -55,10 +55,15 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         graphics.blitSprite(SPRITE, this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
-        graphics.blitSprite(appSprite, this.leftPos + 30, this.topPos + 20, 198, 118)
+        appSprite?.let { graphics.blitSprite(it, this.leftPos + 30, this.topPos + 20, 198, 118) }
     }
 
     override fun renderLabels(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {
         pGuiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, Tempad.ORANGE.value, true)
+    }
+
+    override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+        this.renderTooltip(pGuiGraphics, pMouseX, pMouseY)
     }
 }

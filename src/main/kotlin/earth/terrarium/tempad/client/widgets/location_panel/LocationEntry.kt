@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import java.util.UUID
 
-class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntryBuilder.() -> Unit = {}): ListEntry<Any> {
+class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntryBuilder.() -> Unit = {}): KListWidgetItem {
     companion object {
         val FAVORITE = "favorite".sprites("misc")
     }
@@ -28,20 +28,16 @@ class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntry
     var isSelected: () -> Boolean
     var isFavorite: () -> Boolean
 
-    override fun render(
-        graphics: GuiGraphics,
-        scissor: ScissorBoxStack,
-        x: Int,
-        y: Int,
-        width: Int,
-        mouseX: Int,
-        mouseY: Int,
-        listHovered: Boolean,
-        partialTick: Float
-    ) {
+    override var _x: Int = 0
+    override var _y: Int = 0
+    override var _focused: Boolean = false
+    override var _width: Int = 0
+    override var _height: Int = 12
+
+    override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, pPartialTick: Float) {
         val selected = isSelected()
         val favorite = isFavorite()
-        val hovered = listHovered && mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + 12
+        val hovered = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + 12
 
         if (selected) {
             graphics.fill(x, y, x + width, y + 12, Tempad.ORANGE.value)
@@ -56,9 +52,7 @@ class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntry
         graphics.drawString(Minecraft.getInstance().font, text, x + 2 + if(favorite) 14 else 0, y + 2, color, false)
     }
 
-    override fun getHeight(p0: Int): Int = 12
-
-    override fun mouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, width: Int): Boolean = onClick()
+    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean = onClick()
 }
 
 

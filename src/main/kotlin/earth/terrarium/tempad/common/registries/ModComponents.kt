@@ -8,6 +8,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.createRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.data.SettingsComponent
 import earth.terrarium.tempad.common.utils.componentType
 import earth.terrarium.tempad.common.utils.networkSerialize
 import earth.terrarium.tempad.common.utils.serialize
@@ -18,17 +19,10 @@ import net.minecraft.resources.ResourceLocation
 object ModComponents {
     val REGISTRY: ResourcefulRegistry<DataComponentType<*>> = ResourcefulRegistries.create(BuiltInRegistries.DATA_COMPONENT_TYPE, Tempad.MOD_ID)
 
-    val DEFAULT_APP: DataComponentType<ResourceLocation> by REGISTRY.register("default_app") {
+    val TEMPAD_SETTINGS: DataComponentType<SettingsComponent> by REGISTRY.register("tempad_settings") {
         componentType {
-            serialize = ResourceLocation.CODEC
-            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
-        }
-    }
-
-    val DEFAULT_MACRO: DataComponentType<ResourceLocation> by REGISTRY.register("default_macro") {
-        componentType {
-            serialize = ResourceLocation.CODEC
-            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
+            serialize = SettingsComponent.CODEC
+            networkSerialize = SettingsComponent.BYTE_CODEC
         }
     }
 }

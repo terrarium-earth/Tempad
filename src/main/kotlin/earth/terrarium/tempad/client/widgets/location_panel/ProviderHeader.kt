@@ -1,23 +1,26 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
-import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack
+import earth.terrarium.olympus.client.components.base.ListWidget
 import earth.terrarium.olympus.client.components.lists.EntryListWidget
-import earth.terrarium.olympus.client.components.lists.ListEntry
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.ProviderSettings
+import earth.terrarium.tempad.client.widgets.ModWidgets.CHEVRON_DOWN
+import earth.terrarium.tempad.client.widgets.ModWidgets.CHEVRON_UP
 import earth.terrarium.tempad.common.utils.sprites
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.narration.NarratableEntry
+import net.minecraft.client.gui.narration.NarratableEntry.NarrationPriority
+import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import java.util.function.Consumer
 
-class ProviderHeader(val settings: ProviderSettings): ListEntry<Any> {
+class ProviderHeader(val settings: ProviderSettings, val parent: PanelWidget): KListWidgetItem {
     companion object {
         val valueCaches = mutableMapOf<ResourceLocation, Boolean>()
-
-        val CHEVRON_DOWN = "chevron_down".sprites("misc")
-        val CHEVRON_UP = "chevron_up".sprites("misc")
     }
 
     val text = Component.translatable(settings.id.toLanguageKey("provider")).withStyle(ChatFormatting.UNDERLINE)
@@ -27,38 +30,32 @@ class ProviderHeader(val settings: ProviderSettings): ListEntry<Any> {
             valueCaches[settings.id] = value
         }
 
-    var parent: EntryListWidget<Any>? = null
+    override var _x: Int = 0
+    override var _y: Int = 0
+    override var _focused: Boolean = false
+    override var _width: Int = 0
+    override var _height: Int = 12
 
-    override fun render(
-        graphics: GuiGraphics,
-        scissor: ScissorBoxStack,
-        x: Int,
-        y: Int,
-        width: Int,
-        mouseX: Int,
-        mouseY: Int,
-        hovered: Boolean,
-        partialTick: Float
-    ) {
-        graphics.drawScrollingString(Minecraft.getInstance().font, text, x + 2, x + width - 14, y + 2, Tempad.ORANGE.value)
+    override fun setFocused(pFocused: Boolean) {
+        _focused = pFocused
+    }
 
-        val isHovered = hovered && mouseX >= x + width - 12 && mouseX <= x + width && mouseY >= y && mouseY <= y + 10
+    override fun isFocused(): Boolean = _focused
+
+    override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, pPartialTick: Float) {
+        graphics.drawScrollingString(Minecraft.getInstance().font, text, _x + 2, _x + _width - 14, _y + 2, Tempad.ORANGE.value)
+
+        val isHovered = mouseX >= _x + _width - 12 && mouseX <= _x + _width && mouseY >= _y && mouseY <= _y + 10
         if (hidden) {
-            graphics.blitSprite(CHEVRON_UP.get(true, isHovered), x + width - 12, y, 10, 10)
+            graphics.blitSprite(CHEVRON_UP.get(true, isHovered), _x + _width - 12, _y + 2, 10, 10)
         } else {
-            graphics.blitSprite(CHEVRON_DOWN.get(true, isHovered), x + width - 12, y, 10, 10)
+            graphics.blitSprite(CHEVRON_DOWN.get(true, isHovered), _x + _width - 12, _y + 2, 10, 10)
         }
     }
 
-    override fun setList(list: EntryListWidget<Any>?) {
-        parent = list
-    }
-
-    override fun getHeight(width: Int): Int = 14
-
-    override fun mouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int, width: Int): Boolean {
+    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
         hidden = !hidden
-        parent?.update()
+        parent.update()
         return true
     }
 }
