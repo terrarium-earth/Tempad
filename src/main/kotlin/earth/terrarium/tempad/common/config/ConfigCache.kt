@@ -9,6 +9,7 @@ import com.teamresourceful.resourcefullib.common.network.base.ClientboundPacketT
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
+import earth.terrarium.tempad.Tempad
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
@@ -74,7 +75,7 @@ class ConfigCache(val modId: String, val network: Network) {
             network.register(syncType)
             observable.getter.call().addListener { _, newValue ->
                 this.value = newValue
-                ServerLifecycleHooks.getCurrentServer()?.let { network.sendToAllPlayers(ConfigSyncData(newValue), it) }
+                network.sendToAllPlayers(ConfigSyncData(newValue), Tempad.server!!)
             }
         }
 

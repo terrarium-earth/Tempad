@@ -24,7 +24,7 @@ data class SettingsApp(val slotId: Int): TempadApp<SettingsData> {
 
     override fun getDisplayName(): Component = Component.translatable("menu.tempad.settings")
 
-    override fun createContent(player: ServerPlayer): SettingsData = SettingsData(TempadLocations.getProviders(), slotId)
+    override fun createContent(player: ServerPlayer): SettingsData = SettingsData(TempadLocations.providers, slotId)
 
     override fun isEnabled(player: Player): Boolean = true
 }

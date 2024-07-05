@@ -1,4 +1,6 @@
 import groovy.json.StringEscapeUtils
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
@@ -62,6 +64,13 @@ tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     filesMatching(listOf("META-INF/neoforge.mods.toml")) {
         expand("version" to project.version)
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.add("-Xjvm-default=all")
     }
 }
 

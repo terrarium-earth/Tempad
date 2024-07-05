@@ -23,6 +23,7 @@ import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import org.lwjgl.glfw.GLFW
 
 class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.NewLocationMenu>(SPRITE, menu, inv, title) {
@@ -48,6 +49,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
     }
 
     var currentColor = Tempad.ORANGE
+    lateinit var textInput: EditBox
 
     override fun init() {
         super.init()
@@ -106,7 +108,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             ).setColor(Tempad.ORANGE.value).alignLeft()
         )
 
-        val box = addRenderableWidget(
+        textInput = addRenderableWidget(
             EditBox(
                 this.font,
                 this.localLeft + 8,
@@ -114,17 +116,35 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             )
         )
 
-        box.setMaxLength(32)
-        box.isBordered = false
-        box.fgColor
-        box.setTextColor(Tempad.ORANGE.value)
+        textInput.setMaxLength(32)
+        textInput.isBordered = false
+        textInput.fgColor
+        textInput.setTextColor(Tempad.ORANGE.value)
 
         addRenderableWidget(ImageButton(
             this.localLeft + 84, this.localTop + 100, 14, 14,
             "save".btnSprites()
         ) {
-            CreateLocationPacket(box.value, currentColor).sendToServer()
+            CreateLocationPacket(textInput.value, currentColor).sendToServer()
             minecraft?.setScreen(null)
         }).setTooltip(Tooltip.create(CommonComponents.GUI_DONE))
+    }
+
+    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+        if (!textInput.isMouseOver(pMouseX, pMouseY)) {
+            textInput.isFocused = false
+        }
+        return super.mouseClicked(pMouseX, pMouseY, pButton)
+    }
+
+    override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
+        if (textInput.isFocused) {
+            if (pKeyCode == GLFW.GLFW_KEY_ESCAPE) {
+                textInput.isFocused = false
+                return true
+            }
+            return textInput.keyPressed(pKeyCode, pScanCode, pModifiers)
+        }
+        return super.keyPressed(pKeyCode, pScanCode, pModifiers)
     }
 }

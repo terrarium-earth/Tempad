@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item
 object ModItems {
     val REGISTRY: ResourcefulRegistry<Item> = ResourcefulRegistries.create(BuiltInRegistries.ITEM, Tempad.MOD_ID)
 
-    val TEMPAD: TempadItem by REGISTRY.register("tempad") {
-        TempadItem()
-    }
+    val TEMPAD: TempadItem by REGISTRY.register("tempad") { TempadItem() }
+
+    val ADVANCED_TEMPAD: TempadItem by REGISTRY.register("advanced_tempad") { TempadItem() }
 }

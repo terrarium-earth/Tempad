@@ -36,6 +36,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.capabilities.ItemCapability
+import net.neoforged.neoforge.fluids.FluidStack
 import kotlin.reflect.KProperty
 
 operator fun TagKey<EntityType<*>>.contains(entity: EntityType<*>): Boolean = entity.`is`(this)
@@ -52,9 +53,13 @@ operator fun TagKey<Block>.contains(state: BlockState): Boolean = state.`is`(thi
 
 operator fun TagKey<Fluid>.contains(fluid: Fluid): Boolean = fluid.builtInRegistryHolder().`is`(this)
 
+operator fun TagKey<Fluid>.contains(fluid: FluidStack): Boolean = fluid.fluid.`is`(this)
+
 operator fun <T> TagKey<T>.contains(key: Holder.Reference<T>): Boolean = key.`is`(this)
 
 operator fun MinecraftServer?.get(dimId: ResourceKey<Level>): ServerLevel? = this?.getLevel(dimId)
+
+operator fun <T> ItemStack.get(capability: ItemCapability<T, Void>) = this.getCapability(capability)
 
 inline fun <reified T: Entity> EntityGetter.getEntities(area: AABB, noinline predicate: (T) -> Boolean): List<T> {
     return this.getEntitiesOfClass(T::class.java, area, predicate)

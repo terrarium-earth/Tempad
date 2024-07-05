@@ -8,12 +8,15 @@ import earth.terrarium.tempad.common.data.locationData
 import net.minecraft.world.entity.player.Player
 import java.util.*
 
-object DefaultLocationHandler: LocationHandler {
-    val settings = ProviderSettings("default".tempadId)
-
-    override fun removeLocation(player: Player, locationId: UUID) {
-        player.locationData -= locationId
+class DefaultLocationHandler(val player: Player): LocationHandler {
+    companion object {
+        val SETTINGS = ProviderSettings("default".tempadId)
     }
 
-    override fun getLocations(player: Player): Map<UUID, LocationData> = player.locationData.locations
+    override val locations: Map<UUID, LocationData>
+        get() = player.locationData.locations
+
+    override fun minusAssign(locationId: UUID) {
+        player.locationData -= locationId
+    }
 }

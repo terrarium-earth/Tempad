@@ -1,20 +1,17 @@
 package earth.terrarium.tempad.client.screen
 
-import earth.terrarium.olympus.client.components.base.ListWidget
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.macro.MacroRegistry
 import earth.terrarium.tempad.client.screen.TeleportScreen.Companion.imgBtn
 import earth.terrarium.tempad.client.widgets.LabeledWidget
-import earth.terrarium.tempad.client.widgets.buttons.ButtonType
-import earth.terrarium.tempad.client.widgets.buttons.FlatButton
 import earth.terrarium.tempad.client.widgets.colored.ColoredDropdown
 import earth.terrarium.tempad.client.widgets.colored.ColoredList
 import earth.terrarium.tempad.common.data.*
 import earth.terrarium.tempad.common.registries.ModMenus
+import earth.terrarium.tempad.common.registries.settings
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.toLanguageKey
 import net.minecraft.client.gui.layouts.FrameLayout
-import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory

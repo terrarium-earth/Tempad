@@ -25,6 +25,7 @@ import net.minecraft.client.gui.layouts.LayoutSettings
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import org.lwjgl.glfw.GLFW
 import java.util.*
 
 class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Component) :
@@ -45,35 +46,32 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
         set(value) {
             field = value
             locationButtons?.visitWidgets { widget -> widget.active = value != null }
-            favBtn?.toggled = favorite?.matches(value?.first?.id, value?.second) == true
-            value?.third?.let { infoPanel?.update(it) }
+            favBtn.toggled = favorite?.matches(value?.first?.id, value?.second) == true
+            value?.third?.let { infoPanel.update(it) }
         }
-    private var infoPanel: InformationPanel? = null
-    private var favBtn: ToggleButton? = null
-    private var search: EditBox? = null
+
+    private lateinit var infoPanel: InformationPanel
+    private lateinit var favBtn: ToggleButton
+    private lateinit var search: EditBox
     private var favorite: FavoriteLocationAttachment? = menu.appContent?.favoriteLocation
-    private var panel: PanelWidget? = null
+    private lateinit var panel: PanelWidget
 
     override fun init() {
         super.init()
         infoPanel = addRenderableWidget(InformationPanel(localLeft + 4, localTop + 4))
-        infoPanel!!.setPosition(localLeft + 4, localTop + 21)
+        infoPanel.setPosition(localLeft + 4, localTop + 21)
 
-        panel = addRenderableWidget(PanelWidget(
+        val searchValue = if (::search.isInitialized) search.value else ""
+
+        this.panel = addRenderableWidget(PanelWidget(
             menu.appContent?.locations ?: emptyMap(),
             this::selected,
             { selected = it },
-            { search?.value ?: "" },
+            { search.value },
             { provider, locationId -> favorite?.matches(provider.id, locationId) ?: false }
         ))
 
-        panel?.update()
-        panel?.setPosition(localLeft + 101, localTop + 21)
-
-        val searchValue = Optionull.mapOrDefault(
-            search,
-            { obj: EditBox -> obj.value }, ""
-        )
+        panel.setPosition(localLeft + 101, localTop + 21)
 
         this.search = addRenderableWidget(
             ModWidgets.search(
@@ -81,9 +79,10 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
                 localTop + 7,
                 66,
                 12
-            ) { text -> panel?.update() })
+            ) { text -> panel.update() })
 
-        search?.setValue(searchValue)
+        search.setValue(searchValue)
+        panel.update()
 
         locationButtons = LinearLayout(
             localLeft + 4,
@@ -117,21 +116,21 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             CENTERED
         )
 
-        favBtn?.tooltip = { selected ->
+        favBtn.tooltip = { selected ->
             Tooltip.create(Component.translatable(
                 if (selected) "gui.${Tempad.MOD_ID}.unfavorite.button" else "gui.${Tempad.MOD_ID}.favorite.button"
             ))
         }
 
-        favBtn?.setTooltip(Tooltip.create(Component.translatable("gui.${Tempad.MOD_ID}.favorite.button")))
+        favBtn.setTooltip(Tooltip.create(Component.translatable("gui.${Tempad.MOD_ID}.favorite.button")))
 
         btns.addChild(
             imgBtn("delete") {
                 if (minecraft == null || selected == null) return@imgBtn
                 val (provider, locationId, _) = selected!!
                 DeleteLocationPacket(provider.id, locationId).sendToServer()
-                panel?.deleteSelected()
-                infoPanel?.clearLines()
+                panel.deleteSelected()
+                infoPanel.clearLines()
             },
             CENTERED
         )
@@ -153,9 +152,27 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
 
     override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
         super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
-        if (panel?.isScrolling == true) {
-            panel?.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+        if (panel.isScrolling) {
+            panel.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
         }
         return true
+    }
+
+    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+        if (!search.isMouseOver(pMouseX, pMouseY)) {
+            search.isFocused = false
+        }
+        return super.mouseClicked(pMouseX, pMouseY, pButton)
+    }
+
+    override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
+        if (search.isFocused) {
+            if (pKeyCode == GLFW.GLFW_KEY_ESCAPE) {
+                search.isFocused = false
+                return true
+            }
+            return search.keyPressed(pKeyCode, pScanCode, pModifiers)
+        }
+        return super.keyPressed(pKeyCode, pScanCode, pModifiers)
     }
 }

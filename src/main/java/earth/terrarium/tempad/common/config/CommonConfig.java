@@ -16,6 +16,11 @@ import com.teamresourceful.resourcefulconfig.api.types.options.EntryType;
         }
 )
 @ConfigInfo.Color("#ff6f00")
+@Config(value = "tempad", categories = {
+    CommonConfig.TimeDoor.class,
+    CommonConfig.Tempad.class,
+    CommonConfig.AdvancedTempad.class
+})
 public final class CommonConfig {
     @ConfigEntry(id = "allow_interdimensional_travel", type = EntryType.BOOLEAN)
     @Comment("Whether or not Time Doors are allowed to be opened to dimensions other than the one they are in.")
@@ -28,6 +33,10 @@ public final class CommonConfig {
     @ConfigEntry(id = "allow_location_saving", type = EntryType.BOOLEAN)
     @Comment("Whether or not locations can be saved to the Tempad.")
     public static boolean allowLocationSaving = true;
+
+    @ConfigEntry(id = "exp_per_charge", type = EntryType.INTEGER)
+    @Comment("The amount of experience to consume from the player per charge of the tempad, where 1 charge = 1 opening of the timedoor")
+    public static Observable<Integer> expPerCharge = Observable.of(40);
 
     public static final class TimeDoor {
         @ConfigEntry(id = "placement_distance", type = EntryType.INTEGER)
@@ -46,11 +55,7 @@ public final class CommonConfig {
     public static final class Tempad {
         @ConfigEntry(id = "fuel_type", type = EntryType.STRING)
         @Comment("The type of fuel that the Tempad uses.")
-        public static Observable<String> fuelType = Observable.of("tempad:none");
-
-        @ConfigEntry(id = "consume_amount", type = EntryType.INTEGER)
-        @Comment("The amount of fuel that the Tempad consumes per teleport.")
-        public static Observable<Integer> consumeAmount = Observable.of(0);
+        public static Observable<String> fuelType = Observable.of("tempad:infinite");
 
         @ConfigEntry(id = "capacity", type = EntryType.INTEGER)
         @Comment("The amount of fuel that the Tempad can store.")
@@ -64,11 +69,7 @@ public final class CommonConfig {
     public static final class AdvancedTempad {
         @ConfigEntry(id = "fuel_type", type = EntryType.STRING)
         @Comment("The type of fuel that the Advanced Tempad uses.")
-        public static Observable<String> fuelType = Observable.of("tempad:none");
-
-        @ConfigEntry(id = "consume_amount", type = EntryType.INTEGER)
-        @Comment("The amount of fuel that the Advanced Tempad consumes per teleport.")
-        public static Observable<Integer> consumeAmount = Observable.of(0);
+        public static Observable<String> fuelType = Observable.of("tempad:infinite");
 
         @ConfigEntry(id = "capacity", type = EntryType.INTEGER)
         @Comment("The amount of fuel that the Advanced Tempad can store.")

@@ -14,8 +14,8 @@ data class FuelBarWidget(val fuelConsumer: FuelConsumer, val x: Int, val y: Int)
     }
 
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        val fuelAmount = fuelConsumer.fuelAmount
-        val capacity = fuelConsumer.capacity
+        val fuelAmount = fuelConsumer.charges
+        val capacity = fuelConsumer.totalCharges
         val percentage = fuelAmount.toFloat() / capacity.toFloat()
         val barHeight = (percentage * HEIGHT).toInt()
         graphics.blitSprite(SPRITE, WIDTH, HEIGHT, 0, 0, x + 234, y + HEIGHT - barHeight, WIDTH, barHeight)

@@ -14,16 +14,15 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
 import java.util.*
 
-object WarpsHandler: LocationHandler {
-    val CODEC: Codec<Map<UUID, LocationData>> = Codec.unboundedMap(UUIDUtil.CODEC, LocationData.CODEC).stable()
-    val DATA = CodecSavedData.create(CODEC, "tempad/warps").alwaysDirty().defaultValue { emptyMap() }
-    val SETTINGS = ProviderSettings("warps".tempadId, downloadable = false)
-
-    override fun removeLocation(player: Player, locationId: UUID) {
-        // Operation not supported
+class WarpsHandler(player: Player): LocationHandler {
+    companion object {
+        val CODEC: Codec<Map<UUID, LocationData>> = Codec.unboundedMap(UUIDUtil.CODEC, LocationData.CODEC).stable()
+        val DATA = CodecSavedData.create(CODEC, "tempad/warps").alwaysDirty().defaultValue { emptyMap() }
+        val SETTINGS = ProviderSettings("warps".tempadId, downloadable = false)
     }
 
-    override fun getLocations(player: Player): Map<UUID, LocationData> {
-        return emptyMap()
-    }
+    override val locations: Map<UUID, LocationData>
+        get() = emptyMap()
+
+    override fun minusAssign(locationId: UUID) {}
 }

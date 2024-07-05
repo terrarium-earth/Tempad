@@ -32,27 +32,30 @@ data class ProviderSettings(val id: ResourceLocation, val exportable: Boolean = 
 }
 
 interface LocationHandler {
-    fun removeLocation(player: Player, locationId: UUID)
-    fun getLocations(player: Player): Map<UUID, LocationData>
+    val locations: Map<UUID, LocationData>
+    operator fun minusAssign(locationId: UUID)
 }
 
-object TempadLocations: Iterable<Map.Entry<ProviderSettings, LocationHandler>> {
-    private val providers: MutableMap<ProviderSettings, LocationHandler> = mutableMapOf()
+typealias LocationProvider = (Player) -> LocationHandler
+
+object TempadLocations {
+    private val registry: MutableMap<ProviderSettings, LocationProvider> = mutableMapOf()
+
+    val providers: Set<ProviderSettings>
+        get() = registry.keys
 
     @JvmStatic
-    fun register(settings: ProviderSettings, provider: LocationHandler) {
-        providers[settings] = provider
+    @JvmName("register")
+    operator fun set(settings: ProviderSettings, provider: LocationProvider) {
+        registry[settings] = provider
     }
 
     @JvmStatic
-    operator fun get(settings: ProviderSettings): LocationHandler? = providers[settings]
+    operator fun get(settings: ProviderSettings): LocationProvider? = registry[settings]
 
     @JvmStatic
-    operator fun get(id: ResourceLocation): LocationHandler? = providers.keys.find { it.id == id }?.let { providers[it] }
+    operator fun get(id: ResourceLocation): LocationProvider? = registry.keys.find { it.id == id }?.let { registry[it] }
 
-    fun getAllForPlayer(player: Player): Map<ProviderSettings, Map<UUID, LocationData>> = providers.mapValues { it.value.getLocations(player) }
-
-    fun getProviders(): Set<ProviderSettings> = providers.keys
-
-    override operator fun iterator(): Iterator<Map.Entry<ProviderSettings, LocationHandler>> = providers.iterator()
+    @JvmStatic
+    operator fun get(player: Player): Map<ProviderSettings, Map<UUID, LocationData>> = registry.mapValues { it.value(player).locations }
 }

@@ -7,9 +7,9 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.LocationDataAttachment
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
-import earth.terrarium.tempad.common.utils.attachmentType
-import earth.terrarium.tempad.common.utils.codec
+import earth.terrarium.tempad.common.utils.*
 import net.minecraft.Util
+import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.NeoForgeRegistries
 
@@ -24,9 +24,13 @@ object ModAttachments {
     }
 
     val FAVORITE: AttachmentType<FavoriteLocationAttachment> by REGISTRY.register("favorite") {
-        attachmentType({ FavoriteLocationAttachment(DefaultLocationHandler.settings.id, Util.NIL_UUID) }) {
+        attachmentType({ FavoriteLocationAttachment(DefaultLocationHandler.SETTINGS.id, Util.NIL_UUID) }) {
             codec = FavoriteLocationAttachment.CODEC
             copyOnDeath()
         }
     }
+
 }
+
+var AttachmentHolder.favoriteLocationData by ModAttachments.FAVORITE.optional()
+var AttachmentHolder.locationData by ModAttachments.LOCATIONS

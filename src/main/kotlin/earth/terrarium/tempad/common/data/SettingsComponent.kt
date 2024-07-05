@@ -4,7 +4,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.codecs.EnumCodec
-import earth.terrarium.tempad.common.apps.TeleportApp
 import earth.terrarium.tempad.common.registries.ModApps
 import earth.terrarium.tempad.common.registries.ModComponents
 import earth.terrarium.tempad.common.registries.ModMacros
@@ -13,12 +12,6 @@ import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.common.MutableDataComponentHolder
 import com.teamresourceful.bytecodecs.defaults.EnumCodec as EnumByteCodec
 
-var MutableDataComponentHolder.settings by ComponentDelegate(ModComponents.TEMPAD_SETTINGS, SettingsComponent(
-    ModApps.TELEPORT,
-    ModMacros.DEFAULT_MACRO_ID,
-    OrganizationMethod.BY_PROVIDER
-))
-
 enum class OrganizationMethod {
     BY_PROVIDER,
     BY_DIMENSION,
@@ -26,6 +19,7 @@ enum class OrganizationMethod {
 }
 
 data class SettingsComponent(val defaultApp: ResourceLocation, val defaultMacro: ResourceLocation, val organizationMethod: OrganizationMethod) {
+
     companion object {
         val CODEC = RecordCodecBuilder.create {
             it.group(

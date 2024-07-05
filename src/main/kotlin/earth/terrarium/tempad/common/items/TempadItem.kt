@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.common.data.settings
+import earth.terrarium.tempad.common.registries.settings
 import earth.terrarium.tempad.common.utils.getSlot
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
