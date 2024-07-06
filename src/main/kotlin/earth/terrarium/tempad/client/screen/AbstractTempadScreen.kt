@@ -1,10 +1,11 @@
 package earth.terrarium.tempad.client.screen
 
+import com.mojang.blaze3d.systems.RenderSystem
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.api.fuel.FuelConsumer
+import earth.terrarium.tempad.api.fuel.FuelHandler
 import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.client.widgets.FuelBarWidget
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
@@ -12,7 +13,6 @@ import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.events.ContainerEventHandler
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -28,6 +28,7 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
 
     var localLeft: Int = 0
     var localTop: Int = 0
+    val tempadItem get() = inv[menu.appContent!!.slotId]
 
     companion object {
         val SPRITE = "screen/tempad".tempadId
@@ -42,20 +43,23 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
             OpenAppPacket(button!!.appId, menu.appContent!!.slotId).sendToServer()
         }
 
-        for ((id, app) in AppRegistry.getAll(menu.appContent!!.slotId)) {
+        for ((id, app) in AppRegistry.getAll(inv.player, menu.appContent!!.slotId)) {
             appList.addEntry(AppButton(app, id))
         }
 
         addRenderableWidget(appList)
 
-        val fuelConsumer = inv[menu.appContent!!.slotId].getCapability(FuelConsumer.CAPABILITY) ?: return
+        val fuelHandler = inv[menu.appContent!!.slotId].getCapability(FuelHandler.CAPABILITY) ?: return
 
-        addRenderableOnly(FuelBarWidget(fuelConsumer, 237, 52))
+        addRenderableOnly(FuelBarWidget(fuelHandler, 237, 52))
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         graphics.blitSprite(SPRITE, this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
-        appSprite?.let { graphics.blitSprite(it, this.leftPos + 30, this.topPos + 20, 198, 118) }
+        appSprite?.let {
+            RenderSystem.enableBlend()
+            graphics.blitSprite(it, this.leftPos + 30, this.topPos + 20, 198, 118)
+        }
     }
 
     override fun renderLabels(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {

@@ -5,10 +5,12 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.apps.BasicAppContent
 import earth.terrarium.tempad.common.apps.NewLocationData
 import earth.terrarium.tempad.common.apps.TeleportData
 import earth.terrarium.tempad.common.apps.SettingsData
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import earth.terrarium.tempad.common.menu.FuelMenu
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.entity.player.Inventory
@@ -42,6 +44,13 @@ object ModMenus {
         MenuContentHelper.create(
             ::NewLocationMenu,
             RecordCodecMenuContentSerializer(NewLocationData.CODEC)
+        )
+    }
+
+    val FUEL_MENU: MenuType<FuelMenu> by REGISTRY.register("fuel") {
+        MenuContentHelper.create(
+            ::FuelMenu,
+            RecordCodecMenuContentSerializer(BasicAppContent.CODEC)
         )
     }
 }

@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.fuel
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.energy.IEnergyStorage
 
-class EnergyFuelConsumer(stack: ItemStack, override val totalCharges: Int) : BaseFuelConsumer(stack), IEnergyStorage {
+class EnergyFuelHandler(stack: ItemStack, override val totalCharges: Int) : BaseFuelHandler(stack), IEnergyStorage {
     companion object {
         const val consumeAmount = 1000
     }

@@ -9,3 +9,9 @@ abstract class AppContent<T: AppContent<T>> (val slotId: Int, byteCodec: ByteCod
     private val serializer: MenuContentSerializer<T> = RecordCodecMenuContentSerializer(byteCodec)
     override fun serializer(): MenuContentSerializer<T> = serializer
 }
+
+class BasicAppContent(slotId: Int) : AppContent<BasicAppContent>(slotId, CODEC) {
+    companion object {
+        val CODEC = ByteCodec.INT.map(::BasicAppContent, BasicAppContent::slotId)
+    }
+}

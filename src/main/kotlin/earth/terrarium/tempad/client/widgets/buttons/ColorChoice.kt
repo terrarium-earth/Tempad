@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 
-class ColorButton(val color: Color, name: Component, val updateColor: (Color) -> Unit): AbstractButton(0, 0, 14, 14, name) {
+class ColorChoice(val color: Color, name: Component, val updateColor: (Color) -> Unit): AbstractButton(0, 0, 14, 14, name) {
     init {
         tooltip = Tooltip.create(name)
     }

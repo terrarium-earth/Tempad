@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.client
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.client.screen.FuelScreen
 import earth.terrarium.tempad.client.screen.NewLocationScreen
 import earth.terrarium.tempad.client.screen.SettingsScreen
 import earth.terrarium.tempad.client.screen.TeleportScreen
@@ -20,5 +21,6 @@ object TempadClient {
         event.register(ModMenus.TELEPORT_MENU, ::TeleportScreen)
         event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
         event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
+        event.register(ModMenus.FUEL_MENU, ::FuelScreen)
     }
 }

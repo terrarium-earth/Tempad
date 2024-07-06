@@ -2,7 +2,7 @@ package earth.terrarium.tempad.common.entity
 
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.fuel.FuelConsumer
+import earth.terrarium.tempad.api.fuel.FuelHandler
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.items.TempadItem
@@ -33,9 +33,9 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         fun openTimedoor(player: Player, slotId: Int, location: LocationData) {
             val stack = player.inventory[slotId]
             if (stack.item !is TempadItem) return
-            val fuelConsumer = stack.getCapability(FuelConsumer.CAPABILITY) ?: return
-            if (fuelConsumer.charges <= 0) return
-            fuelConsumer -= 1
+            val fuelHandler = stack.getCapability(FuelHandler.CAPABILITY) ?: return
+            if (fuelHandler.charges <= 0) return
+            fuelHandler -= 1
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
             timedoor.pos = LocationData.offsetLocation(player.position(), location.angle, CommonConfig.TimeDoor.placementDistance)

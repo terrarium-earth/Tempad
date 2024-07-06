@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.SingleRecipeInput
 import net.neoforged.neoforge.items.IItemHandler
 
-class SolidFuelConsumer(tempadStack: ItemStack, override val totalCharges: Int) : BaseFuelConsumer(tempadStack), IItemHandler {
+class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) : BaseFuelHandler(tempadStack), IItemHandler {
 
     override fun getSlots(): Int = 1
 

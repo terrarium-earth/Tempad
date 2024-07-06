@@ -6,6 +6,7 @@ object CommonConfigCache {
     val CACHE = ConfigCache("tempad", ModNetworking.CHANNEL)
 
     val expPerCharge by CACHE.ofInt(CommonConfig::expPerCharge)
+    val energyPerCharge by CACHE.ofInt(CommonConfig::energyPerCharge)
 
     object Tempad {
         val fuelType by CACHE.ofString(CommonConfig.Tempad::fuelType)

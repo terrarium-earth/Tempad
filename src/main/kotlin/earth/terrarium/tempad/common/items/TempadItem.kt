@@ -17,7 +17,7 @@ class TempadItem: Item(Properties()) {
         val stack = player.getItemInHand(hand)
         if (level.isClientSide) return InteractionResultHolder.success(stack)
 
-        AppRegistry.get(stack.settings.defaultApp, hand.getSlot(player))?.openMenu(player as ServerPlayer)
+        AppRegistry.get(stack.settings.defaultApp, player, hand.getSlot(player))?.openMenu(player as ServerPlayer)
 
         return InteractionResultHolder.success(stack)
     }

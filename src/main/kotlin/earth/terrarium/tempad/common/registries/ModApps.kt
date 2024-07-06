@@ -2,18 +2,30 @@ package earth.terrarium.tempad.common.registries
 
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.common.apps.FuelApp
 import earth.terrarium.tempad.common.apps.NewLocationApp
 import earth.terrarium.tempad.common.apps.SettingsApp
 import earth.terrarium.tempad.common.apps.TeleportApp
+import earth.terrarium.tempad.common.fuel.DefaultFuelType
+import earth.terrarium.tempad.common.utils.get
 
 object ModApps {
     val TELEPORT = "teleport".tempadId
     val SETTINGS = "settings".tempadId
     val NEW_LOCATION = "new_location".tempadId
+    val FUEL = "fuel".tempadId
 
     fun init() {
-        AppRegistry.register(TELEPORT, ::TeleportApp)
-        AppRegistry.register(NEW_LOCATION, ::NewLocationApp)
-        AppRegistry.register(SETTINGS, ::SettingsApp)
+        AppRegistry[TELEPORT] = { _, id -> TeleportApp(id) }
+        AppRegistry[NEW_LOCATION] = { _, id -> NewLocationApp(id) }
+        AppRegistry[SETTINGS] = { _, id -> SettingsApp(id) }
+        AppRegistry[FUEL] = { player, slotId ->
+            val fuelType = DefaultFuelType.parse(player.inventory[slotId])
+            if (fuelType.acceptsFuel()) {
+                FuelApp(slotId)
+            } else {
+                null
+            }
+        }
     }
 }

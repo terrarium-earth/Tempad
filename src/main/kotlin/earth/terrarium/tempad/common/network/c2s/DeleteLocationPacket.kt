@@ -23,7 +23,7 @@ data class DeleteLocationPacket(val providerId: ResourceLocation, val locationId
             ),
             NetworkHandle.handle { message, player ->
                 if ({ it.item is TempadItem } !in player.inventory) return@handle
-                TempadLocations[message.providerId]?.removeLocation(player, message.locationId)
+                TempadLocations[player, message.providerId]!! -= message.locationId
             }
         )
     }

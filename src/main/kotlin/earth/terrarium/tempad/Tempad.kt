@@ -2,7 +2,7 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
-import earth.terrarium.tempad.api.fuel.FuelConsumer
+import earth.terrarium.tempad.api.fuel.FuelHandler
 import earth.terrarium.tempad.api.fuel.FuelRegistry
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.config.CommonConfig
@@ -43,8 +43,7 @@ class Tempad(bus: IEventBus) {
 
     init {
         TempadLocations[DefaultLocationHandler.SETTINGS] = ::DefaultLocationHandler
-
-        TempadLocations.set(WarpsHandler.SETTINGS, WarpsHandler)
+        TempadLocations[WarpsHandler.SETTINGS] = ::WarpsHandler
 
         CONFIGURATOR.register(CommonConfig::class.java)
 
@@ -62,7 +61,7 @@ class Tempad(bus: IEventBus) {
 
     @SubscribeEvent
     fun registerCaps(event: RegisterCapabilitiesEvent) {
-        event.register(FuelConsumer.CAPABILITY)[ModItems.TEMPAD] = { stack, _ ->
+        event.register(FuelHandler.CAPABILITY)[ModItems.TEMPAD] = { stack, _ ->
             FuelRegistry.get(
                 stack.fuelType ?: ResourceLocation.tryParse(CommonConfigCache.Tempad.fuelType) ?: ModFuel.INFINITE,
                 stack,
@@ -70,7 +69,7 @@ class Tempad(bus: IEventBus) {
             )
         }
 
-        event.register(FuelConsumer.CAPABILITY)[ModItems.ADVANCED_TEMPAD] = { stack, _ ->
+        event.register(FuelHandler.CAPABILITY)[ModItems.ADVANCED_TEMPAD] = { stack, _ ->
             FuelRegistry.get(
                 stack.fuelType ?: ResourceLocation.tryParse(CommonConfigCache.AdvancedTempad.fuelType) ?: ModFuel.INFINITE,
                 stack,
@@ -79,18 +78,18 @@ class Tempad(bus: IEventBus) {
         }
 
         event.register(Capabilities.ItemHandler.ITEM)[ModItems.TEMPAD, ModItems.ADVANCED_TEMPAD] = { stack, _ ->
-            val fuelConsumer = stack[FuelConsumer.CAPABILITY]
-            if (fuelConsumer is IItemHandler) fuelConsumer else null
+            val fuelHandler = stack[FuelHandler.CAPABILITY]
+            if (fuelHandler is IItemHandler) fuelHandler else null
         }
 
         event.register(Capabilities.FluidHandler.ITEM)[ModItems.TEMPAD, ModItems.ADVANCED_TEMPAD] = { stack, _ ->
-            val fuelConsumer = stack[FuelConsumer.CAPABILITY]
-            if (fuelConsumer is IFluidHandlerItem) fuelConsumer else null
+            val fuelHandler = stack[FuelHandler.CAPABILITY]
+            if (fuelHandler is IFluidHandlerItem) fuelHandler else null
         }
 
         event.register(Capabilities.EnergyStorage.ITEM)[ModItems.TEMPAD, ModItems.ADVANCED_TEMPAD] = { stack, _ ->
-            val fuelConsumer = stack[FuelConsumer.CAPABILITY]
-            if (fuelConsumer is IEnergyStorage) fuelConsumer else null
+            val fuelHandler = stack[FuelHandler.CAPABILITY]
+            if (fuelHandler is IEnergyStorage) fuelHandler else null
         }
     }
 }

@@ -14,5 +14,7 @@ object ModNetworking {
         CHANNEL.register(OpenFavoritePacket.TYPE)
         CHANNEL.register(OpenTimedoorPacket.TYPE)
         CHANNEL.register(SetFavoritePacket.TYPE)
+        CHANNEL.register(AddFuelPacket.TYPE)
+        CHANNEL.register(TransferFuelPacket.TYPE)
     }
 }

@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
+import net.minecraft.world.Container
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -71,9 +72,9 @@ fun <T: Entity> entityType(factory: EntityFactory<T>, category: MobCategory, bui
     return EntityType.Builder.of(factory, category).apply(builder)
 }
 
-operator fun Inventory.get(slot: Int): ItemStack = this.getItem(slot)
+operator fun Container.get(slot: Int): ItemStack = this.getItem(slot)
 
-operator fun Inventory.set(slot: Int, stack: ItemStack) = this.setItem(slot, stack)
+operator fun Container.set(slot: Int, stack: ItemStack) = this.setItem(slot, stack)
 
 var Entity.pos: Vec3
     get() = this.position()

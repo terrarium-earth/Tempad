@@ -7,7 +7,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
 
-class ExperienceFuelConsumer(stack: ItemStack, override val totalCharges: Int) : BaseFuelConsumer(stack), IFluidHandlerItem {
+class ExperienceFuelHandler(stack: ItemStack, override val totalCharges: Int) : BaseFuelHandler(stack), IFluidHandlerItem {
     fun playerHasEnoughExp(player: Player) = player.totalExperience >= CommonConfigCache.expPerCharge
 
     fun takeExp(player: Player) {

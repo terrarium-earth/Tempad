@@ -21,8 +21,9 @@ data class OpenAppPacket(val appHolder: AppHolder) : Packet<OpenAppPacket> {
             AppRegistry.BYTE_CODEC.map(::OpenAppPacket, OpenAppPacket::appHolder),
             NetworkHandle.handle { message, player ->
                 val stack = player.inventory[message.appHolder.slotId]
-                if (!stack.`is`(ModItems.TEMPAD) || (message.appHolder.app != null && !message.appHolder.app.isEnabled(player))) return@handle
-                message.appHolder.app!!.openMenu(player as ServerPlayer)
+                val app = message.appHolder.getApp(player)
+                if (!stack.`is`(ModItems.TEMPAD) || (app != null && !app.isEnabled(player))) return@handle
+                app?.openMenu(player as ServerPlayer)
             }
         )
     }

@@ -4,7 +4,7 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.color.ConstantColors
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.client.widgets.buttons.ColorButton
+import earth.terrarium.tempad.client.widgets.buttons.ColorChoice
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.MapWidget
 import earth.terrarium.tempad.common.network.c2s.CreateLocationPacket
@@ -91,7 +91,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         Color.initRainbow()
 
         COLORS.forEach { color ->
-            rowHelper.addChild(ColorButton(color, CommonComponents.EMPTY) { currentColor = it })
+            rowHelper.addChild(ColorChoice(color, CommonComponents.EMPTY) { currentColor = it })
         }
 
         colorLayout.arrangeElements()

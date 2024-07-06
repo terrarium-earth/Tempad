@@ -10,7 +10,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
 
-class LiquidFuelConsumer(tempadStack: ItemStack, override val totalCharges: Int): BaseFuelConsumer(tempadStack), IFluidHandlerItem {
+class LiquidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int): BaseFuelHandler(tempadStack), IFluidHandlerItem {
     override fun getTanks(): Int = 1
 
     override fun getFluidInTank(tank: Int): FluidStack = FluidStack.EMPTY

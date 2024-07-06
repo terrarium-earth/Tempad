@@ -1,11 +1,11 @@
 package earth.terrarium.tempad.client.widgets
 
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.api.fuel.FuelConsumer
+import earth.terrarium.tempad.api.fuel.FuelHandler
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Renderable
 
-data class FuelBarWidget(val fuelConsumer: FuelConsumer, val x: Int, val y: Int): Renderable {
+data class FuelBarWidget(val fuelHandler: FuelHandler, val x: Int, val y: Int): Renderable {
     companion object {
         const val WIDTH = 6
         const val HEIGHT = 54
@@ -14,8 +14,8 @@ data class FuelBarWidget(val fuelConsumer: FuelConsumer, val x: Int, val y: Int)
     }
 
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        val fuelAmount = fuelConsumer.charges
-        val capacity = fuelConsumer.totalCharges
+        val fuelAmount = fuelHandler.charges
+        val capacity = fuelHandler.totalCharges
         val percentage = fuelAmount.toFloat() / capacity.toFloat()
         val barHeight = (percentage * HEIGHT).toInt()
         graphics.blitSprite(SPRITE, WIDTH, HEIGHT, 0, 0, x + 234, y + HEIGHT - barHeight, WIDTH, barHeight)

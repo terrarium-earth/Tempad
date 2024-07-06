@@ -13,7 +13,7 @@ import java.util.*
 
 val Player.favoriteLocation: LocationData?
     get() {
-        return favoriteLocationData?.let { TempadLocations[it.providerId]?.getLocations(this)?.get(it.locationId) }
+        return favoriteLocationData?.let { id -> TempadLocations[this, id.providerId]?.let { it[id.locationId] } }
     }
 
 data class FavoriteLocationAttachment(val providerId: ResourceLocation, val locationId: UUID) {

@@ -34,6 +34,7 @@ data class ProviderSettings(val id: ResourceLocation, val exportable: Boolean = 
 interface LocationHandler {
     val locations: Map<UUID, LocationData>
     operator fun minusAssign(locationId: UUID)
+    operator fun get(locationId: UUID): LocationData? = locations[locationId]
 }
 
 typealias LocationProvider = (Player) -> LocationHandler
@@ -55,6 +56,12 @@ object TempadLocations {
 
     @JvmStatic
     operator fun get(id: ResourceLocation): LocationProvider? = registry.keys.find { it.id == id }?.let { registry[it] }
+
+    @JvmStatic
+    operator fun get(player: Player, settings: ProviderSettings): LocationHandler? = registry[settings]?.invoke(player)
+
+    @JvmStatic
+    operator fun get(player: Player, id: ResourceLocation): LocationHandler? = registry.keys.find { it.id == id }?.let { registry[it]?.invoke(player) }
 
     @JvmStatic
     operator fun get(player: Player): Map<ProviderSettings, Map<UUID, LocationData>> = registry.mapValues { it.value(player).locations }

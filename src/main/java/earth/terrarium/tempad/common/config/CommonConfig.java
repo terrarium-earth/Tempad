@@ -38,6 +38,11 @@ public final class CommonConfig {
     @Comment("The amount of experience to consume from the player per charge of the tempad, where 1 charge = 1 opening of the timedoor")
     public static Observable<Integer> expPerCharge = Observable.of(40);
 
+    @ConfigEntry(id = "energy_per_charge", type = EntryType.INTEGER)
+    @Comment("The amount of energy to consume from an item per charge of the tempad, where 1 charge = 1 opening of the timedoor")
+    public static Observable<Integer> energyPerCharge = Observable.of(1000);
+
+    @Category("timedoor")
     public static final class TimeDoor {
         @ConfigEntry(id = "placement_distance", type = EntryType.INTEGER)
         @Comment("The distance between the Time Door and the player when placed.")
@@ -52,6 +57,7 @@ public final class CommonConfig {
         public static int idleAfterOwnerEnter = 20;
     }
 
+    @Category("tempad")
     public static final class Tempad {
         @ConfigEntry(id = "fuel_type", type = EntryType.STRING)
         @Comment("The type of fuel that the Tempad uses.")
@@ -66,6 +72,7 @@ public final class CommonConfig {
         public static Observable<Integer> cooldownTime = Observable.of(20 * 3 * 60);
     }
 
+    @Category("advanced_tempad")
     public static final class AdvancedTempad {
         @ConfigEntry(id = "fuel_type", type = EntryType.STRING)
         @Comment("The type of fuel that the Advanced Tempad uses.")
@@ -78,11 +85,5 @@ public final class CommonConfig {
         @ConfigEntry(id = "cooldown_time", type = EntryType.INTEGER)
         @Comment("The amount of time in ticks that the Advanced Tempad will be on cooldown after a teleport.")
         public static Observable<Integer> cooldownTime = Observable.of(20 * 3 * 60);
-    }
-
-    public static final class ModCompat {
-        @ConfigEntry(id = "enable_waystones", type = EntryType.BOOLEAN)
-        @Comment("Whether or not compat with Waystones are enabled.")
-        public static boolean enableWaystones = true;
     }
 }

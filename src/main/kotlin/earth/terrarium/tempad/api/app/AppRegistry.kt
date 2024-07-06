@@ -3,13 +3,15 @@ package earth.terrarium.tempad.api.app
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import com.teamresourceful.resourcefullib.common.menu.MenuContent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.player.Player
 
-typealias AppProvider = (slotId: Int) -> TempadApp<*>
+typealias AppProvider = (player: Player, slotId: Int) -> TempadApp<*>?
 
 data class AppHolder(val id: ResourceLocation, val slotId: Int) {
-    val app: TempadApp<*>? = AppRegistry.get(id, slotId)
+    fun getApp(player: Player): TempadApp<*>? {
+        return AppRegistry.get(id, player, slotId)
+    }
 }
 
 object AppRegistry {
@@ -21,16 +23,17 @@ object AppRegistry {
         ::AppHolder
     )
 
-    fun register(id: ResourceLocation, provider: AppProvider) {
+    @JvmName("register")
+    operator fun set(id: ResourceLocation, provider: AppProvider) {
         apps[id] = provider
     }
 
-    fun get(id: ResourceLocation, slotId: Int): TempadApp<*>? {
-        return apps[id]?.invoke(slotId)
+    fun get(id: ResourceLocation, player: Player, slotId: Int): TempadApp<*>? {
+        return apps[id]?.invoke(player, slotId)
     }
 
-    fun getAll(slotId: Int): Map<ResourceLocation, TempadApp<*>> {
-        return apps.mapValues { it.value(slotId) }
+    fun getAll(player: Player, slotId: Int): Map<ResourceLocation, TempadApp<*>> {
+        return apps.mapValues { it.value(player, slotId) }.mapNotNull { it.value?.let { app -> it.key to app } }.toMap()
     }
 
     fun getIds(): Set<ResourceLocation> {

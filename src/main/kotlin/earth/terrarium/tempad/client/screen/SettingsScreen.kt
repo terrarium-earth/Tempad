@@ -19,11 +19,10 @@ import java.util.*
 
 class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.SettingsMenu>(null, menu, inv, title) {
-    var tempadStack = inv[menu.appContent?.slotId!!]
 
-    var defaultMacro: ResourceLocation = tempadStack.settings.defaultMacro
-    var defaultApp: ResourceLocation = tempadStack.settings.defaultApp
-    var organizationMethod: OrganizationMethod = tempadStack.settings.organizationMethod
+    var defaultMacro: ResourceLocation = tempadItem.settings.defaultMacro
+    var defaultApp: ResourceLocation = tempadItem.settings.defaultApp
+    var organizationMethod: OrganizationMethod = tempadItem.settings.organizationMethod
 
     var settings: ColoredList? = null
 

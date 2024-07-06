@@ -1,16 +1,26 @@
 package earth.terrarium.tempad.client.widgets.buttons
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.utils.bedrockButton
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.Component
 
-class FlatButton(text: Component, val type: ButtonType = ButtonType.SOLID, x: Int = 0, y: Int = 0, onPress: (Button) -> Unit) :
-    Button(Minecraft.getInstance().font.width(text) + 12, 14, x, y, text, onPress, { e -> e.get() }) {
+class FlatButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, width: Int = Minecraft.getInstance().font.width(text) + 12, height: Int = 14, x: Int = 0, y: Int = 0, onPress: (Button) -> Unit) :
+    Button(x, y, width, height, text, onPress, { e -> e.get() }) {
+    val textWidth = Minecraft.getInstance().font.width(text)
+
+    var color = Tempad.ORANGE.value
+    var highlightedColor = Tempad.HIGHLIGHTED_ORANGE.value
+    var darkColor = Tempad.DARK_ORANGE.value
 
     override fun renderWidget(graphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-        val color = if(!isActive) Tempad.DARK_ORANGE.value else if (isHovered) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value
+        val color = if(!isActive) darkColor else if (isHovered) highlightedColor else color
+
+        if (type == ButtonType.FANCY) {
+            graphics.bedrockButton(x, y, width, height, isHovered, isActive)
+        }
 
         if (type == ButtonType.SOLID || (type == ButtonType.OUTLINE && isHovered)) {
             graphics.fill(x, y, x + width, y + height, Tempad.DARK_ORANGE.value)
@@ -23,13 +33,15 @@ class FlatButton(text: Component, val type: ButtonType = ButtonType.SOLID, x: In
         graphics.drawString(
             Minecraft.getInstance().font,
             this.getMessage(),
-            x + 6,
-            y + 4,
+            x - (width / 2) - textWidth / 2,
+            y - (height / 2) - 4,
             when (type) {
                 ButtonType.SOLID -> 0xFF000000.toInt()
+                ButtonType.FANCY -> 0xFF000000.toInt()
                 ButtonType.OUTLINE -> if(isHovered && isActive) 0xFF000000.toInt() else color
                 else -> color
-            }
+            },
+            false
         )
     }
 }
@@ -37,5 +49,6 @@ class FlatButton(text: Component, val type: ButtonType = ButtonType.SOLID, x: In
 enum class ButtonType {
     SOLID,
     OUTLINE,
-    TEXT
+    TEXT,
+    FANCY
 }
