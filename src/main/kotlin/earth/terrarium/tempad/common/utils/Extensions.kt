@@ -1,13 +1,15 @@
 package earth.terrarium.tempad.common.utils
 
-import com.teamresourceful.resourcefulconfig.api.types.entries.Observable
+import com.mojang.serialization.Codec
+import com.mojang.serialization.MapCodec
+import com.mojang.serialization.codecs.RecordCodecBuilder
+import com.teamresourceful.bytecodecs.base.ByteCodec
+import com.teamresourceful.bytecodecs.base.ObjectEntryByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
-import com.teamresourceful.resourcefullib.common.network.Network
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.core.GlobalPos
@@ -24,11 +26,9 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EntityType.EntityFactory
 import net.minecraft.world.entity.MobCategory
-import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -38,7 +38,9 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.fluids.FluidStack
-import kotlin.reflect.KProperty
+import java.util.*
+import java.util.function.Function
+import javax.swing.text.html.Option
 
 operator fun TagKey<EntityType<*>>.contains(entity: EntityType<*>): Boolean = entity.`is`(this)
 
@@ -61,6 +63,12 @@ operator fun <T> TagKey<T>.contains(key: Holder.Reference<T>): Boolean = key.`is
 operator fun MinecraftServer?.get(dimId: ResourceKey<Level>): ServerLevel? = this?.getLevel(dimId)
 
 operator fun <T> ItemStack.get(capability: ItemCapability<T, Void>) = this.getCapability(capability)
+
+operator fun ItemStack.minus(amount: Int): ItemStack {
+    val copy = this.copy()
+    copy.shrink(amount)
+    return if (copy.isEmpty) ItemStack.EMPTY else copy
+}
 
 inline fun <reified T: Entity> EntityGetter.getEntities(area: AABB, noinline predicate: (T) -> Boolean): List<T> {
     return this.getEntitiesOfClass(T::class.java, area, predicate)
@@ -108,3 +116,15 @@ fun InteractionHand.getSlot(player: Player): Int = if (this == InteractionHand.M
 
 fun Color.darken(factor: Float): Color = Color((this.intRed * factor).toInt(),
     (this.intGreen * factor).toInt(), (this.intBlue * factor).toInt(), this.intAlpha)
+
+infix fun <K, V> Codec<K>.to(valueC: Codec<V>): Codec<Map<K, V>> = Codec.unboundedMap(this, valueC)
+
+infix fun <K, V> ByteCodec<K>.to(valueC: ByteCodec<V>): ByteCodec<Map<K, V>> = ByteCodec.mapOf(this, valueC)
+
+fun <O, T: Any> MapCodec<Optional<T>>.nullableGetter(getter: Function<O, T?>): RecordCodecBuilder<O, Optional<T>> {
+    return RecordCodecBuilder.of({ Optional.ofNullable(getter.apply(it)) }, this)
+}
+
+fun <O, T: Any> ByteCodec<T>.nullableFieldOf(getter: Function<O, T?>): ObjectEntryByteCodec<O, Optional<T>> {
+    return ObjectEntryByteCodec(this.optionalOf()) { Optional.ofNullable(getter.apply(it)) }
+}

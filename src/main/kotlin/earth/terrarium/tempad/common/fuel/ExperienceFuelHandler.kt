@@ -1,22 +1,14 @@
 package earth.terrarium.tempad.common.fuel
 
-import earth.terrarium.tempad.common.config.CommonConfigCache
+import earth.terrarium.tempad.api.fuel.ItemContext
+import earth.terrarium.tempad.common.registries.experienceConsumeAmount
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
 
-class ExperienceFuelHandler(stack: ItemStack, override val totalCharges: Int) : BaseFuelHandler(stack), IFluidHandlerItem {
-    fun playerHasEnoughExp(player: Player) = player.totalExperience >= CommonConfigCache.expPerCharge
-
-    fun takeExp(player: Player) {
-        if (playerHasEnoughExp(player)) {
-            player.totalExperience -= CommonConfigCache.expPerCharge
-            this += 1
-        }
-    }
-
+class ExperienceFuelHandler(stack: ItemStack, override val totalCharges: Int) : BaseFuelHandler(stack, "experience"), IFluidHandlerItem {
     override fun getTanks(): Int = 1
 
     override fun getFluidInTank(tank: Int): FluidStack = FluidStack.EMPTY
@@ -32,4 +24,18 @@ class ExperienceFuelHandler(stack: ItemStack, override val totalCharges: Int) : 
     override fun drain(maxDrain: Int, action: IFluidHandler.FluidAction): FluidStack = FluidStack.EMPTY
 
     override fun getContainer(): ItemStack = stack
+
+    override fun addChargeFromPlayer(player: Player): Boolean {
+        val toConsume = stack.experienceConsumeAmount
+        if (player.totalExperience >= toConsume) {
+            player.totalExperience -= toConsume
+            this += 1
+            return true
+        }
+        return false
+    }
+
+    override fun addChargeFromItem(context: ItemContext): Boolean {
+        return false // TODO add support for modded experience containers
+    }
 }

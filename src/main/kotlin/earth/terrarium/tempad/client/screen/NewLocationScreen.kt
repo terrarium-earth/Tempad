@@ -90,8 +90,12 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
 
         Color.initRainbow()
 
-        COLORS.forEach { color ->
-            rowHelper.addChild(ColorChoice(color, CommonComponents.EMPTY) { currentColor = it })
+        for ((index, color) in COLORS.withIndex()) {
+            rowHelper.addChild(ColorChoice(color) {
+                colorLayout.visitWidgets { (it as ColorChoice).selected = false }
+                currentColor = it.color
+                it.selected = true
+            }).selected = index == 0
         }
 
         colorLayout.arrangeElements()

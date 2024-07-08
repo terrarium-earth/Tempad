@@ -7,9 +7,12 @@ import earth.terrarium.tempad.client.widgets.LabeledWidget
 import earth.terrarium.tempad.client.widgets.colored.ColoredDropdown
 import earth.terrarium.tempad.client.widgets.colored.ColoredList
 import earth.terrarium.tempad.common.data.*
+import earth.terrarium.tempad.common.network.c2s.SaveSettingsPacket
 import earth.terrarium.tempad.common.registries.ModMenus
-import earth.terrarium.tempad.common.registries.settings
-import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.common.registries.defaultApp
+import earth.terrarium.tempad.common.registries.defaultMacro
+import earth.terrarium.tempad.common.registries.organizationMethod
+import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.network.chat.Component
@@ -20,9 +23,9 @@ import java.util.*
 class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.SettingsMenu>(null, menu, inv, title) {
 
-    var defaultMacro: ResourceLocation = tempadItem.settings.defaultMacro
-    var defaultApp: ResourceLocation = tempadItem.settings.defaultApp
-    var organizationMethod: OrganizationMethod = tempadItem.settings.organizationMethod
+    var defaultMacro: ResourceLocation = tempadItem.defaultMacro
+    var defaultApp: ResourceLocation = tempadItem.defaultApp
+    var organizationMethod: OrganizationMethod = tempadItem.organizationMethod
 
     var settings: ColoredList? = null
 
@@ -72,7 +75,7 @@ class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Compone
         val layout = FrameLayout(localLeft + 4, localTop + 100, 190, 14).setMinDimensions(190, 14)
 
         layout.addChild(imgBtn("save") {
-            onClose()
+            SaveSettingsPacket(menu.appContent!!.slotId, defaultApp, defaultMacro, organizationMethod).sendToServer()
         }) { it.alignHorizontallyRight().alignVerticallyBottom() }
 
         layout.arrangeElements()

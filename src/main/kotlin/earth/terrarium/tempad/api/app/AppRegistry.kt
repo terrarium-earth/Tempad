@@ -28,7 +28,7 @@ object AppRegistry {
         apps[id] = provider
     }
 
-    fun get(id: ResourceLocation, player: Player, slotId: Int): TempadApp<*>? {
+    operator fun get(id: ResourceLocation, player: Player, slotId: Int): TempadApp<*>? {
         return apps[id]?.invoke(player, slotId)
     }
 

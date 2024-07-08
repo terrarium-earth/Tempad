@@ -21,8 +21,8 @@ class FuelMenu(id: Int, inventory: Inventory, appContent: BasicAppContent?): Abs
 
     init {
         container.addListener { this.slotsChanged(this.container) }
-        addSlot(Slot(container, 0, 180, 96))
-        addSlot(Slot(container, 1, 180, 116))
+        addSlot(Slot(container, 0, 179, 60))
+        addSlot(Slot(container, 1, 179, 80))
     }
 
     override fun removed(pPlayer: Player) {

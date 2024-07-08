@@ -1,36 +1,25 @@
 package earth.terrarium.tempad.client.widgets.buttons
 
 import com.teamresourceful.resourcefullib.common.color.Color
+import earth.terrarium.olympus.client.components.base.ListWidget.Item
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.client.widgets.HorizontalListWidget
+import earth.terrarium.tempad.common.utils.bedrockButton
 import earth.terrarium.tempad.common.utils.darken
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractButton
 import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.client.gui.navigation.ScreenRectangle
+import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 
-class ColorChoice(val color: Color, name: Component, val updateColor: (Color) -> Unit): AbstractButton(0, 0, 14, 14, name) {
-    init {
-        tooltip = Tooltip.create(name)
-    }
+class ColorChoice(val color: Color, val updateColor: (ColorChoice) -> Unit): AbstractButton(0, 0, 14, 14, CommonComponents.EMPTY) {
+    var selected = false
 
     override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        val borderColor: Color
-        val fillColor: Color
-        if (!active) {
-            borderColor = Tempad.DARK_ORANGE
-            fillColor = color.darken(0.5f)
-        } else if (isHovered) {
-            borderColor = Tempad.HIGHLIGHTED_ORANGE
-            fillColor = color
-        } else {
-            borderColor = Tempad.ORANGE
-            fillColor = color
-        }
-
-        graphics.fill(x, y, x + width, y + height, borderColor.value)
-        val finalFillColor = Color(fillColor.intRed, fillColor.intGreen, fillColor.intBlue, 255)
-        graphics.fill(x +1, y + 1, x + width - 1, y + height - 1, finalFillColor.value)
+        val fillColor = Color(color.intRed, color.intGreen, color.intBlue, 255)
+        graphics.bedrockButton(x, y, width, height, isHovered, active, selected, fillColor.value)
     }
 
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
@@ -38,6 +27,8 @@ class ColorChoice(val color: Color, name: Component, val updateColor: (Color) ->
     }
 
     override fun onPress() {
-        updateColor(color)
+        updateColor(this)
     }
+
+    override fun getRectangle(): ScreenRectangle = ScreenRectangle(x, y, width, height)
 }

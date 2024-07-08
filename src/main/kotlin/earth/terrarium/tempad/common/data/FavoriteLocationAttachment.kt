@@ -28,6 +28,8 @@ data class FavoriteLocationAttachment(val providerId: ResourceLocation, val loca
         val EMPTY = FavoriteLocationAttachment(DefaultLocationHandler.SETTINGS.id, Util.NIL_UUID)
     }
 
+    constructor() : this(DefaultLocationHandler.SETTINGS.id, Util.NIL_UUID)
+
     fun matches(providerId: ResourceLocation?, locationId: UUID?): Boolean {
         return this.providerId == providerId && this.locationId == locationId
     }

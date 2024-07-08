@@ -19,7 +19,25 @@ class ColoredDropdown<T>(
     Dropdown<T>(null, width, 24, entries.associateWith { optionDisplay(it) }, default, onSelect) {
 
     override fun renderButton(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        graphics.bedrockButton(x, y, width, height, isHovered, isActive)
+        graphics.bedrockButton(x, y, width, height, isDropdownOpen, isActive, isHovered || isDropdownOpen)
+    }
+
+    override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+        val font = Minecraft.getInstance().font
+        this.renderButton(graphics, mouseX, mouseY, partialTick)
+        val textOffset = (this.height - 8) / 2
+        graphics.drawString(
+            font,
+            this.getText(this.selected),
+            this.x + textOffset,
+            this.y + textOffset - 1 + if (isDropdownOpen) 2 else 0,
+            this.fontColor, false
+        )
+        val chevronOffset = (this.height - 16) / 2
+        graphics.blitSprite(
+            this.chevronTexture,
+            x + this.width - chevronOffset - 16, this.y + chevronOffset, 16, 16
+        )
     }
 
     override fun getFontColor(): Int = 0xFF000000.toInt()

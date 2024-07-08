@@ -18,7 +18,7 @@ data class SettingsApp(val slotId: Int): TempadApp<SettingsData> {
         return ModMenus.SettingsMenu(
             pContainerId,
             pPlayerInventory,
-            Optional.empty()
+            Optional.of(SettingsData(TempadLocations.providers, slotId))
         )
     }
 

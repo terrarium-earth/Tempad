@@ -3,26 +3,42 @@ package earth.terrarium.tempad.common.registries
 import com.mojang.serialization.Codec
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
+import com.teamresourceful.resourcefullib.common.codecs.EnumCodec
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.OrganizationMethod
-import earth.terrarium.tempad.common.data.SettingsComponent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.common.MutableDataComponentHolder
+import com.teamresourceful.bytecodecs.defaults.EnumCodec as EnumByteCodec
 
 object ModComponents {
     val REGISTRY: ResourcefulRegistry<DataComponentType<*>> =
         ResourcefulRegistries.create(BuiltInRegistries.DATA_COMPONENT_TYPE, Tempad.MOD_ID)
 
-    val TEMPAD_SETTINGS: DataComponentType<SettingsComponent> by REGISTRY.register("tempad_settings") {
+    val DEFAUlT_APP: DataComponentType<ResourceLocation> by REGISTRY.register("default_app") {
         componentType {
-            serialize = SettingsComponent.CODEC
-            networkSerialize = SettingsComponent.BYTE_CODEC
+            serialize = ResourceLocation.CODEC
+            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
+        }
+    }
+
+    val DEFAULT_MACRO: DataComponentType<ResourceLocation> by REGISTRY.register("default_macro") {
+        componentType {
+            serialize = ResourceLocation.CODEC
+            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
+        }
+    }
+
+    val ORGANIZATION_METHOD: DataComponentType<OrganizationMethod> by REGISTRY.register("organization_method") {
+        componentType {
+            serialize = OrganizationMethod.CODEC
+            networkSerialize = OrganizationMethod.BYTE_CODEC
         }
     }
 
@@ -39,16 +55,32 @@ object ModComponents {
             networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
         }
     }
-}
 
-var MutableDataComponentHolder.settings by ModComponents.TEMPAD_SETTINGS.default(
-    SettingsComponent(
-        ModApps.TELEPORT,
-        ModMacros.DEFAULT_MACRO_ID,
-        OrganizationMethod.BY_PROVIDER
-    )
-)
+    val ENERGY_CONSUME_AMOUNT: DataComponentType<Int> by REGISTRY.register("energy_consume_amount") {
+        componentType {
+            serialize = Codec.INT
+            networkSerialize = ByteCodec.INT
+        }
+    }
+
+    val EXPERIENCE_CONSUME_AMOUNT: DataComponentType<Int> by REGISTRY.register("experience_consume_amount") {
+        componentType {
+            serialize = Codec.INT
+            networkSerialize = ByteCodec.INT
+        }
+    }
+}
 
 var MutableDataComponentHolder.fuelCharges by ModComponents.FUEL_CHARGES.default(0)
 
 var MutableDataComponentHolder.fuelType by ModComponents.TEMPAD_FUEL_TYPE
+
+var MutableDataComponentHolder.energyConsumeAmount by ModComponents.ENERGY_CONSUME_AMOUNT.default(CommonConfigCache.energyPerCharge)
+
+var MutableDataComponentHolder.experienceConsumeAmount by ModComponents.EXPERIENCE_CONSUME_AMOUNT.default(CommonConfigCache.expPerCharge)
+
+var MutableDataComponentHolder.defaultApp by ModComponents.DEFAUlT_APP.default(ModApps.TELEPORT)
+
+var MutableDataComponentHolder.defaultMacro by ModComponents.DEFAULT_MACRO.default(ModMacros.DEFAULT_MACRO_ID)
+
+var MutableDataComponentHolder.organizationMethod by ModComponents.ORGANIZATION_METHOD.default(OrganizationMethod.DIMENSION)

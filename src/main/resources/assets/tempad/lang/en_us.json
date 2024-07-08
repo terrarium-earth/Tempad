@@ -35,9 +35,12 @@
   "tooltip.tempad.item_option_info": "Requires fuel item to use",
   "tooltip.tempad.experience_level_cost": "Requires %s Level(s) to open Timedoor",
   "tooltip.tempad.experience_points_cost": "Requires %s Experience Point(s) to open Timedoor",
-  "item.tempad.tempad": "§6Tempad",
-  "item.tempad.he_who_remains_tempad": "§6Tempad",
-  "item.tempad.he_who_remains_tempad.tooltip": "Property of 'He Who Remains'",
+  "item.tempad.tempad": [
+    { "text": "Tempad", "color": "#ff6f00" }
+  ],
+  "item.tempad.he_who_remains_tempad":[
+    { "text": "Tempad", "color": "#ff6f00" }
+  ],
   "advancements.tempad.tempad": "For All Time. Always.",
   "advancements.tempad.tempad.description": "Obtain a Tempad",
   "advancements.tempad.he_who_remains": "Glorious purpose!",
@@ -61,6 +64,32 @@
 
   "item.tempad.temporal_shielding": "Temporal Shielding",
 
+  "fuel.tempad.empty": "Empty",
+  "fuel.tempad.empty.description": "This item cannot hold fuel",
+
+  "fuel.tempad.display": [
+    "",
+    { "text": "Charges: ", "color": "#91450d" },
+    { "index": 0, "color": "#ff6f00" },
+    { "text": "/", "color": "#ffcc54" },
+    { "index": 1, "color": "#ff6f00" }
+  ],
+
+  "fuel.tempad.infinite": "Infinite",
+  "fuel.tempad.infinite.description": "This item will always have at least 1 fuel and does not require refueling",
+
+  "fuel.tempad.energy": "Energy",
+  "fuel.tempad.energy.description": "This item consumes Forge Energy (FE) as fuel for charges",
+
+  "fuel.tempad.fluid": "Fluid",
+  "fuel.tempad.fluid.description": "This item consumes fluid as fuel for charges. Fluid can be extracted from items or inserted into this device directly",
+
+  "fuel.tempad.solid": "Solid",
+  "fuel.tempad.solid.description": "This item consumes solid items as fuel for charges. Items can be inserted into this device directly",
+
+  "fuel.tempad.experience": "Experience",
+  "fuel.tempad.experience.description": "This item consumes experience as fuel for charges. XP can be extracted from items, the player, or inserted into this device directly with Liquid XP",
+
   "category.tempad": "Tempad",
   "key.tempad.favorite": "Open favorited location",
   "key.tempad.shortcut": "Open Tempad screen",
@@ -69,9 +98,7 @@
   "app.tempad.teleport": "Teleport",
   "app.tempad.settings": "Settings",
 
-
   "menu.tempad.teleport": "Teleport",
-
   "menu.tempad.settings": "Settings",
 
   "menu.tempad.settings.default_macro": "Default Macro",
@@ -87,13 +114,26 @@
   "menu.tempad.new_location.name": "Name:",
   "menu.tempad.new_location.color": "Color:",
 
+  "menu.tempad.fuel": "Manage Fuel",
+  "menu.tempad.fuel.auto_use": "Auto Use",
+  "menu.tempad.fuel.auto_use.description": "Automatically finds and uses fuel items from the player or their inventory",
+  "menu.tempad.fuel.use": "Use",
+  "menu.tempad.fuel.use.description": "Uses item in slot to fuel the Tempad",
+  "menu.tempad.fuel.transfer": "Fuel",
+  "menu.tempad.fuel.transfer.description": "Transfer fuel from the Tempad to the item in the slot",
+
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",
 
   "macro.tempad.default": "Open Fav",
   "macro.tempad.default.description": "Teleport to the favorite location",
 
-  "organization_method.tempad.by_provider": "By Provider",
+  "organization_method.tempad.type": "By Type",
   "organization_method.tempad.alphabetical": "Alphabetical",
-  "organization_method.tempad.by_dimension": "By Dimension"
+  "organization_method.tempad.dimension": "By Dimension",
+
+  "marker.tempad.death": "Died at",
+  "marker.tempad.respawn": "Respawned at",
+  "marker.tempad.dimension_exit": "Left dimension at",
+  "marker.tempad.dimension_enter": "Entered dimension at"
 }

@@ -42,6 +42,10 @@ public final class CommonConfig {
     @Comment("The amount of energy to consume from an item per charge of the tempad, where 1 charge = 1 opening of the timedoor")
     public static Observable<Integer> energyPerCharge = Observable.of(1000);
 
+    @ConfigEntry(id = "max_history_size", type = EntryType.INTEGER)
+    @Comment("The maximum amount of locations that the Time Twister will save location history for.")
+    public static int maxHistorySize = 512;
+
     @Category("timedoor")
     public static final class TimeDoor {
         @ConfigEntry(id = "placement_distance", type = EntryType.INTEGER)

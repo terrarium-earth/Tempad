@@ -1,14 +1,17 @@
 package earth.terrarium.tempad.common.fuel
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.fuel.ItemContext
 import earth.terrarium.tempad.common.registries.ModRecipes
 import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.utils.contains
+import earth.terrarium.tempad.common.utils.minus
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.SingleRecipeInput
 import net.neoforged.neoforge.items.IItemHandler
+import kotlin.jvm.optionals.getOrNull
 
-class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) : BaseFuelHandler(tempadStack), IItemHandler {
+class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) : BaseFuelHandler(tempadStack, "solid"), IItemHandler {
 
     override fun getSlots(): Int = 1
 
@@ -34,4 +37,26 @@ class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) :
     override fun getSlotLimit(slot: Int): Int = Int.MAX_VALUE
 
     override fun isItemValid(slot: Int, stack: ItemStack): Boolean = stack in ModTags.ITEM_FUEL
+
+    override fun addChargeFromItem(context: ItemContext): Boolean {
+        val input = SingleRecipeInput(context.item)
+        val recipe = context.level.recipeManager.getRecipeFor(ModRecipes.SOLID_FUEL_TYPE, input, context.level).getOrNull()
+        recipe?.value()?.let {
+            var overflow = ItemStack.EMPTY
+            if (!context.item.craftingRemainingItem.isEmpty) {
+                overflow = context.item.craftingRemainingItem.copyWithCount(recipe.value().count)
+            }
+            context.item -= recipe.value().count
+            if (!overflow.isEmpty) {
+                if (context.item.isEmpty) {
+                    context.item = overflow
+                } else {
+                    context.insertOverflow(overflow)
+                }
+            }
+            this += 1
+            return true
+        }
+        return false
+    }
 }

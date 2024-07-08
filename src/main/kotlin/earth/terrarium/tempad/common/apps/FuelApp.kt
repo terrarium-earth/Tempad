@@ -12,7 +12,7 @@ class FuelApp(val slotId: Int): TempadApp<BasicAppContent> {
     override fun isEnabled(player: Player): Boolean = true
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
-        return FuelMenu(pContainerId, pPlayerInventory, null)
+        return FuelMenu(pContainerId, pPlayerInventory, BasicAppContent(slotId))
     }
 
     override fun getDisplayName(): Component = Component.translatable("menu.tempad.fuel")

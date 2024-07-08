@@ -13,6 +13,7 @@ import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -49,9 +50,9 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
 
         addRenderableWidget(appList)
 
-        val fuelHandler = inv[menu.appContent!!.slotId].getCapability(FuelHandler.CAPABILITY) ?: return
+        val fuelHandler = inv[menu.appContent!!.slotId][FuelHandler.CAPABILITY] ?: return
 
-        addRenderableOnly(FuelBarWidget(fuelHandler, 237, 52))
+        addRenderableWidget(FuelBarWidget(inv, menu.appContent!!.slotId, leftPos + 237, topPos + 52)).tooltip = Tooltip.create(Component.translatable("fuel.tempad.display", fuelHandler.charges, fuelHandler.totalCharges))
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {

@@ -6,6 +6,7 @@ import com.teamresourceful.resourcefullibkt.common.createRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.items.TempadItem
+import earth.terrarium.tempad.common.items.TimeTwisterItem
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.Item
 
@@ -15,4 +16,6 @@ object ModItems {
     val TEMPAD: TempadItem by REGISTRY.register("tempad") { TempadItem() }
 
     val ADVANCED_TEMPAD: TempadItem by REGISTRY.register("advanced_tempad") { TempadItem() }
+
+    val TIME_TWISTER: TimeTwisterItem by REGISTRY.register("time_twister") { TimeTwisterItem() }
 }
