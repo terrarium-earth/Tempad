@@ -28,8 +28,8 @@ dependencies {
     modApi(group = "com.terraformersmc", name = "modmenu", version = modMenuVersion)
     modImplementation(group = "maven.modrinth", name = "energized-power", version = "gDKMKHBG")
 
-    // modCompileOnly(group = "maven.modrinth", name = "fwaystones", version = "3.1.2+mc1.20")
-    // modCompileOnly(group = "maven.modrinth", name = "owo-lib", version = "0.11.1+1.20")
+     modCompileOnly(group = "maven.modrinth", name = "fwaystones", version = "3.3.2+mc1.20.4")
+     modCompileOnly(group = "maven.modrinth", name = "owo-lib", version = "0.12.6+1.20.3")
 
     modImplementation(group = "dev.emi", name = "trinkets", version = trinketsVersion)
 
