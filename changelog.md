@@ -1,3 +1,3 @@
-# 2.3.3
+# 2.3.4
 
-- "tempad:experience_levels" now works as an alias for "tempad:experience_level"
+- Add support for removing more than 1 item from fuel (JordanPlayz158)
