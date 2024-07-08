@@ -28,7 +28,7 @@ public class TempadClient {
         try {
             clientConfig = TempadClientConfig.loadConfig(Services.PLATFORM.getConfigDir());
         } catch (IOException e) {
-            e.printStackTrace();
+            Constants.LOG.error(e.getMessage());
         }
     }
 

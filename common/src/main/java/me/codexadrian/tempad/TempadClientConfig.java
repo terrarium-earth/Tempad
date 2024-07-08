@@ -84,7 +84,19 @@ public class TempadClientConfig {
             return config;
         }
 
-        return GSON.fromJson(new InputStreamReader(Files.newInputStream(configPath)), TempadClientConfig.class);
+        TempadClientConfig tempadClientConfig = GSON.fromJson(new InputStreamReader(Files.newInputStream(configPath)), TempadClientConfig.class);
+
+        if (tempadClientConfig == null) {
+            TempadClientConfig config = new TempadClientConfig();
+            try (Writer writer = new FileWriter(configPath.toFile())) {
+                GSON.toJson(config, writer);
+            }
+            Constants.LOG.info("Reinitialized " + Constants.MODID + " config file");
+
+            return config;
+        }
+
+        return tempadClientConfig;
     }
 
     public static void saveConfig(TempadClientConfig config) {
@@ -94,7 +106,7 @@ public class TempadClientConfig {
             String json = GSON.toJson(config);
             Files.writeString(file, json);
         } catch (Exception e) {
-            e.printStackTrace();
+            Constants.LOG.error(e.getMessage());
         }
     }
 }
