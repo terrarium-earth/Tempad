@@ -15,7 +15,7 @@ class FuelApp(val slotId: Int): TempadApp<BasicAppContent> {
         return FuelMenu(pContainerId, pPlayerInventory, BasicAppContent(slotId))
     }
 
-    override fun getDisplayName(): Component = Component.translatable("menu.tempad.fuel")
+    override fun getDisplayName(): Component = Component.translatable("app.tempad.fuel")
 
     override fun createContent(player: ServerPlayer?): BasicAppContent = BasicAppContent(slotId)
 }

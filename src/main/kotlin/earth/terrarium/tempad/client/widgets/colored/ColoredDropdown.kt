@@ -16,7 +16,7 @@ class ColoredDropdown<T>(
     default: T,
     onSelect: (T) -> Unit
 ) :
-    Dropdown<T>(null, width, 24, entries.associateWith { optionDisplay(it) }, default, onSelect) {
+    Dropdown<T>(null, width, 20, entries.associateWith { optionDisplay(it) }, default, onSelect) {
 
     override fun renderButton(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         graphics.bedrockButton(x, y, width, height, isDropdownOpen, isActive, isHovered || isDropdownOpen)
@@ -24,25 +24,29 @@ class ColoredDropdown<T>(
 
     override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         val font = Minecraft.getInstance().font
-        this.renderButton(graphics, mouseX, mouseY, partialTick)
+
+        graphics.renderOutline(x + 1, y + 1, width, height, Tempad.DARK_ORANGE.value)
+
+        if (isHovered) {
+            graphics.fill(x, y, x + width, y + height, Tempad.ORANGE.value)
+        } else {
+            graphics.renderOutline(x, y, width, height, Tempad.ORANGE.value)
+        }
+
         val textOffset = (this.height - 8) / 2
         graphics.drawString(
             font,
             this.getText(this.selected),
             this.x + textOffset,
-            this.y + textOffset - 1 + if (isDropdownOpen) 2 else 0,
-            this.fontColor, false
-        )
-        val chevronOffset = (this.height - 16) / 2
-        graphics.blitSprite(
-            this.chevronTexture,
-            x + this.width - chevronOffset - 16, this.y + chevronOffset, 16, 16
+            this.y + textOffset,
+            if(isHovered) 0xFF000000.toInt() else Tempad.ORANGE.value,
+            false
         )
     }
 
     override fun getFontColor(): Int = 0xFF000000.toInt()
 
-    override fun getEntryHeight(): Int = 20
+    override fun getEntryHeight(): Int = 18
 
     override fun renderEntriesBackground(
         graphics: GuiGraphics,

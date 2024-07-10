@@ -37,8 +37,8 @@ class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Compone
         settings?.setPosition(localLeft + 4, localTop + 20)
 
         settings?.add(LabeledWidget(
-            "settings.default_macro".toLanguageKey("menu"),
-            "settings.default_macro.subtitle".toLanguageKey("menu"),
+            "settings.default_macro".toLanguageKey("app"),
+            "settings.default_macro.subtitle".toLanguageKey("app"),
             8,
             ColoredDropdown(
                 94,
@@ -49,8 +49,8 @@ class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Compone
         ))
 
         settings?.add(LabeledWidget(
-            "settings.default_app".toLanguageKey("menu"),
-            "settings.default_app.subtitle".toLanguageKey("menu"),
+            "settings.default_app".toLanguageKey("app"),
+            "settings.default_app.subtitle".toLanguageKey("app"),
             8,
             ColoredDropdown(
                 94,
@@ -61,8 +61,8 @@ class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Compone
         ))
 
         settings?.add(LabeledWidget(
-            "settings.organization_method".toLanguageKey("menu"),
-            "settings.organization_method.subtitle".toLanguageKey("menu"),
+            "settings.organization_method".toLanguageKey("app"),
+            "settings.organization_method.subtitle".toLanguageKey("app"),
             8,
             ColoredDropdown(
                 94,

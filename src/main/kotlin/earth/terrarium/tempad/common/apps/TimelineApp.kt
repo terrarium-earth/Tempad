@@ -29,7 +29,7 @@ class TimelineApp(val slot: Int): TempadApp<TimelineData> {
         return ModMenus.TimelineMenu(pContainerId, pPlayerInventory, Optional.of(TimelineData(slot, pPlayer.travelHistory)))
     }
 
-    override fun getDisplayName(): Component = Component.translatable("menu.tempad.timeline")
+    override fun getDisplayName(): Component = Component.translatable("app.tempad.timeline")
 
     override fun createContent(player: ServerPlayer): TimelineData = TimelineData(slot, player.travelHistory)
 }

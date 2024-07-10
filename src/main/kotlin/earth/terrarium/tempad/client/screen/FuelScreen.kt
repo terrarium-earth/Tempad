@@ -28,12 +28,12 @@ class FuelScreen<T: AppContent<T>>(
     companion object {
         val SPRITE = "screen/fuel".tempadId
 
-        val AUTO_USE_TEXT = Component.translatable("menu.tempad.fuel.auto_use")
-        val AUTO_USE_TOOLTIP = Component.translatable("menu.tempad.fuel.auto_use.description")
-        val USE_TEXT = Component.translatable("menu.tempad.fuel.use")
-        val USE_TOOLTIP = Component.translatable("menu.tempad.fuel.use.description")
-        val TRANSFER_TEXT = Component.translatable("menu.tempad.fuel.transfer")
-        val TRANSFER_TOOLTIP = Component.translatable("menu.tempad.fuel.transfer.description")
+        val AUTO_USE_TEXT = Component.translatable("app.tempad.fuel.auto_use")
+        val AUTO_USE_TOOLTIP = Component.translatable("app.tempad.fuel.auto_use.description")
+        val USE_TEXT = Component.translatable("app.tempad.fuel.use")
+        val USE_TOOLTIP = Component.translatable("app.tempad.fuel.use.description")
+        val TRANSFER_TEXT = Component.translatable("app.tempad.fuel.transfer")
+        val TRANSFER_TOOLTIP = Component.translatable("app.tempad.fuel.transfer.description")
     }
 
     val fuelHandler = tempadItem[FuelHandler.CAPABILITY] ?: EmptyFuel
@@ -62,15 +62,15 @@ class FuelScreen<T: AppContent<T>>(
         infoLayout.arrangeElements()
         infoLayout.visitWidgets { addRenderableWidget(it) }
 
-        addRenderableWidget(ColoredButton(AUTO_USE_TEXT, type = ButtonType.FANCY, width = 65, height = 18, x = localLeft + 101, y = localTop + 19) {
+        addRenderableWidget(ColoredButton(AUTO_USE_TEXT, width = 65, height = 18, x = localLeft + 101, y = localTop + 30) {
             AddFuelPacket(menu.appContent!!.slotId, true).sendToServer()
         }).tooltip = Tooltip.create(AUTO_USE_TOOLTIP)
 
-        addRenderableWidget(ColoredButton(USE_TEXT, type = ButtonType.FANCY, width = 45, height = 18, x = localLeft + 101, y = localTop + 39) {
+        addRenderableWidget(ColoredButton(USE_TEXT, width = 45, height = 18, x = localLeft + 101, y = localTop + 50) {
             AddFuelPacket(menu.appContent!!.slotId, false).sendToServer()
         }).tooltip = Tooltip.create(USE_TOOLTIP)
 
-        addRenderableWidget(ColoredButton(TRANSFER_TEXT, type = ButtonType.FANCY, width = 45, height = 18, x = localLeft + 101, y = localTop + 59) {
+        addRenderableWidget(ColoredButton(TRANSFER_TEXT, width = 45, height = 18, x = localLeft + 101, y = localTop + 70) {
             TransferFuelPacket(menu.appContent!!.slotId).sendToServer()
         }).tooltip = Tooltip.create(TRANSFER_TOOLTIP)
     }

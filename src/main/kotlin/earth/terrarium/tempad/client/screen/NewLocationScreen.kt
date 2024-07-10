@@ -7,6 +7,7 @@ import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.client.widgets.buttons.ColorChoice
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.MapWidget
+import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.common.network.c2s.CreateLocationPacket
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.btnSprites
@@ -29,8 +30,8 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
     AbstractTempadScreen<ModMenus.NewLocationMenu>(SPRITE, menu, inv, title) {
     companion object {
         val SPRITE = "screen/new_location".tempadId
-        val NAME_FIELD = "new_location.name".toLanguageKey("menu")
-        val COLOR_FIELD = "new_location.color".toLanguageKey("menu")
+        val NAME_FIELD = "new_location.name".toLanguageKey("app")
+        val COLOR_FIELD = "new_location.color".toLanguageKey("app")
 
         val COLORS = listOf(
             Tempad.ORANGE,
@@ -76,7 +77,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         addRenderableWidget(
             StringWidget(
                 this.localLeft + 4,
-                this.localTop + 23,
+                this.localTop + 22,
                 100,
                 8,
                 COLOR_FIELD,
@@ -84,7 +85,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             ).setColor(Tempad.ORANGE.value).alignLeft()
         )
 
-        val colorLayout = GridLayout(localLeft + 4, localTop + 36).spacing(2)
+        val colorLayout = GridLayout(localLeft + 4, localTop + 34).spacing(2)
 
         val rowHelper = colorLayout.createRowHelper(6)
 
@@ -104,7 +105,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         addRenderableWidget(
             StringWidget(
                 this.localLeft + 4,
-                this.localTop + 72,
+                this.localTop + 70,
                 100,
                 8,
                 NAME_FIELD,
@@ -116,7 +117,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             EditBox(
                 this.font,
                 this.localLeft + 8,
-                this.localTop + 87, 84, 8, CommonComponents.EMPTY
+                this.localTop + 84, 84, 8, CommonComponents.EMPTY
             )
         )
 
@@ -125,13 +126,13 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         textInput.fgColor
         textInput.setTextColor(Tempad.ORANGE.value)
 
-        addRenderableWidget(ImageButton(
-            this.localLeft + 84, this.localTop + 100, 14, 14,
-            "save".btnSprites()
-        ) {
+        val doneButton = addRenderableWidget(ColoredButton(CommonComponents.GUI_DONE) {
             CreateLocationPacket(textInput.value, currentColor).sendToServer()
             minecraft?.setScreen(null)
-        }).setTooltip(Tooltip.create(CommonComponents.GUI_DONE))
+        })
+
+        doneButton.y = localTop + 98
+        doneButton.x = localLeft + 97 - doneButton.width
     }
 
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {

@@ -29,7 +29,7 @@ data class NewLocationApp(val slotId: Int) : TempadApp<NewLocationData> {
         return ModMenus.NewLocationMenu(pContainerId, pPlayerInventory, Optional.of(NewLocationData(CommonConfig.allowLocationSaving, slotId)))
     }
 
-    override fun getDisplayName(): Component = Component.translatable("menu.tempad.new_location")
+    override fun getDisplayName(): Component = Component.translatable("app.tempad.new_location")
 
     override fun createContent(player: ServerPlayer?) = NewLocationData(CommonConfig.allowLocationSaving, slotId)
 }

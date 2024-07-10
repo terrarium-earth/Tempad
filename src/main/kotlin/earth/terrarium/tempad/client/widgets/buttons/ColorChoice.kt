@@ -15,11 +15,26 @@ import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 
 class ColorChoice(val color: Color, val updateColor: (ColorChoice) -> Unit): AbstractButton(0, 0, 14, 14, CommonComponents.EMPTY) {
+    companion object {
+        const val highlight: Int = 0xa0FFFFFF.toInt()
+    }
+
     var selected = false
 
     override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         val fillColor = Color(color.intRed, color.intGreen, color.intBlue, 255)
-        graphics.bedrockButton(x, y, width, height, isHovered, active, selected, fillColor.value)
+        val dropShadow = Color(color.intRed, color.intGreen, color.intBlue, 128)
+
+        graphics.renderOutline(x + 1, y + 1, width, height, dropShadow.value)
+
+        val x = if(isHovered) x + 1 else x
+        val y = if(isHovered) y + 1 else y
+
+        graphics.fill(x, y, x + width, y + height, fillColor.value)
+
+        if (selected || isHovered) {
+            graphics.renderOutline(x, y, width, height, highlight)
+        }
     }
 
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {

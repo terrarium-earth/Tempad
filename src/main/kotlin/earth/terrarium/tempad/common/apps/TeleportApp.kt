@@ -27,7 +27,7 @@ data class TeleportApp(val slotId: Int): TempadApp<TeleportData> {
         )
     }
 
-    override fun getDisplayName(): Component = Component.translatable("menu.tempad.teleport")
+    override fun getDisplayName(): Component = Component.translatable("app.tempad.teleport")
 
     override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations.get(player), player.favoriteLocationData, slotId)
 

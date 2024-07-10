@@ -4,12 +4,15 @@ import com.teamresourceful.resourcefullib.client.screens.CursorScreen
 import earth.terrarium.olympus.client.components.base.BaseParentWidget
 import earth.terrarium.tempad.Tempad
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Renderable
 import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.layouts.LayoutElement
 import net.minecraft.client.gui.narration.NarratableEntry
+import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.util.Mth
+import java.util.function.Consumer
 import kotlin.math.max
 
 
@@ -36,6 +39,7 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
     fun add(item: Item) {
         items.add(item)
         item.parent = this
+        item.height = height
         updateScrollBar()
     }
 
@@ -45,8 +49,6 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
 
     public override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
         graphics.enableScissor(x + 1, y, x + width, y + height)
-
-        graphics.fill(x, y + 57, x + width, y + 58, Tempad.ORANGE.value)
 
         var x = this.x - scroll.toInt()
         this.lastWidth = 0
@@ -63,42 +65,9 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
         graphics.disableScissor()
     }
 
-    override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
-        if (this.isScrolling) {
-            val scrollBarHeight = (this.height / lastWidth.toDouble()) * this.height
-            val scrollBarDragY = dragY / (this.height - scrollBarHeight)
-            this.scroll = Mth.clamp(
-                this.scroll + scrollBarDragY * this.lastWidth, 0.0,
-                max(0.0, (this.lastWidth - this.height).toDouble())
-            )
-            return true
-        }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
-    }
-
     override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
         this.scroll = Mth.clamp(this.scroll - scrollX * 10 + scrollY * 10, -this.width / 2.0, max(0.0, (this.lastWidth - this.width * 0.5)))
         return true
-    }
-
-    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        if (clicked(mouseX, mouseY)) {
-            val fakeClickX = x + width / 2
-            val fakeClickY = y + height / 2
-            for (entry in this.items) {
-                if (entry.getRectangle().containsPoint(fakeClickX, fakeClickY)){
-                    return entry.mouseClicked(fakeClickX.toDouble(), fakeClickY.toDouble(), button)
-                }
-            }
-        }
-        return false
-    }
-
-    override fun mouseReleased(d: Double, e: Double, i: Int): Boolean {
-        if (i == 0) {
-            this.isScrolling = false
-        }
-        return super.mouseReleased(d, e, i)
     }
 
     private fun updateLastWidth() {
@@ -119,6 +88,7 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
     }
 
     fun scrollToBottom() {
+        updateLastWidth()
         this.scroll = max(0.0, (this.lastWidth - this.width * 0.5))
     }
 
@@ -130,9 +100,43 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
         this.height = height
     }
 
-    interface Item : GuiEventListener, Renderable, NarratableEntry, LayoutElement {
+    abstract class Item : GuiEventListener, Renderable, NarratableEntry, LayoutElement {
         override fun getRectangle(): ScreenRectangle = super<LayoutElement>.getRectangle()
 
-        var parent: HorizontalListWidget?
+        internal var x: Int = 0
+        internal var y: Int = 0
+
+        internal var parent: HorizontalListWidget? = null
+        internal var height: Int = 0
+        internal var width: Int = 20
+        internal var isFocused: Boolean = false
+
+        override fun setFocused(pFocused: Boolean) {
+            isFocused = pFocused
+        }
+
+        override fun isFocused(): Boolean = isFocused
+
+        override fun setY(pY: Int) {
+            y = pY
+        }
+
+        override fun getY(): Int = y
+
+        override fun setX(pX: Int) {
+            x = pX
+        }
+
+        override fun getX(): Int = x
+
+        override fun getWidth(): Int = width
+
+        override fun getHeight(): Int = height
+
+        override fun narrationPriority(): NarratableEntry.NarrationPriority = NarratableEntry.NarrationPriority.NONE
+
+        override fun updateNarration(pNarrationElementOutput: NarrationElementOutput) {}
+
+        override fun visitWidgets(pConsumer: Consumer<AbstractWidget>) {}
     }
 }

@@ -97,30 +97,27 @@
   "app.tempad.new_location": "New Location",
   "app.tempad.teleport": "Teleport",
   "app.tempad.settings": "Settings",
+  "app.tempad.fuel": "Manage Fuel",
+  "app.tempad.timeline": "Travel Timeline",
 
-  "menu.tempad.teleport": "Teleport",
-  "menu.tempad.settings": "Settings",
+  "app.tempad.settings.default_macro": "Default Macro",
+  "app.tempad.settings.default_macro.subtitle": "Default macro to use when shift-clicking Tempad or pressing [F] key",
 
-  "menu.tempad.settings.default_macro": "Default Macro",
-  "menu.tempad.settings.default_macro.subtitle": "Default macro to use when shift-clicking Tempad or pressing [F] key",
+  "app.tempad.settings.default_app": "Default App",
+  "app.tempad.settings.default_app.subtitle": "Default app to open when right-clicking Tempad",
 
-  "menu.tempad.settings.default_app": "Default App",
-  "menu.tempad.settings.default_app.subtitle": "Default app to open when right-clicking Tempad",
+  "app.tempad.settings.organization_method": "Organization",
+  "app.tempad.settings.organization_method.subtitle": "Default way to organize shown locations on the Tempad",
 
-  "menu.tempad.settings.organization_method": "Organization",
-  "menu.tempad.settings.organization_method.subtitle": "Default way to organize shown locations on the Tempad",
+  "app.tempad.new_location.name": "Name:",
+  "app.tempad.new_location.color": "Color:",
 
-  "menu.tempad.new_location": "New Location",
-  "menu.tempad.new_location.name": "Name:",
-  "menu.tempad.new_location.color": "Color:",
-
-  "menu.tempad.fuel": "Manage Fuel",
-  "menu.tempad.fuel.auto_use": "Auto Use",
-  "menu.tempad.fuel.auto_use.description": "Automatically finds and uses fuel items from the player or their inventory",
-  "menu.tempad.fuel.use": "Use",
-  "menu.tempad.fuel.use.description": "Uses item in slot to fuel the Tempad",
-  "menu.tempad.fuel.transfer": "Fuel",
-  "menu.tempad.fuel.transfer.description": "Transfer fuel from the Tempad to the item in the slot",
+  "app.tempad.fuel.auto_use": "Auto Use",
+  "app.tempad.fuel.auto_use.description": "Automatically finds and uses fuel items from the player or their inventory",
+  "app.tempad.fuel.use": "Use",
+  "app.tempad.fuel.use.description": "Uses item in slot to fuel the Tempad",
+  "app.tempad.fuel.transfer": "Fuel",
+  "app.tempad.fuel.transfer.description": "Transfer fuel from the Tempad to the item in the slot",
 
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",
@@ -135,5 +132,8 @@
   "marker.tempad.death": "Died at",
   "marker.tempad.respawn": "Respawned at",
   "marker.tempad.dimension_exit": "Left dimension at",
-  "marker.tempad.dimension_enter": "Entered dimension at"
+  "marker.tempad.dimension_enter": "Entered dimension at",
+
+  "app.tempad.timeline.tracking": "Tracking",
+  "app.tempad.timeline.teleport": "Teleport"
 }
