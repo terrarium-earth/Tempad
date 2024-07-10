@@ -43,7 +43,7 @@ class ProviderHeader(val settings: ProviderSettings, val parent: PanelWidget): K
     override fun isFocused(): Boolean = _focused
 
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, pPartialTick: Float) {
-        graphics.drawScrollingString(Minecraft.getInstance().font, text, _x + 2, _x + _width - 14, _y + 2, Tempad.ORANGE.value)
+        graphics.drawScrollingString(Minecraft.getInstance().font, text, _x + 4, _x + _width - 14, _y + 2, Tempad.ORANGE.value)
 
         val isHovered = mouseX >= _x + _width - 12 && mouseX <= _x + _width && mouseY >= _y && mouseY <= _y + 10
         if (hidden) {

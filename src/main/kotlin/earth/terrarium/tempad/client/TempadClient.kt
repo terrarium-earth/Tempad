@@ -1,10 +1,7 @@
 package earth.terrarium.tempad.client
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.client.screen.FuelScreen
-import earth.terrarium.tempad.client.screen.NewLocationScreen
-import earth.terrarium.tempad.client.screen.SettingsScreen
-import earth.terrarium.tempad.client.screen.TeleportScreen
+import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.common.registries.ModMenus
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
@@ -22,5 +19,6 @@ object TempadClient {
         event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
         event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
         event.register(ModMenus.FUEL_MENU, ::FuelScreen)
+        event.register(ModMenus.TIMELINE_MENU, ::TimelineScreen)
     }
 }

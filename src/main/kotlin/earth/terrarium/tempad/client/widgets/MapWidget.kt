@@ -98,11 +98,11 @@ class MapWidget(var x: Int, var y: Int, var size: Int, var viewDistance: Int) : 
             pose.translate(this.x + left + x, this.y + top + y, 0.0)
             pose.mulPose(Axis.ZP.rotationDegrees(player.yRot))
             pose.translate(-4f, -4f, 0f)
-            graphics.blit(MAP_ICONS, 0, 0, 40f, 0f, 8, 8, 128, 128)
+            graphics.blit(MAP_ICONS, 0, 0, 0f, 0f, 8, 8, 8, 8)
         }
     }
 
     companion object {
-        val MAP_ICONS: ResourceLocation = ResourceLocation.withDefaultNamespace("textures/map/map_icons.png")
+        val MAP_ICONS: ResourceLocation = ResourceLocation.withDefaultNamespace("textures/map/decorations/player.png")
     }
 }

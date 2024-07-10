@@ -71,7 +71,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             { provider, locationId -> favorite?.matches(provider.id, locationId) ?: false }
         ))
 
-        panel.setPosition(localLeft + 101, localTop + 21)
+        panel.setPosition(localLeft + 100, localTop + 21)
 
         this.search = addRenderableWidget(
             ModWidgets.search(

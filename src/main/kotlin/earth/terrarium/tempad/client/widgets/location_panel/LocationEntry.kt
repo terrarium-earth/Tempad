@@ -49,7 +49,7 @@ class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntry
 
         val color = if (selected) 0x000000 else if (hovered) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value
 
-        graphics.drawString(Minecraft.getInstance().font, text, x + 2 + if(favorite) 14 else 0, y + 2, color, false)
+        graphics.drawString(Minecraft.getInstance().font, text, x + 4 + if(favorite) 14 else 0, y + 2, color, false)
     }
 
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean = onClick()

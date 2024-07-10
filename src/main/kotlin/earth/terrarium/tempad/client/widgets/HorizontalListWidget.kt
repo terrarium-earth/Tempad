@@ -2,6 +2,7 @@ package earth.terrarium.tempad.client.widgets
 
 import com.teamresourceful.resourcefullib.client.screens.CursorScreen
 import earth.terrarium.olympus.client.components.base.BaseParentWidget
+import earth.terrarium.tempad.Tempad
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Renderable
 import net.minecraft.client.gui.components.events.GuiEventListener
@@ -19,7 +20,7 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
     protected var lastWidth: Int = 0
     var isScrolling: Boolean = false
         protected set
-    protected var gap: Int = 0
+    protected var gap: Int = 2
 
     override fun clear() {
         super.clear()
@@ -44,6 +45,8 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
 
     public override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
         graphics.enableScissor(x + 1, y, x + width, y + height)
+
+        graphics.fill(x, y + 57, x + width, y + 58, Tempad.ORANGE.value)
 
         var x = this.x - scroll.toInt()
         this.lastWidth = 0
@@ -74,7 +77,7 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
     }
 
     override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
-        this.scroll = Mth.clamp(this.scroll - scrollY * 10, -this.width / 2.0, max(0.0, (this.lastWidth - this.width * 0.5)))
+        this.scroll = Mth.clamp(this.scroll - scrollX * 10 + scrollY * 10, -this.width / 2.0, max(0.0, (this.lastWidth - this.width * 0.5)))
         return true
     }
 

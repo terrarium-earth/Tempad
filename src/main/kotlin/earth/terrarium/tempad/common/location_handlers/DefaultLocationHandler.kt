@@ -4,7 +4,7 @@ import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.ProviderSettings
-import earth.terrarium.tempad.common.data.locationData
+import earth.terrarium.tempad.common.registries.locationData
 import net.minecraft.world.entity.player.Player
 import java.util.*
 

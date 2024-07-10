@@ -7,6 +7,8 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.fluids.crafting.FluidIngredient
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 val COLOR_BYTE_CODEC: ByteCodec<Color> = ByteCodec.BYTE.dispatch(
@@ -36,6 +38,6 @@ val STRING_UUID_BYTE_CODEC: ByteCodec<UUID> = ByteCodec.STRING.map(UUID::fromStr
 
 val FLUID_INGREDIENT_BYTE_CODEC: ByteCodec<FluidIngredient> = StreamCodecByteCodec.ofRegistry(FluidIngredient.STREAM_CODEC)
 
-val DATE_CODEC: Codec<Date> = Codec.LONG.xmap(::Date, Date::getTime)
+val DATE_CODEC: Codec<Date> = Codec.STRING.xmap(String::toLong, Long::toString).xmap(::Date, Date::getTime)
 
 val DATE_BYTE_CODEC: ByteCodec<Date> = ByteCodec.LONG.map(::Date, Date::getTime)

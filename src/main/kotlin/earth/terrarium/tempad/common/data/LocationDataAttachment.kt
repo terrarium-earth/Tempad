@@ -2,14 +2,8 @@ package earth.terrarium.tempad.common.data
 
 import com.mojang.serialization.Codec
 import earth.terrarium.tempad.api.locations.LocationData
-import earth.terrarium.tempad.common.registries.ModAttachments
-import earth.terrarium.tempad.common.utils.getValue
-import earth.terrarium.tempad.common.utils.setValue
 import net.minecraft.core.UUIDUtil
-import net.neoforged.neoforge.attachment.AttachmentHolder
 import java.util.*
-
-var AttachmentHolder.locationData by ModAttachments.LOCATIONS
 
 data class LocationDataAttachment(val locations: MutableMap<UUID, LocationData>) {
     constructor() : this(mutableMapOf())

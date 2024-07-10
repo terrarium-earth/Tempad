@@ -6,5 +6,5 @@ import earth.terrarium.tempad.common.apps.AppContent
 import net.minecraft.world.entity.player.Player
 
 interface TempadApp<T: AppContent<T>>: ContentMenuProvider<T> {
-    fun isEnabled(player: Player): Boolean
+    fun isEnabled(player: Player): Boolean = true
 }

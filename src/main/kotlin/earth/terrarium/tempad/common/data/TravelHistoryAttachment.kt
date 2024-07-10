@@ -83,12 +83,13 @@ class TravelHistoryAttachment(val history: MutableMap<Date, HistoricalLocation>)
      */
     fun backtrackTo(entity: LivingEntity, time: Date) {
         val index = history.keys.indexOf(time)
-        if (index == -1) return
+        val historicalLocation = history[time]
+        if (index == -1 || historicalLocation == null) return
         val ids = mutableListOf<Date>()
         for ((idIndex, entryId) in history.keys.withIndex()) {
-            if (idIndex > index) ids.add(entryId)
+            if (idIndex >= index) ids.add(entryId)
         }
         for (id in ids) history.remove(id)
-        history[time]?.let { entity.changeDimension(DimensionTransition(entity.level() as ServerLevel, it.pos, Vec3.ZERO, 0.0F, 0.0F, true, DimensionTransition.DO_NOTHING)) }
+        entity.changeDimension(DimensionTransition(entity.server.get(historicalLocation.dimension)!!, historicalLocation.pos, Vec3.ZERO, 0.0F, 0.0F, false, DimensionTransition.DO_NOTHING))
     }
 }

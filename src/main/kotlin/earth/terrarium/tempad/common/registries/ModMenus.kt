@@ -5,10 +5,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.apps.BasicAppContent
-import earth.terrarium.tempad.common.apps.NewLocationData
-import earth.terrarium.tempad.common.apps.TeleportData
-import earth.terrarium.tempad.common.apps.SettingsData
+import earth.terrarium.tempad.common.apps.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.menu.FuelMenu
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
@@ -51,6 +48,15 @@ object ModMenus {
         MenuContentHelper.create(
             ::FuelMenu,
             RecordCodecMenuContentSerializer(BasicAppContent.CODEC)
+        )
+    }
+
+    class TimelineMenu(id: Int, inv: Inventory, data: Optional<TimelineData>): AbstractTempadMenu<TimelineData>(id, inv, TIMELINE_MENU, data)
+
+    val TIMELINE_MENU: MenuType<TimelineMenu> by REGISTRY.register("timeline") {
+        MenuContentHelper.create(
+            ::TimelineMenu,
+            RecordCodecMenuContentSerializer(TimelineData.CODEC)
         )
     }
 }

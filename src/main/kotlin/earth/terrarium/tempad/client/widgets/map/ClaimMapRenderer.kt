@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.client.widgets.map
 
+import com.ibm.icu.text.PluralFormat
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack
