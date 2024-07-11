@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level
 
 class SolidFuelRecipe(val ingredient: Ingredient, val count: Int) : CodecRecipe<SingleRecipeInput> {
     companion object {
+        @JvmField
         val CODEC = RecordCodecBuilder.mapCodec {
             it.group(
                 Ingredient.CODEC.fieldOf("ingredient").forGetter(SolidFuelRecipe::ingredient),
@@ -22,6 +23,7 @@ class SolidFuelRecipe(val ingredient: Ingredient, val count: Int) : CodecRecipe<
             ).apply(it, ::SolidFuelRecipe)
         }
 
+        @JvmField
         val BYTE_CODEC = ObjectByteCodec.create(
             ExtraByteCodecs.INGREDIENT.fieldOf(SolidFuelRecipe::ingredient),
             ByteCodec.INT.fieldOf(SolidFuelRecipe::count),
@@ -33,6 +35,6 @@ class SolidFuelRecipe(val ingredient: Ingredient, val count: Int) : CodecRecipe<
 
     override fun matches(input: SingleRecipeInput, level: Level): Boolean = matches(input)
 
-    override fun getType(): RecipeType<*> = ModRecipes.SOLID_FUEL_TYPE
-    override fun serializer(): CodecRecipeSerializer<out CodecRecipe<SingleRecipeInput>> = ModRecipes.SOLID_FUEL_SERIALIZER
+    override fun getType(): RecipeType<*> = ModRecipes.solidFuelType
+    override fun serializer(): CodecRecipeSerializer<out CodecRecipe<SingleRecipeInput>> = ModRecipes.solidFuelSerializer
 }

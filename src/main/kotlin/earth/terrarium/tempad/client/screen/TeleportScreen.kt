@@ -16,7 +16,6 @@ import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.btnSprites
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
-import net.minecraft.Optionull
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.components.ImageButton
@@ -58,8 +57,8 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
 
     override fun init() {
         super.init()
-        infoPanel = addRenderableWidget(InformationPanel(localLeft + 4, localTop + 4))
-        infoPanel.setPosition(localLeft + 4, localTop + 21)
+        infoPanel = addRenderableWidget(InformationPanel())
+        infoPanel.setPosition(localLeft + 4, localTop + 23)
 
         val searchValue = if (::search.isInitialized) search.value else ""
 
@@ -71,17 +70,18 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             { provider, locationId -> favorite?.matches(provider.id, locationId) ?: false }
         ))
 
-        panel.setPosition(localLeft + 100, localTop + 21)
+        panel.setPosition(localLeft + 100, localTop + 23)
 
         this.search = addRenderableWidget(
             ModWidgets.search(
-                localLeft + 113,
-                localTop + 7,
-                66,
+                localLeft + 115,
+                localTop + 8,
+                64,
                 12
-            ) { text -> panel.update() })
+            ) { _ -> panel.update() }
+        )
 
-        search.setValue(searchValue)
+        search.value = searchValue
         panel.update()
 
         locationButtons = LinearLayout(

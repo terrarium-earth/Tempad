@@ -9,12 +9,9 @@ typealias TempadMacro = (player: Player, stack: ItemStack, slot: Int) -> Unit
 private val macros = mutableMapOf<ResourceLocation, TempadMacro>()
 
 object MacroRegistry: Map<ResourceLocation, TempadMacro> by macros {
-    fun register(id: ResourceLocation, macro: TempadMacro) {
+    @JvmName("register")
+    operator fun set(id: ResourceLocation, macro: TempadMacro) {
         macros[id] = macro
-    }
-
-    fun getOrDefault(id: ResourceLocation): TempadMacro {
-        return macros[id] ?: ModMacros.DEFAULT_MACRO
     }
 
     fun getIds(): Set<ResourceLocation> {

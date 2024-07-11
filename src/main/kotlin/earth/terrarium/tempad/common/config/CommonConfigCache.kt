@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.config
 import earth.terrarium.tempad.common.registries.ModNetworking
 
 object CommonConfigCache {
-    val CACHE = ConfigCache("tempad", ModNetworking.CHANNEL)
+    val CACHE = ConfigCache("tempad", ModNetworking.channel)
 
     val expPerCharge by CACHE.ofInt(CommonConfig::expPerCharge)
     val energyPerCharge by CACHE.ofInt(CommonConfig::energyPerCharge)

@@ -5,18 +5,18 @@ import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.common.network.c2s.*
 
 object ModNetworking {
-    val CHANNEL: Network = Network("main".tempadId, 0, false)
+    val channel: Network = Network("main".tempadId, 0, false)
 
     fun init() {
-        CHANNEL.register(CreateLocationPacket.TYPE)
-        CHANNEL.register(DeleteLocationPacket.TYPE)
-        CHANNEL.register(OpenAppPacket.TYPE)
-        CHANNEL.register(OpenFavoritePacket.TYPE)
-        CHANNEL.register(OpenTimedoorPacket.TYPE)
-        CHANNEL.register(SetFavoritePacket.TYPE)
-        CHANNEL.register(AddFuelPacket.TYPE)
-        CHANNEL.register(TransferFuelPacket.TYPE)
-        CHANNEL.register(SaveSettingsPacket.TYPE)
-        CHANNEL.register(BackTrackLocation.TYPE)
+        channel.register(CreateLocationPacket.TYPE)
+        channel.register(DeleteLocationPacket.TYPE)
+        channel.register(OpenAppPacket.TYPE)
+        channel.register(OpenFavoritePacket.TYPE)
+        channel.register(OpenTimedoorPacket.TYPE)
+        channel.register(SetFavoritePacket.TYPE)
+        channel.register(AddFuelPacket.TYPE)
+        channel.register(TransferFuelPacket.TYPE)
+        channel.register(SaveSettingsPacket.TYPE)
+        channel.register(BackTrackLocation.TYPE)
     }
 }

@@ -28,7 +28,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
         private const val ANIMATION_LENGTH = 8
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
-        private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.COLOR_SERIALIZER)
+        private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializaer)
 
         fun openTimedoor(player: Player, slotId: Int, location: LocationData) {
             val stack = player.inventory[slotId]

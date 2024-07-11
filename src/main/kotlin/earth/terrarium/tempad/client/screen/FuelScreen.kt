@@ -3,7 +3,6 @@ package earth.terrarium.tempad.client.screen
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.fuel.FuelHandler
-import earth.terrarium.tempad.client.widgets.colored.ButtonType
 import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.common.apps.AppContent
 import earth.terrarium.tempad.common.fuel.EmptyFuel

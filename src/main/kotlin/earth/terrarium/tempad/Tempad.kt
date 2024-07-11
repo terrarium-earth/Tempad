@@ -31,7 +31,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
 import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.server.ServerLifecycleHooks
-import java.text.DateFormat
 
 @Mod(Tempad.MOD_ID)
 class Tempad(bus: IEventBus) {
@@ -57,45 +56,45 @@ class Tempad(bus: IEventBus) {
         CONFIGURATOR.register(CommonConfig::class.java)
 
         ModApps.init()
-        ModAttachments.REGISTRY.init()
-        ModComponents.REGISTRY.init()
-        ModEntities.ENTITIES.init()
-        ModEntities.DATA_SERIALIZERS.init()
-        ModItems.REGISTRY.init()
+        ModAttachments.registry.init()
+        ModComponents.registry.init()
+        ModEntities.entities.init()
+        ModEntities.serializers.init()
+        ModItems.registry.init()
         ModMacros.init()
-        ModMenus.REGISTRY.init()
+        ModMenus.registry.init()
         ModNetworking.init()
         ModFuel.init()
 
         bus.addListener { event: RegisterCapabilitiesEvent ->
-            event.register(FuelHandler.CAPABILITY)[ModItems.TEMPAD] = { stack, _ ->
+            event.register(FuelHandler.CAPABILITY)[ModItems.tempad] = { stack, _ ->
                 FuelRegistry.get(
-                    stack.fuelType ?: ResourceLocation.tryParse(CommonConfigCache.Tempad.fuelType) ?: ModFuel.INFINITE,
+                    stack.fuelType ?: ResourceLocation.tryParse(CommonConfigCache.Tempad.fuelType) ?: ModFuel.infinite,
                     stack,
                     CommonConfigCache.Tempad.capacity
                 )
             }
 
-            event.register(FuelHandler.CAPABILITY)[ModItems.ADVANCED_TEMPAD] = { stack, _ ->
+            event.register(FuelHandler.CAPABILITY)[ModItems.advancedTempad] = { stack, _ ->
                 FuelRegistry.get(
                     stack.fuelType ?: ResourceLocation.tryParse(CommonConfigCache.AdvancedTempad.fuelType)
-                    ?: ModFuel.INFINITE,
+                    ?: ModFuel.infinite,
                     stack,
                     CommonConfigCache.AdvancedTempad.capacity
                 )
             }
 
-            event.register(Capabilities.ItemHandler.ITEM)[ModItems.TEMPAD, ModItems.ADVANCED_TEMPAD] = { stack, _ ->
+            event.register(Capabilities.ItemHandler.ITEM)[ModItems.tempad, ModItems.advancedTempad] = { stack, _ ->
                 val fuelHandler = stack[FuelHandler.CAPABILITY]
                 if (fuelHandler is IItemHandler) fuelHandler else null
             }
 
-            event.register(Capabilities.FluidHandler.ITEM)[ModItems.TEMPAD, ModItems.ADVANCED_TEMPAD] = { stack, _ ->
+            event.register(Capabilities.FluidHandler.ITEM)[ModItems.tempad, ModItems.advancedTempad] = { stack, _ ->
                 val fuelHandler = stack[FuelHandler.CAPABILITY]
                 if (fuelHandler is IFluidHandlerItem) fuelHandler else null
             }
 
-            event.register(Capabilities.EnergyStorage.ITEM)[ModItems.TEMPAD, ModItems.ADVANCED_TEMPAD] = { stack, _ ->
+            event.register(Capabilities.EnergyStorage.ITEM)[ModItems.tempad, ModItems.advancedTempad] = { stack, _ ->
                 val fuelHandler = stack[FuelHandler.CAPABILITY]
                 if (fuelHandler is IEnergyStorage) fuelHandler else null
             }

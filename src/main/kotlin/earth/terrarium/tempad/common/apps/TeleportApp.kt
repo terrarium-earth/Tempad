@@ -9,7 +9,7 @@ import earth.terrarium.tempad.api.app.TempadApp
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.ModMenus
-import earth.terrarium.tempad.common.registries.favoriteLocationData
+import earth.terrarium.tempad.common.registries.pinnedLocationData
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
@@ -23,13 +23,13 @@ data class TeleportApp(val slotId: Int): TempadApp<TeleportData> {
         return ModMenus.TeleportMenu(
             pContainerId,
             inventory,
-            Optional.of(TeleportData(TempadLocations.get(player), player.favoriteLocationData, slotId))
+            Optional.of(TeleportData(TempadLocations.get(player), player.pinnedLocationData, slotId))
         )
     }
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.teleport")
 
-    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations.get(player), player.favoriteLocationData, slotId)
+    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations.get(player), player.pinnedLocationData, slotId)
 
     override fun isEnabled(player: Player): Boolean = true
 }

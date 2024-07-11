@@ -40,7 +40,6 @@ import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.fluids.FluidStack
 import java.util.*
 import java.util.function.Function
-import javax.swing.text.html.Option
 
 operator fun TagKey<EntityType<*>>.contains(entity: EntityType<*>): Boolean = entity.`is`(this)
 
@@ -108,9 +107,9 @@ fun ResourceLocation.appTitle(): Component = Component.translatable(this.toLangu
 
 fun String.toLanguageKey(type: String): Component = Component.translatable("${type}.${Tempad.MOD_ID}.${this}")
 
-fun <T: Packet<T>> T.sendToServer() = ModNetworking.CHANNEL.sendToServer(this)
+fun <T: Packet<T>> T.sendToServer() = ModNetworking.channel.sendToServer(this)
 
-fun <T: Packet<T>> T.sendToClient(player: Player) = ModNetworking.CHANNEL.sendToPlayer(this, player)
+fun <T: Packet<T>> T.sendToClient(player: Player) = ModNetworking.channel.sendToPlayer(this, player)
 
 fun InteractionHand.getSlot(player: Player): Int = if (this == InteractionHand.MAIN_HAND) player.inventory.selected else 40
 

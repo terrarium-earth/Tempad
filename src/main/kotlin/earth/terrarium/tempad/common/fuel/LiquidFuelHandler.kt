@@ -7,7 +7,6 @@ import earth.terrarium.tempad.common.registries.ModRecipes
 import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.get
-import earth.terrarium.tempad.common.utils.set
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.fluids.FluidStack
@@ -27,7 +26,7 @@ class LiquidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int):
 
     override fun fill(resource: FluidStack, action: IFluidHandler.FluidAction): Int {
         val input = SingleFluidRecipeInput(resource)
-        val recipe = Tempad.server!!.recipeManager.getAllRecipesFor(ModRecipes.LIQUID_FUEL_TYPE)
+        val recipe = Tempad.server!!.recipeManager.getAllRecipesFor(ModRecipes.liquidFuelType)
             .find { it.value().matches(input) }
             ?: return 0
 
@@ -50,7 +49,7 @@ class LiquidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int):
         val fluid = handler.getFluidInTank(0)
         if (fluid.isEmpty) return false
         val input = SingleFluidRecipeInput(fluid)
-        val recipe = context.level.recipeManager.getRecipeFor(ModRecipes.LIQUID_FUEL_TYPE, input, context.level).getOrNull()
+        val recipe = context.level.recipeManager.getRecipeFor(ModRecipes.liquidFuelType, input, context.level).getOrNull()
         recipe?.value()?.let {
             val toExtract = fluid.copyWithAmount(it.amount)
             val drained = handler.drain(toExtract, FluidAction.SIMULATE)

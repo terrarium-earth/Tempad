@@ -10,24 +10,24 @@ import earth.terrarium.tempad.common.recipe.SolidFuelRecipe
 import net.minecraft.core.registries.BuiltInRegistries
 
 object ModRecipes {
-    val SERIALIZERS = ResourcefulRegistries.create(BuiltInRegistries.RECIPE_SERIALIZER, Tempad.MOD_ID)
-    val TYPES = ResourcefulRegistries.create(BuiltInRegistries.RECIPE_TYPE, Tempad.MOD_ID)
+    val serializers = ResourcefulRegistries.create(BuiltInRegistries.RECIPE_SERIALIZER, Tempad.MOD_ID)
+    val types = ResourcefulRegistries.create(BuiltInRegistries.RECIPE_TYPE, Tempad.MOD_ID)
 
-    val SOLID_FUEL_TYPE by TYPES.register("solid_fuel") { CodecRecipeType.of<SolidFuelRecipe>("solid_fuel") }
+    val solidFuelType by types.register("solid_fuel") { CodecRecipeType.of<SolidFuelRecipe>("solid_fuel") }
 
-    val SOLID_FUEL_SERIALIZER by SERIALIZERS.register("solid_fuel") {
+    val solidFuelSerializer by serializers.register("solid_fuel") {
         CodecRecipeSerializer(
-            SOLID_FUEL_TYPE,
+            solidFuelType,
             SolidFuelRecipe.CODEC,
             SolidFuelRecipe.BYTE_CODEC
         )
     }
 
-    val LIQUID_FUEL_TYPE by TYPES.register("liquid_fuel") { CodecRecipeType.of<LiquidFuelRecipe>("liquid_fuel") }
+    val liquidFuelType by types.register("liquid_fuel") { CodecRecipeType.of<LiquidFuelRecipe>("liquid_fuel") }
 
-    val LIQUID_FUEL_SERIALIZER by SERIALIZERS.register("liquid_fuel") {
+    val liquidFuelSerializer by serializers.register("liquid_fuel") {
         CodecRecipeSerializer(
-            LIQUID_FUEL_TYPE,
+            liquidFuelType,
             LiquidFuelRecipe.CODEC,
             LiquidFuelRecipe.BYTE_CODEC
         )

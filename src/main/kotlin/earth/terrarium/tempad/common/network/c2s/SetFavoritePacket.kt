@@ -9,7 +9,7 @@ import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
-import earth.terrarium.tempad.common.registries.favoriteLocationData
+import earth.terrarium.tempad.common.registries.pinnedLocationData
 import net.minecraft.resources.ResourceLocation
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -28,7 +28,7 @@ data class SetFavoritePacket(val favorite: FavoriteLocationAttachment?): Packet<
                 ::FavoriteLocationAttachment
             ).optionalOf().map(::SetFavoritePacket) { Optional.ofNullable(it.favorite) },
             NetworkHandle.handle { message, player ->
-                player.favoriteLocationData = message.favorite
+                player.pinnedLocationData = message.favorite
             }
         )
     }

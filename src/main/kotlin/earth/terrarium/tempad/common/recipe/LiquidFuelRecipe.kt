@@ -32,7 +32,7 @@ class LiquidFuelRecipe(val ingredient: FluidIngredient, val amount: Int): CodecR
 
     override fun matches(input: SingleFluidRecipeInput, level: Level): Boolean = matches(input)
 
-    override fun getType(): RecipeType<LiquidFuelRecipe> = ModRecipes.LIQUID_FUEL_TYPE
+    override fun getType(): RecipeType<LiquidFuelRecipe> = ModRecipes.liquidFuelType
 
-    override fun serializer(): CodecRecipeSerializer<LiquidFuelRecipe> = ModRecipes.LIQUID_FUEL_SERIALIZER
+    override fun serializer(): CodecRecipeSerializer<LiquidFuelRecipe> = ModRecipes.liquidFuelSerializer
 }

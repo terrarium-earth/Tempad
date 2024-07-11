@@ -15,11 +15,11 @@ import net.minecraft.world.inventory.MenuType
 import java.util.Optional
 
 object ModMenus {
-    val REGISTRY: ResourcefulRegistry<MenuType<*>> = ResourcefulRegistries.create(BuiltInRegistries.MENU, Tempad.MOD_ID)
+    val registry: ResourcefulRegistry<MenuType<*>> = ResourcefulRegistries.create(BuiltInRegistries.MENU, Tempad.MOD_ID)
 
     class TeleportMenu(id: Int, inv: Inventory, data: Optional<TeleportData>): AbstractTempadMenu<TeleportData>(id, inv, TELEPORT_MENU, data)
 
-    val TELEPORT_MENU: MenuType<TeleportMenu> by REGISTRY.register("teleport") {
+    val TELEPORT_MENU: MenuType<TeleportMenu> by registry.register("teleport") {
         MenuContentHelper.create(
             ::TeleportMenu,
             RecordCodecMenuContentSerializer(TeleportData.CODEC)
@@ -28,7 +28,7 @@ object ModMenus {
 
     class SettingsMenu(id: Int, inv: Inventory, data: Optional<SettingsData>): AbstractTempadMenu<SettingsData>(id, inv, SETTINGS_MENU, data)
 
-    val SETTINGS_MENU: MenuType<SettingsMenu> by REGISTRY.register("settings") {
+    val SETTINGS_MENU: MenuType<SettingsMenu> by registry.register("settings") {
         MenuContentHelper.create(
             ::SettingsMenu,
             RecordCodecMenuContentSerializer(SettingsData.CODEC)
@@ -37,14 +37,14 @@ object ModMenus {
 
     class NewLocationMenu(id: Int, inv: Inventory, data: Optional<NewLocationData>): AbstractTempadMenu<NewLocationData>(id, inv, NEW_LOCATION_MENU, data)
 
-    val NEW_LOCATION_MENU: MenuType<NewLocationMenu> by REGISTRY.register("new_location") {
+    val NEW_LOCATION_MENU: MenuType<NewLocationMenu> by registry.register("new_location") {
         MenuContentHelper.create(
             ::NewLocationMenu,
             RecordCodecMenuContentSerializer(NewLocationData.CODEC)
         )
     }
 
-    val FUEL_MENU: MenuType<FuelMenu> by REGISTRY.register("fuel") {
+    val FUEL_MENU: MenuType<FuelMenu> by registry.register("fuel") {
         MenuContentHelper.create(
             ::FuelMenu,
             RecordCodecMenuContentSerializer(BasicAppContent.CODEC)
@@ -53,7 +53,7 @@ object ModMenus {
 
     class TimelineMenu(id: Int, inv: Inventory, data: Optional<TimelineData>): AbstractTempadMenu<TimelineData>(id, inv, TIMELINE_MENU, data)
 
-    val TIMELINE_MENU: MenuType<TimelineMenu> by REGISTRY.register("timeline") {
+    val TIMELINE_MENU: MenuType<TimelineMenu> by registry.register("timeline") {
         MenuContentHelper.create(
             ::TimelineMenu,
             RecordCodecMenuContentSerializer(TimelineData.CODEC)

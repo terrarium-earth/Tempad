@@ -1,23 +1,17 @@
 package earth.terrarium.tempad.client.widgets
 
-import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
 import earth.terrarium.olympus.client.components.base.ListWidget
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.core.GlobalPos
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.util.Mth
-import java.util.function.Consumer
 
-class InformationPanel constructor(
-    x: Int,
-    y: Int,
-) : ListWidget(92, 76) {
+class InformationPanel : ListWidget(92, 76) {
     companion object {
         private val EMPTY_LINE_1 = StringEntry(Component.translatable(("gui.${Tempad.MOD_ID}.no_selection.first_line")))
         private val EMPTY_LINE_2 = StringEntry(Component.translatable(("gui.${Tempad.MOD_ID}.no_selection.second_line")))

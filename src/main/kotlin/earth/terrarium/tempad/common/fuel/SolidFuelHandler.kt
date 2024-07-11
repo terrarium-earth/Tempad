@@ -19,7 +19,7 @@ class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) :
 
     override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack {
         val input = SingleRecipeInput(stack)
-        val recipe = Tempad.server!!.recipeManager.getAllRecipesFor(ModRecipes.SOLID_FUEL_TYPE)
+        val recipe = Tempad.server!!.recipeManager.getAllRecipesFor(ModRecipes.solidFuelType)
             .find { it.value().matches(input) }
             ?: return stack
 
@@ -40,7 +40,7 @@ class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) :
 
     override fun addChargeFromItem(context: ItemContext): Boolean {
         val input = SingleRecipeInput(context.item)
-        val recipe = context.level.recipeManager.getRecipeFor(ModRecipes.SOLID_FUEL_TYPE, input, context.level).getOrNull()
+        val recipe = context.level.recipeManager.getRecipeFor(ModRecipes.solidFuelType, input, context.level).getOrNull()
         recipe?.value()?.let {
             var overflow = ItemStack.EMPTY
             if (!context.item.craftingRemainingItem.isEmpty) {
