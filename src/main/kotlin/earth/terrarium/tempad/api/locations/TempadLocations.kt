@@ -5,8 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
+import earth.terrarium.tempad.api.fuel.ItemContext
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.player.Player
 import java.util.UUID
 
 @JvmRecord
@@ -37,7 +37,9 @@ interface LocationHandler {
     operator fun get(locationId: UUID): LocationData? = locations[locationId]
 }
 
-typealias LocationProvider = (Player) -> LocationHandler
+fun interface LocationProvider {
+    operator fun invoke(ctx: ItemContext): LocationHandler
+}
 
 object TempadLocations {
     private val registry: MutableMap<ProviderSettings, LocationProvider> = mutableMapOf()
@@ -58,11 +60,11 @@ object TempadLocations {
     operator fun get(id: ResourceLocation): LocationProvider? = registry.keys.find { it.id == id }?.let { registry[it] }
 
     @JvmStatic
-    operator fun get(player: Player, settings: ProviderSettings): LocationHandler? = registry[settings]?.invoke(player)
+    operator fun get(ctx: ItemContext, settings: ProviderSettings): LocationHandler? = registry[settings]?.invoke(ctx)
 
     @JvmStatic
-    operator fun get(player: Player, id: ResourceLocation): LocationHandler? = registry.keys.find { it.id == id }?.let { registry[it]?.invoke(player) }
+    operator fun get(ctx: ItemContext, id: ResourceLocation): LocationHandler? = registry.keys.find { it.id == id }?.let { registry[it]?.invoke(ctx) }
 
     @JvmStatic
-    operator fun get(player: Player): Map<ProviderSettings, Map<UUID, LocationData>> = registry.mapValues { it.value(player).locations }
+    operator fun get(ctx: ItemContext): Map<ProviderSettings, Map<UUID, LocationData>> = registry.mapValues { it.value(ctx).locations }
 }

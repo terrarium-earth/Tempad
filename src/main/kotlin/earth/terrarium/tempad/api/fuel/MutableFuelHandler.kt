@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.api.fuel
 
+import earth.terrarium.tempad.common.utils.ctx
 import net.minecraft.world.entity.player.Player
 
 interface MutableFuelHandler: FuelHandler {
@@ -17,7 +18,7 @@ interface MutableFuelHandler: FuelHandler {
             return true
         }
         for (i in 0 until player.inventory.containerSize) {
-            if(addChargeFromItem(PlayerContainerContext(player, i))) {
+            if(addChargeFromItem(player.ctx(i))) {
                 return true
             }
         }

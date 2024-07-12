@@ -3,6 +3,7 @@ package earth.terrarium.tempad.common.apps
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import earth.terrarium.tempad.api.app.TempadApp
+import earth.terrarium.tempad.api.fuel.ItemContext
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.registries.ModMenus
 import net.minecraft.network.chat.Component
@@ -12,14 +13,14 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 
-data class NewLocationApp(val slotId: Int) : TempadApp<NewLocationData> {
+data class NewLocationApp(val ctx: ItemContext) : TempadApp<NewLocationData> {
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
-        return ModMenus.NewLocationMenu(pContainerId, pPlayerInventory, Optional.of(NewLocationData(CommonConfig.allowLocationSaving, slotId)))
+        return ModMenus.NewLocationMenu(pContainerId, pPlayerInventory, Optional.of(NewLocationData(CommonConfig.allowLocationSaving, ctx.slot)))
     }
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.new_location")
 
-    override fun createContent(player: ServerPlayer?) = NewLocationData(CommonConfig.allowLocationSaving, slotId)
+    override fun createContent(player: ServerPlayer?) = NewLocationData(CommonConfig.allowLocationSaving, ctx.slot)
 }
 
 class NewLocationData(val allowLocationSaving: Boolean, slotId: Int) : AppContent<NewLocationData>(slotId, CODEC) {

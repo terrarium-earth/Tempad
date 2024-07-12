@@ -1,10 +1,8 @@
 package earth.terrarium.tempad.common.fuel
 
 import earth.terrarium.tempad.api.fuel.ItemContext
-import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.registries.energyConsumeAmount
 import earth.terrarium.tempad.common.utils.get
-import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.energy.IEnergyStorage
@@ -33,7 +31,7 @@ class EnergyFuelHandler(stack: ItemStack, override val totalCharges: Int) : Base
     override fun canReceive(): Boolean = true
 
     override fun addChargeFromItem(context: ItemContext): Boolean {
-        val handler = context.item[Capabilities.EnergyStorage.ITEM] ?: return false
+        val handler = context.stack[Capabilities.EnergyStorage.ITEM] ?: return false
         val toConsume = stack.energyConsumeAmount
         if (handler.extractEnergy(toConsume, true) < toConsume) return false
         handler.extractEnergy(toConsume, false)

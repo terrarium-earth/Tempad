@@ -7,6 +7,7 @@ import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.ModWidgets
 import earth.terrarium.tempad.client.widgets.buttons.ToggleButton
+import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.client.widgets.location_panel.PanelWidget
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.network.c2s.DeleteLocationPacket
@@ -20,7 +21,6 @@ import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.components.ImageButton
 import net.minecraft.client.gui.components.Tooltip
-import net.minecraft.client.gui.layouts.LayoutSettings
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
@@ -31,29 +31,30 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
     AbstractTempadScreen<ModMenus.TeleportMenu>(SPRITE, menu, inv, title) {
     companion object {
         val SPRITE = "screen/teleport".tempadId
-        val CENTERED: (LayoutSettings) -> Unit = { it.alignHorizontallyRight() }
 
         fun imgBtn(key: String, onClick: (btn: Button) -> Unit): ImageButton {
-            val imageButton = ImageButton(14, 14, key.btnSprites(), onClick, key.toLanguageKey("button"))
+            val imageButton = ImageButton(10, 10, key.btnSprites(), onClick, key.toLanguageKey("button"))
             imageButton.tooltip = Tooltip.create(key.toLanguageKey("button"))
             return imageButton
         }
+
+        val teleportText = Component.translatable("app.${Tempad.MOD_ID}.teleport.button")
     }
 
-    private var locationButtons: LinearLayout? = null
     var selected: Triple<ProviderSettings, UUID, LocationData>? = null
         set(value) {
             field = value
-            locationButtons?.visitWidgets { widget -> widget.active = value != null }
+            locationButtons.visitWidgets { widget -> widget.visible = value != null }
             favBtn.toggled = favorite?.matches(value?.first?.id, value?.second) == true
             value?.third?.let { infoPanel.update(it) }
         }
 
+    private lateinit var locationButtons: LinearLayout
     private lateinit var infoPanel: InformationPanel
     private lateinit var favBtn: ToggleButton
     private lateinit var search: EditBox
     private var favorite: FavoriteLocationAttachment? = menu.appContent?.favoriteLocation
-    private lateinit var panel: PanelWidget
+    private lateinit var locationList: PanelWidget
 
     override fun init() {
         super.init()
@@ -62,7 +63,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
 
         val searchValue = if (::search.isInitialized) search.value else ""
 
-        this.panel = addRenderableWidget(PanelWidget(
+        this.locationList = addRenderableWidget(PanelWidget(
             menu.appContent?.locations ?: emptyMap(),
             this::selected,
             { selected = it },
@@ -70,7 +71,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             { provider, locationId -> favorite?.matches(provider.id, locationId) ?: false }
         ))
 
-        panel.setPosition(localLeft + 100, localTop + 23)
+        locationList.setPosition(localLeft + 100, localTop + 23)
 
         this.search = addRenderableWidget(
             ModWidgets.search(
@@ -78,30 +79,28 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
                 localTop + 8,
                 64,
                 12
-            ) { _ -> panel.update() }
+            ) { _ -> locationList.update() }
         )
 
         search.value = searchValue
-        panel.update()
+        locationList.update()
 
         locationButtons = LinearLayout(
-            localLeft + 4,
-            localTop + 100,
+            localLeft + 71,
+            localTop + 26,
             LinearLayout.Orientation.HORIZONTAL
         ).spacing(2)
 
-        val btns = locationButtons ?: return
-        btns.addChild(
-            imgBtn("teleport") {
-                if (minecraft == null || selected == null) return@imgBtn
+        addRenderableWidget(
+            ColoredButton(teleportText, height = 18, width = 74, x = localLeft + 4, y = localTop + 96) {
+                if (minecraft == null || selected == null) return@ColoredButton
                 val (provider, locationId, _) = selected!!
                 OpenTimedoorPacket(provider.id, locationId, 0).sendToServer()
                 minecraft?.setScreen(null)
             },
-            CENTERED
-        )
+        ).active = false
 
-        favBtn = btns.addChild(
+        favBtn = locationButtons.addChild(
             ToggleButton("unfavorite".btnSprites(), "favorite".btnSprites()) {
                 if (minecraft == null || selected == null) return@ToggleButton
                 val (provider, locationId, _) = selected!!
@@ -113,7 +112,6 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
                     favorite = FavoriteLocationAttachment(provider.id, locationId)
                 }
             },
-            CENTERED
         )
 
         favBtn.tooltip = { selected ->
@@ -124,36 +122,27 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
 
         favBtn.setTooltip(Tooltip.create(Component.translatable("gui.${Tempad.MOD_ID}.favorite.button")))
 
-        btns.addChild(
+        locationButtons.addChild(
             imgBtn("delete") {
                 if (minecraft == null || selected == null) return@imgBtn
                 val (provider, locationId, _) = selected!!
-                DeleteLocationPacket(provider.id, locationId).sendToServer()
-                panel.deleteSelected()
+                DeleteLocationPacket(provider.id, locationId, menu.appContent!!.slotId).sendToServer()
+                locationList.deleteSelected()
                 infoPanel.clearLines()
             },
-            CENTERED
         )
 
-        btns.addChild(
-            imgBtn("download") {
-                locationButtons?.let { it.visitWidgets { widget -> widget.active = false } }
-                minecraft?.setScreen(null)
-            },
-            CENTERED
-        )
-
-        btns.arrangeElements()
-        btns.visitWidgets { widget ->
+        locationButtons.arrangeElements()
+        locationButtons.visitWidgets { widget ->
             addRenderableWidget(widget)
-            widget.active = false
+            widget.visible = false
         }
     }
 
     override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
         super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
-        if (panel.isScrolling) {
-            panel.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+        if (locationList.isScrolling) {
+            locationList.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
         }
         return true
     }

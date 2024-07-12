@@ -6,18 +6,14 @@ import net.minecraft.world.Container
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 
-class PlayerContainerContext(override val player: Player, private val container: Container, val slot: Int): ItemContext {
+class PlayerContainerContext(override val player: Player, private val container: Container, override val slot: Int): ItemContext {
     constructor(player: Player, slot: Int) : this(player, player.inventory, slot)
 
     override val level = player.level()
 
-    override var item: ItemStack
+    override var stack: ItemStack
         get() = container[slot]
         set(value) {
             container[slot] = value
         }
-
-    override fun insertOverflow(overflow: ItemStack) {
-        player.inventory.placeItemBackInInventory(overflow)
-    }
 }

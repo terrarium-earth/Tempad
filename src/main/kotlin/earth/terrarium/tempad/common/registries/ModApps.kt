@@ -16,18 +16,18 @@ object ModApps {
     val timeline = "timeline".tempadId
 
     fun init() {
-        AppRegistry[teleport] = { _, id -> TeleportApp(id) }
-        AppRegistry[newLocation] = { _, id -> NewLocationApp(id) }
-        AppRegistry[timeline] = { _, id -> TimelineApp(id) }
-        AppRegistry[fuel] = { player, slotId ->
-            val fuelType = player.inventory[slotId][FuelHandler.CAPABILITY]
+        AppRegistry[teleport] = ::TeleportApp
+        AppRegistry[newLocation] = ::NewLocationApp
+        AppRegistry[timeline] = ::TimelineApp
+        AppRegistry[fuel] = { ctx ->
+            val fuelType = ctx.stack[FuelHandler.CAPABILITY]
             if (fuelType is MutableFuelHandler) {
-                FuelApp(slotId)
+                FuelApp(ctx)
             } else {
                 null
             }
         }
 
-        AppRegistry[settings] = { _, id -> SettingsApp(id) }
+        AppRegistry[settings] = ::SettingsApp
     }
 }

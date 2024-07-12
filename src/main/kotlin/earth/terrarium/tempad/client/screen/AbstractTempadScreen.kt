@@ -44,7 +44,7 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
             OpenAppPacket(button!!.appId, menu.appContent!!.slotId).sendToServer()
         }
 
-        for ((id, app) in AppRegistry.getAll(inv.player, menu.appContent!!.slotId)) {
+        for ((id, app) in AppRegistry.getAll(menu.ctx)) {
             appList.addEntry(AppButton(app, id))
         }
 

@@ -45,7 +45,7 @@ class LiquidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int):
     override fun getContainer(): ItemStack = stack
 
     override fun addChargeFromItem(context: ItemContext): Boolean {
-        val handler = context.item[Capabilities.FluidHandler.ITEM] ?: return false
+        val handler = context.stack[Capabilities.FluidHandler.ITEM] ?: return false
         val fluid = handler.getFluidInTank(0)
         if (fluid.isEmpty) return false
         val input = SingleFluidRecipeInput(fluid)
@@ -56,7 +56,7 @@ class LiquidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int):
             if (drained.amount < it.amount) return false
             handler.drain(toExtract, FluidAction.EXECUTE)
             this += 1
-            context.item = handler.container
+            context.stack = handler.container
             return true
         }
         return false

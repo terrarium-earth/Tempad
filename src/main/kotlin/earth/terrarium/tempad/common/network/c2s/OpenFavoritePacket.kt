@@ -6,7 +6,8 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.common.data.favoriteLocation
+import earth.terrarium.tempad.api.fuel.PlayerContainerContext
+import earth.terrarium.tempad.common.data.pinnedLocation
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 
 data class OpenFavoritePacket(val slotId: Int): Packet<OpenFavoritePacket> {
@@ -18,7 +19,8 @@ data class OpenFavoritePacket(val slotId: Int): Packet<OpenFavoritePacket> {
                 { it.slotId },
             ),
             NetworkHandle.handle { message, player ->
-                player.favoriteLocation?.let { TimedoorEntity.openTimedoor(player, message.slotId, it) }
+                val ctx = PlayerContainerContext(player, message.slotId)
+                ctx.pinnedLocation?.let { TimedoorEntity.openTimedoor(ctx, it) }
             }
         )
     }

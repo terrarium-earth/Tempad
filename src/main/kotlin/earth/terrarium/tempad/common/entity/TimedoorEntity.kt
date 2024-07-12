@@ -3,6 +3,7 @@ package earth.terrarium.tempad.common.entity
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.fuel.FuelHandler
+import earth.terrarium.tempad.api.fuel.ItemContext
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.items.TempadItem
@@ -30,18 +31,18 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializaer)
 
-        fun openTimedoor(player: Player, slotId: Int, location: LocationData) {
-            val stack = player.inventory[slotId]
+        fun openTimedoor(ctx: ItemContext, location: LocationData) {
+            val stack = ctx.stack
             if (stack.item !is TempadItem) return
             val fuelHandler = stack.getCapability(FuelHandler.CAPABILITY) ?: return
             if (fuelHandler.charges <= 0) return
             fuelHandler -= 1
-            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
-            timedoor.owner = player.uuid
-            timedoor.pos = LocationData.offsetLocation(player.position(), location.angle, CommonConfig.TimeDoor.placementDistance)
-            timedoor.yRot = player.yHeadRot
+            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, ctx.level)
+            timedoor.owner = ctx.player.uuid
+            timedoor.pos = LocationData.offsetLocation(ctx.player.position(), location.angle, CommonConfig.TimeDoor.placementDistance)
+            timedoor.yRot = ctx.player.yHeadRot
             timedoor.targetLocation = location
-            player.level().addFreshEntity(timedoor)
+            ctx.player.level().addFreshEntity(timedoor)
         }
     }
 
@@ -58,17 +59,23 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     var color by DataDelegate(COLOR)
+
     var closingTime by DataDelegate(CLOSING_TIME)
+
     var targetLocation: LocationData? = null
         set(value) {
             field = value
             color = value?.color ?: Tempad.ORANGE
         }
+
     var linkedPortalEntity: TimedoorEntity? = null
         private set
-    private var owner: UUID? = null
+
+    var owner: UUID? = null
+
     private val targetLevel: ServerLevel?
         get() = targetLocation?.dimension?.let { level().server[it] }
+
     private val selfLocation: LocationData
         get() = LocationData("Return from ${targetLocation?.name}", LocationData.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
 

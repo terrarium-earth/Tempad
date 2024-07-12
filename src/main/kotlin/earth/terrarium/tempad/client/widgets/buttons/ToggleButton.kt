@@ -11,7 +11,7 @@ class ToggleButton(
     private val unselectedSprites: WidgetSprites,
     onPress: (btn: Button) -> Unit,
 ) :
-    Button(0, 0, 14, 14, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION) {
+    Button(0, 0, 10, 10, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION) {
     var toggled = false
     var tooltip = { selected: Boolean -> Tooltip.create(CommonComponents.EMPTY) }
 

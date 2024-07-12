@@ -3,6 +3,7 @@ package earth.terrarium.tempad.common.apps
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import earth.terrarium.tempad.api.app.TempadApp
+import earth.terrarium.tempad.api.fuel.ItemContext
 import earth.terrarium.tempad.common.data.HistoricalLocation
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.registries.travelHistory
@@ -24,12 +25,12 @@ class TimelineData(val slot: Int, val history: Map<Date, HistoricalLocation>): A
     }
 }
 
-class TimelineApp(val slot: Int): TempadApp<TimelineData> {
+class TimelineApp(val ctx: ItemContext): TempadApp<TimelineData> {
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
-        return ModMenus.TimelineMenu(pContainerId, pPlayerInventory, Optional.of(TimelineData(slot, pPlayer.travelHistory)))
+        return ModMenus.TimelineMenu(pContainerId, pPlayerInventory, Optional.of(TimelineData(ctx.slot, pPlayer.travelHistory)))
     }
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.timeline")
 
-    override fun createContent(player: ServerPlayer): TimelineData = TimelineData(slot, player.travelHistory)
+    override fun createContent(player: ServerPlayer): TimelineData = TimelineData(ctx.slot, player.travelHistory)
 }

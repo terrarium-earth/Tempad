@@ -2,6 +2,7 @@ package earth.terrarium.tempad.common.menu
 
 import earth.terrarium.tempad.common.apps.AppContent
 import earth.terrarium.tempad.common.apps.NewLocationData
+import earth.terrarium.tempad.common.utils.ctx
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -17,6 +18,8 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
     }
 
     constructor(id: Int, inventory: Inventory, type: MenuType<*>?, locations: Optional<T>) : this(id, inventory, type, locations.getOrNull())
+
+    val ctx = inventory.player.ctx(appContent?.slotId ?: -1)
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack {
         var itemStack = ItemStack.EMPTY

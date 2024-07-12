@@ -8,6 +8,7 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.api.fuel.PlayerContainerContext
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.resources.ResourceLocation
@@ -26,8 +27,9 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
             ),
             NetworkHandle.handle { message, player ->
                 if (TempadLocations[message.providerId] == null) return@handle
-                val location = TempadLocations[player, message.providerId]?.let { it[message.locationId] }
-                location?.let { TimedoorEntity.openTimedoor(player, message.slotId, it) }
+                val ctx = PlayerContainerContext(player, message.slotId)
+                val location = TempadLocations[ctx, message.providerId]?.let { it[message.locationId] }
+                location?.let { TimedoorEntity.openTimedoor(ctx, it) }
             }
         )
     }

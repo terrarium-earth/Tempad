@@ -39,19 +39,19 @@ class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) :
     override fun isItemValid(slot: Int, stack: ItemStack): Boolean = stack in ModTags.ITEM_FUEL
 
     override fun addChargeFromItem(context: ItemContext): Boolean {
-        val input = SingleRecipeInput(context.item)
+        val input = SingleRecipeInput(context.stack)
         val recipe = context.level.recipeManager.getRecipeFor(ModRecipes.solidFuelType, input, context.level).getOrNull()
         recipe?.value()?.let {
             var overflow = ItemStack.EMPTY
-            if (!context.item.craftingRemainingItem.isEmpty) {
-                overflow = context.item.craftingRemainingItem.copyWithCount(recipe.value().count)
+            if (!context.stack.craftingRemainingItem.isEmpty) {
+                overflow = context.stack.craftingRemainingItem.copyWithCount(recipe.value().count)
             }
-            context.item -= recipe.value().count
+            context.stack -= recipe.value().count
             if (!overflow.isEmpty) {
-                if (context.item.isEmpty) {
-                    context.item = overflow
+                if (context.stack.isEmpty) {
+                    context.stack = overflow
                 } else {
-                    context.insertOverflow(overflow)
+                    context.player.inventory.placeItemBackInInventory(overflow)
                 }
             }
             this += 1

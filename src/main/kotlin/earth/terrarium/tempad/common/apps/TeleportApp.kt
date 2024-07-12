@@ -6,6 +6,7 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.app.TempadApp
+import earth.terrarium.tempad.api.fuel.ItemContext
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.ModMenus
@@ -18,18 +19,20 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-data class TeleportApp(val slotId: Int): TempadApp<TeleportData> {
+data class TeleportApp(val ctx: ItemContext): TempadApp<TeleportData> {
     override fun createMenu(pContainerId: Int, inventory: Inventory, player: Player): AbstractContainerMenu {
         return ModMenus.TeleportMenu(
             pContainerId,
             inventory,
-            Optional.of(TeleportData(TempadLocations.get(player), player.pinnedLocationData, slotId))
+            Optional.of(createContent())
         )
     }
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.teleport")
 
-    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations.get(player), player.pinnedLocationData, slotId)
+    private fun createContent() = createContent(ctx.player as ServerPlayer)
+
+    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations[ctx], player.pinnedLocationData, ctx.slot)
 
     override fun isEnabled(player: Player): Boolean = true
 }
