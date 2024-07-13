@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.fuel
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.fuel.ItemContext
+import earth.terrarium.tempad.api.context.ContextInstance
 import earth.terrarium.tempad.common.registries.ModRecipes
 import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.utils.contains
@@ -38,7 +38,7 @@ class SolidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int) :
 
     override fun isItemValid(slot: Int, stack: ItemStack): Boolean = stack in ModTags.ITEM_FUEL
 
-    override fun addChargeFromItem(context: ItemContext): Boolean {
+    override fun addChargeFromItem(context: ContextInstance): Boolean {
         val input = SingleRecipeInput(context.stack)
         val recipe = context.level.recipeManager.getRecipeFor(ModRecipes.solidFuelType, input, context.level).getOrNull()
         recipe?.value()?.let {

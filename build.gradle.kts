@@ -25,6 +25,7 @@ repositories {
     maven(url = "https://maven.neoforged.net/releases")
     maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
     maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
+    maven(url = "https://maven.octo-studios.com/releases")
     mavenLocal()
 }
 
@@ -36,6 +37,7 @@ dependencies {
     val resourcefulLibVersion: String by project
     val resourcefulLibKtVersion: String by project
     val kotlinForForgeVersion: String by project
+    val curiosVersion: String by project
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
@@ -50,6 +52,8 @@ dependencies {
     implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "latest.release") {
         isTransitive = false
     }
+
+    implementation("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
 }
 
 java {
@@ -71,6 +75,7 @@ kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
         freeCompilerArgs.add("-Xjvm-default=all")
+        freeCompilerArgs.add("-Xcontext-receivers")
     }
 }
 

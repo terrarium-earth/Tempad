@@ -23,9 +23,9 @@ import java.util.*
 class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.SettingsMenu>(null, menu, inv, title) {
 
-    var defaultMacro: ResourceLocation = tempadItem.defaultMacro
-    var defaultApp: ResourceLocation = tempadItem.defaultApp
-    var organizationMethod: OrganizationMethod = tempadItem.organizationMethod
+    var defaultMacro: ResourceLocation = menu.stack.defaultMacro
+    var defaultApp: ResourceLocation = menu.stack.defaultApp
+    var organizationMethod: OrganizationMethod = menu.stack.organizationMethod
 
     var settings: ColoredList? = null
 
@@ -75,7 +75,7 @@ class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Compone
         val layout = FrameLayout(localLeft + 4, localTop + 100, 190, 14).setMinDimensions(190, 14)
 
         layout.addChild(imgBtn("save") {
-            SaveSettingsPacket(menu.appContent!!.slotId, defaultApp, defaultMacro, organizationMethod).sendToServer()
+            SaveSettingsPacket(menu.ctx, defaultApp, defaultMacro, organizationMethod).sendToServer()
         }) { it.alignHorizontallyRight().alignVerticallyBottom() }
 
         layout.arrangeElements()

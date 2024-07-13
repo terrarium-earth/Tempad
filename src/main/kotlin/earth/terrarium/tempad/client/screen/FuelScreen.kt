@@ -35,7 +35,7 @@ class FuelScreen<T: AppContent<T>>(
         val TRANSFER_TOOLTIP = Component.translatable("app.tempad.fuel.transfer.description")
     }
 
-    val fuelHandler = tempadItem[FuelHandler.CAPABILITY] ?: EmptyFuel
+    val fuelHandler = menu.stack[FuelHandler.CAPABILITY] ?: EmptyFuel
 
     override fun init() {
         super.init()
@@ -62,15 +62,15 @@ class FuelScreen<T: AppContent<T>>(
         infoLayout.visitWidgets { addRenderableWidget(it) }
 
         addRenderableWidget(ColoredButton(AUTO_USE_TEXT, width = 65, height = 18, x = localLeft + 101, y = localTop + 30) {
-            AddFuelPacket(menu.appContent!!.slotId, true).sendToServer()
+            AddFuelPacket(menu.ctx, true).sendToServer()
         }).tooltip = Tooltip.create(AUTO_USE_TOOLTIP)
 
         addRenderableWidget(ColoredButton(USE_TEXT, width = 45, height = 18, x = localLeft + 101, y = localTop + 50) {
-            AddFuelPacket(menu.appContent!!.slotId, false).sendToServer()
+            AddFuelPacket(menu.ctx, false).sendToServer()
         }).tooltip = Tooltip.create(USE_TOOLTIP)
 
         addRenderableWidget(ColoredButton(TRANSFER_TEXT, width = 45, height = 18, x = localLeft + 101, y = localTop + 70) {
-            TransferFuelPacket(menu.appContent!!.slotId).sendToServer()
+            TransferFuelPacket(menu.ctx).sendToServer()
         }).tooltip = Tooltip.create(TRANSFER_TOOLTIP)
     }
 }

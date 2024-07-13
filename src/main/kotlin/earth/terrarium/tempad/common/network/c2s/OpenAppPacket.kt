@@ -7,22 +7,22 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppHolder
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.api.context.ItemContext
+import earth.terrarium.tempad.common.registries.*
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 
 data class OpenAppPacket(val appHolder: AppHolder) : Packet<OpenAppPacket> {
-    constructor(appID: ResourceLocation, slotId: Int) : this(AppHolder(appID, slotId))
+    constructor(appID: ResourceLocation, data: ItemContext) : this(AppHolder(appID, data))
 
     companion object {
         val TYPE = CodecPacketType.Server.create(
             "open_app".tempadId,
             AppRegistry.BYTE_CODEC.map(::OpenAppPacket, OpenAppPacket::appHolder),
             NetworkHandle.handle { message, player ->
-                val stack = player.inventory[message.appHolder.slotId]
                 val app = message.appHolder.getApp(player)
-                if (!stack.`is`(ModItems.tempad) || (app != null && !app.isEnabled(player))) return@handle
+                val stack = message.appHolder.ctx.getStack(player)
+                if (stack.item !is ModItems.tempad || (app != null && !app.isEnabled(player))) return@handle
                 app?.openMenu(player as ServerPlayer)
             }
         )

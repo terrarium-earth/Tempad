@@ -6,13 +6,12 @@ import earth.terrarium.tempad.common.fuel.EmptyFuel
 import earth.terrarium.tempad.common.utils.get
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
-import net.minecraft.client.gui.components.Renderable
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.CommonComponents
-import net.minecraft.network.chat.Component
-import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.item.ItemStack
+import kotlin.properties.ReadWriteProperty
 
-class FuelBarWidget(val inv: Inventory, val slot: Int, x: Int, y: Int): AbstractWidget(x, y, WIDTH, HEIGHT, CommonComponents.EMPTY) {
+class FuelBarWidget(prop: ReadWriteProperty<Any, ItemStack>, x: Int, y: Int): AbstractWidget(x, y, WIDTH, HEIGHT, CommonComponents.EMPTY) {
     companion object {
         const val WIDTH = 6
         const val HEIGHT = 54
@@ -20,7 +19,8 @@ class FuelBarWidget(val inv: Inventory, val slot: Int, x: Int, y: Int): Abstract
         val SPRITE = "misc/bar".tempadId
     }
 
-    val fuelHandler get() = inv[slot][FuelHandler.CAPABILITY] ?: EmptyFuel
+    val stack by prop
+    val fuelHandler get() = stack[FuelHandler.CAPABILITY] ?: EmptyFuel
 
     override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         val fuelAmount = fuelHandler.charges

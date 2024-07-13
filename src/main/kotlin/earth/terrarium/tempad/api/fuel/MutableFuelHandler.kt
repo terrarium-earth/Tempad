@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.api.fuel
 
+import earth.terrarium.tempad.api.context.ContextInstance
 import earth.terrarium.tempad.common.utils.ctx
 import net.minecraft.world.entity.player.Player
 
@@ -25,5 +26,5 @@ interface MutableFuelHandler: FuelHandler {
         return false
     }
 
-    fun addChargeFromItem(context: ItemContext): Boolean
+    fun addChargeFromItem(context: ContextInstance): Boolean
 }

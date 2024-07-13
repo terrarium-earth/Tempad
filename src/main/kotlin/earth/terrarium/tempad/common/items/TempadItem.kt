@@ -22,7 +22,7 @@ class TempadItem: Item(Properties()) {
         val ctx = player.ctx(slotId)
         if (level.isClientSide) {
             if (player.isShiftKeyDown) {
-                MacroRegistry[stack.defaultMacro]?.let { macro -> macro(ctx) }
+                MacroRegistry[stack.defaultMacro]?.run(ctx)
             }
             return InteractionResultHolder.success(stack)
         }

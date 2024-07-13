@@ -1,13 +1,10 @@
 package earth.terrarium.tempad.api.macro
 
-import earth.terrarium.tempad.api.fuel.ItemContext
-import earth.terrarium.tempad.common.registries.ModMacros
+import earth.terrarium.tempad.api.context.ContextInstance
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.ItemStack
 
 fun interface TempadMacro {
-    operator fun invoke(ctx: ItemContext)
+    fun run(ctx: ContextInstance)
 }
 
 private val macros = mutableMapOf<ResourceLocation, TempadMacro>()

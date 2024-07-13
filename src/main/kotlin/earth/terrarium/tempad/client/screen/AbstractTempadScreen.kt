@@ -29,7 +29,6 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
 
     var localLeft: Int = 0
     var localTop: Int = 0
-    val tempadItem get() = inv[menu.appContent!!.slotId]
 
     companion object {
         val SPRITE = "screen/tempad".tempadId
@@ -41,18 +40,18 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         this.localLeft = this.leftPos + 30
 
         val appList = SelectionList<AppButton>(localLeft - 16, localTop + 1, 16, 116, 15) { button ->
-            OpenAppPacket(button!!.appId, menu.appContent!!.slotId).sendToServer()
+            OpenAppPacket(button!!.appId, menu.ctx).sendToServer()
         }
 
-        for ((id, app) in AppRegistry.getAll(menu.ctx)) {
+        for ((id, app) in AppRegistry.getAll(menu.ctx.getInstance(minecraft!!.player!!))) {
             appList.addEntry(AppButton(app, id))
         }
 
         addRenderableWidget(appList)
 
-        val fuelHandler = inv[menu.appContent!!.slotId][FuelHandler.CAPABILITY] ?: return
+        val fuelHandler = menu.stack[FuelHandler.CAPABILITY] ?: return
 
-        addRenderableWidget(FuelBarWidget(inv, menu.appContent!!.slotId, leftPos + 237, topPos + 52)).tooltip = Tooltip.create(Component.translatable("fuel.tempad.display", fuelHandler.charges, fuelHandler.totalCharges))
+        addRenderableWidget(FuelBarWidget(menu.ctx.stackDelegate(minecraft!!.player!!), leftPos + 237, topPos + 52)).tooltip = Tooltip.create(Component.translatable("fuel.tempad.display", fuelHandler.charges, fuelHandler.totalCharges))
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {

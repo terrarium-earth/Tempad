@@ -2,8 +2,6 @@ package earth.terrarium.tempad.common.fuel
 
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.fuel.FuelHandler
-import earth.terrarium.tempad.api.fuel.ItemContext
-import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
 object EmptyFuel: FuelHandler {

@@ -4,7 +4,9 @@ import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializer
 import net.minecraft.network.syncher.SynchedEntityData
+import net.minecraft.world.Container
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.common.MutableDataComponentHolder
@@ -58,3 +60,10 @@ class OptionalDataDelegate<T : Any>(private val key: EntityDataAccessor<Optional
     override operator fun getValue(thisRef: Entity, property: KProperty<*>): T? = thisRef.entityData[key].orElse(null)
     override operator fun setValue(thisRef: Entity, property: KProperty<*>, value: T?) = thisRef.entityData.set(key, Optional.ofNullable(value))
 }
+
+class ContainerDelegate(private val container: Container, private val slot: Int) : ReadWriteProperty<Any?, ItemStack> {
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>): ItemStack = container.getItem(slot)
+    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: ItemStack) = container.setItem(slot, value)
+}
+
+fun Container.slot(slot: Int) = ContainerDelegate(this, slot)

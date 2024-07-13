@@ -1,8 +1,6 @@
 package earth.terrarium.tempad.common.menu
 
 import earth.terrarium.tempad.common.apps.AppContent
-import earth.terrarium.tempad.common.apps.NewLocationData
-import earth.terrarium.tempad.common.utils.ctx
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -17,9 +15,10 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
         this.addPlayerInvSlots(inventory)
     }
 
-    constructor(id: Int, inventory: Inventory, type: MenuType<*>?, locations: Optional<T>) : this(id, inventory, type, locations.getOrNull())
+    val ctx = appContent!!.ctx
+    val stack by ctx.stackDelegate(inventory.player)
 
-    val ctx = inventory.player.ctx(appContent?.slotId ?: -1)
+    constructor(id: Int, inventory: Inventory, type: MenuType<*>?, locations: Optional<T>) : this(id, inventory, type, locations.getOrNull())
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack {
         var itemStack = ItemStack.EMPTY
@@ -110,11 +109,11 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
     }
 
     private fun makeInvSlot(inventory: Inventory, slotIndex: Int, x: Int, y: Int): Slot {
-        return if(slotIndex == appContent?.slotId) LockedSlot(inventory, slotIndex, x, y) else Slot(inventory, slotIndex, x, y)
+        return LockedSlot(inventory, slotIndex, x, y)
     }
 
-    class LockedSlot(inventory: Inventory, slotIndex: Int, x: Int, y: Int) : Slot(inventory, slotIndex, x, y) {
-        override fun mayPlace(stack: ItemStack): Boolean = false
-        override fun mayPickup(pPlayer: Player): Boolean = false
+    inner class LockedSlot(val inventory: Inventory, slotIndex: Int, x: Int, y: Int) : Slot(inventory, slotIndex, x, y) {
+        override fun mayPlace(stack: ItemStack): Boolean = ctx.isLocked(this, inventory.player)
+        override fun mayPickup(pPlayer: Player): Boolean = ctx.isLocked(this, inventory.player)
     }
 }

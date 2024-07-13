@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.fuel
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.fuel.ItemContext
+import earth.terrarium.tempad.api.context.ContextInstance
 import earth.terrarium.tempad.common.recipe.SingleFluidRecipeInput
 import earth.terrarium.tempad.common.registries.ModRecipes
 import earth.terrarium.tempad.common.registries.ModTags
@@ -44,7 +44,7 @@ class LiquidFuelHandler(tempadStack: ItemStack, override val totalCharges: Int):
 
     override fun getContainer(): ItemStack = stack
 
-    override fun addChargeFromItem(context: ItemContext): Boolean {
+    override fun addChargeFromItem(context: ContextInstance): Boolean {
         val handler = context.stack[Capabilities.FluidHandler.ITEM] ?: return false
         val fluid = handler.getFluidInTank(0)
         if (fluid.isEmpty) return false

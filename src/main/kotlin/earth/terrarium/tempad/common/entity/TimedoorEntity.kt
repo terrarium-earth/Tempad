@@ -2,8 +2,8 @@ package earth.terrarium.tempad.common.entity
 
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.context.ContextInstance
 import earth.terrarium.tempad.api.fuel.FuelHandler
-import earth.terrarium.tempad.api.fuel.ItemContext
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.items.TempadItem
@@ -31,7 +31,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializaer)
 
-        fun openTimedoor(ctx: ItemContext, location: LocationData) {
+        fun openTimedoor(ctx: ContextInstance, location: LocationData) {
             val stack = ctx.stack
             if (stack.item !is TempadItem) return
             val fuelHandler = stack.getCapability(FuelHandler.CAPABILITY) ?: return

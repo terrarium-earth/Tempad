@@ -22,7 +22,7 @@ object ModMenus {
     val TELEPORT_MENU: MenuType<TeleportMenu> by registry.register("teleport") {
         MenuContentHelper.create(
             ::TeleportMenu,
-            RecordCodecMenuContentSerializer(TeleportData.CODEC)
+            RecordCodecMenuContentSerializer(TeleportData.codec)
         )
     }
 
@@ -31,7 +31,7 @@ object ModMenus {
     val SETTINGS_MENU: MenuType<SettingsMenu> by registry.register("settings") {
         MenuContentHelper.create(
             ::SettingsMenu,
-            RecordCodecMenuContentSerializer(SettingsData.CODEC)
+            RecordCodecMenuContentSerializer(SettingsData.codec)
         )
     }
 
@@ -40,14 +40,14 @@ object ModMenus {
     val NEW_LOCATION_MENU: MenuType<NewLocationMenu> by registry.register("new_location") {
         MenuContentHelper.create(
             ::NewLocationMenu,
-            RecordCodecMenuContentSerializer(NewLocationData.CODEC)
+            RecordCodecMenuContentSerializer(NewLocationData.codec)
         )
     }
 
     val FUEL_MENU: MenuType<FuelMenu> by registry.register("fuel") {
         MenuContentHelper.create(
             ::FuelMenu,
-            RecordCodecMenuContentSerializer(BasicAppContent.CODEC)
+            RecordCodecMenuContentSerializer(BasicAppContent.codec)
         )
     }
 
@@ -56,7 +56,7 @@ object ModMenus {
     val TIMELINE_MENU: MenuType<TimelineMenu> by registry.register("timeline") {
         MenuContentHelper.create(
             ::TimelineMenu,
-            RecordCodecMenuContentSerializer(TimelineData.CODEC)
+            RecordCodecMenuContentSerializer(TimelineData.codec)
         )
     }
 }

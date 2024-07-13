@@ -8,13 +8,13 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.api.fuel.PlayerContainerContext
+import earth.terrarium.tempad.api.context.ItemContext
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.resources.ResourceLocation
 import java.util.*
 
-data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: UUID, val slotId: Int) :
+data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: UUID, val ctx: ItemContext) :
     Packet<OpenTimedoorPacket> {
     companion object {
         val TYPE = CodecPacketType.Server.create(
@@ -22,12 +22,12 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
             ObjectByteCodec.create(
                 ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
                 ByteCodec.UUID.fieldOf { it.locationId },
-                ByteCodec.INT.fieldOf { it.slotId },
+                ItemContext.codec.fieldOf { it.ctx },
                 ::OpenTimedoorPacket
             ),
             NetworkHandle.handle { message, player ->
                 if (TempadLocations[message.providerId] == null) return@handle
-                val ctx = PlayerContainerContext(player, message.slotId)
+                val ctx = message.ctx.getInstance(player)
                 val location = TempadLocations[ctx, message.providerId]?.let { it[message.locationId] }
                 location?.let { TimedoorEntity.openTimedoor(ctx, it) }
             }

@@ -95,7 +95,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             ColoredButton(teleportText, height = 18, width = 74, x = localLeft + 4, y = localTop + 96) {
                 if (minecraft == null || selected == null) return@ColoredButton
                 val (provider, locationId, _) = selected!!
-                OpenTimedoorPacket(provider.id, locationId, 0).sendToServer()
+                OpenTimedoorPacket(provider.id, locationId, menu.ctx).sendToServer()
                 minecraft?.setScreen(null)
             },
         ).active = false
@@ -126,7 +126,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             imgBtn("delete") {
                 if (minecraft == null || selected == null) return@imgBtn
                 val (provider, locationId, _) = selected!!
-                DeleteLocationPacket(provider.id, locationId, menu.appContent!!.slotId).sendToServer()
+                DeleteLocationPacket(menu.ctx, provider.id, locationId).sendToServer()
                 locationList.deleteSelected()
                 infoPanel.clearLines()
             },

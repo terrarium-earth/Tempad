@@ -10,7 +10,7 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.fuel.PlayerContainerContext
+import earth.terrarium.tempad.api.context.impl.InventoryItemContext
 import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.core.GlobalPos
@@ -129,4 +129,4 @@ fun <O, T: Any> ByteCodec<T>.nullableFieldOf(getter: Function<O, T?>): ObjectEnt
     return ObjectEntryByteCodec(this.optionalOf()) { Optional.ofNullable(getter.apply(it)) }
 }
 
-fun Player.ctx(slot: Int) = PlayerContainerContext(this, slot)
+fun Player.ctx(slot: Int) = InventoryItemContext(slot).getInstance(this)
