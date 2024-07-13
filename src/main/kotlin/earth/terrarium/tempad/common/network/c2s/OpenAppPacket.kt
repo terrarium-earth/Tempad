@@ -22,7 +22,7 @@ data class OpenAppPacket(val appHolder: AppHolder) : Packet<OpenAppPacket> {
             NetworkHandle.handle { message, player ->
                 val app = message.appHolder.getApp(player)
                 val stack = message.appHolder.ctx.getStack(player)
-                if (stack.item !is ModItems.tempad || (app != null && !app.isEnabled(player))) return@handle
+                if (!stack.`is`(ModItems.tempad) || (app != null && !app.isEnabled(player))) return@handle
                 app?.openMenu(player as ServerPlayer)
             }
         )
