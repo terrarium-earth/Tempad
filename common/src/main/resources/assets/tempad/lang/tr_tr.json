@@ -1,0 +1,71 @@
+{
+  "gui.tempad.search_field": "Ara...",
+  "gui.tempad.name_field": "Ad...",
+  "gui.tempad.new_location": "(+) Yeni Konum",
+  "gui.tempad.add_location": "Konum ekle",
+  "gui.tempad.download": "Konumu dışa aktar",
+  "gui.tempad.download_disabled": "Bu konumu dışa aktaramazsınız",
+  "gui.tempad.teleport": "Işınlan",
+  "gui.tempad.teleport_disabled": "Bu konuma ışınlanamazsınız",
+  "gui.tempad.delete": "Konumu sil",
+  "gui.tempad.delete_disabled": "Bu konumu silemezsiniz",
+  "gui.tempad.favorite": "Konumu favoriye ekle",
+  "gui.tempad.unfavorite": "Konumu favoriden kaldır",
+  "gui.tempad.timedoor": "Zaman Kapısı",
+  "gui.tempad.dimension": "Boyut: %s",
+  "gui.tempad.no_locations.first_line": "Konumu eklemek",
+  "gui.tempad.no_locations.second_line": "için [+] bas",
+  "gui.tempad.no_selection.first_line": "Daha fazla ayrıntı",
+  "gui.tempad.no_selection.second_line": "için konum seçin",
+  "gui.tempad.x": "X: %s",
+  "gui.tempad.y": "Y: %s",
+  "gui.tempad.z": "Z: %s",
+  "gui.tempad.ready": "Işınlanmaya hazır",
+  "gui.tempad.not_ready": "Işınlanmaya hazır değil",
+  "gui.tempad.cancel": "İptal et",
+  "gui.tempad.confirm": "Onayla",
+  
+  "tooltip.tempad.durability_cost": "Kalan kullanım: %s/%s",
+  "tooltip.tempad.timeleft": "Şarj Oluyor: %s",
+  "tooltip.tempad.fullycharged": "Tamamen Şarj Oldu",
+  "tooltip.tempad.timer_cost": "Bekleme Süresi: %s",
+  "tooltip.tempad.energy_info": "Enerji: %s/%s RF",
+  "tooltip.tempad.energy_cost": "Kullanım başına %s RF tüketir",
+  "tooltip.tempad.item_option_info": "Kullanmak için yakıt eşyası gerekli",
+  "tooltip.tempad.experience_level_cost": "Zaman Kapısını açmak için %s Seviye gerekli",
+  "tooltip.tempad.experience_points_cost": "Zaman Kapısını açmak için %s Deneyim Puanı gerekli",
+  
+  "item.tempad.tempad": "§6Tempad",
+  "item.tempad.he_who_remains_tempad": "§6Tempad",
+  "item.tempad.he_who_remains_tempad.tooltip": "'Geriye Kalan' ın Eşyası'",
+  
+  "advancements.tempad.tempad": "Tüm Zamanlar İçin. Her Zaman.",
+  "advancements.tempad.tempad.description": "Tempad'i Elde Et",
+  "advancements.tempad.he_who_remains": "Zamanın Sonundaki Kale",
+  "advancements.tempad.he_who_remains.description": "'Geri Kalan' ın Tempad'ini elde edin",
+  
+  "subtitles.tempad.entity.timedoor.open": "Zaman Kapısı açılıyor",
+  
+  "dimension.minecraft.overworld": "Ana Dünya",
+  "dimension.minecraft.the_nether": "Nether",
+  "dimension.minecraft.the_end": "End",
+  
+  "tempad_option.tempad.energy": "Enerji: %s/%s §b⚡§r",
+  "tempad_option.tempad.energy_cost": "Maliyeti %s §b⚡§r",
+  "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r",
+  
+  "item.tempad.empty_tank": "Boş",
+
+  "item.tempad.location_card": "Konum Kartı",
+  "item.tempad.location_card.creator_toolip": "%s tarafından oluşturuldu",
+  "item.tempad.location_card.shift_toolip": "Daha fazla bilgi için [%s] tuşuna basılı tutun",
+  "item.tempad.location_card.added_location": "Eklenen konum: %s",
+  "item.tempad.location_card.add_location": "Konumu ayarlamak için sağ tıklayın",
+  "item.tempad.location_card.set_name": "Konum adını ayarlamak için örste yeniden adlandırın",
+  "item.tempad.location_card.set_location": "Konumu ayarla: %s",
+
+  "category.tempad.keybinds": "Tempad",
+  
+  "key.tempad.favorite": "Favoriye eklenen konumu aç",
+  "key.tempad.shortcut": "Tempad ekranını aç"
+}
