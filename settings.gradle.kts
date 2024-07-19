@@ -8,7 +8,6 @@ pluginManagement {
         maven(url = "https://maven.neoforged.net/releases/")
         maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
         gradlePluginPortal()
-        mavenLocal()
     }
 }
 

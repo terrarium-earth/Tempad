@@ -49,7 +49,7 @@ dependencies {
         isTransitive = false
     }
 
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "latest.release") {
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "1.0.1") {
         isTransitive = false
     }
 
