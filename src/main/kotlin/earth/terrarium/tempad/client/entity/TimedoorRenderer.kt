@@ -59,7 +59,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         poseStack.pushPose()
         poseStack.mulPose(Axis.YP.rotationDegrees(entity.yRot))
         poseStack.translate(width / -2.0, finalHeight / 2.0 - height / 2.0 + 0.01, depth / -2.0)
-        if (width >= 0) renderTimedoor(poseStack, buffer, width, height, depth, entity.color.value)
+        if (width >= 0) renderTimedoor(poseStack, buffer, width, height, depth, entity.color.value, entity.tickCount)
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
         poseStack.popPose()
     }
@@ -71,6 +71,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         height: Float,
         depth: Float,
         color: Int,
+        age: Int,
     ) {
         val maxX = width
         val maxY = height
@@ -112,42 +113,162 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
             .addVertex(model, maxX, minY, maxZ).color().setUv(maxX, maxZ).setUv2(1, 1)
             .addVertex(model, minX, minY, maxZ).color().setUv(minX, maxZ).setUv2(0, 1)
             //Left
-            .addVertex(model, minX, maxY, maxZ).color().setUv(maxZ, maxY).setUv2( 1, 1)
-            .addVertex(model, minX, maxY, minZ).color().setUv(minZ, maxY).setUv2( 0, 1)
-            .addVertex(model, minX, minY, minZ).color().setUv(minZ, minY).setUv2( 0, 0)
-            .addVertex(model, minX, minY, maxZ).color().setUv(maxZ, minY).setUv2( 1, 0)
+            .addVertex(model, minX, maxY, maxZ).color().setUv(maxZ, maxY).setUv2(1, 1)
+            .addVertex(model, minX, maxY, minZ).color().setUv(minZ, maxY).setUv2(0, 1)
+            .addVertex(model, minX, minY, minZ).color().setUv(minZ, minY).setUv2(0, 0)
+            .addVertex(model, minX, minY, maxZ).color().setUv(maxZ, minY).setUv2(1, 0)
             //Right
-            .addVertex(model, maxX, maxY, minZ).color().setUv(minZ, maxY).setUv2( 0, 1)
-            .addVertex(model, maxX, maxY, maxZ).color().setUv(maxZ, maxY).setUv2( 1, 1)
-            .addVertex(model, maxX, minY, maxZ).color().setUv(maxZ, minY).setUv2( 1, 0)
-            .addVertex(model, maxX, minY, minZ).color().setUv(minZ, minY).setUv2( 0, 0)
+            .addVertex(model, maxX, maxY, minZ).color().setUv(minZ, maxY).setUv2(0, 1)
+            .addVertex(model, maxX, maxY, maxZ).color().setUv(maxZ, maxY).setUv2(1, 1)
+            .addVertex(model, maxX, minY, maxZ).color().setUv(maxZ, minY).setUv2(1, 0)
+            .addVertex(model, maxX, minY, minZ).color().setUv(minZ, minY).setUv2(0, 0)
 
         val lineBuffer = multiBufferSource.getBuffer(RenderType.lines())
 
-        lineBuffer
-            .addVertex(model, minX, minY, minZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
-            .addVertex(model, maxX, minY, minZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
-            .addVertex(model, minX, minY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
-            .addVertex(model, minX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+        val widthTime = width * 20f
+        val heightTime = height * 20f
+        val total = widthTime * 2 + heightTime * 2.2f
+        val topPercent = 1 - age % total / widthTime
+        val rightPercent = 1 - (age % total - widthTime) / heightTime
+        val bottomPercent = 1 - (age % total - widthTime - heightTime) / widthTime
+        val leftPercent = 1 - (age % total - widthTime * 2 - heightTime) / heightTime
+
+        val widthLine = (total / widthTime) * .0625f
+        val heightLine = (total / heightTime) * .0625f
+
+        //front
+        lineBuffer.addVertex(model, minX, maxY, minZ).color().setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+        if (topPercent > -widthLine && topPercent < (1 + widthLine)) {
+            val start = Mth.clamp(topPercent - widthLine, 0f, 1f)
+            val end = Mth.clamp(topPercent + widthLine, 0f, 1f)
+            val middle = Mth.clamp(topPercent, 0f, 1f)
+
+            lineBuffer.addVertex(model, Mth.lerp(start, 0f, maxX), maxY, minZ)
+                .color()
+                .setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(start, 0f, maxX), maxY, minZ)
+                .color()
+                .setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(middle, 0f, maxX), maxY, minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(middle, 0f, maxX), maxY, minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(end, 0f, maxX), maxY, minZ)
+                .color()
+                .setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(end, 0f, maxX), maxY, minZ)
+                .color()
+                .setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+        }
+        lineBuffer.addVertex(model, maxX, maxY, minZ).color().setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+
+
+        lineBuffer.addVertex(model, minX, minY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+        if (rightPercent > -heightLine && rightPercent < (1 + heightLine)) {
+            val start = Mth.clamp(rightPercent - heightLine, 0f, 1f)
+            val end = Mth.clamp(rightPercent + heightLine, 0f, 1f)
+            val middle = Mth.clamp(rightPercent, 0f, 1f)
+
+            lineBuffer.addVertex(model, minX, Mth.lerp(start, 0f, maxY), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, minX, Mth.lerp(start, 0f, maxY), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, minX, Mth.lerp(middle, 0f, maxY), minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, minX, Mth.lerp(middle, 0f, maxY), minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, minX, Mth.lerp(end, 0f, maxY), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, minX, Mth.lerp(end, 0f, maxY), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+        }
+        lineBuffer.addVertex(model, minX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+
+
+        lineBuffer.addVertex(model, minX, minY, minZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F);
+        if (bottomPercent > -widthLine && bottomPercent < (1 + widthLine)) {
+            val start = Mth.clamp(bottomPercent + widthLine, 0f, 1f)
+            val end = Mth.clamp(bottomPercent - widthLine, 0f, 1f)
+            val middle = Mth.clamp(bottomPercent, 0f, 1f)
+
+            lineBuffer.addVertex(model, Mth.lerp(1 - start, 0f, maxX), minY, minZ)
+                .color()
+                .setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(1 - start, 0f, maxX), minY, minZ)
+                .color()
+                .setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(1 - middle, 0f, maxX), minY, minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(1 - middle, 0f, maxX), minY, minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(1 - end, 0f, maxX), minY, minZ)
+                .color()
+                .setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+            lineBuffer.addVertex(model, Mth.lerp(1 - end, 0f, maxX), minY, minZ)
+                .color()
+                .setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+        }
+        lineBuffer.addVertex(model, maxX, minY, minZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+
+
+        lineBuffer.addVertex(model, maxX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+        if (leftPercent > -heightLine && leftPercent < (1 + heightLine)) {
+            val start = Mth.clamp(leftPercent - heightLine, 0f, 1f)
+            val end = Mth.clamp(leftPercent + heightLine, 0f, 1f)
+            val middle = Mth.clamp(leftPercent, 0f, 1f)
+
+            lineBuffer.addVertex(model, maxX, Mth.lerp(start, maxY, 0f), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, maxX, Mth.lerp(start, maxY, 0f), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, maxX, Mth.lerp(middle, maxY, 0f), minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, maxX, Mth.lerp(middle, maxY, 0f), minZ)
+                .setColor(0xFFFFFFFF.toInt())
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, maxX, Mth.lerp(end, maxY, 0f), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+            lineBuffer.addVertex(model, maxX, Mth.lerp(end, maxY, 0f), minZ)
+                .color()
+                .setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+        }
+        lineBuffer.addVertex(model, maxX, minY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
+
+            // connecting front and back
             .addVertex(model, minX, minY, minZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
             .addVertex(model, minX, minY, maxZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
-            .addVertex(model, maxX, minY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
-            .addVertex(model, maxX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
-            .addVertex(model, maxX, maxY, minZ).color().setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
-            .addVertex(model, minX, maxY, minZ).color().setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
+
+            .addVertex(model, maxX, minY, minZ).color().setNormal(matrix3f, 0.0F, 0.0F, -1.0F)
+            .addVertex(model, maxX, minY, maxZ).color().setNormal(matrix3f, 0.0F, 0.0F, -1.0F)
+
             .addVertex(model, minX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
             .addVertex(model, minX, maxY, maxZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
+
+            .addVertex(model, maxX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
+            .addVertex(model, maxX, maxY, maxZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
+
+            //back
             .addVertex(model, minX, maxY, maxZ).color().setNormal(matrix3f, 0.0F, -1.0F, 0.0F)
             .addVertex(model, minX, minY, maxZ).color().setNormal(matrix3f, 0.0F, -1.0F, 0.0F)
             .addVertex(model, minX, minY, maxZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
             .addVertex(model, maxX, minY, maxZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
-            .addVertex(model, maxX, minY, maxZ).color().setNormal(matrix3f, 0.0F, 0.0F, -1.0F)
-            .addVertex(model, maxX, minY, minZ).color().setNormal(matrix3f, 0.0F, 0.0F, -1.0F)
-            .addVertex(model, minX, maxY, maxZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
-            .addVertex(model, maxX, maxY, maxZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
             .addVertex(model, maxX, minY, maxZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
             .addVertex(model, maxX, maxY, maxZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
-            .addVertex(model, maxX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
-            .addVertex(model, maxX, maxY, maxZ).color().setNormal(matrix3f, 0.0F, 0.0F, 1.0F)
+            .addVertex(model, maxX, maxY, maxZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
+            .addVertex(model, minX, maxY, maxZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F)
     }
 }
