@@ -119,6 +119,12 @@
   "app.tempad.fuel.transfer": "Fuel",
   "app.tempad.fuel.transfer.description": "Transfer fuel from the Tempad to the item in the slot",
 
+  "app.tempad.timeline.tracking": "Tracking",
+  "app.tempad.timeline.teleport": "Teleport",
+
+  "app.tempad.teleport.teleport": "Teleport",
+  "app.tempad.teleport.write": "Write",
+
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",
 
@@ -132,8 +138,5 @@
   "marker.tempad.death": "Died at",
   "marker.tempad.respawn": "Respawned at",
   "marker.tempad.dimension_exit": "Left dimension at",
-  "marker.tempad.dimension_enter": "Entered dimension at",
-
-  "app.tempad.timeline.tracking": "Tracking",
-  "app.tempad.timeline.teleport": "Teleport"
+  "marker.tempad.dimension_enter": "Entered dimension at"
 }

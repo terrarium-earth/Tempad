@@ -2,10 +2,10 @@ package earth.terrarium.tempad.common.entity
 
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.context.ContextInstance
-import earth.terrarium.tempad.api.fuel.FuelHandler
+import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.api.test.SyncableContext
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.utils.*
@@ -22,27 +22,29 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.common.NeoForgeEventHandler
 import net.neoforged.neoforge.common.Tags
 import java.util.UUID
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
-        private const val ANIMATION_LENGTH = 8
+        internal const val ANIMATION_LENGTH = 8
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializaer)
 
-        fun openTimedoor(ctx: ContextInstance, location: LocationData) {
+        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: LocationData) {
             val stack = ctx.stack
             if (stack.item !is TempadItem) return
-            val fuelHandler = stack.getCapability(FuelHandler.CAPABILITY) ?: return
-            if (fuelHandler.charges <= 0) return
-            fuelHandler -= 1
-            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, ctx.level)
-            timedoor.owner = ctx.player.uuid
-            timedoor.pos = LocationData.offsetLocation(ctx.player.position(), location.angle, CommonConfig.TimeDoor.placementDistance)
-            timedoor.yRot = ctx.player.yHeadRot
+            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
+            timedoor.owner = player.uuid
+            timedoor.pos = LocationData.offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
+            timedoor.yRot = -player.yHeadRot
             timedoor.targetLocation = location
-            ctx.player.level().addFreshEntity(timedoor)
+            timedoor.closingTime = -1
+            val event = TimedoorEvent.Open(timedoor, player, ctx).post()
+            if (event.isCanceled) return
+            player.level().addFreshEntity(timedoor)
         }
     }
 
@@ -100,21 +102,32 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         linkedPortalEntity.resetClosingTime()
         this.resetClosingTime()
         for (entity in entities) {
-            entity.changeDimension(
-                DimensionTransition(
-                    targetLevel,
-                    location.pos,
-                    Vec3.ZERO,
-                    location.angle,
-                    0.0F,
-                    true,
-                    DimensionTransition.DO_NOTHING
+            val event = TimedoorEvent.Enter(this, entity).post()
+            if (event.isCanceled) continue
+
+            if (entity.level().dimension() == targetLevel.dimension()) {
+                entity.teleportTo(location.pos)
+                entity.yRot = location.angle
+                entity.yHeadRot = location.angle
+            } else {
+                entity.changeDimension(
+                    DimensionTransition(
+                        targetLevel,
+                        location.pos,
+                        Vec3.ZERO,
+                        location.angle,
+                        0.0F,
+                        false,
+                        DimensionTransition.DO_NOTHING
+                    )
                 )
-            )
+            }
+
             if (entity is Player && entity.uuid == owner) {
                 this.closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterOwnerEnter
-                entity.teleportTo(linkedPortalEntity.x, linkedPortalEntity.y, linkedPortalEntity.z)
             }
+
+            TimedoorEvent.Exit(linkedPortalEntity, entity).post()
         }
         tryClose()
     }
@@ -136,6 +149,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     private fun tryClose() {
         if (tickCount > closingTime + ANIMATION_LENGTH && closingTime != -1) {
+            TimedoorEvent.Close(this).post()
             this.linkedPortalEntity?.linkedPortalEntity = null
             this.discard()
         }

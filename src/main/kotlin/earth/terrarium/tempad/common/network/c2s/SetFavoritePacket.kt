@@ -14,10 +14,15 @@ import net.minecraft.resources.ResourceLocation
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-data class SetFavoritePacket(val favorite: FavoriteLocationAttachment?): Packet<SetFavoritePacket> {
-    constructor(providerId: ResourceLocation, locationId: UUID): this(FavoriteLocationAttachment(providerId, locationId))
+data class SetFavoritePacket(val favorite: FavoriteLocationAttachment?) : Packet<SetFavoritePacket> {
+    constructor(providerId: ResourceLocation, locationId: UUID) : this(
+        FavoriteLocationAttachment(
+            providerId,
+            locationId
+        )
+    )
 
-    constructor(favorite: Optional<FavoriteLocationAttachment>): this(favorite.getOrNull())
+    constructor(favorite: Optional<FavoriteLocationAttachment>) : this(favorite.getOrNull())
 
     companion object {
         val TYPE = CodecPacketType.Server.create(

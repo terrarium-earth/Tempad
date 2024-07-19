@@ -10,11 +10,15 @@ in ivec2 UV2;
 out vec4 color;
 out vec2 texCoord0;
 out vec2 texCoord2;
+out vec2 uv;
+out vec2 uv2;
 
 uniform mat4 ModelViewMat, ProjMat;
 
 void main() {
     color = Color;
+    uv = UV0;
+    uv2 = UV2;
     texCoord0 = UV0 * borderSize;
     texCoord2 = vec2(UV2) * 0.0625;
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);

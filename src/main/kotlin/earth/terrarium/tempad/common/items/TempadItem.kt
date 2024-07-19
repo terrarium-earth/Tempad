@@ -18,16 +18,14 @@ class TempadItem: Item(Properties()) {
 
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(hand)
+        if (level.isClientSide) return InteractionResultHolder.success(stack)
+
         val slotId = hand.getSlot(player)
         val ctx = player.ctx(slotId)
-        if (level.isClientSide) {
-            if (player.isShiftKeyDown) {
-                MacroRegistry[stack.defaultMacro]?.run(ctx)
-            }
-            return InteractionResultHolder.success(stack)
-        }
 
-        if (!player.isShiftKeyDown) {
+        if (player.isShiftKeyDown) {
+            MacroRegistry[stack.defaultMacro]?.run(player, ctx)
+        } else {
             AppRegistry[stack.defaultApp, ctx]?.openMenu(player as ServerPlayer)
         }
 

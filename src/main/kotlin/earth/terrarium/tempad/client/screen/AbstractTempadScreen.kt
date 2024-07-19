@@ -5,15 +5,11 @@ import com.teamresourceful.resourcefullib.client.components.selection.SelectionL
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.api.fuel.FuelHandler
 import earth.terrarium.tempad.client.widgets.buttons.AppButton
-import earth.terrarium.tempad.client.widgets.FuelBarWidget
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
-import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -40,18 +36,14 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         this.localLeft = this.leftPos + 30
 
         val appList = SelectionList<AppButton>(localLeft - 16, localTop + 1, 16, 116, 15) { button ->
-            OpenAppPacket(button!!.appId, menu.ctx).sendToServer()
+            OpenAppPacket(button!!.appId, menu.ctxHolder).sendToServer()
         }
 
-        for ((id, app) in AppRegistry.getAll(menu.ctx.getInstance(minecraft!!.player!!))) {
+        for ((id, app) in AppRegistry.getAll(menu.ctxHolder.getCtx(minecraft!!.player!!))) {
             appList.addEntry(AppButton(app, id))
         }
 
         addRenderableWidget(appList)
-
-        val fuelHandler = menu.stack[FuelHandler.CAPABILITY] ?: return
-
-        addRenderableWidget(FuelBarWidget(menu.ctx.stackDelegate(minecraft!!.player!!), leftPos + 237, topPos + 52)).tooltip = Tooltip.create(Component.translatable("fuel.tempad.display", fuelHandler.charges, fuelHandler.totalCharges))
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {

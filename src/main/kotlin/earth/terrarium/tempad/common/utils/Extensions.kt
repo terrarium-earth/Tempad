@@ -10,7 +10,7 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.context.impl.InventoryItemContext
+import earth.terrarium.tempad.api.test.InventoryContext
 import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.core.GlobalPos
@@ -37,7 +37,9 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.neoforged.bus.api.Event
 import net.neoforged.neoforge.capabilities.ItemCapability
+import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.fluids.FluidStack
 import java.util.*
 import java.util.function.Function
@@ -129,4 +131,11 @@ fun <O, T: Any> ByteCodec<T>.nullableFieldOf(getter: Function<O, T?>): ObjectEnt
     return ObjectEntryByteCodec(this.optionalOf()) { Optional.ofNullable(getter.apply(it)) }
 }
 
-fun Player.ctx(slot: Int) = InventoryItemContext(slot).getInstance(this)
+fun Player.ctx(slot: Int) = InventoryContext(this, slot)
+
+fun <T: Event> T.post(): T = NeoForge.EVENT_BUS.post(this)
+
+fun Entity.teleportTo(pos: Vec3) = this.teleportTo(pos.x, pos.y, pos.z)
+
+val String.vanillaId: ResourceLocation
+    get() = ResourceLocation.withDefaultNamespace(this)

@@ -4,6 +4,7 @@ import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack
 import earth.terrarium.olympus.client.components.lists.ListEntry
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.common.utils.btnSprites
 import earth.terrarium.tempad.common.utils.sprites
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -12,7 +13,7 @@ import java.util.UUID
 
 class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntryBuilder.() -> Unit = {}): KListWidgetItem {
     companion object {
-        val FAVORITE = "favorite".sprites("misc")
+        val FAVORITE = "unpin".btnSprites()
     }
 
     init {
@@ -44,7 +45,7 @@ class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntry
         }
 
         if (favorite) {
-            graphics.blitSprite(FAVORITE.get(!selected, hovered), x + 2, y + 1, 10, 10)
+            graphics.blitSprite(FAVORITE.get(!selected, hovered), x + 4, y + 1, 10, 10)
         }
 
         val color = if (selected) 0x000000 else if (hovered) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value

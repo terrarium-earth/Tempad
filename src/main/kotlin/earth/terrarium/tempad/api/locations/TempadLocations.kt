@@ -5,12 +5,18 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import earth.terrarium.tempad.api.context.ContextInstance
+import earth.terrarium.tempad.api.test.SyncableContext
 import net.minecraft.resources.ResourceLocation
-import java.util.UUID
+import net.minecraft.world.entity.player.Player
+import java.util.*
 
 @JvmRecord
-data class ProviderSettings(val id: ResourceLocation, val exportable: Boolean = true, val downloadable: Boolean = true, val deletable: Boolean = true) {
+data class ProviderSettings(
+    val id: ResourceLocation,
+    val exportable: Boolean = true,
+    val downloadable: Boolean = true,
+    val deletable: Boolean = true,
+) {
     companion object {
         val CODEC: Codec<ProviderSettings> = RecordCodecBuilder.create {
             it.group(
@@ -35,10 +41,12 @@ interface LocationHandler {
     val locations: Map<UUID, LocationData>
     operator fun minusAssign(locationId: UUID)
     operator fun get(locationId: UUID): LocationData? = locations[locationId]
+
+    fun writeToCard(locationId: UUID, ctx: SyncableContext<*>)
 }
 
 fun interface LocationProvider {
-    fun get(ctx: ContextInstance): LocationHandler
+    fun get(player: Player, ctx: SyncableContext<*>): LocationHandler
 }
 
 object TempadLocations {
@@ -60,11 +68,14 @@ object TempadLocations {
     operator fun get(id: ResourceLocation): LocationProvider? = registry.keys.find { it.id == id }?.let { registry[it] }
 
     @JvmStatic
-    operator fun get(ctx: ContextInstance, settings: ProviderSettings): LocationHandler? = registry[settings]?.get(ctx)
+    operator fun get(player: Player, ctx: SyncableContext<*>, settings: ProviderSettings): LocationHandler? =
+        registry[settings]?.get(player, ctx)
 
     @JvmStatic
-    operator fun get(ctx: ContextInstance, id: ResourceLocation): LocationHandler? = registry.keys.find { it.id == id }?.let { registry[it]?.get(ctx) }
+    operator fun get(player: Player, ctx: SyncableContext<*>, id: ResourceLocation): LocationHandler? =
+        registry.keys.find { it.id == id }?.let { registry[it]?.get(player, ctx) }
 
     @JvmStatic
-    operator fun get(ctx: ContextInstance): Map<ProviderSettings, Map<UUID, LocationData>> = registry.mapValues { it.value.get(ctx).locations }
+    operator fun get(player: Player, ctx: SyncableContext<*>): Map<ProviderSettings, Map<UUID, LocationData>> =
+        registry.mapValues { it.value.get(player, ctx).locations }
 }

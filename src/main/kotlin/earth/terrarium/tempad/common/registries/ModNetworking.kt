@@ -14,8 +14,6 @@ object ModNetworking {
         channel.register(OpenFavoritePacket.TYPE)
         channel.register(OpenTimedoorPacket.TYPE)
         channel.register(SetFavoritePacket.TYPE)
-        channel.register(AddFuelPacket.TYPE)
-        channel.register(TransferFuelPacket.TYPE)
         channel.register(SaveSettingsPacket.TYPE)
         channel.register(BackTrackLocation.TYPE)
     }

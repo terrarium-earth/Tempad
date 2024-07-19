@@ -10,10 +10,10 @@ import earth.terrarium.tempad.client.widgets.buttons.ToggleButton
 import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.client.widgets.location_panel.PanelWidget
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
+import earth.terrarium.tempad.common.menu.TeleportMenu
 import earth.terrarium.tempad.common.network.c2s.DeleteLocationPacket
 import earth.terrarium.tempad.common.network.c2s.OpenTimedoorPacket
 import earth.terrarium.tempad.common.network.c2s.SetFavoritePacket
-import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.btnSprites
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
@@ -27,8 +27,8 @@ import net.minecraft.world.entity.player.Inventory
 import org.lwjgl.glfw.GLFW
 import java.util.*
 
-class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Component) :
-    AbstractTempadScreen<ModMenus.TeleportMenu>(SPRITE, menu, inv, title) {
+class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
+    AbstractTempadScreen<TeleportMenu>(SPRITE, menu, inv, title) {
     companion object {
         val SPRITE = "screen/teleport".tempadId
 
@@ -38,13 +38,15 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             return imageButton
         }
 
-        val teleportText = Component.translatable("app.${Tempad.MOD_ID}.teleport.button")
+        val teleportText = Component.translatable("app.${Tempad.MOD_ID}.teleport")
+        val writeText = Component.translatable("app.${Tempad.MOD_ID}.teleport.write")
     }
 
     var selected: Triple<ProviderSettings, UUID, LocationData>? = null
         set(value) {
             field = value
             locationButtons.visitWidgets { widget -> widget.visible = value != null }
+            teleportBtn.active = value != null
             favBtn.toggled = favorite?.matches(value?.first?.id, value?.second) == true
             value?.third?.let { infoPanel.update(it) }
         }
@@ -53,8 +55,9 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
     private lateinit var infoPanel: InformationPanel
     private lateinit var favBtn: ToggleButton
     private lateinit var search: EditBox
-    private var favorite: FavoriteLocationAttachment? = menu.appContent?.favoriteLocation
+    private var favorite: FavoriteLocationAttachment? = menu.appContent.favoriteLocation
     private lateinit var locationList: PanelWidget
+    private lateinit var teleportBtn: ColoredButton
 
     override fun init() {
         super.init()
@@ -64,7 +67,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
         val searchValue = if (::search.isInitialized) search.value else ""
 
         this.locationList = addRenderableWidget(PanelWidget(
-            menu.appContent?.locations ?: emptyMap(),
+            menu.appContent.locations,
             this::selected,
             { selected = it },
             { search.value },
@@ -86,22 +89,24 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
         locationList.update()
 
         locationButtons = LinearLayout(
-            localLeft + 71,
+            localLeft + 73,
             localTop + 26,
             LinearLayout.Orientation.HORIZONTAL
         ).spacing(2)
 
-        addRenderableWidget(
+        teleportBtn = addRenderableWidget(
             ColoredButton(teleportText, height = 18, width = 74, x = localLeft + 4, y = localTop + 96) {
                 if (minecraft == null || selected == null) return@ColoredButton
                 val (provider, locationId, _) = selected!!
-                OpenTimedoorPacket(provider.id, locationId, menu.ctx).sendToServer()
+                OpenTimedoorPacket(provider.id, locationId, menu.ctxHolder).sendToServer()
                 minecraft?.setScreen(null)
             },
-        ).active = false
+        )
+
+        teleportBtn.active = false
 
         favBtn = locationButtons.addChild(
-            ToggleButton("unfavorite".btnSprites(), "favorite".btnSprites()) {
+            ToggleButton("unpin".btnSprites(), "pin".btnSprites()) {
                 if (minecraft == null || selected == null) return@ToggleButton
                 val (provider, locationId, _) = selected!!
                 if (favorite?.matches(provider.id, locationId) == true) {
@@ -126,7 +131,7 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             imgBtn("delete") {
                 if (minecraft == null || selected == null) return@imgBtn
                 val (provider, locationId, _) = selected!!
-                DeleteLocationPacket(menu.ctx, provider.id, locationId).sendToServer()
+                DeleteLocationPacket(menu.ctxHolder, provider.id, locationId).sendToServer()
                 locationList.deleteSelected()
                 infoPanel.clearLines()
             },
@@ -163,5 +168,16 @@ class TeleportScreen(menu: ModMenus.TeleportMenu, inv: Inventory, title: Compone
             return search.keyPressed(pKeyCode, pScanCode, pModifiers)
         }
         return super.keyPressed(pKeyCode, pScanCode, pModifiers)
+    }
+
+    override fun containerTick() {
+        super.containerTick()
+        if (::teleportBtn.isInitialized) {
+            if(menu.container.isEmpty) {
+                teleportBtn.message = teleportText
+            } else {
+                teleportBtn.message = writeText
+            }
+        }
     }
 }

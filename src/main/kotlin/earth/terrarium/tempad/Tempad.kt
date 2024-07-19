@@ -2,8 +2,6 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
-import earth.terrarium.tempad.api.fuel.FuelHandler
-import earth.terrarium.tempad.api.fuel.FuelRegistry
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.config.CommonConfigCache
@@ -19,8 +17,6 @@ import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
-import net.neoforged.neoforge.capabilities.Capabilities
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent
@@ -58,47 +54,15 @@ class Tempad(bus: IEventBus) {
         ModApps.init()
         ModAttachments.registry.init()
         ModComponents.registry.init()
+        ModContext.init()
         ModEntities.entities.init()
         ModEntities.serializers.init()
         ModItems.registry.init()
         ModMacros.init()
         ModMenus.registry.init()
         ModNetworking.init()
-        ModFuel.init()
-
-        bus.addListener { event: RegisterCapabilitiesEvent ->
-            event.register(FuelHandler.CAPABILITY)[ModItems.tempad] = { stack, _ ->
-                FuelRegistry.get(
-                    stack.fuelType ?: ResourceLocation.tryParse(CommonConfigCache.Tempad.fuelType) ?: ModFuel.infinite,
-                    stack,
-                    CommonConfigCache.Tempad.capacity
-                )
-            }
-
-            event.register(FuelHandler.CAPABILITY)[ModItems.advancedTempad] = { stack, _ ->
-                FuelRegistry.get(
-                    stack.fuelType ?: ResourceLocation.tryParse(CommonConfigCache.AdvancedTempad.fuelType)
-                    ?: ModFuel.infinite,
-                    stack,
-                    CommonConfigCache.AdvancedTempad.capacity
-                )
-            }
-
-            event.register(Capabilities.ItemHandler.ITEM)[ModItems.tempad, ModItems.advancedTempad] = { stack, _ ->
-                val fuelHandler = stack[FuelHandler.CAPABILITY]
-                if (fuelHandler is IItemHandler) fuelHandler else null
-            }
-
-            event.register(Capabilities.FluidHandler.ITEM)[ModItems.tempad, ModItems.advancedTempad] = { stack, _ ->
-                val fuelHandler = stack[FuelHandler.CAPABILITY]
-                if (fuelHandler is IFluidHandlerItem) fuelHandler else null
-            }
-
-            event.register(Capabilities.EnergyStorage.ITEM)[ModItems.tempad, ModItems.advancedTempad] = { stack, _ ->
-                val fuelHandler = stack[FuelHandler.CAPABILITY]
-                if (fuelHandler is IEnergyStorage) fuelHandler else null
-            }
-        }
+        ModRecipes.types.init()
+        ModRecipes.serializers.init()
 
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->
             if (event.entity.tickCount % 1200 != 0) return@addListener

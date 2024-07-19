@@ -10,14 +10,11 @@ import earth.terrarium.tempad.client.widgets.MapWidget
 import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.common.network.c2s.CreateLocationPacket
 import earth.terrarium.tempad.common.registries.ModMenus
-import earth.terrarium.tempad.common.utils.btnSprites
 import earth.terrarium.tempad.common.utils.globalPos
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
 import net.minecraft.client.gui.components.EditBox
-import net.minecraft.client.gui.components.ImageButton
 import net.minecraft.client.gui.components.StringWidget
-import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.GridLayout
 import net.minecraft.client.gui.layouts.LinearLayout
@@ -127,7 +124,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         textInput.setTextColor(Tempad.ORANGE.value)
 
         val doneButton = addRenderableWidget(ColoredButton(CommonComponents.GUI_DONE) {
-            CreateLocationPacket(textInput.value, currentColor).sendToServer()
+            CreateLocationPacket(textInput.value, currentColor, menu.ctxHolder).sendToServer()
             minecraft?.setScreen(null)
         })
 

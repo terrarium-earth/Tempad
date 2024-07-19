@@ -34,9 +34,9 @@ class TimelineScreen(menu: ModMenus.TimelineMenu, inv: Inventory, title: Compone
         val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, minecraft!!.locale)
         val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, minecraft!!.locale)
 
-        for ((dateTime, location) in menu.appContent!!.history.toSortedMap()) {
+        for ((dateTime, location) in menu.appContent.history.toSortedMap()) {
             testButtons.add(TimelineEntry(font, dateFormat.format(dateTime), timeFormat.format(dateTime), location) {
-                BackTrackLocation(dateTime).sendToServer()
+                BackTrackLocation(dateTime, menu.ctxHolder).sendToServer()
                 onClose()
             })
         }

@@ -40,7 +40,7 @@ data class LocationData(val name: String, val pos: Vec3, val dimension: Resource
         )
 
         fun offsetLocation(pos: Vec3, angle: Float, distance: Int = 1): Vec3 {
-            val angleInRadians = (angle + 270) * Mth.DEG_TO_RAD
+            val angleInRadians = (angle + 90) * Mth.DEG_TO_RAD
             return pos + Vec3(Mth.cos(angleInRadians).toDouble() * distance, 0.0, Mth.sin(angleInRadians).toDouble() * distance)
         }
     }

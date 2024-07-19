@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component
 
 class ColoredButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, width: Int = Minecraft.getInstance().font.width(text) + 12, height: Int = 16, x: Int = 0, y: Int = 0, onPress: (Button) -> Unit) :
     Button(x, y, width, height, text, onPress, { e -> e.get() }) {
-    val textWidth = Minecraft.getInstance().font.width(text)
+    var textWidth = Minecraft.getInstance().font.width(text)
 
     var color = Tempad.ORANGE.value
     var highlightedColor = Tempad.HIGHLIGHTED_ORANGE.value
@@ -25,12 +25,12 @@ class ColoredButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, 
         if (type == ButtonType.OUTLINE) {
             graphics.renderOutline(x + 1, y + 1, width, height, Tempad.DARK_ORANGE.value)
 
-            if (!isHovered) {
+            if (!isHovered && isActive) {
                 graphics.renderOutline(x, y, width, height, Tempad.ORANGE.value)
             }
         }
 
-        if (type == ButtonType.SOLID || (type == ButtonType.OUTLINE && isHovered)) {
+        if (type == ButtonType.SOLID || (type == ButtonType.OUTLINE && isHovered && isActive)) {
             graphics.fill(x, y, x + width, y + height, Tempad.ORANGE.value)
         }
 
@@ -48,6 +48,11 @@ class ColoredButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, 
             },
             false
         )
+    }
+
+    override fun setMessage(pMessage: Component) {
+        super.setMessage(pMessage)
+        textWidth = Minecraft.getInstance().font.width(pMessage)
     }
 }
 

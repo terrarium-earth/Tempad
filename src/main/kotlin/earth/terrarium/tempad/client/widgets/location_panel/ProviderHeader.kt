@@ -18,16 +18,17 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import java.util.function.Consumer
 
-class ProviderHeader(val settings: ProviderSettings, val parent: PanelWidget): KListWidgetItem {
+class ProviderHeader(val text: Component, val id: String, val parent: PanelWidget): KListWidgetItem {
     companion object {
-        val valueCaches = mutableMapOf<ResourceLocation, Boolean>()
+        val valueCaches = mutableMapOf<String, Boolean>()
     }
 
-    val text = Component.translatable(settings.id.toLanguageKey("provider")).withStyle(ChatFormatting.UNDERLINE)
-    var hidden
-        get() = valueCaches.getOrPut(settings.id) { false }
+    constructor(settings: ProviderSettings, parent: PanelWidget): this(Component.translatable(settings.id.toLanguageKey("provider")), settings.id.toLanguageKey(), parent)
+
+    var hidden = valueCaches.getOrPut(id) { false }
         set(value) {
-            valueCaches[settings.id] = value
+            valueCaches[id] = value
+            field = value
         }
 
     override var _x: Int = 0

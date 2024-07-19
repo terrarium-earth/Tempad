@@ -1,12 +1,15 @@
 package earth.terrarium.tempad.common.registries
 
-import earth.terrarium.tempad.api.context.ItemContext
-import earth.terrarium.tempad.api.context.impl.InventoryItemContext
-import earth.terrarium.tempad.api.context.impl.StaticItemContext
+import earth.terrarium.tempad.api.test.ContextRegistry
+import earth.terrarium.tempad.api.test.InventoryContext
+import earth.terrarium.tempad.common.compat.curios.initCuriosCompat
+import net.neoforged.fml.ModList
 
 object ModContext {
     fun init() {
-        ItemContext.register(InventoryItemContext.type)
-        ItemContext.register(StaticItemContext.type)
+        ContextRegistry.register(InventoryContext.type, ::InventoryContext)
+        if (ModList.get().isLoaded("curios")) {
+            initCuriosCompat()
+        }
     }
 }

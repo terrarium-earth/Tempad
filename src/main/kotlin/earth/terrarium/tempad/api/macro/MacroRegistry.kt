@@ -1,10 +1,11 @@
 package earth.terrarium.tempad.api.macro
 
-import earth.terrarium.tempad.api.context.ContextInstance
+import earth.terrarium.tempad.api.test.SyncableContext
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.player.Player
 
 fun interface TempadMacro {
-    fun run(ctx: ContextInstance)
+    fun run(player: Player, ctx: SyncableContext<*>)
 }
 
 private val macros = mutableMapOf<ResourceLocation, TempadMacro>()

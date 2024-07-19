@@ -1,11 +1,8 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
-import earth.terrarium.olympus.client.components.base.ListWidget
-import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.widgets.colored.ColoredList
-import net.minecraft.client.gui.GuiGraphics
 import java.util.*
 
 class PanelWidget(
@@ -16,34 +13,35 @@ class PanelWidget(
     private val isFavorite: (ProviderSettings, UUID) -> Boolean,
 ) : ColoredList(93, 90) {
     val widgets: MutableMap<ProviderHeader, MutableList<LocationEntry>> =
-        locations.mapKeys { (provider) -> ProviderHeader(provider, this) }.mapValues { (provider, locations) ->
-            return@mapValues locations.map { (id, locationData) ->
+        locations.map { (provider, locations) ->
+            val header = ProviderHeader(provider, this)
+            val entries = locations.map { (id, locationData) ->
                 LocationEntry(id, locationData) {
                     isFavorite {
-                        isFavorite(provider.settings, id)
+                        isFavorite(provider, id)
                     }
 
                     onClick {
-                        if (selected() == Triple(provider.settings, id, locationData)) return@onClick false
-                        select(Triple(provider.settings, id, locationData))
+                        if (selected() == Triple(provider, id, locationData)) return@onClick false
+                        select(Triple(provider, id, locationData))
                         true
                     }
 
                     isSelected {
-                        selected() == Triple(provider.settings, id, locationData)
+                        selected() == Triple(provider, id, locationData)
                     }
                 }
             }.toMutableList()
-        }.toMutableMap()
+            header to entries
+        }.toMap().toMutableMap()
 
     fun update() {
         set(getFilteredEntries())
     }
 
     fun deleteSelected() {
-        val (settings, id, _) = selected() ?: return
-        for ((header, entries) in widgets) {
-            if (header.settings != settings) continue
+        val (_, id, _) = selected() ?: return
+        for ((_, entries) in widgets) {
             val entry = entries.find { it.id == id }
             if (entry != null) {
                 entries -= entry
