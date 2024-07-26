@@ -89,7 +89,7 @@ public class RunProgramScreen extends Screen {
         if(stack.hasTag()) {
             allLocations = new ArrayList<>(TempadComponent.fromStack(stack).getLocations());
             Collections.sort(allLocations);
-            addRenderableLocationList()
+            addRenderableLocationList();
         }
 
         TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 15, (height - HEIGHT) / 2 + offset + 16 * 14, 12, Component.translatable("gui." + Constants.MODID + ".new_location"), color, (button)->{
@@ -148,7 +148,7 @@ public class RunProgramScreen extends Screen {
             this.interfaceNeedsReload = false;
         }
         if(this.listNeedsReload)
-            addRenderableLocationList()
+            addRenderableLocationList();
     }
 
     private void renderOutline(PoseStack poseStack) {
