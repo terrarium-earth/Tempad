@@ -63,6 +63,23 @@ public class RunProgramScreen extends Screen {
         return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
+    private void addRenderableLocationList(){
+        int x = (width - WIDTH) / 2 + 3 + 16 * 15;
+        int y = (height - HEIGHT) / 2 + 3 + 16 * 2;
+        if(displayedLocations)
+            for(TextButton button : displayedLocations)
+                removeWidget(button);
+        displayedLocations = new ArrayList<>();
+        int offset = Math.min(mouseMovement, listSize - 12);
+        for(int i = offset; i < 12 + offset; i++) {
+            LocationData data = allLocations.get(i);
+            displayedLocations.add(new TextButton(x, y, 12, Component.literal(data.getName()), color, (button -> locationButtonOnPress(data))));
+            y+=16;
+        }
+        displayedLocations.forEach(this::addRenderableWidget);
+        this.listNeedsReload = false;
+    }
+
     @Override
     protected void init() {
         super.init();
@@ -71,25 +88,8 @@ public class RunProgramScreen extends Screen {
         ItemStack stack = minecraft.player.getItemInHand(this.hand);
         if(stack.hasTag()) {
             allLocations = new ArrayList<>(TempadComponent.fromStack(stack).getLocations());
-            listSize = allLocations.size();
-            List<LocationData> shownLocationData = new ArrayList<>();
-            if(listSize > 12) {
-                for(int i = 0; i < 12; i++) {
-                    shownLocationData.add(allLocations.get(i));
-                }
-            } else {
-                shownLocationData = allLocations;
-            }
-
-            int x = (width - WIDTH) / 2 + offset + 16 * 15;
-            int y = (height - HEIGHT) / 2 + offset + 16 * 2;
-            Collections.sort(shownLocationData);
-            for(LocationData data : shownLocationData) {
-                var locationButton = new TextButton(x, y, 12, Component.literal(data.getName()), color, (button) -> locationButtonOnPress(data));
-                this.displayedLocations.add(locationButton);
-                addRenderableWidget(locationButton);
-                y+=16;
-            }
+            Collections.sort(allLocations);
+            addRenderableLocationList()
         }
 
         TextButton addLocation = new TextButton((width - WIDTH) / 2 + offset + 16 * 15, (height - HEIGHT) / 2 + offset + 16 * 14, 12, Component.translatable("gui." + Constants.MODID + ".new_location"), color, (button)->{
@@ -147,23 +147,8 @@ public class RunProgramScreen extends Screen {
             addRenderableWidget(timedoorSprite);
             this.interfaceNeedsReload = false;
         }
-        int x = (width - WIDTH) / 2 + 3 + 16 * 15;
-        int y = (height - HEIGHT) / 2 + 3 + 16 * 2;
-        if(this.listNeedsReload) {
-
-            for(TextButton button : displayedLocations) {
-                removeWidget(button);
-            }
-            displayedLocations = new ArrayList<>();
-            int offset = Math.min(mouseMovement, listSize - 12);
-            for(int i = offset; i < 12 + offset; i++) {
-                LocationData data = allLocations.get(i);
-                displayedLocations.add(new TextButton(x, y, 12, Component.literal(data.getName()), color, (button -> locationButtonOnPress(data))));
-                y+=16;
-            }
-            displayedLocations.forEach(this::addRenderableWidget);
-            this.listNeedsReload = false;
-        }
+        if(this.listNeedsReload)
+            addRenderableLocationList()
     }
 
     private void renderOutline(PoseStack poseStack) {
