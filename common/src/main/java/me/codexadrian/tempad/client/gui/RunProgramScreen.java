@@ -58,7 +58,7 @@ public class RunProgramScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         int wiggleRoom = listSize > 12 ? listSize - 12 : 0;
-        mouseMovement = Math.min(wiggleRoom, Math.max(mouseMovement + (int) (delta * 10), 0));
+        mouseMovement = Math.min(wiggleRoom, Math.max(mouseMovement - (int) (delta), 0));
         if(listSize > 12) listNeedsReload = true;
         return super.mouseScrolled(mouseX, mouseY, delta);
     }
@@ -66,11 +66,11 @@ public class RunProgramScreen extends Screen {
     private void addRenderableLocationList(){
         int x = (width - WIDTH) / 2 + 3 + 16 * 15;
         int y = (height - HEIGHT) / 2 + 3 + 16 * 2;
-        if(displayedLocations)
+        if(displayedLocations != null)
             for(TextButton button : displayedLocations)
                 removeWidget(button);
         displayedLocations = new ArrayList<>();
-        int offset = Math.min(mouseMovement, listSize - 12);
+        int offset = Math.max(0,Math.min(mouseMovement, listSize - 12));
         for(int i = offset; i < 12 + offset; i++) {
             LocationData data = allLocations.get(i);
             displayedLocations.add(new TextButton(x, y, 12, Component.literal(data.getName()), color, (button -> locationButtonOnPress(data))));
@@ -89,6 +89,7 @@ public class RunProgramScreen extends Screen {
         if(stack.hasTag()) {
             allLocations = new ArrayList<>(TempadComponent.fromStack(stack).getLocations());
             Collections.sort(allLocations);
+            listSize = allLocations.size();
             addRenderableLocationList();
         }
 
