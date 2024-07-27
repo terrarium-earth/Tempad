@@ -71,7 +71,7 @@ public class RunProgramScreen extends Screen {
                 removeWidget(button);
         displayedLocations = new ArrayList<>();
         int offset = Math.max(0,Math.min(mouseMovement, listSize - 12));
-        for(int i = offset; i < 12 + offset; i++) {
+        for(int i = offset; i < Math.min(listSize,12 + offset); i++) {
             LocationData data = allLocations.get(i);
             displayedLocations.add(new TextButton(x, y, 12, Component.literal(data.getName()), color, (button -> locationButtonOnPress(data))));
             y+=16;
