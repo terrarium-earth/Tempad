@@ -6,7 +6,7 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.api.test.ContextHolder
+import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.travelHistory
 import earth.terrarium.tempad.common.utils.DATE_BYTE_CODEC
@@ -14,7 +14,7 @@ import java.util.*
 
 class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackTrackLocation> {
     companion object {
-        val TYPE = CodecPacketType.Server.create(
+        val type = CodecPacketType.Server.create(
             "back_track_location".tempadId,
             ObjectByteCodec.create(
                 DATE_BYTE_CODEC.fieldOf { it.time },
@@ -28,5 +28,5 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
         )
     }
 
-    override fun type(): PacketType<BackTrackLocation> = TYPE
+    override fun type(): PacketType<BackTrackLocation> = type
 }

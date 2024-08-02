@@ -8,35 +8,29 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
-import earth.terrarium.tempad.common.registries.pinnedLocationData
+import earth.terrarium.tempad.api.locations.TempadLocations
+import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.common.menu.menuCtx
 import net.minecraft.resources.ResourceLocation
-import java.util.*
-import kotlin.jvm.optionals.getOrNull
+import java.util.UUID
 
-data class SetFavoritePacket(val favorite: FavoriteLocationAttachment?) : Packet<SetFavoritePacket> {
-    constructor(providerId: ResourceLocation, locationId: UUID) : this(
-        FavoriteLocationAttachment(
-            providerId,
-            locationId
-        )
-    )
-
-    constructor(favorite: Optional<FavoriteLocationAttachment>) : this(favorite.getOrNull())
-
+class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, val ctx: ContextHolder<*>): Packet<WriteToCardPacket> {
     companion object {
         val type = CodecPacketType.Server.create(
-            "set_favorite".tempadId,
+            "write_to_card".tempadId,
             ObjectByteCodec.create(
                 ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
                 ByteCodec.UUID.fieldOf { it.locationId },
-                ::FavoriteLocationAttachment
-            ).optionalOf().map(::SetFavoritePacket) { Optional.ofNullable(it.favorite) },
+                ContextHolder.codec.fieldOf { it.ctx },
+                ::WriteToCardPacket
+            ),
             NetworkHandle.handle { message, player ->
-                player.pinnedLocationData = message.favorite
+                if (TempadLocations[message.providerId] == null) return@handle
+                val ctx = message.ctx.getCtx(player)
+                TempadLocations[player, ctx, message.providerId]?.writeToCard(message.locationId, player.menuCtx)
             }
         )
     }
 
-    override fun type(): PacketType<SetFavoritePacket> = type
+    override fun type(): PacketType<WriteToCardPacket> = type
 }

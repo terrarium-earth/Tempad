@@ -1,6 +1,6 @@
 package earth.terrarium.tempad.api.event
 
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player

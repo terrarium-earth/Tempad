@@ -7,7 +7,7 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.app.AppHolder
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.api.test.ContextHolder
+import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.registries.*
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
@@ -16,7 +16,7 @@ data class OpenAppPacket(val appHolder: AppHolder) : Packet<OpenAppPacket> {
     constructor(appID: ResourceLocation, data: ContextHolder<*>) : this(AppHolder(appID, data))
 
     companion object {
-        val TYPE = CodecPacketType.Server.create(
+        val type = CodecPacketType.Server.create(
             "open_app".tempadId,
             AppRegistry.BYTE_CODEC.map(::OpenAppPacket, OpenAppPacket::appHolder),
             NetworkHandle.handle { message, player ->
@@ -28,5 +28,5 @@ data class OpenAppPacket(val appHolder: AppHolder) : Packet<OpenAppPacket> {
         )
     }
 
-    override fun type(): PacketType<OpenAppPacket> = TYPE
+    override fun type(): PacketType<OpenAppPacket> = type
 }

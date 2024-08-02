@@ -1,14 +1,14 @@
 package earth.terrarium.tempad.client.widgets
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.client.widgets.location_panel.KListWidgetItem
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.network.chat.Component
 
-class LabeledWidget(title: Component, val subtitle: Component,  val labelMargin: Int, val widget: AbstractWidget, val labelWidth: Int = 94, val ignoreResize: Boolean = false) : KListWidgetItem {
+class LabeledWidget(title: Component, val subtitle: Component,  val labelMargin: Int, val widget: AbstractWidget, val labelWidth: Int = 94, val ignoreResize: Boolean = false) :
+    KListWidgetItem {
     val titleWidget = StringWidget(title, Minecraft.getInstance().font).setColor(Tempad.ORANGE.value)
     val tooltip = listOf(title.visualOrderText) + Minecraft.getInstance().font.split(subtitle, 125)
 

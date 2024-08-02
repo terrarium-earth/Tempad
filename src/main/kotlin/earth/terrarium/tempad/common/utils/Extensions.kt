@@ -5,17 +5,20 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.ObjectEntryByteCodec
+import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.test.InventoryContext
+import earth.terrarium.tempad.api.context.InventoryContext
 import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.Holder
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
@@ -41,6 +44,7 @@ import net.neoforged.bus.api.Event
 import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.fluids.FluidStack
+import net.neoforged.neoforge.fluids.SimpleFluidContent
 import java.util.*
 import java.util.function.Function
 
@@ -70,6 +74,36 @@ operator fun ItemStack.minus(amount: Int): ItemStack {
     val copy = this.copy()
     copy.shrink(amount)
     return if (copy.isEmpty) ItemStack.EMPTY else copy
+}
+
+operator fun ItemStack.plus(amount: Int): ItemStack {
+    val copy = this.copy()
+    copy.grow(amount)
+    return copy
+}
+
+operator fun FluidStack.minus(amount: Int): FluidStack {
+    val copy = this.copy()
+    copy.amount -= amount
+    return if (copy.isEmpty) FluidStack.EMPTY else copy
+}
+
+operator fun FluidStack.plus(amount: Int): FluidStack {
+    val copy = this.copy()
+    copy.amount += amount
+    return copy
+}
+
+operator fun SimpleFluidContent.minus(amount: Int): SimpleFluidContent {
+    val copy = this.copy()
+    copy.amount -= amount
+    return if (copy.isEmpty) SimpleFluidContent.EMPTY else SimpleFluidContent.copyOf(copy)
+}
+
+operator fun SimpleFluidContent.plus(amount: Int): SimpleFluidContent {
+    val copy = this.copy()
+    copy.amount += amount
+    return SimpleFluidContent.copyOf(copy)
 }
 
 inline fun <reified T: Entity> EntityGetter.getEntities(area: AABB, noinline predicate: (T) -> Boolean): List<T> {
@@ -139,3 +173,10 @@ fun Entity.teleportTo(pos: Vec3) = this.teleportTo(pos.x, pos.y, pos.z)
 
 val String.vanillaId: ResourceLocation
     get() = ResourceLocation.withDefaultNamespace(this)
+
+val <T> StreamCodec<RegistryFriendlyByteBuf, T>.byteCodec: ByteCodec<T> get() = StreamCodecByteCodec.ofRegistry(this)
+
+val GlobalPos.dimDisplay: Component get() = Component.translatable(this.dimension.location().toLanguageKey("dimension"))
+val GlobalPos.xDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.x", this.pos().x)
+val GlobalPos.yDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.y", this.pos().y)
+val GlobalPos.zDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.z", this.pos().z)

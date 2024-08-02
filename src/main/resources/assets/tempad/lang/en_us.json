@@ -99,6 +99,7 @@
   "app.tempad.settings": "Settings",
   "app.tempad.fuel": "Manage Fuel",
   "app.tempad.timeline": "Travel Timeline",
+  "app.tempad.tp_to": "Teleport to Player",
 
   "app.tempad.settings.default_macro": "Default Macro",
   "app.tempad.settings.default_macro.subtitle": "Default macro to use when shift-clicking Tempad or pressing [F] key",
@@ -124,6 +125,9 @@
 
   "app.tempad.teleport.teleport": "Teleport",
   "app.tempad.teleport.write": "Write",
+
+  "app.tempad.tp_to.teleport": "Teleport",
+  "app.tempad.tp_to.selected": "Selected",
 
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",

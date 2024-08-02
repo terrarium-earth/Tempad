@@ -52,19 +52,21 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
     override fun init() {
         super.init()
 
-        addRenderableOnly(MapWidget(localLeft + 101, localTop + 21, 92, 5))
+        addRenderableOnly(MapWidget(localLeft + 101, localTop + 21, 92))
 
-        val mapFrameLayout = FrameLayout(localLeft + 105, localTop + 25, 86, 86).setMinDimensions(86, 86)
-        val posInfoLayout = LinearLayout(0,0, LinearLayout.Orientation.VERTICAL)
-        mapFrameLayout.addChild(posInfoLayout) { it.alignVerticallyBottom().alignHorizontallyRight() }
+        val mapFrameLayout = FrameLayout(localLeft + 101, localTop + 21, 92, 92).setMinDimensions(92, 92)
+        val posInfoLayout = LinearLayout(0,0, LinearLayout.Orientation.VERTICAL).spacing(2)
+        mapFrameLayout.addChild(posInfoLayout) { it.alignVerticallyBottom().alignHorizontallyRight().padding(4) }
 
         minecraft?.player?.globalPos?.let { pos ->
-            InformationPanel.getEntries(pos).forEach { component ->
-                posInfoLayout.addChild(StringWidget(component, font).setColor(Tempad.ORANGE.value)) { it.alignHorizontallyRight() }
-            }
             mapFrameLayout.addChild(StringWidget(Component.translatable(pos.dimension().location().toLanguageKey("dimension")), font).setColor(Tempad.ORANGE.value)) {
                 it.alignVerticallyTop()
                 it.alignHorizontallyLeft()
+                it.padding(4)
+            }
+
+            InformationPanel.getEntries(pos.pos).forEach { component ->
+                posInfoLayout.addChild(StringWidget(component, font).setColor(Tempad.ORANGE.value)) { it.alignHorizontallyRight() }
             }
         }
 

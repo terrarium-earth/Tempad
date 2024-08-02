@@ -1,9 +1,8 @@
 package earth.terrarium.tempad.common.data
 
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.TempadLocations
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.registries.pinnedLocationData
 import net.minecraft.Util

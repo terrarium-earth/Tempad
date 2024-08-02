@@ -5,7 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.ItemContext
+import earth.terrarium.tempad.api.context.SyncableContext
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import java.util.*
@@ -42,7 +43,7 @@ interface LocationHandler {
     operator fun minusAssign(locationId: UUID)
     operator fun get(locationId: UUID): LocationData? = locations[locationId]
 
-    fun writeToCard(locationId: UUID, ctx: SyncableContext<*>)
+    fun writeToCard(locationId: UUID, ctx: ItemContext)
 }
 
 fun interface LocationProvider {

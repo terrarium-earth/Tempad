@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.api.test
+package earth.terrarium.tempad.api.context
 
 import net.minecraft.world.Container
 import net.minecraft.world.item.ItemStack
@@ -7,7 +7,7 @@ interface ItemContext {
     var stack: ItemStack
 
     fun exchange(toInsert: ItemStack) {
-        val old = toInsert
+        val old = stack.copy()
         if (old.count > toInsert.count) {
             stack = old.also { it.count -= toInsert.count }
             addStack(toInsert)

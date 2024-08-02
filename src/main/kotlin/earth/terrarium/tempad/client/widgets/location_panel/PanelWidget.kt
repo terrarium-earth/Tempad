@@ -11,7 +11,7 @@ class PanelWidget(
     private val select: (Triple<ProviderSettings, UUID, LocationData>?) -> Unit,
     val filter: () -> String,
     private val isFavorite: (ProviderSettings, UUID) -> Boolean,
-) : ColoredList(93, 90) {
+) : ColoredList(111, 74) {
     val widgets: MutableMap<ProviderHeader, MutableList<LocationEntry>> =
         locations.map { (provider, locations) ->
             val header = ProviderHeader(provider, this)

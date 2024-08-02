@@ -3,19 +3,14 @@ package earth.terrarium.tempad.common.compat.curios
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.api.test.ContextRegistry
-import earth.terrarium.tempad.api.test.ContextType
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.ContextRegistry
+import earth.terrarium.tempad.api.context.ContextType
+import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.compat.curios.CuriosSyncableContext.CuriosSlotInfo
-import earth.terrarium.tempad.common.items.TempadItem
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import top.theillusivec4.curios.api.CuriosApi
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler
-import kotlin.jvm.optionals.getOrNull
 
 class CuriosSyncableContext(val player: Player, override val data: CuriosSlotInfo) : SyncableContext<CuriosSlotInfo> {
     val inventory: MutableMap<String, ICurioStacksHandler> = CuriosApi.getCuriosInventory(player).orElseThrow().curios

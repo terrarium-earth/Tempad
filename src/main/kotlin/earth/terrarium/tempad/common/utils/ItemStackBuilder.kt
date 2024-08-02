@@ -4,8 +4,6 @@ import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 
-fun itemStack(item: Item, count: Int = 1, components: (DataComponentPatch.Builder.() -> Unit)? = null) {
-    ItemStack(item, count).also { stack ->
-        components?.let { stack.applyComponents(DataComponentPatch.builder().apply(it).build()) }
-    }
+fun Item.stack(count: Int = 1, components: (ItemStack.() -> Unit)? = null): ItemStack {
+    return ItemStack(this, count).also { stack -> components?.invoke(stack) }
 }

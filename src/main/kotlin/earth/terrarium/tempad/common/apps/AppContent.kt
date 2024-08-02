@@ -4,7 +4,7 @@ import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.menu.MenuContent
 import com.teamresourceful.resourcefullib.common.menu.MenuContentSerializer
-import earth.terrarium.tempad.api.test.ContextHolder
+import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 
 abstract class AppContent<T: AppContent<T>> (val ctx: ContextHolder<*>, byteCodec: ByteCodec<T>) : MenuContent<T> {

@@ -7,7 +7,7 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.api.test.ContextHolder
+import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.registries.defaultApp
 import earth.terrarium.tempad.common.registries.defaultMacro
@@ -21,7 +21,7 @@ class SaveSettingsPacket(
 ) :
     Packet<SaveSettingsPacket> {
     companion object {
-        val TYPE = CodecPacketType.Server.create(
+        val type = CodecPacketType.Server.create(
             "save_settings".tempadId,
             ObjectByteCodec.create(
                 ContextHolder.codec.fieldOf(SaveSettingsPacket::ctxData),
@@ -39,5 +39,5 @@ class SaveSettingsPacket(
         )
     }
 
-    override fun type(): PacketType<SaveSettingsPacket> = TYPE
+    override fun type(): PacketType<SaveSettingsPacket> = type
 }

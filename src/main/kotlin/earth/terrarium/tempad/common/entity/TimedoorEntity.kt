@@ -5,8 +5,9 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.api.locations.LocationData
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.items.TempadItem
+import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.nbt.CompoundTag
@@ -16,14 +17,10 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.entity.RelativeMovement
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
-import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.common.NeoForge
-import net.neoforged.neoforge.common.NeoForgeEventHandler
 import net.neoforged.neoforge.common.Tags
 import java.util.UUID
 
@@ -39,7 +36,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
             timedoor.pos = LocationData.offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
-            timedoor.yRot = -player.yHeadRot
+            timedoor.yRot = player.yHeadRot
             timedoor.targetLocation = location
             timedoor.closingTime = -1
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
@@ -57,7 +54,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     private fun canTeleport(entity: Entity): Boolean {
-        return (entity is LivingEntity || entity is ItemEntity) && isInside(entity) && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
+        return entity !is TimedoorEntity && isInside(entity) && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
     }
 
     var color by DataDelegate(COLOR)
@@ -106,15 +103,18 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             if (event.isCanceled) continue
 
             if (entity.level().dimension() == targetLevel.dimension()) {
-                entity.teleportTo(location.pos)
-                entity.yRot = location.angle
-                entity.yHeadRot = location.angle
+                entity.deltaMovement = entity.deltaMovement.yRot(this.yRot - location.angle)
+                entity.teleportTo(targetLevel, location.pos.x, location.pos.y, location.pos.z, RelativeMovement.ALL, location.angle, entity.xRot)
+                entity.hasImpulse = true
+                if (entity is Player) {
+                    RotatePlayerMomentumPacket(this.yRot - location.angle).sendToClient(entity)
+                }
             } else {
                 entity.changeDimension(
                     DimensionTransition(
                         targetLevel,
                         location.pos,
-                        Vec3.ZERO,
+                        entity.deltaMovement,
                         location.angle,
                         0.0F,
                         false,
@@ -142,7 +142,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         targetPortal.color = color
         targetPortal.closingTime = CommonConfig.TimeDoor.idleAfterOwnerEnter
         targetPortal.targetLocation = selfLocation
-        targetPortal.yRot = location.angle
+        targetPortal.yRot = location.angle + 180f
         linkedPortalEntity = targetPortal
         targetLevel.addFreshEntity(targetPortal)
     }
@@ -155,8 +155,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
     }
 
-    override fun onRemovedFromWorld() {
-        super.onRemovedFromWorld()
+    override fun onRemovedFromLevel() {
+        super.onRemovedFromLevel()
         if (this.linkedPortalEntity != null) this.linkedPortalEntity!!.linkedPortalEntity = null
         this.linkedPortalEntity = null
     }

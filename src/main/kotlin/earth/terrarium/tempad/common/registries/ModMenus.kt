@@ -7,7 +7,6 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.apps.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
-import earth.terrarium.tempad.common.menu.FuelMenu
 import earth.terrarium.tempad.common.menu.TeleportMenu
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.registries.BuiltInRegistries
@@ -43,19 +42,21 @@ object ModMenus {
         )
     }
 
-    val FUEL_MENU: MenuType<FuelMenu> by registry.register("fuel") {
-        MenuContentHelper.create(
-            ::FuelMenu,
-            RecordCodecMenuContentSerializer(BasicAppContent.codec)
-        )
-    }
-
     class TimelineMenu(id: Int, inv: Inventory, data: Optional<TimelineData>): AbstractTempadMenu<TimelineData>(id, inv, TIMELINE_MENU, data)
 
     val TIMELINE_MENU: MenuType<TimelineMenu> by registry.register("timeline") {
         MenuContentHelper.create(
             ::TimelineMenu,
             RecordCodecMenuContentSerializer(TimelineData.codec)
+        )
+    }
+
+    class TpToMenu(id: Int, inv: Inventory, data: Optional<BasicAppContent>): AbstractTempadMenu<BasicAppContent>(id, inv, TPA_MENU, data)
+
+    val TPA_MENU: MenuType<TpToMenu> by registry.register("tpa") {
+        MenuContentHelper.create(
+            ::TpToMenu,
+            RecordCodecMenuContentSerializer(BasicAppContent.codec)
         )
     }
 }

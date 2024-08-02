@@ -7,7 +7,15 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.Component
 
-class ColoredButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, width: Int = Minecraft.getInstance().font.width(text) + 12, height: Int = 16, x: Int = 0, y: Int = 0, onPress: (Button) -> Unit) :
+class ColoredButton(
+    text: Component,
+    val type: ButtonType = ButtonType.SOLID,
+    width: Int = Minecraft.getInstance().font.width(text) + 12,
+    height: Int = 16,
+    x: Int = 0,
+    y: Int = 0,
+    onPress: (Button) -> Unit,
+) :
     Button(x, y, width, height, text, onPress, { e -> e.get() }) {
     var textWidth = Minecraft.getInstance().font.width(text)
 
@@ -16,7 +24,7 @@ class ColoredButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, 
     var darkColor = Tempad.DARK_ORANGE.value
 
     override fun renderWidget(graphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-        val color = if(!isActive) darkColor else if (isHovered) highlightedColor else color
+        val color = if (!isActive) darkColor else if (isHovered) highlightedColor else color
 
         if (type == ButtonType.FANCY) {
             graphics.bedrockButton(x, y, width, height, isHovered, isActive)
@@ -31,7 +39,9 @@ class ColoredButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, 
         }
 
         if (type == ButtonType.SOLID || (type == ButtonType.OUTLINE && isHovered && isActive)) {
-            graphics.fill(x, y, x + width, y + height, Tempad.ORANGE.value)
+            graphics.fill(x, y, x + width, y + height, color)
+            graphics.renderOutline(x + 1, y + 1, width - 2, height - 2, 0x1FFFFFAA.toInt())
+            graphics.renderOutline(x, y, width, height, 0x3F000000.toInt())
         }
 
 
@@ -39,11 +49,11 @@ class ColoredButton(text: Component, val type: ButtonType = ButtonType.OUTLINE, 
             Minecraft.getInstance().font,
             this.getMessage(),
             x + (width / 2) - textWidth / 2,
-            y + (height / 2) - 4 + if(type == ButtonType.FANCY && isHovered && isActive) 2 else 0,
+            y + (height / 2) - 4 + if (type == ButtonType.FANCY && isHovered && isActive) 2 else 0,
             when (type) {
                 ButtonType.SOLID -> 0xFF000000.toInt()
                 ButtonType.FANCY -> 0xFF000000.toInt()
-                ButtonType.OUTLINE -> if(isHovered && isActive) 0xFF000000.toInt() else color
+                ButtonType.OUTLINE -> if (isHovered && isActive) 0xFF000000.toInt() else color
                 else -> color
             },
             false

@@ -2,7 +2,6 @@ package earth.terrarium.tempad.client.widgets.map
 
 import net.minecraft.Optionull
 import net.minecraft.client.Minecraft
-import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.BiomeColors
 import net.minecraft.core.BlockPos
 import net.minecraft.core.BlockPos.MutableBlockPos
@@ -20,7 +19,7 @@ import kotlin.math.min
 object ClaimMapTopologyAlgorithm {
     const val BRIGHTER_COLOR: Int = -0xfcfcfd
 
-    fun setColors(minX: Int, minZ: Int, maxX: Int, maxZ: Int, level: ClientLevel, player: Player): Array<IntArray> {
+    fun setColors(minX: Int, minZ: Int, maxX: Int, maxZ: Int, level: Level, player: Player): Array<IntArray> {
         val colors = Array(maxX - minX) { IntArray(maxZ - minZ) }
         val pos1 = MutableBlockPos()
         val pos2 = MutableBlockPos()
@@ -192,7 +191,7 @@ object ClaimMapTopologyAlgorithm {
         ) shl 8) or min((blue * 1.1f).toInt(), 255) or -0x1000000
     }
 
-    private fun findBlockWithAirAbove(level: ClientLevel, pos: BlockPos): Int {
+    private fun findBlockWithAirAbove(level: Level, pos: BlockPos): Int {
         var offset = 0
         val y = pos.y
         val mutablePos = pos.mutable()

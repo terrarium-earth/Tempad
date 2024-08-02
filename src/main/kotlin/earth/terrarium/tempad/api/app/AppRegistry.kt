@@ -2,8 +2,8 @@ package earth.terrarium.tempad.api.app
 
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import earth.terrarium.tempad.api.test.ContextHolder
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.api.context.SyncableContext
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 

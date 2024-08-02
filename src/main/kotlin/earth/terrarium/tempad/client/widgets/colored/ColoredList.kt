@@ -39,4 +39,6 @@ open class ColoredList(width: Int, height: Int, spacing: Int = 0): ListWidget(wi
 
     override fun getScrollbarThumbWidth(): Int = 6
     override fun getScrollbarPadding(): Int = 2
+
+    operator fun iterator(): Iterator<Item> = this.items.iterator()
 }

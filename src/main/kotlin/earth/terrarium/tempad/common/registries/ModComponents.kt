@@ -7,6 +7,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.utils.*
@@ -40,45 +41,72 @@ object ModComponents {
         }
     }
 
-    val FUEL_CHARGES: DataComponentType<Int> by registry.register("fuel_charges") {
+    val fuelCharges: DataComponentType<Int> by registry.register("fuel_charges") {
         componentType {
             serialize = Codec.INT
             networkSerialize = ByteCodec.INT
         }
     }
 
-    val TEMPAD_FUEL_TYPE: DataComponentType<ResourceLocation> by registry.register("fuel_type") {
+    val fuelType: DataComponentType<ResourceLocation> by registry.register("fuel_type") {
         componentType {
             serialize = ResourceLocation.CODEC
             networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
         }
     }
 
-    val ENERGY_CONSUME_AMOUNT: DataComponentType<Int> by registry.register("energy_consume_amount") {
+    val energyConsumeAmount: DataComponentType<Int> by registry.register("energy_consume_amount") {
         componentType {
             serialize = Codec.INT
             networkSerialize = ByteCodec.INT
         }
     }
 
-    val EXPERIENCE_CONSUME_AMOUNT: DataComponentType<Int> by registry.register("experience_consume_amount") {
+    val expConsumeAmount: DataComponentType<Int> by registry.register("experience_consume_amount") {
         componentType {
             serialize = Codec.INT
             networkSerialize = ByteCodec.INT
+        }
+    }
+
+    val fluidContent: DataComponentType<Int> by registry.register("chronon_content") {
+        componentType {
+            serialize = Codec.INT
+            networkSerialize = ByteCodec.INT
+        }
+    }
+
+    val staticLocation: DataComponentType<LocationData> by registry.register("static_location") {
+        componentType {
+            serialize = LocationData.CODEC
+            networkSerialize = LocationData.BYTE_CODEC
+        }
+    }
+
+    val enabled: DataComponentType<Boolean> by registry.register("enabled") {
+        componentType {
+            serialize = Codec.BOOL
+            networkSerialize = ByteCodec.BOOLEAN
         }
     }
 }
 
-var MutableDataComponentHolder.fuelCharges by ModComponents.FUEL_CHARGES.default(0)
+var MutableDataComponentHolder.fuelCharges by ModComponents.fuelCharges.default(0)
 
-var MutableDataComponentHolder.fuelType by ModComponents.TEMPAD_FUEL_TYPE
+var MutableDataComponentHolder.fuelType by ModComponents.fuelType
 
-var MutableDataComponentHolder.energyConsumeAmount by ModComponents.ENERGY_CONSUME_AMOUNT.default(CommonConfigCache.energyPerCharge)
+var MutableDataComponentHolder.energyConsumeAmount by ModComponents.energyConsumeAmount.default(CommonConfigCache.energyPerCharge)
 
-var MutableDataComponentHolder.experienceConsumeAmount by ModComponents.EXPERIENCE_CONSUME_AMOUNT.default(CommonConfigCache.expPerCharge)
+var MutableDataComponentHolder.experienceConsumeAmount by ModComponents.expConsumeAmount.default(CommonConfigCache.expPerCharge)
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.default(ModApps.teleport)
 
 var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.default(ModMacros.teleportToPinned)
 
 var MutableDataComponentHolder.organizationMethod by ModComponents.organizationMethod.default(OrganizationMethod.DIMENSION)
+
+var MutableDataComponentHolder.chrononContent by ModComponents.fluidContent.default(0)
+
+var MutableDataComponentHolder.staticLocation by ModComponents.staticLocation
+
+var MutableDataComponentHolder.enabled by ModComponents.enabled.default(true)

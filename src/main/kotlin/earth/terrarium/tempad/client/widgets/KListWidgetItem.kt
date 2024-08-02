@@ -1,7 +1,6 @@
-package earth.terrarium.tempad.client.widgets.location_panel
+package earth.terrarium.tempad.client.widgets
 
 import earth.terrarium.olympus.client.components.base.ListWidget
-import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.client.gui.narration.NarrationElementOutput

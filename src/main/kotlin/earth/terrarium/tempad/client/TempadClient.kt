@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderType.*
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRenderers
+import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
@@ -22,7 +23,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
 import java.io.IOException
 
-@EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object TempadClient {
     var timedoorShader: ShaderInstance? = null
     val renderType: RenderType = CompositeState.builder()
@@ -56,6 +57,7 @@ object TempadClient {
         event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
         event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
         event.register(ModMenus.TIMELINE_MENU, ::TimelineScreen)
+        event.register(ModMenus.TPA_MENU, ::TpToScreen)
     }
 
     @SubscribeEvent @JvmStatic

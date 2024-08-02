@@ -1,22 +1,13 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
-import earth.terrarium.olympus.client.components.base.ListWidget
-import earth.terrarium.olympus.client.components.lists.EntryListWidget
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.ProviderSettings
+import earth.terrarium.tempad.client.widgets.KListWidgetItem
 import earth.terrarium.tempad.client.widgets.ModWidgets.CHEVRON_DOWN
 import earth.terrarium.tempad.client.widgets.ModWidgets.CHEVRON_UP
-import earth.terrarium.tempad.common.utils.sprites
-import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.AbstractWidget
-import net.minecraft.client.gui.narration.NarratableEntry
-import net.minecraft.client.gui.narration.NarratableEntry.NarrationPriority
-import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
-import java.util.function.Consumer
 
 class ProviderHeader(val text: Component, val id: String, val parent: PanelWidget): KListWidgetItem {
     companion object {

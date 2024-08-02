@@ -57,7 +57,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         }
 
         poseStack.pushPose()
-        poseStack.mulPose(Axis.YP.rotationDegrees(entity.yRot))
+        poseStack.mulPose(Axis.YN.rotationDegrees(entity.yRot))
         poseStack.translate(width / -2.0, finalHeight / 2.0 - height / 2.0 + 0.01, depth / -2.0)
         if (width >= 0) renderTimedoor(poseStack, buffer, width, height, depth, entity.color.value, entity.tickCount)
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
@@ -125,16 +125,27 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
 
         val lineBuffer = multiBufferSource.getBuffer(RenderType.lines())
 
-        val widthTime = width * 20f
-        val heightTime = height * 20f
-        val total = widthTime * 2 + heightTime * 2.2f
-        val topPercent = 1 - age % total / widthTime
-        val rightPercent = 1 - (age % total - widthTime) / heightTime
-        val bottomPercent = 1 - (age % total - widthTime - heightTime) / widthTime
-        val leftPercent = 1 - (age % total - widthTime * 2 - heightTime) / heightTime
+        val widthPart = width * 20f
+        val heightPart = height * 20f
+        val total = (widthPart * 2 + heightPart * 2)
+        val widthLine = (total / widthPart) * .0625f
+        val heightLine = (total / heightPart) * .0625f
+        val topPercent: Float
+        val rightPercent: Float
+        val bottomPercent: Float
+        val leftPercent: Float
+        if (widthPart > heightPart) {
+            topPercent = 1 - (((age + widthPart) % total) - widthPart) / (widthPart - (widthPart * widthLine * 1.5f)) + widthLine
+            rightPercent = 1 - (age % total - widthPart) / heightPart
+            bottomPercent = 1 - (age % total - widthPart - heightPart) / (widthPart - (widthPart * widthLine * 1.5f)) + widthLine
+            leftPercent = 1 - ((age - widthPart) % total - widthPart - heightPart) / heightPart
+        } else {
+            topPercent = 1 - (((age + widthPart) % total) - widthPart) / widthPart
+            rightPercent = 1 - (((age + widthPart) % total) - widthPart * 2) / (heightPart - (heightPart * heightLine * 1.5f)) + heightLine
+            bottomPercent = 1 - (age % total - widthPart - heightPart) / widthPart
+            leftPercent = 1 - ((age - widthPart) % total - widthPart - heightPart) / (heightPart - (heightPart * heightLine * 1.5f)) + heightLine
+        }
 
-        val widthLine = (total / widthTime) * .0625f
-        val heightLine = (total / heightTime) * .0625f
 
         //front
         lineBuffer.addVertex(model, minX, maxY, minZ).color().setNormal(matrix3f, -1.0F, 0.0F, 0.0F)

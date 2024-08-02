@@ -5,8 +5,8 @@ import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.app.TempadApp
-import earth.terrarium.tempad.api.test.ContextHolder
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.registries.ModMenus
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer

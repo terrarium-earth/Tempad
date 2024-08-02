@@ -1,6 +1,6 @@
 package earth.terrarium.tempad.api.macro
 
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.SyncableContext
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 

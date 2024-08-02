@@ -1,17 +1,16 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
-import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack
-import earth.terrarium.olympus.client.components.lists.ListEntry
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.client.widgets.KListWidgetItem
 import earth.terrarium.tempad.common.utils.btnSprites
-import earth.terrarium.tempad.common.utils.sprites
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import java.util.UUID
 
-class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntryBuilder.() -> Unit = {}): KListWidgetItem {
+class LocationEntry(val id: UUID, val data: LocationData, builder: LocationEntryBuilder.() -> Unit = {}):
+    KListWidgetItem {
     companion object {
         val FAVORITE = "unpin".btnSprites()
     }

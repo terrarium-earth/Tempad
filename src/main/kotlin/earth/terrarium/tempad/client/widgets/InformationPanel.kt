@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.core.GlobalPos
+import net.minecraft.core.Vec3i
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.util.Mth
@@ -23,11 +24,11 @@ class InformationPanel : ListWidget(92, 76) {
         private val ANGLE = "gui.${Tempad.MOD_ID}.angle"
         private val LOCATION_DIMENSION = "gui.${Tempad.MOD_ID}.dimension"
 
-        fun getEntries(pos: GlobalPos): List<MutableComponent> {
+        fun getEntries(pos: Vec3i): List<MutableComponent> {
             return listOf(
-                Component.translatable(LOCATION_X, pos.pos().x),
-                Component.translatable(LOCATION_Y, pos.pos().y),
-                Component.translatable(LOCATION_Z, pos.pos().z),
+                Component.translatable(LOCATION_X, pos.x),
+                Component.translatable(LOCATION_Y, pos.y),
+                Component.translatable(LOCATION_Z, pos.z),
             )
         }
     }
@@ -40,9 +41,9 @@ class InformationPanel : ListWidget(92, 76) {
     fun update(location: LocationData) {
         set(listOf(
             StringEntry(Component.literal(location.name)),
-            StringEntry(Component.translatable(LOCATION_X, Mth.floor(location.x))),
-            StringEntry(Component.translatable(LOCATION_Y, Mth.floor(location.y))),
-            StringEntry(Component.translatable(LOCATION_Z, Mth.floor(location.z))),
+            StringEntry(Component.translatable(LOCATION_X, location.x)),
+            StringEntry(Component.translatable(LOCATION_Y, location.y)),
+            StringEntry(Component.translatable(LOCATION_Z, location.z)),
             StringEntry(Component.translatable(ANGLE, location.angle)),
             StringEntry(Component.translatable(LOCATION_DIMENSION, location.dimComponent))
         ))

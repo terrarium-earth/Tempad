@@ -6,7 +6,8 @@ import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.locations.LocationData
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.ProviderSettings
-import earth.terrarium.tempad.api.test.SyncableContext
+import earth.terrarium.tempad.api.context.ItemContext
+import earth.terrarium.tempad.api.context.SyncableContext
 import net.minecraft.core.UUIDUtil
 import net.minecraft.world.entity.player.Player
 import java.util.*
@@ -22,7 +23,7 @@ class WarpsHandler(player: Player, ctx: SyncableContext<*>): LocationHandler {
         get() = emptyMap()
 
     override fun minusAssign(locationId: UUID) {}
-    override fun writeToCard(locationId: UUID, ctx: SyncableContext<*>) {
+    override fun writeToCard(locationId: UUID, ctx: ItemContext) {
         TODO("Not yet implemented")
     }
 }

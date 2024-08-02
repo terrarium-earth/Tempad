@@ -9,7 +9,7 @@ import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.api.locations.TempadLocations
-import earth.terrarium.tempad.api.test.ContextHolder
+import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.resources.ResourceLocation
 import java.util.*
@@ -17,7 +17,7 @@ import java.util.*
 data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: UUID, val ctx: ContextHolder<*>) :
     Packet<OpenTimedoorPacket> {
     companion object {
-        val TYPE = CodecPacketType.Server.create(
+        val type = CodecPacketType.Server.create(
             "open_timedoor".tempadId,
             ObjectByteCodec.create(
                 ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
@@ -34,5 +34,5 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
         )
     }
 
-    override fun type(): PacketType<OpenTimedoorPacket> = TYPE
+    override fun type(): PacketType<OpenTimedoorPacket> = type
 }

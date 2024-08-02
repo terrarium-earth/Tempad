@@ -6,15 +6,16 @@ import earth.terrarium.tempad.common.apps.*
 
 object ModApps {
     val teleport = "teleport".tempadId
-    val settings = "settings".tempadId
     val newLocation = "new_location".tempadId
     val timeline = "timeline".tempadId
+    val tpTo = "tp_to".tempadId
+    val settings = "settings".tempadId
 
     fun init() {
         AppRegistry[teleport] = ::TeleportApp
         AppRegistry[newLocation] = ::NewLocationApp
         AppRegistry[timeline] = ::TimelineApp
-
+        AppRegistry[tpTo] = ::TpToApp
         AppRegistry[settings] = ::SettingsApp
     }
 }

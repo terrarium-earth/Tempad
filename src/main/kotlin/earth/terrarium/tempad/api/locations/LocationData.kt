@@ -9,12 +9,41 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.VEC3_BYTE_CODEC
+import earth.terrarium.tempad.common.utils.byteCodec
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
+
+data class LocationDisplay(val title: Component, val subtitle: Component, val metadata: List<Component>) {
+    companion object {
+        val EMPTY = LocationDisplay(Component.literal(""), Component.literal(""), emptyList())
+        val codec: ByteCodec<LocationDisplay> = StreamCodec.composite(
+            ComponentSerialization.STREAM_CODEC,
+            LocationDisplay::title,
+            ComponentSerialization.STREAM_CODEC,
+            LocationDisplay::subtitle,
+            ByteBufCodecs.collection(::ArrayList, ComponentSerialization.STREAM_CODEC),
+            LocationDisplay::metadata,
+            ::LocationDisplay
+        ).byteCodec
+    }
+}
+
+interface NamedGlobalLocation {
+    val name: String
+    val pos: Vec3
+    val dimension: ResourceKey<Level>
+
+    val display: LocationDisplay
+    val byteCodec: ByteCodec<NamedGlobalLocation>
+    val codec: Codec<NamedGlobalLocation>
+}
 
 data class LocationData(val name: String, val pos: Vec3, val dimension: ResourceKey<Level>, val angle: Float, val color: Color) {
     companion object {
@@ -45,11 +74,12 @@ data class LocationData(val name: String, val pos: Vec3, val dimension: Resource
         }
     }
 
-    val offsetLocation = offsetLocation(pos, angle)
+    val offsetLocation = offsetLocation(pos, angle + 180)
 
-    val x = pos.x
-    val y = pos.y
-    val z = pos.z
+    val x: Int = pos.x.toInt()
+    val y: Int = pos.y.toInt()
+    val z: Int = pos.z.toInt()
+    val dimensionText = Component.translatable(dimension.location().toLanguageKey("dimension"))
 
     val dimComponent: Component = Component.translatable(dimension.location().toLanguageKey("dimension"))
 }

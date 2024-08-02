@@ -4,12 +4,11 @@ import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.config.CommonConfig
-import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
+import earth.terrarium.tempad.common.items.ChrononContainer
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.location_handlers.WarpsHandler
 import earth.terrarium.tempad.common.registries.*
-import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
@@ -17,15 +16,14 @@ import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
+import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
-import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
-import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.server.ServerLifecycleHooks
 
 @Mod(Tempad.MOD_ID)
@@ -63,6 +61,14 @@ class Tempad(bus: IEventBus) {
         ModNetworking.init()
         ModRecipes.types.init()
         ModRecipes.serializers.init()
+        ModFluids.dataRegistry.init()
+        ModFluids.registry.init()
+
+        bus.addListener { event: RegisterCapabilitiesEvent ->
+            event.register(Capabilities.FluidHandler.ITEM)[ModItems.chrononGenerator] = { stack, _ ->
+                ChrononContainer(stack)
+            }
+        }
 
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->
             if (event.entity.tickCount % 1200 != 0) return@addListener

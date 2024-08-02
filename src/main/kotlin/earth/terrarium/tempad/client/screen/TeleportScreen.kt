@@ -14,14 +14,17 @@ import earth.terrarium.tempad.common.menu.TeleportMenu
 import earth.terrarium.tempad.common.network.c2s.DeleteLocationPacket
 import earth.terrarium.tempad.common.network.c2s.OpenTimedoorPacket
 import earth.terrarium.tempad.common.network.c2s.SetFavoritePacket
+import earth.terrarium.tempad.common.network.c2s.WriteToCardPacket
 import earth.terrarium.tempad.common.utils.btnSprites
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
-import net.minecraft.client.gui.components.Button
-import net.minecraft.client.gui.components.EditBox
-import net.minecraft.client.gui.components.ImageButton
-import net.minecraft.client.gui.components.Tooltip
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.*
+import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.core.BlockPos
+import net.minecraft.core.NonNullList
+import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import org.lwjgl.glfw.GLFW
@@ -45,26 +48,45 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
     var selected: Triple<ProviderSettings, UUID, LocationData>? = null
         set(value) {
             field = value
-            locationButtons.visitWidgets { widget -> widget.visible = value != null }
             teleportBtn.active = value != null
             favBtn.toggled = favorite?.matches(value?.first?.id, value?.second) == true
-            value?.third?.let { infoPanel.update(it) }
+
+            infoLayout.visitWidgets { widget ->
+                widget.visible = true
+            }
+
+            value?.third?.let {
+                dimWidget.message = it.dimensionText
+                val entries = InformationPanel.getEntries(BlockPos.containing(it.pos))
+                posWidgets.forEachIndexed { index, widget -> widget.message = entries[index] }
+            }
         }
 
     private lateinit var locationButtons: LinearLayout
-    private lateinit var infoPanel: InformationPanel
     private lateinit var favBtn: ToggleButton
     private lateinit var search: EditBox
     private var favorite: FavoriteLocationAttachment? = menu.appContent.favoriteLocation
     private lateinit var locationList: PanelWidget
     private lateinit var teleportBtn: ColoredButton
 
+    private lateinit var infoLayout: FrameLayout
+    private lateinit var dimWidget: StringWidget
+    private lateinit var posWidgets: List<StringWidget>
+
     override fun init() {
         super.init()
-        infoPanel = addRenderableWidget(InformationPanel())
-        infoPanel.setPosition(localLeft + 4, localTop + 23)
 
         val searchValue = if (::search.isInitialized) search.value else ""
+        this.search = addRenderableWidget(
+            ModWidgets.search(
+                localLeft + 20,
+                localTop + 24,
+                64,
+                12
+            ) { _ -> if (::locationList.isInitialized) locationList.update() }
+        )
+
+        search.value = searchValue
 
         this.locationList = addRenderableWidget(PanelWidget(
             menu.appContent.locations,
@@ -74,36 +96,29 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             { provider, locationId -> favorite?.matches(provider.id, locationId) ?: false }
         ))
 
-        locationList.setPosition(localLeft + 100, localTop + 23)
-
-        this.search = addRenderableWidget(
-            ModWidgets.search(
-                localLeft + 115,
-                localTop + 8,
-                64,
-                12
-            ) { _ -> locationList.update() }
-        )
-
-        search.value = searchValue
+        locationList.setPosition(localLeft + 4, localTop + 39)
         locationList.update()
 
-        locationButtons = LinearLayout(
-            localLeft + 73,
-            localTop + 26,
-            LinearLayout.Orientation.HORIZONTAL
-        ).spacing(2)
+        infoLayout = FrameLayout(74, 74)
+        infoLayout.setPosition(localLeft + 119, localTop + 22)
 
-        teleportBtn = addRenderableWidget(
-            ColoredButton(teleportText, height = 18, width = 74, x = localLeft + 4, y = localTop + 96) {
-                if (minecraft == null || selected == null) return@ColoredButton
-                val (provider, locationId, _) = selected!!
-                OpenTimedoorPacket(provider.id, locationId, menu.ctxHolder).sendToServer()
-                minecraft?.setScreen(null)
-            },
-        )
+        val coordinates = infoLayout.addChild(LinearLayout(0,0, LinearLayout.Orientation.VERTICAL).spacing(2)) {
+            it.alignHorizontallyLeft()
+            it.alignVerticallyTop()
+            it.padding(4)
+        }
 
-        teleportBtn.active = false
+        dimWidget = coordinates.addChild(StringWidget(66, 9, CommonComponents.EMPTY, font).setColor(Tempad.ORANGE.value).alignLeft())
+
+        posWidgets = NonNullList.withSize(3, CommonComponents.EMPTY).map { component ->
+            coordinates.addChild(StringWidget(66, 9, component, font).setColor(Tempad.ORANGE.value).alignLeft())
+        }
+
+        locationButtons = infoLayout.addChild(LinearLayout(0, 0, LinearLayout.Orientation.HORIZONTAL).spacing(2)) {
+            it.alignHorizontallyRight()
+            it.alignVerticallyBottom()
+            it.padding(4)
+        }
 
         favBtn = locationButtons.addChild(
             ToggleButton("unpin".btnSprites(), "pin".btnSprites()) {
@@ -133,15 +148,25 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 val (provider, locationId, _) = selected!!
                 DeleteLocationPacket(menu.ctxHolder, provider.id, locationId).sendToServer()
                 locationList.deleteSelected()
-                infoPanel.clearLines()
             },
         )
 
-        locationButtons.arrangeElements()
-        locationButtons.visitWidgets { widget ->
+        infoLayout.visitWidgets { widget ->
             addRenderableWidget(widget)
             widget.visible = false
         }
+        infoLayout.arrangeElements()
+
+        teleportBtn = addRenderableWidget(
+            ColoredButton(teleportText, width = 76, height = 16, x = localLeft + 118, y = localTop + 98) {
+                if (minecraft == null || selected == null) return@ColoredButton
+                val (provider, locationId, _) = selected!!
+                OpenTimedoorPacket(provider.id, locationId, menu.ctxHolder).sendToServer()
+                minecraft?.setScreen(null)
+            },
+        )
+
+        teleportBtn.active = false
     }
 
     override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
@@ -152,11 +177,17 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         return true
     }
 
-    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
-        if (!search.isMouseOver(pMouseX, pMouseY)) {
+    override fun mouseClicked(mouseX: Double, mouseY: Double, pButton: Int): Boolean {
+        if (!search.isMouseOver(mouseX, mouseY)) {
             search.isFocused = false
         }
-        return super.mouseClicked(pMouseX, pMouseY, pButton)
+        if (mouseX >= localLeft + 118 && mouseX <= localLeft + 193 && mouseY >= localTop + 20 && mouseY <= localTop + 95 && !menu.carried.isEmpty) {
+            selected?.let { (provider, locationId, _) ->
+                WriteToCardPacket(provider.id, locationId, menu.ctxHolder).sendToServer()
+                return true
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, pButton)
     }
 
     override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
@@ -178,6 +209,13 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             } else {
                 teleportBtn.message = writeText
             }
+        }
+    }
+
+    override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
+        super.renderBg(graphics, partialTick, mouseX, mouseY)
+        if (mouseX >= localLeft + 118 && mouseX <= localLeft + 193 && mouseY >= localTop + 20 && mouseY <= localTop + 95 && !menu.carried.isEmpty && selected != null) {
+            graphics.renderOutline(localLeft + 118, localTop + 20, 76, 76, Tempad.HIGHLIGHTED_ORANGE.value)
         }
     }
 }
