@@ -4,10 +4,14 @@ import com.mojang.serialization.Codec
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
 import net.minecraft.core.component.DataComponentType
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -18,6 +22,7 @@ import net.neoforged.neoforge.capabilities.IBlockCapabilityProvider
 import net.neoforged.neoforge.capabilities.ICapabilityProvider
 import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
+import javax.naming.OperationNotSupportedException
 
 fun <T> attachmentType(supplier: () -> T, builder: AttachmentType.Builder<T>.() -> Unit): AttachmentType<T> {
     return AttachmentType.builder(supplier).apply(builder).build()
@@ -43,4 +48,14 @@ var <T> DataComponentType.Builder<T>.networkSerialize: ByteCodec<T>
     get() = error("No getter for synced")
     set(value) {
         this.networkSynchronized(StreamCodecByteCodec.toRegistry(value))
+    }
+
+fun creativeModeTab(builder: CreativeModeTab.Builder.() -> Unit): CreativeModeTab {
+    return CreativeModeTab.builder().apply(builder).build()
+}
+
+var CreativeModeTab.Builder.title: Component
+    get() = throw OperationNotSupportedException()
+    set(title) {
+        this.title(title)
     }

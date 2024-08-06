@@ -8,7 +8,6 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.LocationData
-import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.component.DataComponentType
@@ -41,35 +40,14 @@ object ModComponents {
         }
     }
 
-    val fuelCharges: DataComponentType<Int> by registry.register("fuel_charges") {
+    val chrononContent: DataComponentType<Int> by registry.register("chronon_content") {
         componentType {
             serialize = Codec.INT
             networkSerialize = ByteCodec.INT
         }
     }
 
-    val fuelType: DataComponentType<ResourceLocation> by registry.register("fuel_type") {
-        componentType {
-            serialize = ResourceLocation.CODEC
-            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
-        }
-    }
-
-    val energyConsumeAmount: DataComponentType<Int> by registry.register("energy_consume_amount") {
-        componentType {
-            serialize = Codec.INT
-            networkSerialize = ByteCodec.INT
-        }
-    }
-
-    val expConsumeAmount: DataComponentType<Int> by registry.register("experience_consume_amount") {
-        componentType {
-            serialize = Codec.INT
-            networkSerialize = ByteCodec.INT
-        }
-    }
-
-    val fluidContent: DataComponentType<Int> by registry.register("chronon_content") {
+    val chrononLimit: DataComponentType<Int> by registry.register("chronon_limit") {
         componentType {
             serialize = Codec.INT
             networkSerialize = ByteCodec.INT
@@ -89,24 +67,27 @@ object ModComponents {
             networkSerialize = ByteCodec.BOOLEAN
         }
     }
+
+    val twisterEquipped: DataComponentType<Boolean> by registry.register("twister_equipped") {
+        componentType {
+            serialize = Codec.BOOL
+            networkSerialize = ByteCodec.BOOLEAN
+        }
+    }
 }
 
-var MutableDataComponentHolder.fuelCharges by ModComponents.fuelCharges.default(0)
+var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
 
-var MutableDataComponentHolder.fuelType by ModComponents.fuelType
+var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.withDefault(ModMacros.teleportToPinned)
 
-var MutableDataComponentHolder.energyConsumeAmount by ModComponents.energyConsumeAmount.default(CommonConfigCache.energyPerCharge)
+var MutableDataComponentHolder.organizationMethod by ModComponents.organizationMethod.withDefault(OrganizationMethod.DIMENSION)
 
-var MutableDataComponentHolder.experienceConsumeAmount by ModComponents.expConsumeAmount.default(CommonConfigCache.expPerCharge)
+var MutableDataComponentHolder.chrononContent by ModComponents.chrononContent.withDefault(0)
 
-var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.default(ModApps.teleport)
-
-var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.default(ModMacros.teleportToPinned)
-
-var MutableDataComponentHolder.organizationMethod by ModComponents.organizationMethod.default(OrganizationMethod.DIMENSION)
-
-var MutableDataComponentHolder.chrononContent by ModComponents.fluidContent.default(0)
+var MutableDataComponentHolder.chrononLimit by ModComponents.chrononLimit.withDefault(0)
 
 var MutableDataComponentHolder.staticLocation by ModComponents.staticLocation
 
-var MutableDataComponentHolder.enabled by ModComponents.enabled.default(true)
+var MutableDataComponentHolder.enabled by ModComponents.enabled.withDefault(true)
+
+var MutableDataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.withDefault(false)

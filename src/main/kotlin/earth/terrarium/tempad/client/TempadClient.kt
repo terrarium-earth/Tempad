@@ -7,14 +7,17 @@ import com.mojang.blaze3d.vertex.VertexFormat
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
-import earth.terrarium.tempad.common.registries.ModEntities
-import earth.terrarium.tempad.common.registries.ModMenus
+import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.vanillaId
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderType.*
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRenderers
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
+import net.minecraft.util.Mth
+import net.minecraft.world.entity.player.Player
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
@@ -44,6 +47,23 @@ object TempadClient {
                 it
             )
         }
+
+    val inUseProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
+        (entity as? Player)?.containerMenu is AbstractTempadMenu<*>
+    }
+
+    val twisterAttachedProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
+        stack.twisterEquipped
+    }
+
+    val charge = ClampedItemPropertyFunction { stack, level, entity, seed ->
+        step(stack.chrononContent / stack.chrononLimit.toFloat(), 0.33f)
+    }
+
+    fun step(value: Float, step: Float): Float {
+        if (value >= 0.9) return 1f
+        return value - value % step
+    }
 
     @SubscribeEvent @JvmStatic
     fun init(event: FMLClientSetupEvent) {

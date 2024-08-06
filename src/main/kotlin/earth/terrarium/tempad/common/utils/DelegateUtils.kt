@@ -43,7 +43,7 @@ class ComponentDelegate<T : Any>(private val key: DataComponentType<T>, private 
 operator fun <T : Any> DataComponentType<T>.getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T? = thisRef[this]
 operator fun <T : Any> DataComponentType<T>.setValue(thisRef: MutableDataComponentHolder, property: KProperty<*>, value: T?) { thisRef[this] = value }
 
-fun <T : Any> DataComponentType<T>.default(default: T) = ComponentDelegate(this, default)
+fun <T : Any> DataComponentType<T>.withDefault(default: T) = ComponentDelegate(this, default)
 
 inline fun <reified T : Entity, U> createDataKey(serializer: EntityDataSerializer<U>): EntityDataAccessor<U> =
     SynchedEntityData.defineId(T::class.java, serializer)

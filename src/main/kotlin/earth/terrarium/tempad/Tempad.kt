@@ -19,6 +19,7 @@ import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent
@@ -56,6 +57,7 @@ class Tempad(bus: IEventBus) {
         ModEntities.entities.init()
         ModEntities.serializers.init()
         ModItems.registry.init()
+        ModItems.creativeTabs.init()
         ModMacros.init()
         ModMenus.registry.init()
         ModNetworking.init()
@@ -67,6 +69,13 @@ class Tempad(bus: IEventBus) {
         bus.addListener { event: RegisterCapabilitiesEvent ->
             event.register(Capabilities.FluidHandler.ITEM)[ModItems.chrononGenerator] = { stack, _ ->
                 ChrononContainer(stack)
+            }
+        }
+
+        bus.addListener { event: BuildCreativeModeTabContentsEvent ->
+            if (event.tab !== ModItems.tab) return@addListener
+            for (entry in ModItems.registry.entries) {
+                event.accept(entry.get())
             }
         }
 
