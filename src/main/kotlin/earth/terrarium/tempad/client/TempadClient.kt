@@ -5,10 +5,12 @@ package earth.terrarium.tempad.client
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.Tempad.Companion.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
+import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.vanillaId
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
 import net.minecraft.client.renderer.RenderType
@@ -16,12 +18,13 @@ import net.minecraft.client.renderer.RenderType.*
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
-import net.minecraft.util.Mth
+import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.world.entity.player.Player
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
+import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
 import java.io.IOException
@@ -48,16 +51,20 @@ object TempadClient {
             )
         }
 
+    val enabledProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.enabled }
+
+    val twisterAttachedProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.twisterEquipped }
+
     val inUseProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
-        (entity as? Player)?.containerMenu is AbstractTempadMenu<*>
+        if (entity !is Player) return@BooleanItemPropertyFunction false
+        val menu = entity.containerMenu
+        if (menu !is AbstractTempadMenu<*>) return@BooleanItemPropertyFunction false
+        return@BooleanItemPropertyFunction menu.ctx.stack === stack
     }
 
-    val twisterAttachedProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
-        stack.twisterEquipped
-    }
-
-    val charge = ClampedItemPropertyFunction { stack, level, entity, seed ->
-        step(stack.chrononContent / stack.chrononLimit.toFloat(), 0.33f)
+    val chargeProperty = ClampedItemPropertyFunction { stack, level, entity, seed ->
+        val tank = stack[Capabilities.FluidHandler.ITEM] ?: return@ClampedItemPropertyFunction 0f
+        step(tank.getFluidInTank(0).amount.toFloat() / tank.getTankCapacity(0), 0.33f)
     }
 
     fun step(value: Float, step: Float): Float {
@@ -68,7 +75,11 @@ object TempadClient {
     @SubscribeEvent @JvmStatic
     fun init(event: FMLClientSetupEvent) {
         EntityRenderers.register(ModEntities.TIMEDOOR_ENTITY, ::TimedoorRenderer)
-        // NeoForge.EVENT_BUS.addListener<Event>(ForgeTempadClient::onClientTick)
+        ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
+        ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
+        ItemProperties.register(ModItems.tempad, "charge".tempadId, chargeProperty)
+        ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, chargeProperty)
+        ItemProperties.register(ModItems.temporalBeacon, "enabled".tempadId, enabledProperty)
     }
 
     @SubscribeEvent @JvmStatic

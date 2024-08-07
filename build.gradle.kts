@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm") version "2.0.0"
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("net.neoforged.gradle.userdev") version "7.0.145"
+    id("net.neoforged.gradle.userdev") version "7.0.153"
 }
 
 val minecraftVersion: String by project
@@ -77,6 +77,10 @@ kotlin {
         freeCompilerArgs.add("-Xjvm-default=all")
         freeCompilerArgs.add("-Xcontext-receivers")
     }
+
+    sourceSets.all {
+        languageSettings.enableLanguageFeature("ExplicitBackingFields")
+    }
 }
 
 publishing {
@@ -132,6 +136,21 @@ resourcefulGradle {
                     "forge_link" to forgeLink
             ))
         }
+    }
+}
+
+runs {
+    // other run configurations here
+
+    maybeCreate("data").apply {
+        programArguments.addAll(
+            "--mod", modId,
+            "--all",
+            "--output", file("src/generated/resources").absolutePath,
+            "--existing", file("src/main/resources/").absolutePath,
+            "--client",
+            "--server"
+        )
     }
 }
 

@@ -127,7 +127,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
 
         val doneButton = addRenderableWidget(ColoredButton(CommonComponents.GUI_DONE) {
             CreateLocationPacket(textInput.value, currentColor, menu.ctxHolder).sendToServer()
-            minecraft?.setScreen(null)
+            this.onClose()
         })
 
         doneButton.y = localTop + 98

@@ -31,6 +31,7 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EntityType.EntityFactory
 import net.minecraft.world.entity.MobCategory
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.EntityGetter
@@ -68,7 +69,7 @@ operator fun <T> TagKey<T>.contains(key: Holder.Reference<T>): Boolean = key.`is
 
 operator fun MinecraftServer?.get(dimId: ResourceKey<Level>): ServerLevel? = this?.getLevel(dimId)
 
-operator fun <T> ItemStack.get(capability: ItemCapability<T, Void>) = this.getCapability(capability)
+operator fun <T> ItemStack.get(capability: ItemCapability<T, Void?>) = this.getCapability(capability)
 
 operator fun ItemStack.minus(amount: Int): ItemStack {
     val copy = this.copy()
@@ -180,3 +181,7 @@ val GlobalPos.dimDisplay: Component get() = Component.translatable(this.dimensio
 val GlobalPos.xDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.x", this.pos().x)
 val GlobalPos.yDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.y", this.pos().y)
 val GlobalPos.zDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.z", this.pos().z)
+
+var Slot.contents
+    get() = this.item
+    set(value) = this.set(value)

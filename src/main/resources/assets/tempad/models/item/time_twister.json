@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "tempad:item/tempad_charged"
+    "layer0": "tempad:item/time_twister"
   }
 }

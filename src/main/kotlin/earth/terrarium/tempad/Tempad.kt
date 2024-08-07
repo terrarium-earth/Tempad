@@ -6,6 +6,7 @@ import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.items.ChrononContainer
+import earth.terrarium.tempad.common.items.TempadContainer
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.location_handlers.WarpsHandler
 import earth.terrarium.tempad.common.registries.*
@@ -67,8 +68,17 @@ class Tempad(bus: IEventBus) {
         ModFluids.registry.init()
 
         bus.addListener { event: RegisterCapabilitiesEvent ->
-            event.register(Capabilities.FluidHandler.ITEM)[ModItems.chrononGenerator] = { stack, _ ->
-                ChrononContainer(stack)
+            val fluidHandlers = event.register(Capabilities.FluidHandler.ITEM)
+            fluidHandlers[ModItems.chrononGenerator] = { stack, _ ->
+                ChrononContainer(stack, 32000)
+            }
+
+            fluidHandlers[ModItems.tempad] = { stack, _ ->
+                TempadContainer(stack)
+            }
+
+            fluidHandlers[ModItems.timeTwister] = { stack, _ ->
+                ChrononContainer(stack, 4000)
             }
         }
 

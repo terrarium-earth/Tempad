@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "tempad:item/temporal_shielding"
+    "layer0": "tempad:item/blank_card"
   }
 }

@@ -162,7 +162,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 if (minecraft == null || selected == null) return@ColoredButton
                 val (provider, locationId, _) = selected!!
                 OpenTimedoorPacket(provider.id, locationId, menu.ctxHolder).sendToServer()
-                minecraft?.setScreen(null)
+                this.onClose()
             },
         )
 

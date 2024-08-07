@@ -4,12 +4,11 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.data.client.ModItemModelData
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.bus.api.SubscribeEvent
-import net.neoforged.fml.ModContainer
 import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.data.event.GatherDataEvent
 
 @Mod(Tempad.MOD_ID)
-class TempadData(bus: IEventBus, mod: ModContainer) {
+class TempadData(bus: IEventBus) {
     init {
         bus.addListener(::gatherData)
     }

@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "tempad:item/chronon_generator_1",
+      "predicate": {
+        "tempad:charge": 0.33
+      }
+    },
+    {
+      "model": "tempad:item/chronon_generator_2",
+      "predicate": {
+        "tempad:charge": 0.66
+      }
+    },
+    {
+      "model": "tempad:item/chronon_generator_3",
+      "predicate": {
+        "tempad:charge": 1.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "tempad:item/chronon_generator"
+  }
+}

@@ -2,19 +2,25 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.macro.MacroRegistry
+import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.defaultApp
 import earth.terrarium.tempad.common.registries.defaultMacro
+import earth.terrarium.tempad.common.registries.twisterEquipped
+import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.ctx
 import earth.terrarium.tempad.common.utils.getSlot
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.entity.SlotAccess
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.ClickAction
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-class TempadItem: Item(Properties().stacksTo(1)) {
+class TempadItem: Item(Properties().stacksTo(1)), ChrononAcceptor {
 
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(hand)
@@ -31,4 +37,48 @@ class TempadItem: Item(Properties().stacksTo(1)) {
 
         return InteractionResultHolder.success(stack)
     }
+
+
+    override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
+        if (action == ClickAction.SECONDARY) {
+            if (stack.twisterEquipped) {
+                if (!slot.hasItem()) {
+                    stack.twisterEquipped = false
+                    slot.contents = stack.transmuteCopy(ModItems.timeTwister).also {
+                        stack
+                    }
+                    return true
+                } else if (slot.contents.item === ModItems.tempad) {
+                    stack.twisterEquipped = false
+                    slot.contents.twisterEquipped = true
+                    return true
+                }
+            } else if (slot.contents.item === ModItems.timeTwister) {
+                slot.contents = ItemStack.EMPTY
+                stack.twisterEquipped = true
+                return true
+            }
+        }
+        return super.overrideStackedOnOther(stack, slot, action, player)
+    }
+
+    override fun overrideOtherStackedOnMe(
+        stack: ItemStack,
+        other: ItemStack,
+        slot: Slot,
+        action: ClickAction,
+        player: Player,
+        access: SlotAccess,
+    ): Boolean {
+        if (action == ClickAction.SECONDARY && other.item === ModItems.timeTwister && !stack.twisterEquipped) {
+            stack.twisterEquipped = true
+            other.shrink(1)
+            return true
+        }
+        return super.overrideOtherStackedOnMe(stack, other, slot, action, player, access)
+    }
+}
+
+class TempadContainer(stack: ItemStack) : ChrononContainer(stack, 0) {
+    override val capacity: Int get() = if (stack.twisterEquipped) 12000 else 8000
 }

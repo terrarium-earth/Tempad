@@ -38,9 +38,6 @@
   "item.tempad.tempad": [
     { "text": "Tempad", "color": "#ff6f00" }
   ],
-  "item.tempad.he_who_remains_tempad":[
-    { "text": "Tempad", "color": "#ff6f00" }
-  ],
   "advancements.tempad.tempad": "For All Time. Always.",
   "advancements.tempad.tempad.description": "Obtain a Tempad",
   "advancements.tempad.he_who_remains": "Glorious purpose!",
@@ -54,6 +51,7 @@
   "item.tempad.empty_tank": "Empty",
   "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r",
 
+  "item.tempad.blank_card": "Blank Card",
   "item.tempad.location_card": "Location Card",
   "item.tempad.location_card.creator_toolip": "Created by %s",
   "item.tempad.location_card.shift_toolip": "Hold [%s] for more info",
@@ -63,6 +61,9 @@
   "item.tempad.location_card.set_location": "Set location: %s",
 
   "item.tempad.temporal_shielding": "Temporal Shielding",
+  "item.tempad.chronon_generator": "Chronon Generator",
+  "item.tempad.temporal_beacon": "Temporal Beacon",
+  "item.tempad.time_twister": "Time Twister",
 
   "fuel.tempad.empty": "Empty",
   "fuel.tempad.empty.description": "This item cannot hold fuel",

@@ -14,13 +14,16 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper
 
 class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : ItemModelProvider(output, Tempad.MOD_ID, fileHelper) {
     override fun registerModels() {
-        basicItem(ModItems.tempad).apply {
+        getBuilder("tempad").apply {
+            parent(ModelFile.UncheckedModelFile("item/generated"))
+            texture("layer0", "tempad:item/tempad/base")
             for (attached in arrayOf(0f, 1f)) {
                 for (inUse in arrayOf(0f, 1f)) {
                     for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
-                        var path = "tempad:tempad/"
-                        path += (if (attached == 1f) "attached" else "base") + "_"
-                        path += (if (inUse == 1f) "in_use" else "idle") + "_"
+                        var path = "tempad:item/tempad/"
+                        path += (if (attached == 1f) "attached" else "base")
+                        path += "_"
+                        path += (if (inUse == 1f) "in_use" else "idle")
                         path += "_$index"
 
                         override().apply {
@@ -31,12 +34,12 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
                             model(getBuilder(path).apply {
                                 parent(ModelFile.UncheckedModelFile("item/generated"))
 
-                                texture("layer0", "tempad/base${if (attached == 1f) "_with_twister" else ""}".tempadId)
+                                texture("layer0", "item/tempad/base${if (attached == 1f) "_with_twister" else ""}".tempadId)
                                 if (inUse == 1f) {
-                                    texture("layer1", "tempad/screen_on".tempadId)
+                                    texture("layer1", "item/tempad/screen_on".tempadId)
                                 }
                                 if (charge > 0) {
-                                    texture("layer2", "tempad/charge_${index}")
+                                    texture("layer2", "item/tempad/charge_${index}")
                                 }
                             })
                         }
@@ -50,11 +53,11 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
                 override().apply {
                     predicate("charge".tempadId, charge)
 
-                    model(getBuilder("tempad:chronon_generator_${index}").apply {
+                    model(getBuilder("tempad:chronon_generator_${index + 1}").apply {
                         parent(ModelFile.UncheckedModelFile("item/generated"))
 
-                        texture("layer0", "tempad:chronon_generator")
-                        texture("layer1", "tempad:chronon_generator/charge_${index}")
+                        texture("layer0", "tempad:item/chronon_generator")
+                        texture("layer1", "tempad:item/chronon_generator/charge_${index + 1}")
                     })
                 }
             }

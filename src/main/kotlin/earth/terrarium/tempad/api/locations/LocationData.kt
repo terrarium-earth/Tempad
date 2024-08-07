@@ -15,34 +15,27 @@ import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 
-data class LocationDisplay(val title: Component, val subtitle: Component, val metadata: List<Component>) {
-    companion object {
-        val EMPTY = LocationDisplay(Component.literal(""), Component.literal(""), emptyList())
-        val codec: ByteCodec<LocationDisplay> = StreamCodec.composite(
-            ComponentSerialization.STREAM_CODEC,
-            LocationDisplay::title,
-            ComponentSerialization.STREAM_CODEC,
-            LocationDisplay::subtitle,
-            ByteBufCodecs.collection(::ArrayList, ComponentSerialization.STREAM_CODEC),
-            LocationDisplay::metadata,
-            ::LocationDisplay
-        ).byteCodec
-    }
-}
+data class LocationType<T: NamedGlobalLocation>(val id: ResourceLocation, val byteCodec: ByteCodec<T>, val codec: Codec<T>)
 
 interface NamedGlobalLocation {
     val name: String
     val pos: Vec3
     val dimension: ResourceKey<Level>
+    val angle: Float
+    val color: Color
 
-    val display: LocationDisplay
-    val byteCodec: ByteCodec<NamedGlobalLocation>
-    val codec: Codec<NamedGlobalLocation>
+    val display: List<Component>
+    val type: LocationType<*>
+}
+
+object LocationTypeRegistry {
+
 }
 
 data class LocationData(val name: String, val pos: Vec3, val dimension: ResourceKey<Level>, val angle: Float, val color: Color) {
