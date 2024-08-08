@@ -2,7 +2,9 @@ package earth.terrarium.tempad.client.screen
 
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.api.locations.ClientDisplay
+import earth.terrarium.tempad.api.locations.NamedGlobalPos
+import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.ModWidgets
@@ -45,7 +47,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         val writeText = Component.translatable("app.${Tempad.MOD_ID}.teleport.write")
     }
 
-    var selected: Triple<ProviderSettings, UUID, LocationData>? = null
+    var selected: Triple<ProviderSettings, UUID, ClientDisplay>? = null
         set(value) {
             field = value
             teleportBtn.active = value != null
@@ -55,11 +57,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 widget.visible = true
             }
 
-            value?.third?.let {
-                dimWidget.message = it.dimensionText
-                val entries = InformationPanel.getEntries(BlockPos.containing(it.pos))
-                posWidgets.forEachIndexed { index, widget -> widget.message = entries[index] }
-            }
+            value?.third?.let { infoTextWidget.update(it.info) }
         }
 
     private lateinit var locationButtons: LinearLayout
@@ -70,8 +68,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
     private lateinit var teleportBtn: ColoredButton
 
     private lateinit var infoLayout: FrameLayout
-    private lateinit var dimWidget: StringWidget
-    private lateinit var posWidgets: List<StringWidget>
+    private lateinit var infoTextWidget: InformationPanel
 
     override fun init() {
         super.init()
@@ -108,11 +105,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             it.padding(4)
         }
 
-        dimWidget = coordinates.addChild(StringWidget(66, 9, CommonComponents.EMPTY, font).setColor(Tempad.ORANGE.value).alignLeft())
-
-        posWidgets = NonNullList.withSize(3, CommonComponents.EMPTY).map { component ->
-            coordinates.addChild(StringWidget(66, 9, component, font).setColor(Tempad.ORANGE.value).alignLeft())
-        }
+        infoTextWidget = InformationPanel(font, 74, 74)
+        infoTextWidget.setPosition(119, 21)
 
         locationButtons = infoLayout.addChild(LinearLayout(0, 0, LinearLayout.Orientation.HORIZONTAL).spacing(2)) {
             it.alignHorizontallyRight()

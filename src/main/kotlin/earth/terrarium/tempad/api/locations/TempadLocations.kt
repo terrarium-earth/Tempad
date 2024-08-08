@@ -39,9 +39,9 @@ data class ProviderSettings(
 }
 
 interface LocationHandler {
-    val locations: Map<UUID, LocationData>
+    val locations: Map<UUID, NamedGlobalPos>
     operator fun minusAssign(locationId: UUID)
-    operator fun get(locationId: UUID): LocationData? = locations[locationId]
+    operator fun get(locationId: UUID): NamedGlobalPos? = locations[locationId]
 
     fun writeToCard(locationId: UUID, ctx: ItemContext)
 }
@@ -77,6 +77,6 @@ object TempadLocations {
         registry.keys.find { it.id == id }?.let { registry[it]?.get(player, ctx) }
 
     @JvmStatic
-    operator fun get(player: Player, ctx: SyncableContext<*>): Map<ProviderSettings, Map<UUID, LocationData>> =
+    operator fun get(player: Player, ctx: SyncableContext<*>): Map<ProviderSettings, Map<UUID, NamedGlobalPos>> =
         registry.mapValues { it.value.get(player, ctx).locations }
 }

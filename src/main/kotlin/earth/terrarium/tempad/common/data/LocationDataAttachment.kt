@@ -1,20 +1,21 @@
 package earth.terrarium.tempad.common.data
 
 import com.mojang.serialization.Codec
-import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.api.locations.NamedGlobalPos
+import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import net.minecraft.core.UUIDUtil
 import java.util.*
 
-data class LocationDataAttachment(val locations: MutableMap<UUID, LocationData>) {
+data class NamedGlobalPosAttachment(val locations: MutableMap<UUID, NamedGlobalPos>) {
     constructor() : this(mutableMapOf())
 
     companion object {
         @JvmField
-        val CODEC: Codec<LocationDataAttachment> = Codec.unboundedMap(UUIDUtil.STRING_CODEC, LocationData.CODEC)
-            .xmap({ LocationDataAttachment(it.toMutableMap()) }, LocationDataAttachment::locations)
+        val CODEC: Codec<NamedGlobalPosAttachment> = Codec.unboundedMap(UUIDUtil.STRING_CODEC, NamedGlobalPos.codec)
+            .xmap({ NamedGlobalPosAttachment(it.toMutableMap()) }, NamedGlobalPosAttachment::locations)
     }
 
-    operator fun plusAssign(location: LocationData) {
+    operator fun plusAssign(location: NamedGlobalPos) {
         locations[UUID.randomUUID()] = location
     }
 

@@ -4,13 +4,16 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.common.config.CommonConfig
-import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.context.SyncableContext
+import earth.terrarium.tempad.api.locations.NamedGlobalPos
+import earth.terrarium.tempad.api.locations.offsetLocation
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.chat.Component
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerLevel
@@ -30,12 +33,12 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializaer)
 
-        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: LocationData) {
+        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: StaticNamedGlobalPos) {
             val stack = ctx.stack
             if (stack.item !is TempadItem) return
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
-            timedoor.pos = LocationData.offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
+            timedoor.pos = StaticNamedGlobalPos.offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
             timedoor.yRot = player.yHeadRot
             timedoor.targetLocation = location
             timedoor.closingTime = -1
@@ -61,7 +64,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     var closingTime by DataDelegate(CLOSING_TIME)
 
-    var targetLocation: LocationData? = null
+    var targetLocation: NamedGlobalPos? = null
         set(value) {
             field = value
             color = value?.color ?: Tempad.ORANGE
@@ -75,8 +78,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     private val targetLevel: ServerLevel?
         get() = targetLocation?.dimension?.let { level().server[it] }
 
-    private val selfLocation: LocationData
-        get() = LocationData("Return from ${targetLocation?.name}", LocationData.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
+    private val selfLocation: StaticNamedGlobalPos
+        get() = StaticNamedGlobalPos(Component.literal("Return from ${targetLocation?.name}"), StaticNamedGlobalPos.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
 
     override fun defineSynchedData(pBuilder: SynchedEntityData.Builder) {
         pBuilder.define(CLOSING_TIME, CommonConfig.TimeDoor.idleAfterEnter)

@@ -9,57 +9,37 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.VEC3_BYTE_CODEC
-import earth.terrarium.tempad.common.utils.byteCodec
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.ComponentSerialization
-import net.minecraft.network.codec.ByteBufCodecs
-import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
+import earth.terrarium.tempad.Tempad.Companion.tempadId
+import net.minecraft.network.chat.ComponentSerialization
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 
-data class LocationType<T: NamedGlobalLocation>(val id: ResourceLocation, val byteCodec: ByteCodec<T>, val codec: Codec<T>)
-
-interface NamedGlobalLocation {
-    val name: String
-    val pos: Vec3
-    val dimension: ResourceKey<Level>
-    val angle: Float
-    val color: Color
-
-    val display: List<Component>
-    val type: LocationType<*>
-}
-
-object LocationTypeRegistry {
-
-}
-
-data class LocationData(val name: String, val pos: Vec3, val dimension: ResourceKey<Level>, val angle: Float, val color: Color) {
+class StaticNamedGlobalPos(override val name: Component, override val pos: Vec3, override val dimension: ResourceKey<Level>, override val angle: Float, override val color: Color): NamedGlobalPos {
     companion object {
-        val MAP_CODEC: MapCodec<LocationData> = RecordCodecBuilder.mapCodec {
+        val CODEC: MapCodec<StaticNamedGlobalPos> = RecordCodecBuilder.mapCodec {
             it.group(
-                Codec.STRING.fieldOf("name").forGetter { it.name },
+                ComponentSerialization.CODEC.fieldOf("name").forGetter { it.name },
                 Vec3.CODEC.fieldOf("pos").forGetter { it.pos },
                 Level.RESOURCE_KEY_CODEC.fieldOf("dimension").forGetter { it.dimension },
                 Codec.FLOAT.fieldOf("angle").forGetter { it.angle },
-                Color.CODEC.fieldOf("color").forGetter(LocationData::color),
-            ).apply(it, ::LocationData)
+                Color.CODEC.fieldOf("color").forGetter(StaticNamedGlobalPos::color),
+            ).apply(it, ::StaticNamedGlobalPos)
         }
 
-        val CODEC: Codec<LocationData> = MAP_CODEC.codec()
-
-        val BYTE_CODEC: ByteCodec<LocationData> = ObjectByteCodec.create(
-            ByteCodec.STRING.fieldOf { it.name },
+        val BYTE_CODEC: ByteCodec<StaticNamedGlobalPos> = ObjectByteCodec.create(
+            ExtraByteCodecs.COMPONENT.fieldOf { it.name },
             VEC3_BYTE_CODEC.fieldOf { it.pos },
             ExtraByteCodecs.DIMENSION.fieldOf { it.dimension },
             ByteCodec.FLOAT.fieldOf { it.angle },
             COLOR_BYTE_CODEC.fieldOf { it.color },
-            ::LocationData
+            ::StaticNamedGlobalPos
         )
+
+        val type = LocationType<StaticNamedGlobalPos>("static_pos".tempadId, BYTE_CODEC, CODEC)
 
         fun offsetLocation(pos: Vec3, angle: Float, distance: Int = 1): Vec3 {
             val angleInRadians = (angle + 90) * Mth.DEG_TO_RAD
@@ -74,5 +54,12 @@ data class LocationData(val name: String, val pos: Vec3, val dimension: Resource
     val z: Int = pos.z.toInt()
     val dimensionText = Component.translatable(dimension.location().toLanguageKey("dimension"))
 
-    val dimComponent: Component = Component.translatable(dimension.location().toLanguageKey("dimension"))
+    override val display: List<Component> = listOf(
+        dimensionText,
+        Component.literal("X: $x"),
+        Component.literal("Y: $y"),
+        Component.literal("Z: $z")
+    )
+
+    override val type: LocationType<*> = Companion.type
 }

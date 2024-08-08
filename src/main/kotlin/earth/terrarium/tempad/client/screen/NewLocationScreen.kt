@@ -18,6 +18,7 @@ import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.GridLayout
 import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.core.Vec3i
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
@@ -44,6 +45,14 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             ConstantColors.white,
             ConstantColors.black // TODO replace black
         )
+
+        fun getEntries(pos: Vec3i): List<Component> {
+            return listOf(
+                Component.literal("X: ${pos.x}"),
+                Component.literal("Y: ${pos.y}"),
+                Component.literal("Z: ${pos.z}"),
+            )
+        }
     }
 
     var currentColor = Tempad.ORANGE
@@ -65,7 +74,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
                 it.padding(4)
             }
 
-            InformationPanel.getEntries(pos.pos).forEach { component ->
+            getEntries(pos.pos).forEach { component ->
                 posInfoLayout.addChild(StringWidget(component, font).setColor(Tempad.ORANGE.value)) { it.alignHorizontallyRight() }
             }
         }

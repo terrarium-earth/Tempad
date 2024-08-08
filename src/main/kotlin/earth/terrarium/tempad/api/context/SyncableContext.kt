@@ -61,7 +61,7 @@ data class ContextHolder<T: Any>(val type: ContextType<T>, val data: T) {
 
 object ContextRegistry {
     val registry: Map<ContextType<*>, ContextProvider<*>>
-        field = mutableMapOf<ContextType<*>, ContextProvider<*>>()
+        field = mutableMapOf()
 
     fun <T: Any> register(type: ContextType<T>, provider: ContextProvider<T>) {
         registry[type] = provider

@@ -5,7 +5,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
-import earth.terrarium.tempad.common.data.LocationDataAttachment
+import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.utils.*
 import net.neoforged.neoforge.attachment.AttachmentHolder
@@ -15,9 +15,9 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries
 object ModAttachments {
     val registry: ResourcefulRegistry<AttachmentType<*>> = ResourcefulRegistries.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tempad.MOD_ID)
 
-    val locations: AttachmentType<LocationDataAttachment> by registry.register("locations") {
-        attachmentType(::LocationDataAttachment) {
-            codec = LocationDataAttachment.CODEC
+    val locations: AttachmentType<NamedGlobalPosAttachment> by registry.register("locations") {
+        attachmentType(::NamedGlobalPosAttachment) {
+            codec = NamedGlobalPosAttachment.CODEC
             copyOnDeath()
         }
     }
@@ -37,6 +37,6 @@ object ModAttachments {
     }
 }
 
-var AttachmentHolder.pinnedLocationData by ModAttachments.pinnedLocation.optional()
-var AttachmentHolder.locationData by ModAttachments.locations
+var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
+var AttachmentHolder.savedPositions by ModAttachments.locations
 var AttachmentHolder.travelHistory by ModAttachments.travelHistory

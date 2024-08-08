@@ -6,7 +6,7 @@ import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import earth.terrarium.tempad.Tempad.Companion.tempadId
-import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.BlockPos

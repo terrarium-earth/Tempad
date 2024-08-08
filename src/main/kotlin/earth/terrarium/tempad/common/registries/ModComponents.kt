@@ -7,7 +7,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.LocationData
+import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.component.DataComponentType
@@ -54,10 +54,10 @@ object ModComponents {
         }
     }
 
-    val staticLocation: DataComponentType<LocationData> by registry.register("static_location") {
+    val staticLocation: DataComponentType<StaticNamedGlobalPos> by registry.register("static_location") {
         componentType {
-            serialize = LocationData.CODEC
-            networkSerialize = LocationData.BYTE_CODEC
+            serialize = StaticNamedGlobalPos.CODEC
+            networkSerialize = StaticNamedGlobalPos.BYTE_CODEC
         }
     }
 
