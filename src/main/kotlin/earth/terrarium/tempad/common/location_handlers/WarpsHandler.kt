@@ -2,7 +2,7 @@ package earth.terrarium.tempad.common.location_handlers
 
 import com.mojang.serialization.Codec
 import com.teamresourceful.resourcefullib.common.utils.files.CodecSavedData
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.ProviderSettings
@@ -24,7 +24,4 @@ class WarpsHandler(player: Player, ctx: SyncableContext<*>): LocationHandler {
         get() = emptyMap()
 
     override fun minusAssign(locationId: UUID) {}
-    override fun writeToCard(locationId: UUID, ctx: ItemContext) {
-        TODO("Not yet implemented")
-    }
 }

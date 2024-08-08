@@ -4,7 +4,7 @@ import com.ibm.icu.text.PluralFormat
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.GameRenderer

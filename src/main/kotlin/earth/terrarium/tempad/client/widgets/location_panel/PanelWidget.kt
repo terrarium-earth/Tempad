@@ -30,7 +30,7 @@ class PanelWidget(
                     }
 
                     isSelected {
-                        selected() == Triple(provider, id, StaticNamedGlobalPos)
+                        selected() == Triple(provider, id, display)
                     }
                 }
             }.toMutableList()

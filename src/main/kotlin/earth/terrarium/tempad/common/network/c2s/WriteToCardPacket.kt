@@ -7,10 +7,16 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import com.teamresourceful.resourcefullibkt.common.contains
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.common.data.CardLocationComponent
 import earth.terrarium.tempad.common.menu.menuCtx
+import earth.terrarium.tempad.common.registries.ModItems
+import earth.terrarium.tempad.common.registries.ModTags
+import earth.terrarium.tempad.common.registries.staticLocation
+import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.resources.ResourceLocation
 import java.util.UUID
 
@@ -27,7 +33,15 @@ class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, 
             NetworkHandle.handle { message, player ->
                 if (TempadLocations[message.providerId] == null) return@handle
                 val ctx = message.ctx.getCtx(player)
-                TempadLocations[player, ctx, message.providerId]?.writeToCard(message.locationId, player.menuCtx)
+                val menuCtx = player.menuCtx
+
+                val pos = TempadLocations[player, ctx, message.providerId]?.get(message.locationId) ?: return@handle
+                if (menuCtx.stack !in ModTags.LOCATION_CARDS) return@handle
+                menuCtx.exchange(
+                    ModItems.locationCard.stack {
+                        staticLocation = CardLocationComponent(message.providerId, pos)
+                    }
+                )
             }
         )
     }

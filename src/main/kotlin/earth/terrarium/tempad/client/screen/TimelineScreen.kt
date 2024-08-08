@@ -2,7 +2,7 @@ package earth.terrarium.tempad.client.screen
 
 import com.ibm.icu.text.DateFormat
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.widgets.HorizontalListWidget
 import earth.terrarium.tempad.client.widgets.TimelineEntry
 import earth.terrarium.tempad.client.widgets.colored.ButtonType

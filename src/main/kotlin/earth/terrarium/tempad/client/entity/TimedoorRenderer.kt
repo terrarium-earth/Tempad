@@ -3,7 +3,7 @@ package earth.terrarium.tempad.client.entity
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.TempadClient
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.client.renderer.MultiBufferSource

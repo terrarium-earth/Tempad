@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.menu
 
 import com.teamresourceful.bytecodecs.base.ByteCodec
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.context.ContextType
 import earth.terrarium.tempad.api.context.SyncableContext
 import net.minecraft.world.entity.player.Player

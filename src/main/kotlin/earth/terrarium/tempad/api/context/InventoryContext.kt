@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.api.context
 
 import com.teamresourceful.bytecodecs.base.ByteCodec
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.utils.slot
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack

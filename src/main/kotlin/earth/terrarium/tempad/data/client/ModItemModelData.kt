@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.data.client
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.PackOutput
@@ -63,10 +63,13 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             }
         }
 
+        enablableItem(ModItems.temporalBeacon)
+
         basicItem(ModItems.blankCard)
         basicItem(ModItems.locationCard)
         basicItem(ModItems.timeTwister)
-        enablableItem(ModItems.temporalBeacon)
+        basicItem(ModItems.newLocationUpgrade)
+        basicItem(ModItems.playerTeleportUpgrade)
     }
 
     fun enablableItem(item: Item): ItemModelBuilder {

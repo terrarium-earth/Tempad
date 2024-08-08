@@ -3,7 +3,7 @@ package earth.terrarium.tempad.client.screen
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.color.ConstantColors
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.widgets.buttons.ColorChoice
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.MapWidget

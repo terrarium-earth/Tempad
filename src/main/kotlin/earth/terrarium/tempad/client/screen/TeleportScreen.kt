@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.client.screen
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.ClientDisplay
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
@@ -99,13 +99,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         infoLayout = FrameLayout(74, 74)
         infoLayout.setPosition(localLeft + 119, localTop + 22)
 
-        val coordinates = infoLayout.addChild(LinearLayout(0,0, LinearLayout.Orientation.VERTICAL).spacing(2)) {
-            it.alignHorizontallyLeft()
-            it.alignVerticallyTop()
-            it.padding(4)
-        }
-
-        infoTextWidget = InformationPanel(font, 74, 74)
+        infoTextWidget = infoLayout.addChild(InformationPanel(font, 74, 74))
         infoTextWidget.setPosition(119, 21)
 
         locationButtons = infoLayout.addChild(LinearLayout(0, 0, LinearLayout.Orientation.HORIZONTAL).spacing(2)) {

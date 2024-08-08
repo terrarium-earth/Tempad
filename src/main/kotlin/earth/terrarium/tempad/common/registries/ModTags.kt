@@ -1,6 +1,6 @@
 package earth.terrarium.tempad.common.registries
 
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import net.minecraft.core.registries.Registries
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
@@ -13,4 +13,6 @@ object ModTags {
 
     val ITEM_FUEL: TagKey<Item> = TagKey.create(Registries.ITEM, "fuel".tempadId)
     val LIQUID_FUEL: TagKey<Fluid> = TagKey.create(Registries.FLUID, "fuel".tempadId)
+
+    val LOCATION_CARDS: TagKey<Item> = TagKey.create(Registries.ITEM, "location_cards".tempadId)
 }

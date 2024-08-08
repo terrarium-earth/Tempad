@@ -5,16 +5,16 @@ import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import net.minecraft.resources.ResourceLocation
 
-class PriorityId(val id: ResourceLocation, private val priority: Int): Comparable<PriorityId> {
+data class PriorityId(val id: ResourceLocation, private val priority: Priority): Comparable<PriorityId> {
     override fun compareTo(other: PriorityId): Int {
-        return priority - other.priority
+        return priority.priority.compareTo(other.priority.priority)
     }
+}
 
-    companion object {
-        val byteCodec = ObjectByteCodec.create(
-            ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(PriorityId::id),
-            ByteCodec.INT.fieldOf(PriorityId::priority),
-            ::PriorityId
-        )
-    }
+enum class Priority(val priority: Int) {
+    LOWEST(0),
+    LOW(1),
+    NORMAL(2),
+    HIGH(3),
+    HIGHEST(4)
 }

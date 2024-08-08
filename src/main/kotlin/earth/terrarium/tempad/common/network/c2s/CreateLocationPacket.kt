@@ -6,12 +6,13 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.items.TempadItem
-import earth.terrarium.tempad.common.registries.StaticNamedGlobalPos
+import earth.terrarium.tempad.common.registries.savedPositions
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
+import net.minecraft.network.chat.Component
 
 data class CreateLocationPacket(val name: String, val color: Color, val ctx: ContextHolder<*>) : Packet<CreateLocationPacket> {
     companion object {

@@ -5,7 +5,7 @@ package earth.terrarium.tempad.client
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu

@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.registries
 
 import com.teamresourceful.resourcefullib.common.network.Network
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.network.c2s.*
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 

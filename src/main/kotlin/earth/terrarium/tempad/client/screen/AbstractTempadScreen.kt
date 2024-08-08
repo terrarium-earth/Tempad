@@ -3,7 +3,7 @@ package earth.terrarium.tempad.client.screen
 import com.mojang.blaze3d.systems.RenderSystem
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu

@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import net.minecraft.network.chat.ComponentSerialization
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 

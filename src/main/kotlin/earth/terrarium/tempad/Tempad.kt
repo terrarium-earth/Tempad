@@ -28,11 +28,12 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.server.ServerLifecycleHooks
 
+val String.tempadId: ResourceLocation
+    get() = ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, this)
+
 @Mod(Tempad.MOD_ID)
 class Tempad(bus: IEventBus) {
     companion object {
-        val String.tempadId: ResourceLocation
-            get() = ResourceLocation.fromNamespaceAndPath(MOD_ID, this)
 
         const val MOD_ID = "tempad"
         val DARK_ORANGE: Color = Color(0x91, 0x45, 0x0d, 255)
@@ -46,9 +47,6 @@ class Tempad(bus: IEventBus) {
     }
 
     init {
-        TempadLocations[DefaultLocationHandler.SETTINGS] = ::DefaultLocationHandler
-        TempadLocations[WarpsHandler.SETTINGS] = ::WarpsHandler
-
         CONFIGURATOR.register(CommonConfig::class.java)
 
         ModApps.init()
@@ -66,6 +64,7 @@ class Tempad(bus: IEventBus) {
         ModRecipes.serializers.init()
         ModFluids.dataRegistry.init()
         ModFluids.registry.init()
+        ModLocations.init()
 
         bus.addListener { event: RegisterCapabilitiesEvent ->
             val fluidHandlers = event.register(Capabilities.FluidHandler.ITEM)

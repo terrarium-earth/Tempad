@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import earth.terrarium.tempad.Tempad.Companion.tempadId
+import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_CODEC
 

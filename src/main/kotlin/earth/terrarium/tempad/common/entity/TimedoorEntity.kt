@@ -33,12 +33,12 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializaer)
 
-        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: StaticNamedGlobalPos) {
+        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos) {
             val stack = ctx.stack
             if (stack.item !is TempadItem) return
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
-            timedoor.pos = StaticNamedGlobalPos.offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
+            timedoor.pos = offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
             timedoor.yRot = player.yHeadRot
             timedoor.targetLocation = location
             timedoor.closingTime = -1

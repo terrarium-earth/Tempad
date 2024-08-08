@@ -42,8 +42,6 @@ interface LocationHandler {
     val locations: Map<UUID, NamedGlobalPos>
     operator fun minusAssign(locationId: UUID)
     operator fun get(locationId: UUID): NamedGlobalPos? = locations[locationId]
-
-    fun writeToCard(locationId: UUID, ctx: ItemContext)
 }
 
 fun interface LocationProvider {

@@ -15,7 +15,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries
 object ModAttachments {
     val registry: ResourcefulRegistry<AttachmentType<*>> = ResourcefulRegistries.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tempad.MOD_ID)
 
-    val locations: AttachmentType<NamedGlobalPosAttachment> by registry.register("locations") {
+    val locations: AttachmentType<NamedGlobalPosAttachment> by registry.register("saved_positions") {
         attachmentType(::NamedGlobalPosAttachment) {
             codec = NamedGlobalPosAttachment.CODEC
             copyOnDeath()

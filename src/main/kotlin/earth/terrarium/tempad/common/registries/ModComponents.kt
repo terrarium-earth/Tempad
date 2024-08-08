@@ -7,7 +7,8 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
+import earth.terrarium.tempad.common.data.CardLocationComponent
+import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.component.DataComponentType
@@ -54,10 +55,10 @@ object ModComponents {
         }
     }
 
-    val staticLocation: DataComponentType<StaticNamedGlobalPos> by registry.register("static_location") {
+    val staticLocation: DataComponentType<CardLocationComponent> by registry.register("card_location") {
         componentType {
-            serialize = StaticNamedGlobalPos.CODEC
-            networkSerialize = StaticNamedGlobalPos.BYTE_CODEC
+            serialize = CardLocationComponent.codec
+            networkSerialize = CardLocationComponent.byteCodec
         }
     }
 
@@ -72,6 +73,13 @@ object ModComponents {
         componentType {
             serialize = Codec.BOOL
             networkSerialize = ByteCodec.BOOLEAN
+        }
+    }
+
+    val installedUpgrades: DataComponentType<InstalledUpgradesComponent> by registry.register("installed_upgrades") {
+        componentType {
+            serialize = InstalledUpgradesComponent.codec
+            networkSerialize = InstalledUpgradesComponent.byteCodec
         }
     }
 }
@@ -91,3 +99,5 @@ var MutableDataComponentHolder.staticLocation by ModComponents.staticLocation
 var MutableDataComponentHolder.enabled by ModComponents.enabled.withDefault(true)
 
 var MutableDataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.withDefault(false)
+
+var MutableDataComponentHolder.installedUpgrades by ModComponents.installedUpgrades.withDefault(InstalledUpgradesComponent(emptyList()))
