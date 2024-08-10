@@ -36,7 +36,7 @@ class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, 
                 val menuCtx = player.menuCtx
 
                 val pos = TempadLocations[player, ctx, message.providerId]?.get(message.locationId) ?: return@handle
-                if (menuCtx.stack !in ModTags.LOCATION_CARDS) return@handle
+                if (menuCtx.stack !in ModTags.locationCards) return@handle
                 menuCtx.exchange(
                     ModItems.locationCard.stack {
                         staticLocation = CardLocationComponent(message.providerId, pos)

@@ -12,11 +12,11 @@ import earth.terrarium.tempad.client.widgets.buttons.ToggleButton
 import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.client.widgets.location_panel.PanelWidget
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
-import earth.terrarium.tempad.common.menu.TeleportMenu
 import earth.terrarium.tempad.common.network.c2s.DeleteLocationPacket
 import earth.terrarium.tempad.common.network.c2s.OpenTimedoorPacket
 import earth.terrarium.tempad.common.network.c2s.SetFavoritePacket
 import earth.terrarium.tempad.common.network.c2s.WriteToCardPacket
+import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.utils.btnSprites
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
@@ -187,17 +187,6 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             return search.keyPressed(pKeyCode, pScanCode, pModifiers)
         }
         return super.keyPressed(pKeyCode, pScanCode, pModifiers)
-    }
-
-    override fun containerTick() {
-        super.containerTick()
-        if (::teleportBtn.isInitialized) {
-            if(menu.container.isEmpty) {
-                teleportBtn.message = teleportText
-            } else {
-                teleportBtn.message = writeText
-            }
-        }
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {

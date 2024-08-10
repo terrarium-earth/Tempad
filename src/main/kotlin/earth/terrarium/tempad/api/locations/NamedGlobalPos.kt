@@ -17,8 +17,8 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 
 interface NamedGlobalPos {
     val name: Component
-    val pos: Vec3
-    val dimension: ResourceKey<Level>
+    val pos: Vec3?
+    val dimension: ResourceKey<Level>?
     val angle: Float
     val color: Color
 
@@ -36,7 +36,7 @@ fun offsetLocation(pos: Vec3, angle: Float, distance: Int = 1): Vec3 {
     return pos + Vec3(Mth.cos(angleInRadians).toDouble() * distance, 0.0, Mth.sin(angleInRadians).toDouble() * distance)
 }
 
-val NamedGlobalPos.offsetLocation get() = offsetLocation(pos, angle + 180)
+val NamedGlobalPos.offsetLocation get() = pos?.let { offsetLocation(it, angle + 180) }
 
 data class ClientDisplay(val name: Component, val info: List<Component>) {
     companion object {

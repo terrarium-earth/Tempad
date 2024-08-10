@@ -7,7 +7,6 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.apps.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
-import earth.terrarium.tempad.common.menu.TeleportMenu
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.entity.player.Inventory
@@ -16,6 +15,8 @@ import java.util.Optional
 
 object ModMenus {
     val registry: ResourcefulRegistry<MenuType<*>> = ResourcefulRegistries.create(BuiltInRegistries.MENU, Tempad.MOD_ID)
+
+    class TeleportMenu(id: Int, inv: Inventory, data: Optional<TeleportData>): AbstractTempadMenu<TeleportData>(id, inv, TELEPORT_MENU, data)
 
     val TELEPORT_MENU: MenuType<TeleportMenu> by registry.register("teleport") {
         MenuContentHelper.create(

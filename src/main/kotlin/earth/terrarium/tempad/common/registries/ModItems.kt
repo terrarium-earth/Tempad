@@ -7,6 +7,7 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.items.ChrononGenerator
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.items.TemporalBeaconItem
+import earth.terrarium.tempad.common.items.TimeTwisterItem
 import earth.terrarium.tempad.common.utils.creativeModeTab
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -30,7 +31,7 @@ object ModItems {
     val tempad: TempadItem by registry.register("tempad") { TempadItem() }
     val chrononGenerator: ChrononGenerator by registry.register("chronon_generator") { ChrononGenerator() }
     val temporalBeacon: Item by registry.register("temporal_beacon") { TemporalBeaconItem() }
-    val timeTwister: Item by registry.register("time_twister") { Item(Item.Properties()) }
+    val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }
 
     val blankCard: Item by registry.register("blank_card") { Item(Item.Properties()) }
     val locationCard: Item by registry.register("location_card") { Item(Item.Properties()) }

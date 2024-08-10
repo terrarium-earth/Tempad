@@ -36,19 +36,20 @@ class LocationEntry(val id: UUID, val data: ClientDisplay, builder: LocationEntr
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, pPartialTick: Float) {
         val selected = isSelected()
         val favorite = isFavorite()
-        val hovered = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + 12
+        val hovered = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height
 
         if (selected) {
-            graphics.fill(x, y, x + width, y + 12, Tempad.ORANGE.value)
+            graphics.fill(x, y, x + width, y + height, Tempad.ORANGE.value)
         }
 
         if (favorite) {
-            graphics.blitSprite(FAVORITE.get(!selected, hovered), x + 4, y + 1, 10, 10)
+            graphics.blitSprite(FAVORITE.get(!selected, hovered), x + 4, y + (height - 10) / 2, 10, 10)
         }
 
         val color = if (selected) 0x000000 else if (hovered) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value
 
-        graphics.drawString(Minecraft.getInstance().font, data.name, x + 4 + if(favorite) 14 else 0, y + 2, color, false)
+        val font = Minecraft.getInstance().font
+        graphics.drawString(font, data.name, x + 4 + if(favorite) 14 else 0, y + Math.round((height - font.lineHeight) / 2f), color, false)
     }
 
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean = onClick()

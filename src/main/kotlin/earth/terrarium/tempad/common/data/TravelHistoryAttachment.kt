@@ -92,4 +92,6 @@ class TravelHistoryAttachment(val history: MutableMap<Date, HistoricalLocation>)
         for (id in ids) history.remove(id)
         entity.changeDimension(DimensionTransition(entity.server.get(historicalLocation.dimension)!!, historicalLocation.pos, Vec3.ZERO, 0.0F, 0.0F, false, DimensionTransition.DO_NOTHING))
     }
+
+    val relevantHistory get() = history.filter { it.value.marker != null }
 }

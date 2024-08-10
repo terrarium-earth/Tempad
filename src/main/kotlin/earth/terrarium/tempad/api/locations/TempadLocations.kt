@@ -15,7 +15,6 @@ import java.util.*
 data class ProviderSettings(
     val id: ResourceLocation,
     val exportable: Boolean = true,
-    val downloadable: Boolean = true,
     val deletable: Boolean = true,
 ) {
     companion object {
@@ -23,7 +22,6 @@ data class ProviderSettings(
             it.group(
                 ResourceLocation.CODEC.fieldOf("id").forGetter { it.id },
                 Codec.BOOL.optionalFieldOf("exportable", true).forGetter { it.exportable },
-                Codec.BOOL.optionalFieldOf("downloadable", true).forGetter { it.downloadable },
                 Codec.BOOL.optionalFieldOf("deletable", true).forGetter { it.deletable }
             ).apply(it, ::ProviderSettings)
         }
@@ -31,7 +29,6 @@ data class ProviderSettings(
         val BYTE_CODEC = ObjectByteCodec.create(
             ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.id },
             ByteCodec.BOOLEAN.fieldOf { it.exportable },
-            ByteCodec.BOOLEAN.fieldOf { it.downloadable },
             ByteCodec.BOOLEAN.fieldOf { it.deletable },
             ::ProviderSettings
         )

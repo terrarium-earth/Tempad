@@ -11,7 +11,7 @@ import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.locations.ClientDisplay
 import earth.terrarium.tempad.api.locations.clientDisplay
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
-import earth.terrarium.tempad.common.menu.TeleportMenu
+import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.registries.pinnedPosition
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer

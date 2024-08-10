@@ -132,6 +132,7 @@
 
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",
+  "provider.tempad.player": "Players",
 
   "macro.tempad.default": "Open Fav",
   "macro.tempad.default.description": "Teleport to the favorite location",

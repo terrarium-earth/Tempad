@@ -9,8 +9,10 @@ import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
 import earth.terrarium.tempad.api.locations.offsetLocation
 import earth.terrarium.tempad.common.items.TempadItem
+import earth.terrarium.tempad.common.items.chrononContainer
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
+import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -35,7 +37,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
         fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos) {
             val stack = ctx.stack
-            if (stack.item !is TempadItem) return
+            if (!player.isCreative() && (stack.item !is TempadItem || stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
             timedoor.pos = offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
@@ -44,6 +46,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             timedoor.closingTime = -1
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
             if (event.isCanceled) return
+            stack.chrononContainer -= 1000
             player.level().addFreshEntity(timedoor)
         }
     }
@@ -89,11 +92,12 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun isAlwaysTicking() = true
 
     override fun tick() {
+        if (level().isClientSide()) return
         val location = targetLocation
         val targetLevel = targetLevel
-        if (location == null || targetLevel == null || level().isClientSide()) return
+        val targetPos = location?.pos
         val entities = level().getEntities<Entity>(boundingBox, ::canTeleport)
-        if (entities.isEmpty()) {
+        if (entities.isEmpty() || location == null || targetLevel == null || targetPos == null) {
             tryClose()
             return
         }
@@ -107,7 +111,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
             if (entity.level().dimension() == targetLevel.dimension()) {
                 entity.deltaMovement = entity.deltaMovement.yRot(this.yRot - location.angle)
-                entity.teleportTo(targetLevel, location.pos.x, location.pos.y, location.pos.z, RelativeMovement.ALL, location.angle, entity.xRot)
+                entity.teleportTo(targetLevel, targetPos.x, targetPos.y, targetPos.z, RelativeMovement.ALL, location.angle, entity.xRot)
                 entity.hasImpulse = true
                 if (entity is Player) {
                     RotatePlayerMomentumPacket(this.yRot - location.angle).sendToClient(entity)
@@ -116,7 +120,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 entity.changeDimension(
                     DimensionTransition(
                         targetLevel,
-                        location.pos,
+                        targetPos,
                         entity.deltaMovement,
                         location.angle,
                         0.0F,
@@ -126,7 +130,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 )
             }
 
-            if (entity is Player && entity.uuid == owner) {
+            if (entity is Player && entity.uuid == owner && this.closingTime != -1) {
                 this.closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterOwnerEnter
             }
 
@@ -138,9 +142,10 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     private fun tryInitReceivingPortal() {
         val location = targetLocation
         val targetLevel = targetLevel
-        if (location == null || targetLevel == null || linkedPortalEntity != null) return
+        val targetPos = location?.pos
+        if (location == null || targetLevel == null || linkedPortalEntity != null || targetPos == null) return
         val targetPortal = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, targetLevel)
-        targetPortal.pos = location.offsetLocation
+        targetPortal.pos = offsetLocation(targetPos, location.angle + 180)
         targetPortal.linkedPortalEntity = this
         targetPortal.color = color
         targetPortal.closingTime = CommonConfig.TimeDoor.idleAfterOwnerEnter

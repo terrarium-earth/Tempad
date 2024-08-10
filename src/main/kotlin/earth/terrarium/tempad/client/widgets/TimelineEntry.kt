@@ -15,9 +15,9 @@ class TimelineEntry(val font: Font, val date: String, val time: String, val loca
     val parentLeft get() = parent?.let { it.x + 2 } ?: (x + 2)
     val parentRight get() = parent?.let { it.x + it.width - 2 } ?: (x + width - 2)
 
-    val markerComponent: MutableComponent? = location.marker?.let { Component.translatable(it.toLanguageKey("marker")) }
-    val locationComponent: MutableComponent = Component.literal("${location.pos.x.toInt()}, ${location.pos.y.toInt()}, ${location.pos.z.toInt()}")
-    val dimensionComponent: MutableComponent = Component.translatable(location.dimension.location().toLanguageKey("dimension"))
+    val markerComponent: Component? = location.marker?.let { Component.translatable(it.toLanguageKey("marker")) }
+    val locationComponent: Component = Component.literal("${location.pos.x.toInt()}, ${location.pos.y.toInt()}, ${location.pos.z.toInt()}")
+    val dimensionComponent: Component = Component.translatable(location.dimension.location().toLanguageKey("dimension"))
 
     val sprite = location.marker?.let { ResourceLocation.fromNamespaceAndPath(it.namespace, "marker/" + it.path) }
 

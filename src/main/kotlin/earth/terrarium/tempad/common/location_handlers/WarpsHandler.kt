@@ -17,7 +17,7 @@ class WarpsHandler(player: Player, ctx: SyncableContext<*>): LocationHandler {
     companion object {
         val CODEC: Codec<Map<UUID, NamedGlobalPos>> = Codec.unboundedMap(UUIDUtil.CODEC, NamedGlobalPos.codec).stable()
         val DATA = CodecSavedData.create(CODEC, "tempad/warps").alwaysDirty().defaultValue { emptyMap() }
-        val SETTINGS = ProviderSettings("warps".tempadId, downloadable = false)
+        val SETTINGS = ProviderSettings("warps".tempadId)
     }
 
     override val locations: Map<UUID, StaticNamedGlobalPos>

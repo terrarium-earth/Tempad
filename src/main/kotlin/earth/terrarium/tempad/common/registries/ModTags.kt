@@ -11,8 +11,5 @@ object ModTags {
     val enteringNotSupported: TagKey<Level> = TagKey.create(Registries.DIMENSION, "entering_not_supported".tempadId)
     val leavingNotSupported: TagKey<Level> = TagKey.create(Registries.DIMENSION, "leaving_not_supported".tempadId)
 
-    val ITEM_FUEL: TagKey<Item> = TagKey.create(Registries.ITEM, "fuel".tempadId)
-    val LIQUID_FUEL: TagKey<Fluid> = TagKey.create(Registries.FLUID, "fuel".tempadId)
-
-    val LOCATION_CARDS: TagKey<Item> = TagKey.create(Registries.ITEM, "location_cards".tempadId)
+    val locationCards: TagKey<Item> = TagKey.create(Registries.ITEM, "location_cards".tempadId)
 }
