@@ -88,7 +88,6 @@ object TempadClient {
         event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
         event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
         event.register(ModMenus.TIMELINE_MENU, ::TimelineScreen)
-        event.register(ModMenus.TPA_MENU, ::TpToScreen)
     }
 
     @SubscribeEvent @JvmStatic

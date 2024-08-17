@@ -48,13 +48,6 @@ object ModComponents {
         }
     }
 
-    val chrononLimit: DataComponentType<Int> by registry.register("chronon_limit") {
-        componentType {
-            serialize = Codec.INT
-            networkSerialize = ByteCodec.INT
-        }
-    }
-
     val staticLocation: DataComponentType<CardLocationComponent> by registry.register("card_location") {
         componentType {
             serialize = CardLocationComponent.codec
@@ -91,8 +84,6 @@ var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.withDe
 var MutableDataComponentHolder.organizationMethod by ModComponents.organizationMethod.withDefault(OrganizationMethod.DIMENSION)
 
 var MutableDataComponentHolder.chrononContent by ModComponents.chrononContent.withDefault(0)
-
-var MutableDataComponentHolder.chrononLimit by ModComponents.chrononLimit.withDefault(0)
 
 var MutableDataComponentHolder.staticLocation by ModComponents.staticLocation
 

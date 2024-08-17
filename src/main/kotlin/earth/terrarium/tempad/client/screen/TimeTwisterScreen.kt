@@ -7,7 +7,10 @@ import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
+import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.data.HistoricalLocation
+import earth.terrarium.tempad.common.network.c2s.BackTrackLocation
+import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.PlayerFaceRenderer
@@ -23,7 +26,7 @@ import kotlin.collections.toList
 import kotlin.let
 import kotlin.ranges.until
 
-class TimeTwisterScreen(history: Map<Date, HistoricalLocation>) : Screen(CommonComponents.EMPTY) {
+class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: ContextHolder<*>) : Screen(CommonComponents.EMPTY) {
     companion object {
         private const val MAX_ENTRIES = 8
         private const val START = 25
@@ -105,10 +108,8 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>) : Screen(CommonC
     }
 
     private fun select(index: Int): Boolean {
-        if (index in 0 until locations.size) {
-            locations[index]?.let { player ->
-                //
-            }
+        locations[index]?.let { (date, _) ->
+            BackTrackLocation(date, ctx).sendToServer()
         }
         onClose()
         lastSelect = System.currentTimeMillis()

@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.items
 
 import com.ibm.icu.lang.UCharacter.GraphemeClusterBreak.T
+import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.common.registries.ModFluids
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.contents
@@ -17,18 +18,25 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
 
-
 class ChrononGenerator : Item(Properties().stacksTo(1)), ChrononAcceptor {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         super.inventoryTick(stack, level, entity, slot, selected)
         if (level.isClientSide || entity.tickCount % 24 != 0) return // 1 mb every 1.2 seconds, 1 bucket per day
-
         stack.chrononContainer += 1
+
+        val ctx = ContextRegistry.locate(entity as Player) {
+            it.item is ChrononAcceptor && it.chrononContainer.hasRoom && it !== stack
+        }
+
+        if (ctx != null) {
+            move(stack.chrononContainer, ctx.stack.chrononContainer, 1000)
+        }
     }
 
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
         if (action == ClickAction.SECONDARY && slot.hasItem() && slot.contents.item is ChrononAcceptor) {
             move(stack.chrononContainer, slot.contents.chrononContainer, 1000)
+            return true
         }
         return super.overrideStackedOnOther(stack, slot, action, player)
     }
@@ -38,6 +46,7 @@ val ItemStack.chrononContainer get() = this[Capabilities.FluidHandler.ITEM] as C
 
 open class ChrononContainer(val stack: ItemStack, open val capacity: Int) : IFluidHandlerItem {
     var content: Int by stack::chrononContent
+    val hasRoom get() = content < capacity
 
     override fun getTanks(): Int = 1
     override fun getContainer(): ItemStack = stack

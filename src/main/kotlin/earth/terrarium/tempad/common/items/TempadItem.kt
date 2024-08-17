@@ -2,10 +2,7 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.macro.MacroRegistry
-import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.registries.defaultApp
-import earth.terrarium.tempad.common.registries.defaultMacro
-import earth.terrarium.tempad.common.registries.twisterEquipped
+import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.ctx
 import earth.terrarium.tempad.common.utils.getSlot
@@ -45,7 +42,7 @@ class TempadItem: Item(Properties().stacksTo(1)), ChrononAcceptor {
                 if (!slot.hasItem()) {
                     stack.twisterEquipped = false
                     slot.contents = stack.transmuteCopy(ModItems.timeTwister).also {
-                        stack
+                        stack.chrononContent = stack.chrononContent.coerceAtMost(it.chrononContainer.capacity)
                     }
                     return true
                 } else if (slot.contents.item === ModItems.tempad) {

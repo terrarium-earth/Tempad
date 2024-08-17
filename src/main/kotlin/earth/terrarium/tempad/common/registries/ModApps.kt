@@ -15,7 +15,6 @@ object ModApps {
         AppRegistry[teleport] = ::TeleportApp
         AppRegistry[newLocation] = ::NewLocationApp
         AppRegistry[timeline] = { ctx -> if(!ctx.stack.twisterEquipped) null else TimelineApp(ctx) }
-        AppRegistry[tpTo] = ::TpToApp
         AppRegistry[settings] = ::SettingsApp
     }
 }

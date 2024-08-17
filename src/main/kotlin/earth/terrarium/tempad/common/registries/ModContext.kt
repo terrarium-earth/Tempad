@@ -13,6 +13,7 @@ object ModContext {
     fun init() {
         ContextRegistry.register(InventoryContext.type, ::InventoryContext)
         ContextRegistry.register(CarriedMenuCtx.type) { player, _ -> CarriedMenuCtx(player) }
+
         if (ModList.get().isLoaded("curios")) {
             initCuriosCompat()
         }

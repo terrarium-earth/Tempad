@@ -51,13 +51,4 @@ object ModMenus {
             RecordCodecMenuContentSerializer(TimelineData.codec)
         )
     }
-
-    class TpToMenu(id: Int, inv: Inventory, data: Optional<BasicAppContent>): AbstractTempadMenu<BasicAppContent>(id, inv, TPA_MENU, data)
-
-    val TPA_MENU: MenuType<TpToMenu> by registry.register("tpa") {
-        MenuContentHelper.create(
-            ::TpToMenu,
-            RecordCodecMenuContentSerializer(BasicAppContent.codec)
-        )
-    }
 }
