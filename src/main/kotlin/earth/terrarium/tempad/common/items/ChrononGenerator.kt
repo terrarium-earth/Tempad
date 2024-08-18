@@ -1,6 +1,5 @@
 package earth.terrarium.tempad.common.items
 
-import com.ibm.icu.lang.UCharacter.GraphemeClusterBreak.T
 import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.common.registries.ModFluids
 import earth.terrarium.tempad.common.registries.chrononContent
@@ -22,14 +21,14 @@ class ChrononGenerator : Item(Properties().stacksTo(1)), ChrononAcceptor {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         super.inventoryTick(stack, level, entity, slot, selected)
         if (level.isClientSide || entity.tickCount % 24 != 0) return // 1 mb every 1.2 seconds, 1 bucket per day
+        if (entity !is Player || ContextRegistry.locate(entity) { it.item is ChrononGenerator && it !== stack } != null) return
+
         stack.chrononContainer += 1
 
-        val ctx = ContextRegistry.locate(entity as Player) {
+        ContextRegistry.locate(entity) {
             it.item is ChrononAcceptor && it.chrononContainer.hasRoom && it !== stack
-        }
-
-        if (ctx != null) {
-            move(stack.chrononContainer, ctx.stack.chrononContainer, 1000)
+        }?.let {
+            move(stack.chrononContainer, it.stack.chrononContainer, 1000)
         }
     }
 
@@ -63,7 +62,10 @@ open class ChrononContainer(val stack: ItemStack, open val capacity: Int) : IFlu
     }
 
     override fun drain(resource: FluidStack, action: IFluidHandler.FluidAction): FluidStack {
-        return if (content == 0 && resource.`is`(ModFluids.chronon)) drain(resource.amount, action) else FluidStack.EMPTY
+        return if (content == 0 && resource.`is`(ModFluids.chronon)) drain(
+            resource.amount,
+            action
+        ) else FluidStack.EMPTY
     }
 
     override fun drain(maxDrain: Int, action: IFluidHandler.FluidAction): FluidStack {
@@ -74,11 +76,11 @@ open class ChrononContainer(val stack: ItemStack, open val capacity: Int) : IFlu
     }
 
     operator fun plusAssign(amount: Int) {
-        content += amount
+        content = (content + amount).coerceAtMost(capacity)
     }
 
     operator fun minusAssign(amount: Int) {
-        content -= amount
+        content = (content - amount).coerceAtLeast(0)
     }
 }
 

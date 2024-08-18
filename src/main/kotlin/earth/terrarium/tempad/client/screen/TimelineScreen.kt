@@ -5,14 +5,12 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.widgets.HorizontalListWidget
 import earth.terrarium.tempad.client.widgets.TimelineEntry
-import earth.terrarium.tempad.client.widgets.colored.ButtonType
 import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.common.network.c2s.BackTrackLocation
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.StringWidget
-import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
@@ -28,23 +26,23 @@ class TimelineScreen(menu: ModMenus.TimelineMenu, inv: Inventory, title: Compone
     override fun init() {
         super.init()
 
-        val testButtons = HorizontalListWidget(125, 72)
-        testButtons.setPosition(localLeft + 5, localTop + 21)
+        val timeline = HorizontalListWidget(125, 72)
+        timeline.setPosition(localLeft + 5, localTop + 21)
 
-        val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, minecraft!!.locale)
-        val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, minecraft!!.locale)
 
         for ((dateTime, location) in menu.appContent.history.toSortedMap()) {
-            testButtons.add(TimelineEntry(font, dateFormat.format(dateTime), timeFormat.format(dateTime), location) {
-                BackTrackLocation(dateTime, menu.ctxHolder).sendToServer()
-                onClose()
-            })
+            timeline.add(TimelineEntry(timeline.width, font, dateTime, location))
         }
 
-        testButtons.scrollToBottom()
-        addRenderableWidget(testButtons)
+        timeline.scrollToBottom()
+        addRenderableWidget(timeline)
 
-        val teleportBtn = addRenderableWidget(ColoredButton(teleportButton, height = 16) {})
+        val teleportBtn = addRenderableWidget(ColoredButton(teleportButton, height = 16) {
+            (timeline.current as? TimelineEntry).let {
+                BackTrackLocation((timeline.current as TimelineEntry).date, menu.ctxHolder).sendToServer()
+                onClose()
+            }
+        })
 
         teleportBtn.x = localLeft + 66 - teleportBtn.width / 2
         teleportBtn.y = localTop + 94
@@ -55,11 +53,13 @@ class TimelineScreen(menu: ModMenus.TimelineMenu, inv: Inventory, title: Compone
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         super.renderBg(graphics, partialTick, mouseX, mouseY)
-        InventoryScreen.renderEntityInInventoryFollowsMouse(
-            graphics, localLeft + 134, localTop + 37, localLeft + 192, localTop + 94, 50, 0.6f,
-            mouseX.toFloat(),
-            mouseY.toFloat(),
-            minecraft!!.player
-        )
+        minecraft?.player?.let {
+            InventoryScreen.renderEntityInInventoryFollowsMouse(
+                graphics, localLeft + 134, localTop + 37, localLeft + 192, localTop + 94, 50, 0.6f,
+                mouseX.toFloat(),
+                mouseY.toFloat(),
+                it
+            )
+        }
     }
 }

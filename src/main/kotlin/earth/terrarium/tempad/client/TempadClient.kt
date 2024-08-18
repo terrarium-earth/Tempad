@@ -4,10 +4,12 @@ package earth.terrarium.tempad.client
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.datafixers.util.Either
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
+import earth.terrarium.tempad.common.items.ChrononContainer
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
@@ -19,14 +21,18 @@ import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
 import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.network.chat.FormattedText
 import net.minecraft.world.entity.player.Player
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
+import net.neoforged.neoforge.client.event.RenderTooltipEvent
+import net.neoforged.neoforge.common.NeoForge
 import java.io.IOException
 
 @EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
@@ -72,6 +78,10 @@ object TempadClient {
         return value - value % step
     }
 
+    init {
+        NeoForge.EVENT_BUS.addListener(::addTooltipComponent)
+    }
+
     @SubscribeEvent @JvmStatic
     fun init(event: FMLClientSetupEvent) {
         EntityRenderers.register(ModEntities.TIMEDOOR_ENTITY, ::TimedoorRenderer)
@@ -101,6 +111,17 @@ object TempadClient {
             )
         ) { shaderInstance: ShaderInstance ->
             timedoorShader = shaderInstance
+        }
+    }
+
+    @SubscribeEvent @JvmStatic
+    fun registerTooltip(event: RegisterClientTooltipComponentFactoriesEvent) {
+        event.register(ChrononData::class.java, ::ChrononTooltip)
+    }
+
+    fun addTooltipComponent(event: RenderTooltipEvent.GatherComponents) {
+        (event.itemStack[Capabilities.FluidHandler.ITEM] as? ChrononContainer)?.let {
+            event.tooltipElements.add(Either.right(it.tooltip))
         }
     }
 }

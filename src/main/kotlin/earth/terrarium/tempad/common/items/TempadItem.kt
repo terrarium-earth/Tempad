@@ -48,11 +48,16 @@ class TempadItem: Item(Properties().stacksTo(1)), ChrononAcceptor {
                 } else if (slot.contents.item === ModItems.tempad) {
                     stack.twisterEquipped = false
                     slot.contents.twisterEquipped = true
+                    val toMove = stack.chrononContent.coerceAtMost(4000)
+                    stack.chrononContent -= toMove
+                    slot.contents.chrononContent += toMove
                     return true
                 }
             } else if (slot.contents.item === ModItems.timeTwister) {
+                val chronons = slot.contents.chrononContent
                 slot.contents = ItemStack.EMPTY
                 stack.twisterEquipped = true
+                stack.chrononContent += chronons
                 return true
             }
         }

@@ -26,6 +26,7 @@ repositories {
     maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
     maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
     maven(url = "https://maven.octo-studios.com/releases")
+    maven(url = "https://modmaven.dev/" )
     mavenLocal()
 }
 
@@ -38,8 +39,17 @@ dependencies {
     val resourcefulLibKtVersion: String by project
     val kotlinForForgeVersion: String by project
     val curiosVersion: String by project
+    val mekanismVersion: String by project
+    val patchouliVersion: String by project
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
+
+    compileOnly("mekanism:Mekanism:${mekanismVersion}:api")
+
+    runtimeOnly("mekanism:Mekanism:${mekanismVersion}")
+    runtimeOnly("mekanism:Mekanism:${mekanismVersion}:additions")
+    runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
+    runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 
     implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraft_version}:${resourcefulConfigVersion}")
     implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraft_version}:${resourcefulLibVersion}")
@@ -54,6 +64,9 @@ dependencies {
     }
 
     implementation("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
+
+    compileOnly("vazkii.patchouli:Patchouli:${patchouliVersion}:api")
+    runtimeOnly("vazkii.patchouli:Patchouli:${patchouliVersion}")
 }
 
 java {

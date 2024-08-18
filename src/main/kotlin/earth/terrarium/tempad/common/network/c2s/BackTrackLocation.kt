@@ -22,7 +22,9 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
                 ::BackTrackLocation
             ),
             NetworkHandle.handle { packet, player ->
-                if ({ packet.ctx.getCtx(player).stack.item is TempadItem } !in player.inventory) return@handle
+                val ctx = packet.ctx.getCtx(player)
+                if ({ ctx.stack.item is TempadItem } !in player.inventory) return@handle
+
                 player.travelHistory.backtrackTo(player, packet.time)
             }
         )

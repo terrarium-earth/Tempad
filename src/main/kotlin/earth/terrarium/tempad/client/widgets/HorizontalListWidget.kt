@@ -25,6 +25,8 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
         protected set
     protected var gap: Int = 2
 
+    var current: Item? = null
+
     override fun clear() {
         super.clear()
         items.clear()
@@ -56,7 +58,10 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
         for (item in items) {
             item.x = x
             item.y = y
-
+            item.current = x >= (this.x + width / 2) - item.width / 2 && x <= (this.x + width / 2) + item.width / 2
+            if (item.current) {
+                current = item
+            }
             item.render(graphics, this.x + width / 2, this.y + height / 2, partialTicks)
             x += item.width + gap
             this.lastWidth += item.width + gap
@@ -110,6 +115,8 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
         internal var height: Int = 0
         internal var width: Int = 20
         internal var isFocused: Boolean = false
+
+        var current = false
 
         override fun setFocused(pFocused: Boolean) {
             isFocused = pFocused

@@ -14,6 +14,7 @@ class TemporalBeaconItem: Item(Properties().stacksTo(1)) {
             val stack = player.getItemInHand(hand)
             stack.enabled = !stack.enabled
         }
+
         return InteractionResultHolder.success(player.getItemInHand(hand))
     }
 }

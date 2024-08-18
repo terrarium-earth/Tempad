@@ -1,6 +1,8 @@
 package earth.terrarium.tempad.common.utils
 
+import com.teamresourceful.resourcefullib.client.utils.RenderUtils
 import earth.terrarium.tempad.Tempad
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 
 fun GuiGraphics.bedrockButton(x: Int, initY: Int, width: Int, initHeight: Int, hovered: Boolean, active: Boolean, focused: Boolean = false, color: Int = Tempad.ORANGE.value) {

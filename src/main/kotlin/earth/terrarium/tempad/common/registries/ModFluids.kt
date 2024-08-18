@@ -9,6 +9,7 @@ import com.teamresourceful.resourcefullib.common.registry.neoforge.NeoForgeResou
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.utils.registerProps
+import earth.terrarium.tempad.common.utils.vanillaId
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.level.material.Fluid
 
@@ -20,6 +21,13 @@ object ModFluids {
         density = 1000
         viscosity = 1000
         temperature = 300
+        still = "block/water_still".vanillaId
+        flowing = "block/water_flow".vanillaId
+        overlay = "block/water_overlay".vanillaId
+        screenOverlay = "textures/misc/underwater.png".vanillaId
+        tintColor = Tempad.ORANGE.value
+        canConvertToSource = false
+        canPlace = false
     }
 
     val chronon: Fluid by registry.register("chronon") {
