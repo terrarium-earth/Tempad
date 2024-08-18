@@ -125,7 +125,9 @@
   "app.tempad.timeline.teleport": "Teleport",
 
   "app.tempad.teleport.teleport": "Teleport",
-  "app.tempad.teleport.write": "Write",
+  "app.tempad.teleport.favorite": "Favorite",
+  "app.tempad.teleport.unfavorite": "Unfavorite",
+  "app.tempad.teleport.delete": "Delete",
 
   "app.tempad.tp_to.teleport": "Teleport",
   "app.tempad.tp_to.selected": "Selected",

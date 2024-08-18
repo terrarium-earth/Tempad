@@ -16,7 +16,7 @@ class ColoredDropdown<T>(
     default: T,
     onSelect: (T) -> Unit
 ) :
-    Dropdown<T>(null, width, 20, entries.associateWith { optionDisplay(it) }, default, onSelect) {
+    Dropdown<T>(null, width, 18, entries.associateWith { optionDisplay(it) }, default, onSelect) {
 
     override fun renderButton(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         graphics.bedrockButton(x, y, width, height, isDropdownOpen, isActive, isHovered || isDropdownOpen)
@@ -25,21 +25,16 @@ class ColoredDropdown<T>(
     override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         val font = Minecraft.getInstance().font
 
-        graphics.renderOutline(x + 1, y + 1, width, height, Tempad.DARK_ORANGE.value)
+        graphics.fill(x, y, x + width, y + height, if (isHovered) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value)
+        graphics.renderOutline(x, y, width, height, 0x66000000)
+        graphics.renderOutline(x + 1, y + 1, width - 2, height - 2, 0x33FFFFFF)
 
-        if (isHovered) {
-            graphics.fill(x, y, x + width, y + height, Tempad.ORANGE.value)
-        } else {
-            graphics.renderOutline(x, y, width, height, Tempad.ORANGE.value)
-        }
-
-        val textOffset = (this.height - 8) / 2
         graphics.drawString(
             font,
             this.getText(this.selected),
-            this.x + textOffset,
-            this.y + textOffset,
-            if(isHovered) 0xFF000000.toInt() else Tempad.ORANGE.value,
+            this.x + 6,
+            this.y + 5,
+            0xFF000000.toInt(),
             false
         )
     }

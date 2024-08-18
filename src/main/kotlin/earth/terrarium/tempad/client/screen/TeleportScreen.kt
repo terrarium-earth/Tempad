@@ -1,13 +1,11 @@
 package earth.terrarium.tempad.client.screen
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.ClientDisplay
-import earth.terrarium.tempad.api.locations.NamedGlobalPos
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.ModWidgets
+import earth.terrarium.tempad.client.widgets.buttons.EnumButton
 import earth.terrarium.tempad.client.widgets.buttons.ToggleButton
 import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.client.widgets.location_panel.PanelWidget
@@ -20,13 +18,14 @@ import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.utils.btnSprites
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
+import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.*
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.EditBox
+import net.minecraft.client.gui.components.ImageButton
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
-import net.minecraft.core.BlockPos
-import net.minecraft.core.NonNullList
-import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import org.lwjgl.glfw.GLFW
@@ -39,12 +38,11 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
 
         fun imgBtn(key: String, onClick: (btn: Button) -> Unit): ImageButton {
             val imageButton = ImageButton(10, 10, key.btnSprites(), onClick, key.toLanguageKey("button"))
-            imageButton.tooltip = Tooltip.create(key.toLanguageKey("button"))
+            imageButton.tooltip = Tooltip.create(Component.translatable("app.${Tempad.MOD_ID}.teleport.$key"))
             return imageButton
         }
 
         val teleportText = Component.translatable("app.${Tempad.MOD_ID}.teleport")
-        val writeText = Component.translatable("app.${Tempad.MOD_ID}.teleport.write")
     }
 
     var selected: Triple<ProviderSettings, UUID, ClientDisplay>? = null
@@ -96,6 +94,10 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         locationList.setPosition(localLeft + 4, localTop + 39)
         locationList.update()
 
+        addRenderableWidget(EnumButton(Sorting.entries) {
+            
+        }).setPosition(localLeft + 100, localTop + 20)
+
         infoLayout = FrameLayout(74, 74)
         infoLayout.setPosition(localLeft + 119, localTop + 22)
 
@@ -122,13 +124,13 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             },
         )
 
-        favBtn.tooltip = { selected ->
-            Tooltip.create(Component.translatable(
-                if (selected) "gui.${Tempad.MOD_ID}.unfavorite.button" else "gui.${Tempad.MOD_ID}.favorite.button"
-            ))
+        favBtn.tooltipFun = { selected ->
+            Tooltip.create(
+                Component.translatable(
+                    if (selected) "app.${Tempad.MOD_ID}.teleport.unfavorite" else "app.${Tempad.MOD_ID}.teleport.favorite"
+                )
+            )
         }
-
-        favBtn.setTooltip(Tooltip.create(Component.translatable("gui.${Tempad.MOD_ID}.favorite.button")))
 
         locationButtons.addChild(
             imgBtn("delete") {
@@ -195,4 +197,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             graphics.renderOutline(localLeft + 118, localTop + 20, 76, 76, Tempad.HIGHLIGHTED_ORANGE.value)
         }
     }
+}
+
+enum class Sorting {
+    ALPHABETICAL, TYPE, DIMENSION
 }

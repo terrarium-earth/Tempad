@@ -82,6 +82,8 @@ class TempadItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
         }
         return super.overrideOtherStackedOnMe(stack, other, slot, action, player, access)
     }
+
+    override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean = false
 }
 
 class TempadContainer(stack: ItemStack) : ChrononContainer(stack, 0) {

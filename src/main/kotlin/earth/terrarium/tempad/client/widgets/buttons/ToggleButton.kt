@@ -13,17 +13,19 @@ class ToggleButton(
 ) :
     Button(0, 0, 10, 10, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION) {
     var toggled = false
-    var tooltip = { selected: Boolean -> Tooltip.create(CommonComponents.EMPTY) }
+    var tooltipFun = { selected: Boolean -> Tooltip.create(CommonComponents.EMPTY) }
 
     public override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         val sprites = if (this.toggled) this.selectedSprites else this.unselectedSprites
         val resourceLocation = sprites[this.isActive, isHovered()]
         graphics.blitSprite(resourceLocation, this.x, this.y, this.width, this.height)
+        this.tooltip = this.getTooltip()
     }
+
+    override fun getTooltip(): Tooltip? = this.tooltipFun(this.toggled)
 
     override fun onPress() {
         this.toggled = !this.toggled
-        this.setTooltip(this.tooltip(toggled))
         super.onPress()
     }
 }

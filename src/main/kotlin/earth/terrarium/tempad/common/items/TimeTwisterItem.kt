@@ -27,4 +27,6 @@ class TimeTwisterItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
         }
         return InteractionResultHolder.success(player.getItemInHand(usedHand))
     }
+
+    override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean = false
 }

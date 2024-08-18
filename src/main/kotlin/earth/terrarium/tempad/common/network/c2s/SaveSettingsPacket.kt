@@ -16,8 +16,7 @@ import net.minecraft.resources.ResourceLocation
 class SaveSettingsPacket(
     val ctxData: ContextHolder<*>,
     val defaultApp: ResourceLocation,
-    val defaultMacro: ResourceLocation,
-    val organizationMethod: OrganizationMethod,
+    val defaultMacro: ResourceLocation
 ) :
     Packet<SaveSettingsPacket> {
     companion object {
@@ -27,7 +26,6 @@ class SaveSettingsPacket(
                 ContextHolder.codec.fieldOf(SaveSettingsPacket::ctxData),
                 ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(SaveSettingsPacket::defaultApp),
                 ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(SaveSettingsPacket::defaultMacro),
-                OrganizationMethod.BYTE_CODEC.fieldOf(SaveSettingsPacket::organizationMethod),
                 ::SaveSettingsPacket
             ),
             NetworkHandle.handle { packet, player ->

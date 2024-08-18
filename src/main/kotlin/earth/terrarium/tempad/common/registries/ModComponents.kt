@@ -34,13 +34,6 @@ object ModComponents {
         }
     }
 
-    val organizationMethod: DataComponentType<OrganizationMethod> by registry.register("organization_method") {
-        componentType {
-            serialize = OrganizationMethod.CODEC
-            networkSerialize = OrganizationMethod.BYTE_CODEC
-        }
-    }
-
     val chrononContent: DataComponentType<Int> by registry.register("chronon_content") {
         componentType {
             serialize = Codec.INT
@@ -80,8 +73,6 @@ object ModComponents {
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
 
 var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.withDefault(ModMacros.teleportToPinned)
-
-var MutableDataComponentHolder.organizationMethod by ModComponents.organizationMethod.withDefault(OrganizationMethod.DIMENSION)
 
 var MutableDataComponentHolder.chrononContent by ModComponents.chrononContent.withDefault(0)
 
