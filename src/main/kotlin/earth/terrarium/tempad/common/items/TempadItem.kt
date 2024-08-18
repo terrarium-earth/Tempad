@@ -17,7 +17,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-class TempadItem: Item(Properties().stacksTo(1)), ChrononAcceptor {
+class TempadItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
 
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(hand)
@@ -42,14 +42,16 @@ class TempadItem: Item(Properties().stacksTo(1)), ChrononAcceptor {
                 if (!slot.hasItem()) {
                     stack.twisterEquipped = false
                     slot.contents = stack.transmuteCopy(ModItems.timeTwister).also {
-                        stack.chrononContent = stack.chrononContent.coerceAtMost(it.chrononContainer.capacity)
+                        val toMove = it.chrononContent.coerceAtMost(it.chrononContainer.capacity)
+                        it.chrononContent = toMove
+                        stack.chrononContent -= toMove
                     }
                     return true
                 } else if (slot.contents.item === ModItems.tempad) {
-                    stack.twisterEquipped = false
-                    slot.contents.twisterEquipped = true
                     val toMove = stack.chrononContent.coerceAtMost(4000)
                     stack.chrononContent -= toMove
+                    stack.twisterEquipped = false
+                    slot.contents.twisterEquipped = true
                     slot.contents.chrononContent += toMove
                     return true
                 }
@@ -74,7 +76,8 @@ class TempadItem: Item(Properties().stacksTo(1)), ChrononAcceptor {
     ): Boolean {
         if (action == ClickAction.SECONDARY && other.item === ModItems.timeTwister && !stack.twisterEquipped) {
             stack.twisterEquipped = true
-            other.shrink(1)
+            stack.chrononContent += other.chrononContent
+            access.set(ItemStack.EMPTY)
             return true
         }
         return super.overrideOtherStackedOnMe(stack, other, slot, action, player, access)

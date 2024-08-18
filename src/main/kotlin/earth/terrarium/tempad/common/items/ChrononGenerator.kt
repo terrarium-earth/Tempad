@@ -56,23 +56,22 @@ open class ChrononContainer(val stack: ItemStack, open val capacity: Int) : IFlu
     override fun fill(resource: FluidStack, action: IFluidHandler.FluidAction): Int {
         return if (content == 0 || resource.fluid == ModFluids.chronon) {
             val amount = resource.amount.coerceAtMost(getTankCapacity(0) - content)
-            if (action.execute()) content += amount
+            if (action.execute()) this += amount
             amount
         } else 0
     }
 
     override fun drain(resource: FluidStack, action: IFluidHandler.FluidAction): FluidStack {
-        return if (content == 0 && resource.`is`(ModFluids.chronon)) drain(
+        return if (content > 0 && resource.`is`(ModFluids.chronon)) drain(
             resource.amount,
             action
         ) else FluidStack.EMPTY
     }
 
     override fun drain(maxDrain: Int, action: IFluidHandler.FluidAction): FluidStack {
-        return if (content <= 0) FluidStack.EMPTY else FluidStack(ModFluids.chronon, content).also {
-            it.amount = maxDrain.coerceAtMost(content)
-            if (action.execute()) content -= it.amount
-        }
+        val amount = maxDrain.coerceAtMost(content)
+        if (action.execute()) this -= amount
+        return FluidStack(ModFluids.chronon, amount)
     }
 
     operator fun plusAssign(amount: Int) {
@@ -95,7 +94,7 @@ fun move(from: IFluidHandler, to: IFluidHandler, amount: Int) {
                 return;
             }
         }
-        from.drain(extracted, IFluidHandler.FluidAction.EXECUTE)
+        val drained = from.drain(extracted, IFluidHandler.FluidAction.EXECUTE)
         to.fill(extracted, IFluidHandler.FluidAction.EXECUTE)
     }
 }
