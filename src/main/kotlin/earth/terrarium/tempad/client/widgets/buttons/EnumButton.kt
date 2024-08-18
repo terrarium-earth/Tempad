@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component
 import java.util.*
 import kotlin.enums.EnumEntries
 
-class EnumButton<T: Enum<T>>(val enumEntries: EnumEntries<T>, val onPress: (value: T) -> Unit): Button(0, 0, 14, 14, CommonComponents.EMPTY, {}, DEFAULT_NARRATION) {
+class EnumButton<T: Enum<T>>(val enumEntries: EnumEntries<T>, val onPress: (value: T) -> Unit): Button(0, 0, 16, 16, CommonComponents.EMPTY, {}, DEFAULT_NARRATION) {
     var sprites: WidgetSprites = enumEntries.first().name.lowercase(Locale.ROOT).btnSprites()
     var selected: T = enumEntries.first()
         set(value) {

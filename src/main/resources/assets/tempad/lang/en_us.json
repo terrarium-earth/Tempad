@@ -139,9 +139,9 @@
   "macro.tempad.default": "Open Fav",
   "macro.tempad.default.description": "Teleport to the favorite location",
 
-  "organization_method.tempad.type": "By Type",
-  "organization_method.tempad.alphabetical": "Alphabetical",
-  "organization_method.tempad.dimension": "By Dimension",
+  "button.tempad.type": "Sort by Type",
+  "button.tempad.alphabetical": "Sort Alphabetically",
+  "button.tempad.dimension": "Sort by Dimension",
 
   "marker.tempad.death": "Died at",
   "marker.tempad.respawn": "Respawned at",

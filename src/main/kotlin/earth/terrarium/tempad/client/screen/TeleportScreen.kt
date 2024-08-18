@@ -95,7 +95,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         locationList.update()
 
         addRenderableWidget(EnumButton(Sorting.entries) {
-            
+
         }).setPosition(localLeft + 100, localTop + 20)
 
         infoLayout = FrameLayout(74, 74)
