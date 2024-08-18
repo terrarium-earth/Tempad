@@ -16,6 +16,7 @@ import earth.terrarium.tempad.common.network.c2s.SetFavoritePacket
 import earth.terrarium.tempad.common.network.c2s.WriteToCardPacket
 import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.utils.btnSprites
+import earth.terrarium.tempad.common.utils.display
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.toLanguageKey
 import earth.terrarium.tempad.tempadId
@@ -43,6 +44,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         }
 
         val teleportText = Component.translatable("app.${Tempad.MOD_ID}.teleport")
+
+        var sortMode = Sorting.ALPHABETICAL
     }
 
     var selected: Triple<ProviderSettings, UUID, ClientDisplay>? = null
@@ -55,7 +58,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 widget.visible = true
             }
 
-            value?.third?.let { infoTextWidget.update(it.info) }
+            value?.third?.let { infoTextWidget.update(it.pos.display) }
         }
 
     private lateinit var locationButtons: LinearLayout
@@ -93,10 +96,15 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
 
         locationList.setPosition(localLeft + 4, localTop + 39)
         locationList.update()
+        locationList.sortBy(sortMode)
 
-        addRenderableWidget(EnumButton(Sorting.entries) {
+        val sortBtn = addRenderableWidget(EnumButton(Sorting.entries) {
+            sortMode = it
+            locationList.sortBy(it)
+        })
 
-        }).setPosition(localLeft + 100, localTop + 20)
+        sortBtn.setPosition(localLeft + 100, localTop + 20)
+        sortBtn.selected = sortMode
 
         infoLayout = FrameLayout(74, 74)
         infoLayout.setPosition(localLeft + 119, localTop + 22)

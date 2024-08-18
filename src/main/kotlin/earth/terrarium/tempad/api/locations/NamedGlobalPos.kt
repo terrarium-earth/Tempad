@@ -7,6 +7,8 @@ import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.color.Color
+import net.minecraft.core.BlockPos
+import net.minecraft.core.GlobalPos
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
@@ -38,17 +40,21 @@ fun offsetLocation(pos: Vec3, angle: Float, distance: Int = 1): Vec3 {
 
 val NamedGlobalPos.offsetLocation get() = pos?.let { offsetLocation(it, angle + 180) }
 
-data class ClientDisplay(val name: Component, val info: List<Component>) {
+data class ClientDisplay(val name: Component, val pos: GlobalPos) {
     companion object {
         val byteCodec: ByteCodec<ClientDisplay> = ObjectByteCodec.create(
             ExtraByteCodecs.COMPONENT.fieldOf { it.name },
-            ExtraByteCodecs.COMPONENT.listOf().fieldOf { it.info },
+            ExtraByteCodecs.GLOBAL_POS.fieldOf { it.pos },
             ::ClientDisplay
         )
     }
 }
 
-val NamedGlobalPos.clientDisplay: ClientDisplay get() = ClientDisplay(name, display)
+val NamedGlobalPos.clientDisplay: ClientDisplay? get() {
+    val vec3 = pos ?: return null
+    val dimkey = dimension ?: return null
+    return ClientDisplay(name, GlobalPos(dimkey, BlockPos.containing(vec3)))
+}
 
 data class LocationType<T: NamedGlobalPos>(val id: ResourceLocation, val byteCodec: ByteCodec<T>, val codec: MapCodec<T>) {
     companion object {

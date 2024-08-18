@@ -5,6 +5,7 @@ import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.network.chat.CommonComponents
+import net.minecraft.world.item.ItemStack
 
 class ToggleButton(
     private val selectedSprites: WidgetSprites,
