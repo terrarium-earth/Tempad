@@ -73,6 +73,8 @@ object TempadClient {
         step(tank.getFluidInTank(0).amount.toFloat() / tank.getTankCapacity(0), 0.33f)
     }
 
+    val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.staticLocation != null }
+
     fun step(value: Float, step: Float): Float {
         if (value >= 0.9) return 1f
         return value - value % step
@@ -90,6 +92,7 @@ object TempadClient {
         ItemProperties.register(ModItems.tempad, "charge".tempadId, chargeProperty)
         ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, chargeProperty)
         ItemProperties.register(ModItems.temporalBeacon, "enabled".tempadId, enabledProperty)
+        ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
     }
 
     @SubscribeEvent @JvmStatic

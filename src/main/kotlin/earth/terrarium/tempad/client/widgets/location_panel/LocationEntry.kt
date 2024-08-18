@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component
 import java.util.UUID
 
 class LocationEntry(val id: UUID, val data: ClientDisplay, builder: LocationEntryBuilder.() -> Unit = {}):
-    KListWidgetItem {
+    KListWidgetItem, Comparable<LocationEntry> {
     companion object {
         val FAVORITE = "unpin".btnSprites()
     }
@@ -53,6 +53,10 @@ class LocationEntry(val id: UUID, val data: ClientDisplay, builder: LocationEntr
     }
 
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean = onClick()
+
+    override fun compareTo(other: LocationEntry): Int {
+        return if(isFavorite()) Int.MIN_VALUE else if(other.isFavorite()) Int.MAX_VALUE else data.name.string.compareTo(other.data.name.string)
+    }
 }
 
 

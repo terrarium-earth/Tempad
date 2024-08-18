@@ -65,8 +65,6 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
 
         enablableItem(ModItems.temporalBeacon)
 
-        basicItem(ModItems.blankCard)
-        basicItem(ModItems.locationCard)
         basicItem(ModItems.timeTwister)
         basicItem(ModItems.newLocationUpgrade)
         basicItem(ModItems.playerTeleportUpgrade)

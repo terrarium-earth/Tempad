@@ -33,7 +33,6 @@ object ModItems {
     val temporalBeacon: Item by registry.register("temporal_beacon") { TemporalBeaconItem() }
     val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }
 
-    val blankCard: Item by registry.register("blank_card") { Item(Item.Properties()) }
     val locationCard: Item by registry.register("location_card") { Item(Item.Properties()) }
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties()) }
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }

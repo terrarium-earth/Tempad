@@ -129,6 +129,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                     SetFavoritePacket(provider.id, locationId).sendToServer()
                     favorite = FavoriteLocationAttachment(provider.id, locationId)
                 }
+                locationList.update()
             },
         )
 

@@ -27,6 +27,7 @@ repositories {
     maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
     maven(url = "https://maven.octo-studios.com/releases")
     maven(url = "https://modmaven.dev/" )
+    maven(url = "https://api.modrinth.com/maven")
     mavenLocal()
 }
 
@@ -41,6 +42,7 @@ dependencies {
     val curiosVersion: String by project
     val mekanismVersion: String by project
     val patchouliVersion: String by project
+    val jadeVersion: String by project
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
@@ -67,6 +69,7 @@ dependencies {
 
     compileOnly("vazkii.patchouli:Patchouli:${patchouliVersion}:api")
     runtimeOnly("vazkii.patchouli:Patchouli:${patchouliVersion}")
+    implementation("maven.modrinth:jade:$jadeVersion")
 }
 
 java {

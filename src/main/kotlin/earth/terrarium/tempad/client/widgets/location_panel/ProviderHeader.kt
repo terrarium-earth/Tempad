@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 
-class ProviderHeader(val text: Component, val id: String, val parent: PanelWidget): KListWidgetItem {
+data class ProviderHeader(val text: Component, val id: String, val parent: PanelWidget): KListWidgetItem, Comparable<ProviderHeader> {
     companion object {
         val valueCaches = mutableMapOf<String, Boolean>()
     }
@@ -48,5 +48,9 @@ class ProviderHeader(val text: Component, val id: String, val parent: PanelWidge
         hidden = !hidden
         parent.update()
         return true
+    }
+
+    override fun compareTo(other: ProviderHeader): Int {
+        return text.string.compareTo(other.text.string)
     }
 }

@@ -32,7 +32,7 @@ data class TeleportApp(val ctx: SyncableContext<*>): TempadApp<TeleportData> {
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.teleport")
 
-    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations[player, ctx].mapValues { map -> map.value.mapValues { pos -> pos.value.clientDisplay } }, player.pinnedPosition, ctx.holder)
+    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations[player, ctx].mapValues { map -> map.value.mapNotNull { pos -> pos.value.clientDisplay?.let { pos.key to it } }.toMap() }, player.pinnedPosition, ctx.holder)
 
     override fun isEnabled(player: Player): Boolean = true
 }

@@ -17,7 +17,7 @@ class PanelWidget(
     val filter: () -> String,
     private val isFavorite: (ProviderSettings, UUID) -> Boolean,
 ) : ColoredList(111, 74) {
-    val widgets: MutableMap<ProviderHeader, MutableList<LocationEntry>> = mutableMapOf()
+    val widgets: SortedMap<ProviderHeader, SortedSet<LocationEntry>> = sortedMapOf()
 
     fun update() {
         set(getFilteredEntries())
@@ -43,7 +43,7 @@ class PanelWidget(
                 widgets.putAll(locations.map { (provider, locations) ->
                     val header = ProviderHeader(provider, this)
                     val entries = locations.map { (id, display) -> createEntry(provider, id, display)
-                    }.toMutableList()
+                    }.toSortedSet()
                     header to entries
                 }.toMap().toMutableMap())
             }
@@ -55,7 +55,7 @@ class PanelWidget(
                         val (id, display) = entry
                         val letter = display.name.string.first().toString().uppercase(Locale.ROOT)
                         val header = ProviderHeader(Component.literal(letter), letter, this)
-                        widgets.getOrPut(header) { mutableListOf() } += createEntry(provider, id, display)
+                        widgets.getOrPut(header) { sortedSetOf() } += createEntry(provider, id, display)
                     }
             }
 
@@ -65,7 +65,7 @@ class PanelWidget(
                     .forEach { (provider, entry) ->
                         val (id, display) = entry
                         val header = ProviderHeader(display.pos.dimDisplay, display.pos.dimension.toString(), this)
-                        widgets.getOrPut(header) { mutableListOf() } += createEntry(provider, id, display)
+                        widgets.getOrPut(header) { sortedSetOf() } += createEntry(provider, id, display)
                     }
             }
         }
@@ -92,7 +92,8 @@ class PanelWidget(
 
     private fun getFilteredEntries(): MutableList<Item> {
         val list = mutableListOf<Item>()
-        for ((provider, entries) in widgets) {
+        val sortedWidgets = widgets.mapValues { it.value.sorted() }
+        for ((provider, entries) in sortedWidgets) {
             val filtered = entries.filter { it.data.name.string.contains(filter(), ignoreCase = true) }
             if (filtered.isEmpty()) continue
             list += provider
