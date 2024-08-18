@@ -83,7 +83,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         get() = targetDimension?.let { level().server[it] }
 
     private val selfLocation: StaticNamedGlobalPos
-        get() = StaticNamedGlobalPos(Component.literal("Return from $name"), StaticNamedGlobalPos.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
+        get() = StaticNamedGlobalPos(Component.translatable("misc.tempad.return", name), StaticNamedGlobalPos.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
 
     override fun defineSynchedData(pBuilder: SynchedEntityData.Builder) {
         pBuilder.define(CLOSING_TIME, CommonConfig.TimeDoor.idleAfterEnter)

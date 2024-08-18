@@ -20,10 +20,11 @@ object TimedoorComponentProvider: IEntityComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: EntityAccessor, config: IPluginConfig) {
         val timedoorEntity = accessor.entity as? TimedoorEntity ?: return
-        tooltip.append(Component.literal("Closing in: ${timedoorEntity.closingTime}"))
-        tooltip.append(CommonComponents.NARRATION_SEPARATOR)
-        tooltip.append(Component.literal("Target Dimension: ${timedoorEntity.targetDimension}"))
-        tooltip.append(CommonComponents.NARRATION_SEPARATOR)
-        tooltip.append(Component.literal("Target Position: ${timedoorEntity.targetPos}"))
+        if (timedoorEntity.closingTime > 0 && timedoorEntity.closingTime > timedoorEntity.tickCount) {
+            tooltip.add(Component.translatable("jade.tempad.will_close", (timedoorEntity.closingTime - timedoorEntity.tickCount) / 20f))
+        } else if (timedoorEntity.closingTime != -1) {
+            tooltip.add(Component.translatable("jade.tempad.closing"))
+        }
+        tooltip.add(Component.translatable("jade.tempad.pos", Component.translatable(timedoorEntity.targetDimension.location().toLanguageKey("dimension")), "${timedoorEntity.targetPos.x().toInt()}, ${timedoorEntity.targetPos.y().toInt()}, ${timedoorEntity.targetPos.z().toInt()}"))
     }
 }

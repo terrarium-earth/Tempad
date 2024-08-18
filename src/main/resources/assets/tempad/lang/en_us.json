@@ -146,5 +146,10 @@
   "marker.tempad.death": "Died at",
   "marker.tempad.respawn": "Respawned at",
   "marker.tempad.dimension_exit": "Left dimension at",
-  "marker.tempad.dimension_enter": "Entered dimension at"
+  "marker.tempad.dimension_enter": "Entered dimension at",
+
+  "jade.tempad.will_close": "Closing in %s seconds",
+  "jade.tempad.closing": "Closing...",
+  "jade.tempad.pos": "Teleporting to %s at %s",
+  "misc.tempad.return": "Returning to %s"
 }
