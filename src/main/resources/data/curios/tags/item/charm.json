@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+        "tempad:chronon_generator",
+        "tempad:temporal_beacon"
+    ]
+}

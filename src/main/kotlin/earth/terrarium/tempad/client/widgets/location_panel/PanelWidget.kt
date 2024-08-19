@@ -1,21 +1,19 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
 import earth.terrarium.tempad.api.locations.ClientDisplay
-import earth.terrarium.tempad.api.locations.NamedGlobalPos
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
-import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.screen.Sorting
 import earth.terrarium.tempad.client.widgets.colored.ColoredList
 import earth.terrarium.tempad.common.utils.dimDisplay
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import java.util.*
 
 class PanelWidget(
-    val locations: Map<ProviderSettings, Map<UUID, ClientDisplay>>,
-    private val selected: () -> Triple<ProviderSettings, UUID, ClientDisplay>?,
-    private val select: (Triple<ProviderSettings, UUID, ClientDisplay>?) -> Unit,
+    val locations: Map<ResourceLocation, Map<UUID, ClientDisplay>>,
+    private val selected: () -> Triple<ResourceLocation, UUID, ClientDisplay>?,
+    private val select: (Triple<ResourceLocation, UUID, ClientDisplay>?) -> Unit,
     val filter: () -> String,
-    private val isFavorite: (ProviderSettings, UUID) -> Boolean,
+    private val isFavorite: (ResourceLocation, UUID) -> Boolean,
 ) : ColoredList(111, 74) {
     val widgets: SortedMap<ProviderHeader, SortedSet<LocationEntry>> = sortedMapOf()
 
@@ -42,7 +40,8 @@ class PanelWidget(
             Sorting.TYPE -> {
                 widgets.putAll(locations.map { (provider, locations) ->
                     val header = ProviderHeader(provider, this)
-                    val entries = locations.map { (id, display) -> createEntry(provider, id, display)
+                    val entries = locations.map { (id, display) ->
+                        createEntry(provider, id, display)
                     }.toSortedSet()
                     header to entries
                 }.toMap().toMutableMap())
@@ -72,7 +71,7 @@ class PanelWidget(
         update()
     }
 
-    fun createEntry(provider: ProviderSettings, id: UUID, display: ClientDisplay): LocationEntry {
+    fun createEntry(provider: ResourceLocation, id: UUID, display: ClientDisplay): LocationEntry {
         return LocationEntry(id, display) {
             isFavorite {
                 isFavorite(provider, id)

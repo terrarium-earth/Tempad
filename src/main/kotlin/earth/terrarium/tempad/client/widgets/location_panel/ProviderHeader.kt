@@ -1,20 +1,20 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.widgets.KListWidgetItem
 import earth.terrarium.tempad.client.widgets.ModWidgets.CHEVRON_DOWN
 import earth.terrarium.tempad.client.widgets.ModWidgets.CHEVRON_UP
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 
 data class ProviderHeader(val text: Component, val id: String, val parent: PanelWidget): KListWidgetItem, Comparable<ProviderHeader> {
     companion object {
         val valueCaches = mutableMapOf<String, Boolean>()
     }
 
-    constructor(settings: ProviderSettings, parent: PanelWidget): this(Component.translatable(settings.id.toLanguageKey("provider")), settings.id.toLanguageKey(), parent)
+    constructor(settings: ResourceLocation, parent: PanelWidget): this(Component.translatable(settings.toLanguageKey("provider")), settings.toLanguageKey(), parent)
 
     var hidden = valueCaches.getOrPut(id) { false }
         set(value) {

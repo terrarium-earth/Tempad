@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
@@ -96,7 +97,7 @@ object TempadClient {
     }
 
     init {
-        NeoForge.EVENT_BUS.addListener(::addTooltipComponent)
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, ::addTooltipComponent)
         clientFluidRegistry.register("chronon", chrononRenderer)
     }
 

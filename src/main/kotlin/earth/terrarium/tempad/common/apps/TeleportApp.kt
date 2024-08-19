@@ -3,7 +3,6 @@ package earth.terrarium.tempad.common.apps
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.app.TempadApp
 import earth.terrarium.tempad.api.context.ContextHolder
@@ -14,6 +13,7 @@ import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.registries.pinnedPosition
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -37,12 +37,12 @@ data class TeleportApp(val ctx: SyncableContext<*>): TempadApp<TeleportData> {
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class TeleportData(val locations: Map<ProviderSettings, Map<UUID, ClientDisplay>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ContextHolder<*>): AppContent<TeleportData>(ctx, codec) {
-    constructor(locations: Map<ProviderSettings, Map<UUID, ClientDisplay>>, fav: Optional<FavoriteLocationAttachment>, ctx: ContextHolder<*>): this(locations, fav.getOrNull(), ctx)
+class TeleportData(val locations: Map<ResourceLocation, Map<UUID, ClientDisplay>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ContextHolder<*>): AppContent<TeleportData>(ctx, codec) {
+    constructor(locations: Map<ResourceLocation, Map<UUID, ClientDisplay>>, fav: Optional<FavoriteLocationAttachment>, ctx: ContextHolder<*>): this(locations, fav.getOrNull(), ctx)
     companion object {
         val codec: ByteCodec<TeleportData> = ObjectByteCodec.create(
             ByteCodec.mapOf(
-                ProviderSettings.BYTE_CODEC,
+                ExtraByteCodecs.RESOURCE_LOCATION,
                 ByteCodec.mapOf(
                     ByteCodec.UUID,
                     ClientDisplay.byteCodec

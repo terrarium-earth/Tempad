@@ -22,10 +22,10 @@ data class FavoriteLocationAttachment(val providerId: ResourceLocation, val loca
             ).apply(instance, ::FavoriteLocationAttachment)
         }
 
-        val EMPTY = FavoriteLocationAttachment(DefaultLocationHandler.SETTINGS.id, Util.NIL_UUID)
+        val EMPTY = FavoriteLocationAttachment(DefaultLocationHandler.ID, Util.NIL_UUID)
     }
 
-    constructor() : this(DefaultLocationHandler.SETTINGS.id, Util.NIL_UUID)
+    constructor() : this(DefaultLocationHandler.ID, Util.NIL_UUID)
 
     fun matches(providerId: ResourceLocation?, locationId: UUID?): Boolean {
         return this.providerId == providerId && this.locationId == locationId

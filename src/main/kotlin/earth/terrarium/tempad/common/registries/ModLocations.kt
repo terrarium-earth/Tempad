@@ -10,9 +10,9 @@ import earth.terrarium.tempad.common.location_handlers.WarpsHandler
 
 object ModLocations {
     fun init() {
-        TempadLocations[DefaultLocationHandler.SETTINGS] = ::DefaultLocationHandler
-        TempadLocations[WarpsHandler.SETTINGS] = ::WarpsHandler
-        TempadLocations[PlayerHandler.SETTINGS] = ::PlayerHandler
+        TempadLocations[DefaultLocationHandler.ID] = ::DefaultLocationHandler
+        TempadLocations[WarpsHandler.ID] = ::WarpsHandler
+        TempadLocations[PlayerHandler.ID] = ::PlayerHandler
 
         LocationTypeRegistry.register(StaticNamedGlobalPos.type)
         LocationTypeRegistry.register(PlayerPos.type)

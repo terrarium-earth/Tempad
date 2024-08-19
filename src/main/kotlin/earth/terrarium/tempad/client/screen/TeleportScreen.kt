@@ -2,7 +2,6 @@ package earth.terrarium.tempad.client.screen
 
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.ClientDisplay
-import earth.terrarium.tempad.api.locations.ProviderSettings
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.ModWidgets
 import earth.terrarium.tempad.client.widgets.buttons.EnumButton
@@ -28,6 +27,7 @@ import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import org.lwjgl.glfw.GLFW
 import java.util.*
@@ -48,11 +48,11 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         var sortMode = Sorting.ALPHABETICAL
     }
 
-    var selected: Triple<ProviderSettings, UUID, ClientDisplay>? = null
+    var selected: Triple<ResourceLocation, UUID, ClientDisplay>? = null
         set(value) {
             field = value
             teleportBtn.active = value != null
-            favBtn.toggled = favorite?.matches(value?.first?.id, value?.second) == true
+            favBtn.toggled = favorite?.matches(value?.first, value?.second) == true
 
             infoLayout.visitWidgets { widget ->
                 widget.visible = true
@@ -91,7 +91,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             this::selected,
             { selected = it },
             { search.value },
-            { provider, locationId -> favorite?.matches(provider.id, locationId) ?: false }
+            { provider, locationId -> favorite?.matches(provider, locationId) ?: false }
         ))
 
         locationList.setPosition(localLeft + 4, localTop + 39)
@@ -122,12 +122,12 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             ToggleButton("unpin".btnSprites(), "pin".btnSprites()) {
                 if (minecraft == null || selected == null) return@ToggleButton
                 val (provider, locationId, _) = selected!!
-                if (favorite?.matches(provider.id, locationId) == true) {
+                if (favorite?.matches(provider, locationId) == true) {
                     SetFavoritePacket(null).sendToServer()
                     favorite = null
                 } else {
-                    SetFavoritePacket(provider.id, locationId).sendToServer()
-                    favorite = FavoriteLocationAttachment(provider.id, locationId)
+                    SetFavoritePacket(provider, locationId).sendToServer()
+                    favorite = FavoriteLocationAttachment(provider, locationId)
                 }
                 locationList.update()
             },
@@ -145,7 +145,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             imgBtn("delete") {
                 if (minecraft == null || selected == null) return@imgBtn
                 val (provider, locationId, _) = selected!!
-                DeleteLocationPacket(menu.ctxHolder, provider.id, locationId).sendToServer()
+                DeleteLocationPacket(menu.ctxHolder, provider, locationId).sendToServer()
                 locationList.deleteSelected()
             },
         )
@@ -160,7 +160,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             ColoredButton(teleportText, width = 76, height = 16, x = localLeft + 118, y = localTop + 98) {
                 if (minecraft == null || selected == null) return@ColoredButton
                 val (provider, locationId, _) = selected!!
-                OpenTimedoorPacket(provider.id, locationId, menu.ctxHolder).sendToServer()
+                OpenTimedoorPacket(provider, locationId, menu.ctxHolder).sendToServer()
                 this.onClose()
             },
         )
@@ -182,7 +182,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         }
         if (mouseX >= localLeft + 118 && mouseX <= localLeft + 193 && mouseY >= localTop + 20 && mouseY <= localTop + 95 && !menu.carried.isEmpty) {
             selected?.let { (provider, locationId, _) ->
-                WriteToCardPacket(provider.id, locationId, menu.ctxHolder).sendToServer()
+                WriteToCardPacket(provider, locationId, menu.ctxHolder).sendToServer()
                 return true
             }
         }

@@ -11,67 +11,36 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import java.util.*
 
-@JvmRecord
-data class ProviderSettings(
-    val id: ResourceLocation,
-    val exportable: Boolean = true,
-    val deletable: Boolean = true,
-) {
-    companion object {
-        val CODEC: Codec<ProviderSettings> = RecordCodecBuilder.create {
-            it.group(
-                ResourceLocation.CODEC.fieldOf("id").forGetter { it.id },
-                Codec.BOOL.optionalFieldOf("exportable", true).forGetter { it.exportable },
-                Codec.BOOL.optionalFieldOf("deletable", true).forGetter { it.deletable }
-            ).apply(it, ::ProviderSettings)
-        }
-
-        val BYTE_CODEC = ObjectByteCodec.create(
-            ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.id },
-            ByteCodec.BOOLEAN.fieldOf { it.exportable },
-            ByteCodec.BOOLEAN.fieldOf { it.deletable },
-            ::ProviderSettings
-        )
-    }
-}
-
 interface LocationHandler {
     val locations: Map<UUID, NamedGlobalPos>
+
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("delete")
     operator fun minusAssign(locationId: UUID)
+
     operator fun get(locationId: UUID): NamedGlobalPos? = locations[locationId]
 }
 
-fun interface LocationProvider {
-    fun get(player: Player, ctx: SyncableContext<*>): LocationHandler
-}
+typealias LocationProvider = (Player, SyncableContext<*>) -> LocationHandler
 
 object TempadLocations {
-    private val registry: MutableMap<ProviderSettings, LocationProvider> = mutableMapOf()
-
-    val providers: Set<ProviderSettings>
-        get() = registry.keys
+    val registry: Map<ResourceLocation, LocationProvider>
+        field = mutableMapOf()
 
     @JvmStatic
     @JvmName("register")
-    operator fun set(settings: ProviderSettings, provider: LocationProvider) {
+    operator fun set(settings: ResourceLocation, provider: LocationProvider) {
         registry[settings] = provider
     }
 
     @JvmStatic
-    operator fun get(settings: ProviderSettings): LocationProvider? = registry[settings]
-
-    @JvmStatic
-    operator fun get(id: ResourceLocation): LocationProvider? = registry.keys.find { it.id == id }?.let { registry[it] }
-
-    @JvmStatic
-    operator fun get(player: Player, ctx: SyncableContext<*>, settings: ProviderSettings): LocationHandler? =
-        registry[settings]?.get(player, ctx)
+    operator fun get(id: ResourceLocation): LocationProvider? = registry[id]
 
     @JvmStatic
     operator fun get(player: Player, ctx: SyncableContext<*>, id: ResourceLocation): LocationHandler? =
-        registry.keys.find { it.id == id }?.let { registry[it]?.get(player, ctx) }
+        registry[id]?.let { it(player, ctx) }
 
     @JvmStatic
-    operator fun get(player: Player, ctx: SyncableContext<*>): Map<ProviderSettings, Map<UUID, NamedGlobalPos>> =
-        registry.mapValues { it.value.get(player, ctx).locations }
+    operator fun get(player: Player, ctx: SyncableContext<*>): Map<ResourceLocation, Map<UUID, NamedGlobalPos>> =
+        registry.mapValues { it.value(player, ctx).locations }
 }
