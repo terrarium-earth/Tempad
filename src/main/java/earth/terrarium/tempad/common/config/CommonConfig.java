@@ -54,11 +54,11 @@ public final class CommonConfig {
 
         @ConfigEntry(id = "idle_after_enter", type = EntryType.INTEGER)
         @Comment("The amount of time in ticks that a Time Door will remain open after an entity (that isn't the owner) enters it.")
-        public static int idleAfterEnter = 20;
+        public static int idleAfterEnter = 200;
 
         @ConfigEntry(id = "idle_after_owner_enter", type = EntryType.INTEGER)
         @Comment("The amount of time in ticks that a Time Door will remain open after the owner enters it.")
-        public static int idleAfterOwnerEnter = 20;
+        public static int idleAfterOwnerEnter = 100;
     }
 
     @Category("tempad")

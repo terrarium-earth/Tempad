@@ -47,7 +47,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             timedoor.pos = offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
             timedoor.yRot = player.yHeadRot
             timedoor.setLocation(location)
-            timedoor.closingTime = -1
+            // timedoor.closingTime = -1
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
             if (event.isCanceled) return
             stack.chrononContainer -= 1000

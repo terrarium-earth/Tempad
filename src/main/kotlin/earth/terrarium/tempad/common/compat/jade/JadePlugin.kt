@@ -21,7 +21,7 @@ object TimedoorComponentProvider: IEntityComponentProvider {
     override fun appendTooltip(tooltip: ITooltip, accessor: EntityAccessor, config: IPluginConfig) {
         val timedoorEntity = accessor.entity as? TimedoorEntity ?: return
         if (timedoorEntity.closingTime > 0 && timedoorEntity.closingTime > timedoorEntity.tickCount) {
-            tooltip.add(Component.translatable("jade.tempad.will_close", (timedoorEntity.closingTime - timedoorEntity.tickCount) / 20f))
+            tooltip.add(Component.translatable("jade.tempad.will_close", Math.round((timedoorEntity.closingTime - timedoorEntity.tickCount) / 20f)))
         } else if (timedoorEntity.closingTime != -1) {
             tooltip.add(Component.translatable("jade.tempad.closing"))
         }
