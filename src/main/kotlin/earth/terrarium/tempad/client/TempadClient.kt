@@ -47,7 +47,7 @@ object TempadClient {
         .setLightmapState(LIGHTMAP)
         .setLayeringState(NO_LAYERING)
         .setShaderState(ShaderStateShard { timedoorShader })
-        .createCompositeState(false)
+        .createCompositeState(true)
         .let {
             create(
                 "timedoorBlur",

@@ -19,7 +19,7 @@ class TimeTwisterItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (!level.isClientSide) {
             val ctx = player.ctx(usedHand.getSlot(player))
-            if(ctx.stack.chrononContent < 1000) {
+            if(!player.isCreative && ctx.stack.chrononContent < 1000) {
                 player.displayClientMessage(Component.translatable("message.tempad.not_enough_chronons").withColor(Tempad.ORANGE.value), true)
                 return InteractionResultHolder.fail(player.getItemInHand(usedHand))
             }

@@ -3,6 +3,7 @@ package earth.terrarium.tempad.client.entity
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
+import earth.terrarium.tempad.client.ShaderModBridge
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.TempadClient
 import earth.terrarium.tempad.common.entity.TimedoorEntity
@@ -26,40 +27,25 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         buffer: MultiBufferSource,
         packedLight: Int,
     ) {
-        var width = 0.0625f * 20
-        val finalHeight = 0.0625f * 36
-        var height = finalHeight
-        val depth = 0.0625f * 6
-        val closingTime: Int = entity.closingTime
         val tickLength = TimedoorEntity.ANIMATION_LENGTH
-        val phaseLength = (tickLength) / 2
-        val ticks = entity.tickCount
-        val animation: Float = (ticks + partialTick) / tickLength
+        val animation: Float
+        val ticks = entity.tickCount + partialTick
 
-        if (ticks < phaseLength) {
-            width = Mth.lerp(animation * 2, 0f, width)
-            height = .2f
+        if (entity.closingTime < ticks) {
+            animation = Mth.clamp(1 - (ticks - entity.closingTime) / tickLength.toFloat(), 0f, 1f)
+        } else {
+            animation = Mth.clamp(ticks / tickLength.toFloat(), 0f, 1f)
         }
 
-        if (ticks in phaseLength..<tickLength) {
-            height = Mth.lerp((animation - 0.5f) * 2, .2f, height)
-        }
-
-        if (closingTime != -1) {
-            if (ticks > closingTime && ticks < closingTime + phaseLength) {
-                height = Mth.lerp(1 - (animation - closingTime.toFloat() / tickLength) * 2, .2f, height)
-            }
-
-            if (ticks >= closingTime + phaseLength) {
-                width = Mth.lerp(1 - (animation - closingTime.toFloat() / tickLength - 0.5f) * 2, 0f, width)
-                height = .2f
-            }
-        }
+        val width = entity.sizing.widthAtPercent(animation)
+        val height = entity.sizing.heightAtPercent(animation)
+        val depth = entity.sizing.depthAtPercent(animation)
+        val finalHeight = entity.sizing.dimensions.height
 
         poseStack.pushPose()
         poseStack.mulPose(Axis.YN.rotationDegrees(entity.yRot))
         poseStack.translate(width / -2.0, finalHeight / 2.0 - height / 2.0 + 0.01, depth / -2.0)
-        if (width >= 0) renderTimedoor(poseStack, buffer, width, height, depth, entity.color.value, entity.tickCount)
+        if (width >= 0) renderTimedoor(poseStack, buffer, width, height, depth, entity.color.value, packedLight, entity.tickCount, entity.sizing.showLineAnimation)
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
         poseStack.popPose()
     }
@@ -71,7 +57,9 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         height: Float,
         depth: Float,
         color: Int,
+        packedLight: Int,
         age: Int,
+        animate: Boolean = true
     ) {
         val maxX = width
         val maxY = height
@@ -82,46 +70,46 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
 
         val model: Matrix4f = poseStack.last().pose()
         val matrix3f = poseStack.last()
-        val buffer = multiBufferSource.getBuffer(TempadClient.renderType)
+        val buffer = multiBufferSource.getBuffer(if(ShaderModBridge.shadersEnabled) RenderType.textBackgroundSeeThrough() else TempadClient.renderType)
 
         //Front
         val red = ((color and 0xFF0000) shr 16) / 255.0f
         val green = ((color and 0xFF00) shr 8) / 255.0f
         val blue = (color and 0xFF) / 255.0f
 
-        fun VertexConsumer.color() = setColor(red, green, blue, 1f)
+        fun VertexConsumer.color(opacity: Float = 1f) = setColor(red, green, blue, opacity)
 
         buffer
             //Front
-            .addVertex(model, minX, maxY, minZ).color().setUv(minX, maxY).setUv2(0, 1)
-            .addVertex(model, maxX, maxY, minZ).color().setUv(maxX, maxY).setUv2(1, 1)
-            .addVertex(model, maxX, minY, minZ).color().setUv(maxX, minY).setUv2(1, 0)
-            .addVertex(model, minX, minY, minZ).color().setUv(minX, minY).setUv2(0, 0)
+            .addVertex(model, minX, maxY, minZ).color(.4f).setUv(minX, maxY).setUv2(0, 1).setLight(packedLight)
+            .addVertex(model, maxX, maxY, minZ).color(.4f).setUv(maxX, maxY).setUv2(1, 1).setLight(packedLight)
+            .addVertex(model, maxX, minY, minZ).color(.4f).setUv(maxX, minY).setUv2(1, 0).setLight(packedLight)
+            .addVertex(model, minX, minY, minZ).color(.4f).setUv(minX, minY).setUv2(0, 0).setLight(packedLight)
             //Back
-            .addVertex(model, maxX, maxY, maxZ).color().setUv(maxX, maxY).setUv2(1, 1)
-            .addVertex(model, minX, maxY, maxZ).color().setUv(minX, maxY).setUv2(0, 1)
-            .addVertex(model, minX, minY, maxZ).color().setUv(minX, minY).setUv2(0, 0)
-            .addVertex(model, maxX, minY, maxZ).color().setUv(maxX, minY).setUv2(1, 0)
+            .addVertex(model, maxX, maxY, maxZ).color(.4f).setUv(maxX, maxY).setUv2(1, 1).setLight(packedLight)
+            .addVertex(model, minX, maxY, maxZ).color(.4f).setUv(minX, maxY).setUv2(0, 1).setLight(packedLight)
+            .addVertex(model, minX, minY, maxZ).color(.4f).setUv(minX, minY).setUv2(0, 0).setLight(packedLight)
+            .addVertex(model, maxX, minY, maxZ).color(.4f).setUv(maxX, minY).setUv2(1, 0).setLight(packedLight)
             //Top
-            .addVertex(model, minX, maxY, maxZ).color().setUv(minX, maxZ).setUv2(0, 1)
-            .addVertex(model, maxX, maxY, maxZ).color().setUv(maxX, maxZ).setUv2(1, 1)
-            .addVertex(model, maxX, maxY, minZ).color().setUv(maxX, minZ).setUv2(1, 0)
-            .addVertex(model, minX, maxY, minZ).color().setUv(minX, minZ).setUv2(0, 0)
+            .addVertex(model, minX, maxY, maxZ).color(.4f).setUv(minX, maxZ).setUv2(0, 1).setLight(packedLight)
+            .addVertex(model, maxX, maxY, maxZ).color(.4f).setUv(maxX, maxZ).setUv2(1, 1).setLight(packedLight)
+            .addVertex(model, maxX, maxY, minZ).color(.4f).setUv(maxX, minZ).setUv2(1, 0).setLight(packedLight)
+            .addVertex(model, minX, maxY, minZ).color(.4f).setUv(minX, minZ).setUv2(0, 0).setLight(packedLight)
             //Bottom
-            .addVertex(model, minX, minY, minZ).color().setUv(minX, minZ).setUv2(0, 0)
-            .addVertex(model, maxX, minY, minZ).color().setUv(maxX, minZ).setUv2(1, 0)
-            .addVertex(model, maxX, minY, maxZ).color().setUv(maxX, maxZ).setUv2(1, 1)
-            .addVertex(model, minX, minY, maxZ).color().setUv(minX, maxZ).setUv2(0, 1)
+            .addVertex(model, minX, minY, minZ).color(.4f).setUv(minX, minZ).setUv2(0, 0).setLight(packedLight)
+            .addVertex(model, maxX, minY, minZ).color(.4f).setUv(maxX, minZ).setUv2(1, 0).setLight(packedLight)
+            .addVertex(model, maxX, minY, maxZ).color(.4f).setUv(maxX, maxZ).setUv2(1, 1).setLight(packedLight)
+            .addVertex(model, minX, minY, maxZ).color(.4f).setUv(minX, maxZ).setUv2(0, 1).setLight(packedLight)
             //Left
-            .addVertex(model, minX, maxY, maxZ).color().setUv(maxZ, maxY).setUv2(1, 1)
-            .addVertex(model, minX, maxY, minZ).color().setUv(minZ, maxY).setUv2(0, 1)
-            .addVertex(model, minX, minY, minZ).color().setUv(minZ, minY).setUv2(0, 0)
-            .addVertex(model, minX, minY, maxZ).color().setUv(maxZ, minY).setUv2(1, 0)
+            .addVertex(model, minX, maxY, maxZ).color(.4f).setUv(maxZ, maxY).setUv2(1, 1).setLight(packedLight)
+            .addVertex(model, minX, maxY, minZ).color(.4f).setUv(minZ, maxY).setUv2(0, 1).setLight(packedLight)
+            .addVertex(model, minX, minY, minZ).color(.4f).setUv(minZ, minY).setUv2(0, 0).setLight(packedLight)
+            .addVertex(model, minX, minY, maxZ).color(.4f).setUv(maxZ, minY).setUv2(1, 0).setLight(packedLight)
             //Right
-            .addVertex(model, maxX, maxY, minZ).color().setUv(minZ, maxY).setUv2(0, 1)
-            .addVertex(model, maxX, maxY, maxZ).color().setUv(maxZ, maxY).setUv2(1, 1)
-            .addVertex(model, maxX, minY, maxZ).color().setUv(maxZ, minY).setUv2(1, 0)
-            .addVertex(model, maxX, minY, minZ).color().setUv(minZ, minY).setUv2(0, 0)
+            .addVertex(model, maxX, maxY, minZ).color(.4f).setUv(minZ, maxY).setUv2(0, 1).setLight(packedLight)
+            .addVertex(model, maxX, maxY, maxZ).color(.4f).setUv(maxZ, maxY).setUv2(1, 1).setLight(packedLight)
+            .addVertex(model, maxX, minY, maxZ).color(.4f).setUv(maxZ, minY).setUv2(1, 0).setLight(packedLight)
+            .addVertex(model, maxX, minY, minZ).color(.4f).setUv(minZ, minY).setUv2(0, 0).setLight(packedLight)
 
         val lineBuffer = multiBufferSource.getBuffer(RenderType.lines())
 
@@ -149,7 +137,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
 
         //front
         lineBuffer.addVertex(model, minX, maxY, minZ).color().setNormal(matrix3f, -1.0F, 0.0F, 0.0F)
-        if (topPercent > -widthLine && topPercent < (1 + widthLine)) {
+        if (animate && topPercent > -widthLine && topPercent < (1 + widthLine)) {
             val start = Mth.clamp(topPercent - widthLine, 0f, 1f)
             val end = Mth.clamp(topPercent + widthLine, 0f, 1f)
             val middle = Mth.clamp(topPercent, 0f, 1f)
@@ -177,7 +165,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
 
 
         lineBuffer.addVertex(model, minX, minY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
-        if (rightPercent > -heightLine && rightPercent < (1 + heightLine)) {
+        if (animate && rightPercent > -heightLine && rightPercent < (1 + heightLine)) {
             val start = Mth.clamp(rightPercent - heightLine, 0f, 1f)
             val end = Mth.clamp(rightPercent + heightLine, 0f, 1f)
             val middle = Mth.clamp(rightPercent, 0f, 1f)
@@ -205,7 +193,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
 
 
         lineBuffer.addVertex(model, minX, minY, minZ).color().setNormal(matrix3f, 1.0F, 0.0F, 0.0F);
-        if (bottomPercent > -widthLine && bottomPercent < (1 + widthLine)) {
+        if (animate && bottomPercent > -widthLine && bottomPercent < (1 + widthLine)) {
             val start = Mth.clamp(bottomPercent + widthLine, 0f, 1f)
             val end = Mth.clamp(bottomPercent - widthLine, 0f, 1f)
             val middle = Mth.clamp(bottomPercent, 0f, 1f)
@@ -233,7 +221,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
 
 
         lineBuffer.addVertex(model, maxX, maxY, minZ).color().setNormal(matrix3f, 0.0F, 1.0F, 0.0F)
-        if (leftPercent > -heightLine && leftPercent < (1 + heightLine)) {
+        if (animate && leftPercent > -heightLine && leftPercent < (1 + heightLine)) {
             val start = Mth.clamp(leftPercent - heightLine, 0f, 1f)
             val end = Mth.clamp(leftPercent + heightLine, 0f, 1f)
             val middle = Mth.clamp(leftPercent, 0f, 1f)

@@ -7,6 +7,7 @@ import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.api.context.drain
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.travelHistory
 import earth.terrarium.tempad.common.utils.DATE_BYTE_CODEC
@@ -23,8 +24,7 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
             ),
             NetworkHandle.handle { packet, player ->
                 val ctx = packet.ctx.getCtx(player)
-                if ({ ctx.stack.item is TempadItem } !in player.inventory) return@handle
-
+                if (!player.isCreative && !ctx.drain(1000)) return@handle
                 player.travelHistory.backtrackTo(player, packet.time)
             }
         )

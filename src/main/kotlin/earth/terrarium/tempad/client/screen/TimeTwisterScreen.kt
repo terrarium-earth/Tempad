@@ -108,7 +108,7 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
     }
 
     private fun select(index: Int): Boolean {
-        locations[index]?.let { (date, _) ->
+        locations.getOrNull(index)?.let { (date, _) ->
             BackTrackLocation(date, ctx).sendToServer()
         }
         onClose()
@@ -192,15 +192,13 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
                     16,
                     16
                 )
-                /*
                 if (hovered) {
                     setTooltipForNextRenderPass(
                         listOf(
-                            Component.translatable(entry.profile.name).visualOrderText
+
                         )
                     )
                 }
-                 */
             }
         }
     }

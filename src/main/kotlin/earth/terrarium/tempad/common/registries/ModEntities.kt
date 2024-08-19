@@ -34,7 +34,6 @@ object ModEntities {
 
     val TIMEDOOR_ENTITY by entities.register("timedoor",
         entityType(::TimedoorEntity, MobCategory.MISC) {
-            sized(1.4F, 2.3F)
             noSave()
         }
     )

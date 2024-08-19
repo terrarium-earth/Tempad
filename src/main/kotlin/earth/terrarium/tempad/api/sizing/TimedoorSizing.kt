@@ -17,13 +17,17 @@ interface TimedoorSizing {
     fun heightAtPercent(percent: Float): Float
     fun depthAtPercent(percent: Float): Float
 
-    fun placeTimedoor(pos: Vec3, angle: Float, timedoor: TimedoorEntity)
+    fun placeTimedoor(type: DoorType, anchor: Vec3, angle: Float, timedoor: TimedoorEntity)
 
     fun TimedoorEntity.isInside(entity: Entity): Boolean
 
     companion object {
         val codec: ByteCodec<TimedoorSizing> = SizingType.codec.dispatch({ it.codec as ByteCodec<TimedoorSizing> }, { it.type })
     }
+}
+
+enum class DoorType {
+    ENTRY, EXIT
 }
 
 data class SizingType<T: TimedoorSizing>(val id: ResourceLocation, val codec: ByteCodec<T>) {

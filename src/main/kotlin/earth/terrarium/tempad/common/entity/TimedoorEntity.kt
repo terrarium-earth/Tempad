@@ -9,6 +9,7 @@ import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
 import earth.terrarium.tempad.api.locations.offsetLocation
 import earth.terrarium.tempad.api.sizing.DefaultSizing
+import earth.terrarium.tempad.api.sizing.DoorType
 import earth.terrarium.tempad.api.sizing.TimedoorSizing
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.items.chrononContainer
@@ -26,8 +27,10 @@ import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.Tags
+import java.sql.Time
 import java.util.UUID
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
@@ -44,8 +47,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             if (!player.isCreative() && (stack.item !is TempadItem || stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
-            timedoor.pos = offsetLocation(player.position(), player.yHeadRot, CommonConfig.TimeDoor.placementDistance)
-            timedoor.yRot = player.yHeadRot
+            timedoor.sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
+            timedoor.sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, timedoor)
             timedoor.setLocation(location)
             // timedoor.closingTime = -1
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
@@ -67,7 +70,12 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var targetDimension by DataDelegate(TARGET_DIMENSION)
     var color by DataDelegate(COLOR)
     var closingTime by DataDelegate(CLOSING_TIME)
-    var sizing: TimedoorSizing by DataDelegate(SIZING)
+    var sizing: TimedoorSizing
+        get() = entityData.get(SIZING)
+        set(value) {
+            entityData.set(SIZING, value)
+            this.fixupDimensions()
+        }
 
     var linkedPortalEntity: TimedoorEntity? = null
         private set
@@ -93,7 +101,13 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun isAlwaysTicking() = true
 
     override fun tick() {
-        if (level().isClientSide()) return
+        if (level().isClientSide()) {
+            if (sizing.dimensions.width != bbWidth || sizing.dimensions.height != bbHeight) {
+                this.fixupDimensions()
+                this.boundingBox = makeBoundingBox()
+            }
+            return
+        }
         val targetLevel = targetLevel
         val entities = level().getEntities<Entity>(boundingBox, ::canTeleport)
         if (entities.isEmpty() || targetLevel == null) {
@@ -143,11 +157,11 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         val targetPos = targetPos
         if (targetLevel == null || linkedPortalEntity != null) return
         val targetPortal = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, targetLevel)
-        targetPortal.pos = offsetLocation(targetPos, targetAngle + 180)
         targetPortal.linkedPortalEntity = this
         targetPortal.closingTime = CommonConfig.TimeDoor.idleAfterOwnerEnter
         targetPortal.setLocation(selfLocation)
-        targetPortal.yRot = targetAngle + 180f
+        targetPortal.sizing = sizing
+        sizing.placeTimedoor(DoorType.EXIT, targetPos, targetAngle + 180f, targetPortal)
         linkedPortalEntity = targetPortal
         targetLevel.addFreshEntity(targetPortal)
     }

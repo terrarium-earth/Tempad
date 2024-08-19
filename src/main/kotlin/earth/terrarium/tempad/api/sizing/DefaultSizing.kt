@@ -1,6 +1,8 @@
 package earth.terrarium.tempad.api.sizing
 
 import com.teamresourceful.bytecodecs.base.ByteCodec
+import earth.terrarium.tempad.api.locations.offsetLocation
+import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.tempadId
 import net.minecraft.util.Mth
@@ -15,7 +17,7 @@ enum class DefaultSizing: TimedoorSizing {
         val depth: Float = 6 / 16f
         override val showLineAnimation: Boolean = true
         override val type: SizingType<*> = SizingType("default".tempadId, ByteCodec.unit(DEFAULT))
-        override val dimensions: EntityDimensions = EntityDimensions.fixed(width / 16f, height / 16f)
+        override val dimensions: EntityDimensions = EntityDimensions.fixed(width, height)
 
         override fun widthAtPercent(percent: Float): Float {
             if (percent < 0.5) return width * percent * 2
@@ -23,14 +25,16 @@ enum class DefaultSizing: TimedoorSizing {
         }
 
         override fun heightAtPercent(percent: Float): Float {
-            if (percent > 0.5) return height * (percent - 0.5f) * 2
-            return height
+            if (percent > 0.5) return Mth.lerp((percent - 0.5f) * 2, 0.2f, height)
+            return 0.2f
         }
 
         override fun depthAtPercent(percent: Float): Float = depth
 
-        override fun placeTimedoor(pos: Vec3, angle: Float, timedoor: TimedoorEntity) {
-            TODO("Not yet implemented")
+        override fun placeTimedoor(type: DoorType, anchor: Vec3, angle: Float, timedoor: TimedoorEntity) {
+            val offset = offsetLocation(anchor, angle, if(type == DoorType.ENTRY) CommonConfig.TimeDoor.placementDistance else 1)
+            timedoor.setPos(offset.x, anchor.y, offset.z)
+            timedoor.yRot = angle
         }
 
         override fun TimedoorEntity.isInside(entity: Entity): Boolean {
@@ -57,11 +61,15 @@ enum class DefaultSizing: TimedoorSizing {
         override fun heightAtPercent(percent: Float): Float = height
 
         override fun depthAtPercent(percent: Float): Float {
-            if (percent > 0.5) return depth * (percent - 0.5f) * 2
-            return depth
+            if (percent > 0.5) return Mth.lerp((percent - 0.5f) * 2, 0.2f, depth)
+            return 0.2f
         }
 
-        override fun placeTimedoor(pos: Vec3, angle: Float, timedoor: TimedoorEntity) {
+        override fun placeTimedoor(type: DoorType, anchor: Vec3, angle: Float, timedoor: TimedoorEntity) {
+            when (type) {
+                DoorType.ENTRY -> timedoor.setPos(anchor.x, anchor.y, anchor.z)
+                DoorType.EXIT -> timedoor.setPos(anchor.x, anchor.y + 2.4f, anchor.z)
+            }
         }
 
         override fun TimedoorEntity.isInside(entity: Entity) = true
