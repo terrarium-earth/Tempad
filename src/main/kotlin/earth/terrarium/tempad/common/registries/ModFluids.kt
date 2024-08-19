@@ -30,7 +30,11 @@ object ModFluids {
         canPlace = false
     }
 
-    val chronon: Fluid by registry.register("chronon") {
+    val stillChronon: Fluid by registry.register("chronon") {
         ResourcefulFlowingFluid.Still(chrononData)
+    }
+
+    val flowingChronon: Fluid by registry.register("flowing_chronon") {
+        ResourcefulFlowingFluid.Flowing(chrononData)
     }
 }

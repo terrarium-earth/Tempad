@@ -5,6 +5,8 @@ package earth.terrarium.tempad.client
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.datafixers.util.Either
+import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
+import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.PlayerPos
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
@@ -78,6 +80,16 @@ object TempadClient {
 
     val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.staticLocation != null }
 
+    val clientFluidRegistry = ResourcefulClientFluidRegistry(Tempad.MOD_ID)
+
+    val chrononRenderer = ClientFluidProperties.builder().apply {
+        still("block/water_still".vanillaId)
+        flowing("block/water_flow".vanillaId)
+        overlay("block/water_overlay".vanillaId)
+        screenOverlay("textures/misc/underwater.png".vanillaId)
+        tintColor(Tempad.ORANGE.value)
+    }
+
     fun step(value: Float, step: Float): Float {
         if (value >= 0.9) return 1f
         return value - value % step
@@ -85,6 +97,7 @@ object TempadClient {
 
     init {
         NeoForge.EVENT_BUS.addListener(::addTooltipComponent)
+        clientFluidRegistry.register("chronon", chrononRenderer)
     }
 
     @SubscribeEvent @JvmStatic

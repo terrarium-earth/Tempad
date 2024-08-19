@@ -28,9 +28,9 @@ interface ItemContext {
 
 fun ItemContext.drain(amount: Int): Boolean {
     val handler = stack[Capabilities.FluidHandler.ITEM] ?: return false
-    val drained = handler.drain(FluidStack(ModFluids.chronon, amount), IFluidHandler.FluidAction.SIMULATE)
+    val drained = handler.drain(FluidStack(ModFluids.stillChronon, amount), IFluidHandler.FluidAction.SIMULATE)
     if (drained.amount != amount) return false
-    handler.drain(FluidStack(ModFluids.chronon, amount), IFluidHandler.FluidAction.EXECUTE)
+    handler.drain(FluidStack(ModFluids.stillChronon, amount), IFluidHandler.FluidAction.EXECUTE)
     return true
 }
 

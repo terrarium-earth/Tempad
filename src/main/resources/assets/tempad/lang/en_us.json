@@ -65,6 +65,8 @@
   "item.tempad.temporal_beacon": "Temporal Beacon",
   "item.tempad.time_twister": "Time Twister",
 
+  "fluid_type.tempad.chronon": "Chronon",
+
   "fuel.tempad.empty": "Empty",
   "fuel.tempad.empty.description": "This item cannot hold fuel",
 
