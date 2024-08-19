@@ -11,8 +11,9 @@ import net.minecraft.world.phys.Vec3
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_CODEC
+import net.minecraft.world.inventory.tooltip.TooltipComponent
 
-data class PlayerPos(val playerProfile: GameProfile): NamedGlobalPos {
+data class PlayerPos(val playerProfile: GameProfile): NamedGlobalPos, TooltipComponent {
     val player: Player? get() = Tempad.server?.playerList?.getPlayer(playerProfile.id)
 
     override val color: Color = Tempad.ORANGE

@@ -7,6 +7,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.sizing.TimedoorSizing
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.VEC3_BYTE_CODEC
@@ -25,6 +26,7 @@ object ModEntities {
     val colorSerializer by serializers.register("color") { createSerializer(COLOR_BYTE_CODEC) }
     val vec3Serializer by serializers.register("vec3") { createSerializer(VEC3_BYTE_CODEC) }
     val dimensionKeySerializer by serializers.register("dimension_key") { createSerializer(ExtraByteCodecs.DIMENSION) }
+    val sizingSerializer by serializers.register("sizing") { createSerializer(TimedoorSizing.codec) }
 
     private fun <T> createSerializer(codec: ByteCodec<T>): EntityDataSerializer<T> {
         return EntityDataSerializer.forValueType(StreamCodecByteCodec.to(codec))

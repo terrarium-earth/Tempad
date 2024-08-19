@@ -6,6 +6,7 @@ import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.ctx
 import earth.terrarium.tempad.common.utils.getSlot
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
@@ -15,6 +16,7 @@ import net.minecraft.world.inventory.ClickAction
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 
 class TempadItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
@@ -34,7 +36,6 @@ class TempadItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
 
         return InteractionResultHolder.success(stack)
     }
-
 
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
         if (action == ClickAction.SECONDARY) {
@@ -84,6 +85,15 @@ class TempadItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
     }
 
     override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean = false
+
+    override fun appendHoverText(
+        stack: ItemStack,
+        context: TooltipContext,
+        tooltipComponents: MutableList<Component>,
+        tooltipFlag: TooltipFlag,
+    ) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
+    }
 }
 
 class TempadContainer(stack: ItemStack) : ChrononContainer(stack, 0) {

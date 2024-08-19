@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.client
+package earth.terrarium.tempad.client.tooltip
 
 import com.teamresourceful.resourcefullibkt.client.scissor
 import earth.terrarium.tempad.Tempad

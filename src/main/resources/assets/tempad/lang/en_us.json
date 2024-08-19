@@ -152,5 +152,6 @@
   "jade.tempad.will_close": "Closing in %s seconds",
   "jade.tempad.closing": "Closing...",
   "jade.tempad.pos": "Teleporting to %s at %s",
-  "misc.tempad.return": "Returning to %s"
+  "misc.tempad.return": "Returning to %s",
+  "tempad.tooltip.player_pos": "Targetting: %s"
 }

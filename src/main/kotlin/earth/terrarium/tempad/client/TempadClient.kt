@@ -6,9 +6,12 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.datafixers.util.Either
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.locations.PlayerPos
+import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
+import earth.terrarium.tempad.client.tooltip.*
 import earth.terrarium.tempad.common.items.ChrononContainer
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
@@ -21,8 +24,8 @@ import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
 import net.minecraft.client.renderer.item.ItemProperties
-import net.minecraft.network.chat.FormattedText
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
@@ -120,11 +123,19 @@ object TempadClient {
     @SubscribeEvent @JvmStatic
     fun registerTooltip(event: RegisterClientTooltipComponentFactoriesEvent) {
         event.register(ChrononData::class.java, ::ChrononTooltip)
+        event.register(PlayerPos::class.java, ::PlayerPosTooltip)
+        event.register(StaticNamedGlobalPos::class.java, ::StaticPosTooltip)
     }
 
     fun addTooltipComponent(event: RenderTooltipEvent.GatherComponents) {
         (event.itemStack[Capabilities.FluidHandler.ITEM] as? ChrononContainer)?.let {
             event.tooltipElements.add(Either.right(it.tooltip))
+        }
+
+        if(event.itemStack.`is`(ModItems.locationCard)) {
+            (event.itemStack.staticLocation?.pos as? TooltipComponent)?.let {
+                event.tooltipElements.add(Either.right(it))
+            }
         }
     }
 }

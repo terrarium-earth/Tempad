@@ -16,9 +16,10 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import earth.terrarium.tempad.tempadId
 import net.minecraft.network.chat.ComponentSerialization
+import net.minecraft.world.inventory.tooltip.TooltipComponent
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 
-class StaticNamedGlobalPos(override val name: Component, override val pos: Vec3, override val dimension: ResourceKey<Level>, override val angle: Float, override val color: Color): NamedGlobalPos {
+class StaticNamedGlobalPos(override val name: Component, override val pos: Vec3, override val dimension: ResourceKey<Level>, override val angle: Float, override val color: Color): NamedGlobalPos, TooltipComponent {
     companion object {
         val CODEC: MapCodec<StaticNamedGlobalPos> = RecordCodecBuilder.mapCodec {
             it.group(

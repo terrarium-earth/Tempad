@@ -50,6 +50,7 @@ class Tempad(bus: IEventBus) {
         CONFIGURATOR.register(CommonConfig::class.java)
 
         ModApps.init()
+        ModSizing.init()
         ModAttachments.registry.init()
         ModComponents.registry.init()
         ModContext.init()

@@ -8,6 +8,8 @@ import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
 import earth.terrarium.tempad.api.locations.offsetLocation
+import earth.terrarium.tempad.api.sizing.DefaultSizing
+import earth.terrarium.tempad.api.sizing.TimedoorSizing
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.items.chrononContainer
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
@@ -20,10 +22,7 @@ import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.util.Mth
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.RelativeMovement
+import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
@@ -38,6 +37,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
         private val TARGET_POS = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
         private val TARGET_DIMENSION = createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
+        private val SIZING = createDataKey<TimedoorEntity, TimedoorSizing>(ModEntities.sizingSerializer)
 
         fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos) {
             val stack = ctx.stack
@@ -55,16 +55,10 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
     }
 
-    private fun isInside(entity: Entity): Boolean {
-        val hypotenuse = (entity.x - x) * (entity.x - x) + (entity.z - z) * (entity.z - z)
-        val alpha = Mth.atan2((entity.z - z), (entity.x - x)).toFloat()
-        val theta = Mth.sin(alpha - yRot * Mth.DEG_TO_RAD)
-        val maxDistance = 0.2 + entity.bbWidth / 2f
-        return theta * theta * hypotenuse < maxDistance * maxDistance
-    }
-
     private fun canTeleport(entity: Entity): Boolean {
-        return entity !is TimedoorEntity && isInside(entity) && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
+        with(sizing) {
+            return entity !is TimedoorEntity && isInside(entity) && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
+        }
     }
 
     var targetAngle = 0f
@@ -73,6 +67,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var targetDimension by DataDelegate(TARGET_DIMENSION)
     var color by DataDelegate(COLOR)
     var closingTime by DataDelegate(CLOSING_TIME)
+    var sizing: TimedoorSizing by DataDelegate(SIZING)
 
     var linkedPortalEntity: TimedoorEntity? = null
         private set
@@ -80,7 +75,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var owner: UUID? = null
 
     private val targetLevel: ServerLevel?
-        get() = targetDimension?.let { level().server[it] }
+        get() = targetDimension.let { level().server[it] }
 
     private val selfLocation: StaticNamedGlobalPos
         get() = StaticNamedGlobalPos(Component.translatable("misc.tempad.return", name), StaticNamedGlobalPos.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
@@ -90,7 +85,10 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         pBuilder.define(COLOR, Tempad.ORANGE)
         pBuilder.define(TARGET_POS, Vec3.ZERO)
         pBuilder.define(TARGET_DIMENSION, Level.OVERWORLD)
+        pBuilder.define(SIZING, DefaultSizing.DEFAULT)
     }
+
+    override fun getDimensions(pose: Pose): EntityDimensions = sizing.dimensions
 
     override fun isAlwaysTicking() = true
 
@@ -143,7 +141,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     private fun tryInitReceivingPortal() {
         val targetLevel = targetLevel
         val targetPos = targetPos
-        if (targetLevel == null || linkedPortalEntity != null || targetPos == null) return
+        if (targetLevel == null || linkedPortalEntity != null) return
         val targetPortal = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, targetLevel)
         targetPortal.pos = offsetLocation(targetPos, targetAngle + 180)
         targetPortal.linkedPortalEntity = this
