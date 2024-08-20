@@ -7,6 +7,7 @@ import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.color.Color
+import earth.terrarium.tempad.common.registries.savedPositions
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.VEC3_BYTE_CODEC
 import net.minecraft.network.chat.Component
@@ -16,6 +17,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import earth.terrarium.tempad.tempadId
 import net.minecraft.network.chat.ComponentSerialization
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 
@@ -63,4 +65,9 @@ class StaticNamedGlobalPos(override val name: Component, override val pos: Vec3,
     )
 
     override val type: LocationType<*> = Companion.type
+
+    override fun consume(player: Player): Component {
+        player.savedPositions += this
+        return Component.translatable("location.tempad.saved")
+    }
 }

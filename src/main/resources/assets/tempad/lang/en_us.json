@@ -64,6 +64,8 @@
   "item.tempad.chronon_generator": "Chronon Generator",
   "item.tempad.temporal_beacon": "Temporal Beacon",
   "item.tempad.time_twister": "Time Twister",
+  "item.tempad.new_location_upgrade": "Upgrade: Location Saving",
+  "item.tempad.player_teleport_upgrade": "Upgrade: Teleporting to Players",
 
   "fluid_type.tempad.chronon": "Chronon",
 

@@ -2,6 +2,7 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.macro.MacroRegistry
+import earth.terrarium.tempad.client.tooltip.tooltip
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.ctx
@@ -14,12 +15,14 @@ import net.minecraft.world.entity.SlotAccess
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ClickAction
 import net.minecraft.world.inventory.Slot
+import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
+import java.util.*
 
-class TempadItem : Item(Properties().stacksTo(1)), ChrononAcceptor {
+class TempadItem : ChrononItem() {
 
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(hand)

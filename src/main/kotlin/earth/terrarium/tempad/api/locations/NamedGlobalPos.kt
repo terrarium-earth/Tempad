@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
@@ -26,6 +27,8 @@ interface NamedGlobalPos {
 
     val display: List<Component>
     val type: LocationType<*>
+
+    fun consume(player: Player): Component
 
     companion object {
         val codec: Codec<NamedGlobalPos> = LocationType.codec.dispatch({ it.type }, { it.codec })

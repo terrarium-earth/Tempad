@@ -14,7 +14,9 @@ class ChrononTooltip(container: ChrononData): ClientTooltipComponent {
 
     val percentage = container.content.toDouble() / container.capacity.toDouble()
 
-    override fun getHeight(): Int = 16
+    val contentHeight = 16
+
+    override fun getHeight(): Int = contentHeight + 4
     override fun getWidth(font: Font): Int = (font.width(text) + 8).coerceAtLeast(56)
 
     fun GuiGraphics.drawCenteredText(font: Font, x: Int, y: Int, color: Int) {
@@ -23,17 +25,17 @@ class ChrononTooltip(container: ChrononData): ClientTooltipComponent {
 
     override fun renderImage(font: Font, x: Int, y: Int, graphics: GuiGraphics) {
         val width = getWidth(font)
-        graphics.fill(x, y, x + width, y + height, Tempad.ORANGE.value)
+        graphics.fill(x, y, x + width, y + contentHeight, Tempad.ORANGE.value)
         val barWidth = (width * percentage).toInt()
-        graphics.fill(x + barWidth, y, x + width, y + height, Tempad.DARK_ORANGE.value)
-        graphics.renderOutline(x, y, width, height, 0x66000000)
-        graphics.renderOutline(x + 1, y + 1, width - 2, height - 2, 0x33FFFFFF)
+        graphics.fill(x + barWidth, y, x + width, y + contentHeight, Tempad.DARK_ORANGE.value)
+        graphics.renderOutline(x, y, width, contentHeight, 0x66000000)
+        graphics.renderOutline(x + 1, y + 1, width - 2, contentHeight - 2, 0x33FFFFFF)
 
-        graphics.scissor(x, y, barWidth, height) {
+        graphics.scissor(x, y, barWidth, contentHeight) {
             graphics.drawCenteredText(font, x + width / 2, y + 4, 0xFF000000.toInt())
         }
 
-        graphics.scissor(x + barWidth, y, width - barWidth, height) {
+        graphics.scissor(x + barWidth, y, width - barWidth, contentHeight) {
             graphics.drawCenteredText(font, x + width / 2, y + 4, Tempad.ORANGE.value)
         }
     }

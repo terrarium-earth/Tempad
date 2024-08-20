@@ -17,7 +17,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
 
-class ChrononGenerator : Item(Properties().stacksTo(1)), ChrononAcceptor {
+class ChrononGenerator : ChrononItem() {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         super.inventoryTick(stack, level, entity, slot, selected)
         if (level.isClientSide || entity.tickCount % 24 != 0) return // 1 mb every 1.2 seconds, 1 bucket per day
@@ -26,14 +26,14 @@ class ChrononGenerator : Item(Properties().stacksTo(1)), ChrononAcceptor {
         stack.chrononContainer += 1
 
         ContextRegistry.locate(entity) {
-            it.item is ChrononAcceptor && it.chrononContainer.hasRoom && it !== stack
+            it.item is ChrononItem && it.chrononContainer.hasRoom && it !== stack
         }?.let {
             move(stack.chrononContainer, it.stack.chrononContainer, 1000)
         }
     }
 
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
-        if (action == ClickAction.SECONDARY && slot.hasItem() && slot.contents.item is ChrononAcceptor) {
+        if (action == ClickAction.SECONDARY && slot.hasItem() && slot.contents.item is ChrononItem) {
             move(stack.chrononContainer, slot.contents.chrononContainer, 1000)
             return true
         }

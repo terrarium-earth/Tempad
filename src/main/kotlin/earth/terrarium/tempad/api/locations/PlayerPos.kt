@@ -35,6 +35,10 @@ data class PlayerPos(val playerProfile: GameProfile): NamedGlobalPos, TooltipCom
 
     override val type: LocationType<*> = Companion.type
 
+    override fun consume(player: Player): Component {
+        return Component.translatable("location.tempad.player.error")
+    }
+
     companion object {
         val byteCodec = GAME_PROFILE_BYTE_CODEC.map(::PlayerPos, PlayerPos::playerProfile)
         val codec = GAME_PROFILE_CODEC.xmap(::PlayerPos, PlayerPos::playerProfile)

@@ -4,10 +4,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.items.ChrononGenerator
-import earth.terrarium.tempad.common.items.TempadItem
-import earth.terrarium.tempad.common.items.TemporalBeaconItem
-import earth.terrarium.tempad.common.items.TimeTwisterItem
+import earth.terrarium.tempad.common.items.*
 import earth.terrarium.tempad.common.utils.creativeModeTab
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -33,7 +30,7 @@ object ModItems {
     val temporalBeacon: Item by registry.register("temporal_beacon") { TemporalBeaconItem() }
     val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }
 
-    val locationCard: Item by registry.register("location_card") { Item(Item.Properties()) }
+    val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties()) }
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }
 }

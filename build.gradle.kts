@@ -43,6 +43,7 @@ dependencies {
     val mekanismVersion: String by project
     val patchouliVersion: String by project
     val jadeVersion: String by project
+    val jeiVersion: String by project
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
@@ -69,7 +70,14 @@ dependencies {
 
     compileOnly("vazkii.patchouli:Patchouli:${patchouliVersion}:api")
     runtimeOnly("vazkii.patchouli:Patchouli:${patchouliVersion}")
+
     implementation("maven.modrinth:jade:$jadeVersion")
+
+    // compile against the JEI API but do not include it at runtime
+    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jeiVersion}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jeiVersion}")
+    // at runtime, use the full JEI jar for NeoForge
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jeiVersion}")
 }
 
 java {

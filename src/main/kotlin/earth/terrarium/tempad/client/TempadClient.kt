@@ -97,7 +97,6 @@ object TempadClient {
     }
 
     init {
-        NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, ::addTooltipComponent)
         clientFluidRegistry.register("chronon", chrononRenderer)
     }
 
@@ -139,17 +138,5 @@ object TempadClient {
         event.register(ChrononData::class.java, ::ChrononTooltip)
         event.register(PlayerPos::class.java, ::PlayerPosTooltip)
         event.register(StaticNamedGlobalPos::class.java, ::StaticPosTooltip)
-    }
-
-    fun addTooltipComponent(event: RenderTooltipEvent.GatherComponents) {
-        (event.itemStack[Capabilities.FluidHandler.ITEM] as? ChrononContainer)?.let {
-            event.tooltipElements.add(Either.right(it.tooltip))
-        }
-
-        if(event.itemStack.`is`(ModItems.locationCard)) {
-            (event.itemStack.staticLocation?.pos as? TooltipComponent)?.let {
-                event.tooltipElements.add(Either.right(it))
-            }
-        }
     }
 }
