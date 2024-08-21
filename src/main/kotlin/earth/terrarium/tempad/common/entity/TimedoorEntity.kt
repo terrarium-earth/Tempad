@@ -2,20 +2,18 @@ package earth.terrarium.tempad.common.entity
 
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.event.TimedoorEvent
-import earth.terrarium.tempad.common.config.CommonConfig
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.context.drain
+import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
-import earth.terrarium.tempad.api.locations.offsetLocation
+import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.sizing.DefaultSizing
 import earth.terrarium.tempad.api.sizing.DoorType
 import earth.terrarium.tempad.api.sizing.TimedoorSizing
-import earth.terrarium.tempad.common.items.TempadItem
-import earth.terrarium.tempad.common.items.chrononContainer
+import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
+import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.nbt.CompoundTag
@@ -28,11 +26,9 @@ import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
-import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.Tags
-import java.sql.Time
-import java.util.UUID
+import java.util.*
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
@@ -45,7 +41,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
         fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos) {
             val stack = ctx.stack
-            if (!player.isCreative() && (stack.item !is TempadItem || stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
+            if (!player.isCreative() && (stack.item === ModItems.tempad || stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
             timedoor.sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT

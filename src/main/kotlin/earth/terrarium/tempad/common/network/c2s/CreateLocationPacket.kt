@@ -10,6 +10,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.items.TempadItem
+import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.savedPositions
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
 import net.minecraft.network.chat.Component
@@ -25,7 +26,7 @@ data class CreateLocationPacket(val name: String, val color: Color, val ctx: Con
                 ::CreateLocationPacket
             ),
             NetworkHandle.handle { message, player ->
-                if ({ message.ctx.getCtx(player).stack.item is TempadItem } !in player.inventory) return@handle
+                if ({ message.ctx.getCtx(player).stack.item === ModItems.tempad } !in player.inventory) return@handle
                 player.savedPositions += StaticNamedGlobalPos(
                     Component.literal(message.name),
                     player.position(),

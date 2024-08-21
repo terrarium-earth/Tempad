@@ -8,7 +8,6 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.api.context.drain
-import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.travelHistory
 import earth.terrarium.tempad.common.utils.DATE_BYTE_CODEC
 import java.util.*

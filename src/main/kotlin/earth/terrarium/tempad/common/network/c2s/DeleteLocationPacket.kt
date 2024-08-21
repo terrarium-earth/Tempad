@@ -10,6 +10,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.items.TempadItem
+import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.resources.ResourceLocation
 import java.util.UUID
 
@@ -24,7 +25,7 @@ data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: Resou
                 ::DeleteLocationPacket
             ),
             NetworkHandle.handle { message, player ->
-                if ({ it.item is TempadItem } !in player.inventory) return@handle
+                if ({ it.item === ModItems.tempad } !in player.inventory) return@handle
                 TempadLocations[player, message.ctx.getCtx(player), message.providerId]!! -= message.locationId
             }
         )

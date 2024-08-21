@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.menu
 
 import earth.terrarium.tempad.common.apps.AppContent
-import earth.terrarium.tempad.common.items.TempadItem
+import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.utils.get
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
@@ -55,6 +55,6 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
     }
 
     inner class LockedSlot(val inventory: Inventory, slotIndex: Int, x: Int, y: Int) : Slot(inventory, slotIndex, x, y) {
-        override fun mayPickup(pPlayer: Player): Boolean = inventory[slotIndex].item !is TempadItem
+        override fun mayPickup(pPlayer: Player): Boolean = inventory[slotIndex].item === ModItems.tempad
     }
 }
