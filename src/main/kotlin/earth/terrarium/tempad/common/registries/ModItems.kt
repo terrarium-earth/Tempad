@@ -33,5 +33,5 @@ object ModItems {
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties()) }
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }
-    val chronomiumIngot: Item by registry.register("chronomium_ingot") { Item(Item.Properties()) }
+    val monotonumIngot: Item by registry.register("inexorable_alloy") { Item(Item.Properties()) }
 }
