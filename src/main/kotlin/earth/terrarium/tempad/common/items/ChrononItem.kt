@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.items
 
+import earth.terrarium.tempad.client.tooltip.ChrononData
 import earth.terrarium.tempad.client.tooltip.tooltip
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.minecraft.world.item.Item

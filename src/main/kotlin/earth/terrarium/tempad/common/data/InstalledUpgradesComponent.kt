@@ -4,8 +4,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.inventory.tooltip.TooltipComponent
 
-data class InstalledUpgradesComponent(val upgrades: List<ResourceLocation>) {
+data class InstalledUpgradesComponent(val upgrades: List<ResourceLocation>): TooltipComponent {
     companion object {
         val codec = RecordCodecBuilder.create { it ->
             it.group(
@@ -25,5 +26,9 @@ data class InstalledUpgradesComponent(val upgrades: List<ResourceLocation>) {
 
     operator fun minus(upgrade: ResourceLocation): InstalledUpgradesComponent {
         return InstalledUpgradesComponent(upgrades - upgrade)
+    }
+
+    operator fun contains(upgrade: ResourceLocation): Boolean {
+        return upgrade in upgrades
     }
 }

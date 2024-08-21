@@ -1,0 +1,32 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#B#",
+        "ETR",
+        "#L#"
+    ],
+    "key": {
+        "#": {
+            "item": "tempad:chronomium_ingot"
+        },
+        "B": {
+            "item": "minecraft:stone_button"
+        },
+        "E": {
+            "item": "minecraft:emerald"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        },
+        "L": {
+            "item": "minecraft:redstone_lamp"
+        },
+        "T": {
+            "item": "minecraft:tinted_glass"
+        }
+    },
+    "result": {
+        "id": "tempad:status_emitter",
+        "count": 1
+    }
+}

@@ -12,14 +12,14 @@
             "item": "minecraft:paper"
         },
         "C": {
-            "item": "minecraft:compass"
+            "item": "tempad:chronomium_ingot"
         },
         "B": {
             "item": "minecraft:black_dye"
         }
     },
     "result": {
-        "item": "tempad:location_card",
-        "count": 1
+        "id": "tempad:location_card",
+        "count": 4
     }
 }

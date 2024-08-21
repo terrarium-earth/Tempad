@@ -6,6 +6,7 @@ import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.api.context.SyncableContext
+import earth.terrarium.tempad.api.context.drain
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
 import earth.terrarium.tempad.api.locations.offsetLocation
 import earth.terrarium.tempad.api.sizing.DefaultSizing
@@ -53,7 +54,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             // timedoor.closingTime = -1
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
             if (event.isCanceled) return
-            stack.chrononContainer -= 1000
+            ctx.drain(1000)
+            player.cooldowns.addCooldown(stack.item, CommonConfig.TimeDoor.idleAfterEnter)
             player.level().addFreshEntity(timedoor)
         }
     }

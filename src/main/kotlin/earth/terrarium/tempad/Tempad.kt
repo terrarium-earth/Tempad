@@ -2,13 +2,11 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
-import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.items.ChrononContainer
+import earth.terrarium.tempad.common.items.InfiniteChronons
 import earth.terrarium.tempad.common.items.TempadContainer
-import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
-import earth.terrarium.tempad.common.location_handlers.WarpsHandler
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.register
 import net.minecraft.resources.ResourceLocation
@@ -44,6 +42,8 @@ class Tempad(bus: IEventBus) {
 
         val server: MinecraftServer?
             get() = ServerLifecycleHooks.getCurrentServer();
+
+        val playerUpgrade: ResourceLocation = "player".tempadId
     }
 
     init {
@@ -61,7 +61,6 @@ class Tempad(bus: IEventBus) {
         ModMacros.init()
         ModMenus.registry.init()
         ModNetworking.init()
-        ModRecipes.types.init()
         ModRecipes.serializers.init()
         ModFluids.dataRegistry.init()
         ModFluids.registry.init()
@@ -70,7 +69,7 @@ class Tempad(bus: IEventBus) {
         bus.addListener { event: RegisterCapabilitiesEvent ->
             val fluidHandlers = event.register(Capabilities.FluidHandler.ITEM)
 
-            fluidHandlers[ModItems.chrononGenerator] = { stack, _ ->
+            fluidHandlers[ModItems.chronometer] = { stack, _ ->
                 ChrononContainer(stack, 32000)
             }
 
@@ -80,6 +79,10 @@ class Tempad(bus: IEventBus) {
 
             fluidHandlers[ModItems.timeTwister] = { stack, _ ->
                 ChrononContainer(stack, 4000)
+            }
+
+            fluidHandlers[ModItems.sacredChronometer] = { stack, _ ->
+                InfiniteChronons(stack)
             }
         }
 

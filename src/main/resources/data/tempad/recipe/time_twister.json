@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#G ",
+        "#TE",
+        "#G "
+    ],
+    "key": {
+        "#": {
+            "item": "tempad:chronomium_ingot"
+        },
+        "E": {
+            "item": "minecraft:ender_pearl"
+        },
+        "T": {
+            "item": "minecraft:tinted_glass"
+        },
+        "G": {
+            "item": "minecraft:gold_ingot"
+        }
+    },
+    "result": {
+        "id": "tempad:time_twister",
+        "count": 1
+    }
+}

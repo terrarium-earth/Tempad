@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#A",
+        "A#"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:copper_ingot"
+        },
+        "A": {
+            "item": "minecraft:netherite_scrap"
+        }
+    },
+    "result": {
+        "id": "tempad:chronomium_ingot",
+        "count": 2
+    }
+}

@@ -9,7 +9,6 @@ import earth.terrarium.tempad.common.utils.creativeModeTab
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTab
-import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.item.Item
 
 object ModItems {
@@ -26,11 +25,13 @@ object ModItems {
     }
 
     val tempad: TempadItem by registry.register("tempad") { TempadItem() }
-    val chrononGenerator: ChrononGenerator by registry.register("chronon_generator") { ChrononGenerator() }
-    val temporalBeacon: Item by registry.register("temporal_beacon") { TemporalBeaconItem() }
+    val chronometer: Chronometer by registry.register("chronometer") { Chronometer() }
+    val statusEmitter: Item by registry.register("status_emitter") { StatusEmitterItem() }
     val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }
+    val sacredChronometer: Item by registry.register("sacred_chronometer") { SacredChronometerItem() }
 
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties()) }
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }
+    val chronomiumIngot: Item by registry.register("chronomium_ingot") { Item(Item.Properties()) }
 }

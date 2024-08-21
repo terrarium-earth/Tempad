@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "###",
+        "EBE",
+        "###"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:dried_kelp"
+        },
+        "E": {
+            "item": "minecraft:ender_pearl"
+        },
+        "B": {
+            "item": "tempad:status_emitter"
+        }
+    },
+    "result": {
+        "id": "tempad:player_teleport_upgrade",
+        "count": 1
+    }
+}

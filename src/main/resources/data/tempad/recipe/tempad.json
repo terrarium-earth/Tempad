@@ -2,25 +2,25 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "###",
-    "RTB",
+    "EBL",
     "###"
   ],
   "key": {
     "#": {
-      "item": "tempad:temporal_shielding"
+      "item": "tempad:chronomium_ingot"
     },
-    "R": {
-      "item": "minecraft:redstone_lamp"
-    },
-    "T": {
+    "E": {
       "item": "minecraft:ender_pearl"
     },
     "B": {
       "item": "minecraft:tinted_glass"
+    },
+    "L": {
+      "item": "minecraft:redstone_lamp"
     }
   },
   "result": {
-    "item": "tempad:tempad",
+    "id": "tempad:tempad",
     "count": 1
   }
 }

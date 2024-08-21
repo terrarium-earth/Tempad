@@ -10,9 +10,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 
 class ChrononTooltip(container: ChrononData): ClientTooltipComponent {
-    val text = Component.literal("${container.content} / ${container.capacity}")
+    val text = if(container.capacity == -1) Component.translatable("item.tempad.sacred_chronometer.infinite") else Component.literal("${container.content} / ${container.capacity}")
 
-    val percentage = container.content.toDouble() / container.capacity.toDouble()
+    val percentage = if(container.capacity == -1) 1.0 else container.content.toDouble() / container.capacity.toDouble()
 
     val contentHeight = 16
 
@@ -43,4 +43,8 @@ class ChrononTooltip(container: ChrononData): ClientTooltipComponent {
 
 val ChrononContainer.tooltip: TooltipComponent get() = ChrononData(content, capacity)
 
-data class ChrononData(val content: Int, val capacity: Int): TooltipComponent
+data class ChrononData(val content: Int, val capacity: Int): TooltipComponent {
+    companion object {
+        val infinite = ChrononData(-1, -1)
+    }
+}

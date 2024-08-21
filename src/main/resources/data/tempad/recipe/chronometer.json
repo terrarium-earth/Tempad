@@ -1,0 +1,32 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#T#",
+        "OCG",
+        "#B#"
+    ],
+    "key": {
+        "#": {
+            "item": "tempad:chronomium_ingot"
+        },
+        "T": {
+            "item": "minecraft:tinted_glass"
+        },
+        "C": {
+            "item": "minecraft:clock"
+        },
+        "G": {
+            "item": "minecraft:golden_apple"
+        },
+        "O": {
+            "item": "minecraft:ominous_bottle"
+        },
+        "B": {
+            "item": "minecraft:blaze_rod"
+        }
+    },
+    "result": {
+        "id": "tempad:chronometer",
+        "count": 1
+    }
+}

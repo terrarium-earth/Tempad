@@ -48,7 +48,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             }
         }
 
-        basicItem(ModItems.chrononGenerator).apply {
+        basicItem(ModItems.chronometer).apply {
             for ((index, charge) in arrayOf(0.33f, 0.66f, 1f).withIndex()) {
                 override().apply {
                     predicate("charge".tempadId, charge)
@@ -63,7 +63,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             }
         }
 
-        enablableItem(ModItems.temporalBeacon)
+        enablableItem(ModItems.statusEmitter)
 
         basicItem(ModItems.timeTwister)
         basicItem(ModItems.newLocationUpgrade)

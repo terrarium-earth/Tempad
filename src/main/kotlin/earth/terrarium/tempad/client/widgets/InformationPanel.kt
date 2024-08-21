@@ -10,7 +10,10 @@ import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.network.chat.Component
 
 class InformationPanel(font: Font, width: Int, height: Int) : ListWidget(width, height) {
-    private val NO_SELECTION: MultilineEntry = MultilineEntry(Component.translatable(("gui.${Tempad.MOD_ID}.no_selection")), font)
+    private val NO_SELECTION: MultilineEntry = MultilineEntry(Component.translatable(("app.${Tempad.MOD_ID}.teleport.no_selection")), font).apply {
+        setWidth(width)
+        setMaxWidth(width - 8)
+    }
 
     init {
         gap = 2
@@ -54,5 +57,4 @@ class MultilineEntry(text: Component, font: Font) : MultiLineTextWidget(text, fo
 
     override fun getX(): Int = super.getX() + 4
     override fun getY(): Int = super.getY() + 4
-    override fun getWidth(): Int = super<MultiLineTextWidget>.width - 4
 }

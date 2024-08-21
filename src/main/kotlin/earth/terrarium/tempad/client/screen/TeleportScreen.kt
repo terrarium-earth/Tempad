@@ -55,7 +55,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             favBtn.toggled = favorite?.matches(value?.first, value?.second) == true
 
             infoLayout.visitWidgets { widget ->
-                widget.visible = true
+                widget.visible = value != null
             }
 
             value?.third?.let { infoTextWidget.update(it.pos.display) }

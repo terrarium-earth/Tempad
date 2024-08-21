@@ -1,0 +1,14 @@
+{
+    "type": "tempad:upgrade",
+    "template": [
+        {
+            "item": "tempad:player_teleport_upgrade"
+        }
+    ],
+    "addition": [
+        {
+            "item": "tempad:location_card"
+        }
+    ],
+    "upgrade": ""
+}
