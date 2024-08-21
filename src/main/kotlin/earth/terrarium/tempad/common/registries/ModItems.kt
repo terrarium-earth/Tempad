@@ -31,7 +31,7 @@ object ModItems {
     val sacredChronometer: Item by registry.register("sacred_chronometer") { SacredChronometerItem() }
 
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
-    val monotonumIngot: Item by registry.register("inexorable_alloy") { Item(Item.Properties()) }
+    val inexorableAlloy: Item by registry.register("inexorable_alloy") { Item(Item.Properties()) }
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties()) }
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }
 }
