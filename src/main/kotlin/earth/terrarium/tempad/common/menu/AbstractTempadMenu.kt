@@ -55,6 +55,6 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
     }
 
     inner class LockedSlot(val inventory: Inventory, slotIndex: Int, x: Int, y: Int) : Slot(inventory, slotIndex, x, y) {
-        override fun mayPickup(pPlayer: Player): Boolean = inventory[slotIndex].item === ModItems.tempad
+        override fun mayPickup(pPlayer: Player): Boolean = inventory[slotIndex].item !== ModItems.tempad
     }
 }

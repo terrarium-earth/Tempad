@@ -25,10 +25,11 @@ object ModItems {
     }
 
     val tempad: TempadItem by registry.register("tempad") { TempadItem() }
-    val chronometer: Chronometer by registry.register("chronometer") { Chronometer() }
+    val chronometer: ChronometerItem by registry.register("chronometer") { ChronometerItem() }
     val statusEmitter: Item by registry.register("status_emitter") { StatusEmitterItem() }
     val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }
     val sacredChronometer: Item by registry.register("sacred_chronometer") { SacredChronometerItem() }
+    val rudimentaryTempad: Item by registry.register("rudimentary_tempad") { RudimentaryTempadItem() }
 
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val inexorableAlloy: Item by registry.register("inexorable_alloy") { Item(Item.Properties()) }

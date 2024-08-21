@@ -41,16 +41,14 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
         fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos) {
             val stack = ctx.stack
-            if (!player.isCreative() && (stack.item === ModItems.tempad || stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
+            if (!player.isCreative() && (stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
             timedoor.sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
             timedoor.sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, timedoor)
             timedoor.setLocation(location)
-            // timedoor.closingTime = -1
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
-            if (event.isCanceled) return
-            ctx.drain(1000)
+            if (event.isCanceled || !ctx.drain(1000)) return
             player.cooldowns.addCooldown(stack.item, CommonConfig.TimeDoor.idleAfterEnter)
             player.level().addFreshEntity(timedoor)
         }

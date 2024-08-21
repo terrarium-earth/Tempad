@@ -11,5 +11,5 @@ object ModTags {
     val enteringNotSupported: TagKey<Level> = TagKey.create(Registries.DIMENSION, "entering_not_supported".tempadId)
     val leavingNotSupported: TagKey<Level> = TagKey.create(Registries.DIMENSION, "leaving_not_supported".tempadId)
 
-    val locationCards: TagKey<Item> = TagKey.create(Registries.ITEM, "location_cards".tempadId)
+    val chrononAcceptor: TagKey<Item> = TagKey.create(Registries.ITEM, "chronon_acceptor".tempadId)
 }

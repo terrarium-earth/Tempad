@@ -59,6 +59,8 @@
   "item.tempad.inexorable_alloy": "Inexorable Alloy",
   "item.tempad.sacred_chronometer": "Sacred Chronometer",
   "item.tempad.sacred_chronometer.infinite": "Infinite",
+  "item.tempad.rudimentary_tempad": "Rudimentary Tempad",
+  "item.tempad.rudimentary_tempad.no_location": "Device has no location card",
 
   "fluid_type.tempad.chronon": "Chronon",
 

@@ -56,6 +56,8 @@ class Tempad(bus: IEventBus) {
         ModContext.init()
         ModEntities.entities.init()
         ModEntities.serializers.init()
+        ModBlocks.blocks.init()
+        ModBlocks.blockEntities.init()
         ModItems.registry.init()
         ModItems.creativeTabs.init()
         ModMacros.init()
@@ -78,6 +80,10 @@ class Tempad(bus: IEventBus) {
             }
 
             fluidHandlers[ModItems.timeTwister] = { stack, _ ->
+                ChrononContainer(stack, 4000)
+            }
+
+            fluidHandlers[ModItems.rudimentaryTempad] = { stack, _ ->
                 ChrononContainer(stack, 4000)
             }
 

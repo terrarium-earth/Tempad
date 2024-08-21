@@ -192,3 +192,5 @@ var Slot.contents
     set(value) = this.set(value)
 
 val ResourceKey<Level>.component get() = Component.translatable(this.location().toLanguageKey("dimension"))
+
+val String.translate: Component get() = Component.translatable(this)
