@@ -8,8 +8,10 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
 import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.client.widgets.TimelineEntry
 import earth.terrarium.tempad.common.data.HistoricalLocation
 import earth.terrarium.tempad.common.network.c2s.BackTrackLocation
+import earth.terrarium.tempad.common.utils.component
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -195,7 +197,12 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
                 if (hovered) {
                     setTooltipForNextRenderPass(
                         listOf(
-
+                            Component.translatable(history.marker.toLanguageKey("marker")).apply {
+                                append(CommonComponents.SPACE)
+                                append(history.dimension.component)
+                            }.visualOrderText,
+                            history.pos.component.visualOrderText,
+                            Component.literal(TimelineEntry.dateFormat.format(date)).visualOrderText
                         )
                     )
                 }

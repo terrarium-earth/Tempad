@@ -21,7 +21,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 
-class StaticNamedGlobalPos(override val name: Component, override val pos: Vec3, override val dimension: ResourceKey<Level>, override val angle: Float, override val color: Color): NamedGlobalPos, TooltipComponent {
+data class StaticNamedGlobalPos(override val name: Component, override val pos: Vec3, override val dimension: ResourceKey<Level>, override val angle: Float, override val color: Color): NamedGlobalPos, TooltipComponent {
     companion object {
         val CODEC: MapCodec<StaticNamedGlobalPos> = RecordCodecBuilder.mapCodec {
             it.group(

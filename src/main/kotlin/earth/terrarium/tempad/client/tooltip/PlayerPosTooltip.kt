@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.client.tooltip
 
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.PlayerPos
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
@@ -16,7 +17,7 @@ class PlayerPosTooltip(val pos: PlayerPos): ClientTooltipComponent {
     val playerTexture get() = Minecraft.getInstance().skinManager.getInsecureSkin(pos.playerProfile).texture()
 
     override fun getHeight(): Int = 10
-    override fun getWidth(font: Font): Int = font.width(text) + 11
+    override fun getWidth(font: Font): Int = font.width(text) + 13
 
     override fun renderText(
         font: Font,
@@ -28,9 +29,9 @@ class PlayerPosTooltip(val pos: PlayerPos): ClientTooltipComponent {
         super.renderText(font, mouseX, mouseY, matrix, bufferSource)
         font.drawInBatch(
             text,
-            mouseX.toFloat() + 11,
+            mouseX.toFloat() + 13,
             mouseY.toFloat() + 1,
-            text.style.color?.value ?: -1,
+            Tempad.ORANGE.value,
             true,
             matrix,
             bufferSource,

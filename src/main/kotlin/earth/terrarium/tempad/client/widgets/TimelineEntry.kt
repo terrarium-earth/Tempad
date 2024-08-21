@@ -3,6 +3,7 @@ package earth.terrarium.tempad.client.widgets
 import com.ibm.icu.text.DateFormat
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.data.HistoricalLocation
+import earth.terrarium.tempad.common.utils.component
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
@@ -24,8 +25,8 @@ class TimelineEntry(parentWidth: Int, val font: Font, val date: Date, val locati
 
     val parentCenter get() = parent?.let { it.x + it.width / 2 } ?: (x + width / 2)
 
-    val markerComponent: MutableComponent = location.marker?.let { Component.translatable(it.toLanguageKey("marker")) } ?: Component.literal("Wandered in")
-    val locationComponent: Component = Component.literal("XYZ: ${location.pos.x.toInt()} / ${location.pos.y.toInt()} / ${location.pos.z.toInt()}")
+    val markerComponent: MutableComponent = location.marker?.let { Component.translatable(it.toLanguageKey("marker")) } ?: Component.translatable("misc.tempad.wandering")
+    val locationComponent: Component = location.pos.component
     val dimensionComponent: Component = Component.translatable(location.dimension.location().toLanguageKey("dimension"))
 
     val text: List<FormattedCharSequence> = font.split(markerComponent.append(" ").append(dimensionComponent), parentWidth - 6) + locationComponent.visualOrderText + dateDisplay.visualOrderText

@@ -43,6 +43,8 @@ data class PlayerPos(val playerProfile: GameProfile): NamedGlobalPos, TooltipCom
         val byteCodec = GAME_PROFILE_BYTE_CODEC.map(::PlayerPos, PlayerPos::playerProfile)
         val codec = GAME_PROFILE_CODEC.xmap(::PlayerPos, PlayerPos::playerProfile)
 
-        val type = LocationType<PlayerPos>("player_pos".tempadId, byteCodec, codec)
+        val type = LocationType<PlayerPos>("player".tempadId, byteCodec, codec)
     }
 }
+
+// /give @s tempad:location_card[tempad:card_location={"type":"tempad:player", "id":[1,1,1,1], "name":"CodexAdrian"}]

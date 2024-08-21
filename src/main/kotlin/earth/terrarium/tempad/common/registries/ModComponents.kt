@@ -7,7 +7,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.data.CardLocationComponent
+import earth.terrarium.tempad.api.locations.NamedGlobalPos
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.utils.*
@@ -41,10 +41,10 @@ object ModComponents {
         }
     }
 
-    val staticLocation: DataComponentType<CardLocationComponent> by registry.register("card_location") {
+    val staticLocation: DataComponentType<NamedGlobalPos> by registry.register("card_location") {
         componentType {
-            serialize = CardLocationComponent.codec
-            networkSerialize = CardLocationComponent.byteCodec
+            serialize = NamedGlobalPos.codec
+            networkSerialize = NamedGlobalPos.byteCodec
         }
     }
 

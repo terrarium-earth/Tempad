@@ -136,5 +136,9 @@
   "jade.tempad.closing": "Closing...",
   "jade.tempad.pos": "Teleporting to %s at %s",
   "misc.tempad.return": "Returning to %s",
-  "tempad.tooltip.player_pos": "Targetting: %s"
+  "tempad.tooltip.player_pos": "Targetting: %s",
+
+  "upgrade.tempad.player": "Teleport to Players",
+  "misc.tempad.upgrades": "Installed Upgrades:",
+  "misc.tempad.wandering": "Wandering in"
 }

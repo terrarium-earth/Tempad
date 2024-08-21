@@ -11,7 +11,6 @@ import com.teamresourceful.resourcefullibkt.common.contains
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.context.ContextHolder
-import earth.terrarium.tempad.common.data.CardLocationComponent
 import earth.terrarium.tempad.common.menu.menuCtx
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.ModTags
@@ -39,7 +38,7 @@ class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, 
                 if (!menuCtx.stack.`is`(ModItems.locationCard)) return@handle
                 menuCtx.exchange(
                     ModItems.locationCard.stack {
-                        staticLocation = CardLocationComponent(message.providerId, pos)
+                        staticLocation = pos
                     }
                 )
             }

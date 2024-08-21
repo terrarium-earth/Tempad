@@ -14,13 +14,13 @@ class LocationCardItem: Item(Properties()) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (!level.isClientSide) {
             player.getItemInHand(usedHand).staticLocation?.let { pos ->
-                player.displayClientMessage(pos.pos.consume(player), true)
+                player.displayClientMessage(pos.consume(player), true)
             }
         }
         return InteractionResultHolder.success(player.getItemInHand(usedHand))
     }
 
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
-        return (stack.staticLocation?.pos as? TooltipComponent)?.let { pos -> Optional.of(pos) } ?: Optional.empty()
+        return (stack.staticLocation as? TooltipComponent)?.let { pos -> Optional.of(pos) } ?: Optional.empty()
     }
 }

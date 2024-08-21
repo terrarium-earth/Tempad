@@ -182,9 +182,13 @@ val GlobalPos.xDisplay: Component get() = Component.translatable("gui.${Tempad.M
 val GlobalPos.yDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.y", this.pos().y)
 val GlobalPos.zDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.z", this.pos().z)
 
+val Vec3.component: Component get() = Component.literal("XYZ: ${this.x.toInt()} / ${this.y.toInt()} / ${this.z.toInt()}")
+
 val GlobalPos.display: List<Component>
     get() = listOf(this.dimDisplay, this.xDisplay, this.yDisplay, this.zDisplay)
 
 var Slot.contents
     get() = this.item
     set(value) = this.set(value)
+
+val ResourceKey<Level>.component get() = Component.translatable(this.location().toLanguageKey("dimension"))

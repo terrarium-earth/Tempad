@@ -1,6 +1,8 @@
 package earth.terrarium.tempad.client.tooltip
 
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
+import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
@@ -13,9 +15,9 @@ class UpgradesTooltip(val upgrades: InstalledUpgradesComponent): ClientTooltipCo
     val text = upgrades.upgrades.map { Component.translatable(it.toLanguageKey("upgrade")) }
     val images = upgrades.upgrades.map { ResourceLocation.fromNamespaceAndPath(it.namespace, "upgrade/" + it.path) }
 
-    override fun getHeight(): Int = upgrades.upgrades.size * 12
+    override fun getHeight(): Int = upgrades.upgrades.size * 12 + 14
 
-    override fun getWidth(font: Font): Int = text.maxOf { font.width(it) } + 11
+    override fun getWidth(font: Font): Int = text.maxOf { font.width(it) } + 13
 
     override fun renderText(
         font: Font,
@@ -24,12 +26,25 @@ class UpgradesTooltip(val upgrades: InstalledUpgradesComponent): ClientTooltipCo
         matrix: Matrix4f,
         bufferSource: MultiBufferSource.BufferSource,
     ) {
+        font.drawInBatch(
+            Component.translatable("misc.tempad.upgrades"),
+            mouseX.toFloat(),
+            mouseY.toFloat(),
+            -1,
+            true,
+            matrix,
+            bufferSource,
+            Font.DisplayMode.NORMAL,
+            0,
+            15728880
+        )
+
         for ((index, line) in text.withIndex()) {
             font.drawInBatch(
                 line,
-                mouseX.toFloat(),
-                mouseY.toFloat() + index * 12f,
-                line.style.color?.value ?: -1,
+                mouseX.toFloat() + 13,
+                mouseY.toFloat() + 1 + (index + 1) * 12f,
+                ChatFormatting.GRAY.color ?: -1,
                 true,
                 matrix,
                 bufferSource,
@@ -42,8 +57,8 @@ class UpgradesTooltip(val upgrades: InstalledUpgradesComponent): ClientTooltipCo
 
     override fun renderImage(font: Font, x: Int, y: Int, guiGraphics: GuiGraphics) {
         super.renderImage(font, x, y, guiGraphics)
-        for ((index, line) in text.withIndex()) {
-            guiGraphics.drawString(font, line, x, y + index * 12, line.style.color?.value ?: -1, false)
+        for ((index, image) in images.withIndex()) {
+            guiGraphics.blitSprite(image, x, y + (index + 1) * 12, 9, 9)
         }
     }
 }

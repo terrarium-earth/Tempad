@@ -59,9 +59,7 @@ data class TempadUpgradeRecipe(val template: Ingredient, val addition: Ingredien
         }
     }
 
-    override fun getSerializer(): RecipeSerializer<*> {
-        TODO("Not yet implemented")
-    }
+    override fun getSerializer(): RecipeSerializer<*> = Serializer
 
     override fun isTemplateIngredient(stack: ItemStack): Boolean = template.test(stack)
     override fun isBaseIngredient(stack: ItemStack): Boolean = stack.item === ModItems.tempad

@@ -4,6 +4,7 @@ package earth.terrarium.tempad.client
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
 import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
 import earth.terrarium.tempad.Tempad
@@ -13,6 +14,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.client.tooltip.*
+import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
@@ -33,6 +35,8 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
+import net.neoforged.neoforge.client.event.RenderTooltipEvent
+import net.neoforged.neoforge.common.NeoForge
 import java.io.IOException
 
 @EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
@@ -92,6 +96,7 @@ object TempadClient {
 
     init {
         clientFluidRegistry.register("chronon", chrononRenderer)
+        NeoForge.EVENT_BUS.addListener(::appendTooltip)
     }
 
     @SubscribeEvent @JvmStatic
@@ -132,5 +137,13 @@ object TempadClient {
         event.register(ChrononData::class.java, ::ChrononTooltip)
         event.register(PlayerPos::class.java, ::PlayerPosTooltip)
         event.register(StaticNamedGlobalPos::class.java, ::StaticPosTooltip)
+        event.register(InstalledUpgradesComponent::class.java, ::UpgradesTooltip)
+    }
+
+    fun appendTooltip(event: RenderTooltipEvent.GatherComponents) {
+        val stack = event.itemStack
+        if(stack.item === ModItems.tempad && stack.installedUpgrades.upgrades.isNotEmpty()) {
+            event.tooltipElements.add(2, Either.right(stack.installedUpgrades))
+        }
     }
 }
