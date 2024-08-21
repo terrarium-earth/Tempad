@@ -140,5 +140,15 @@
 
   "upgrade.tempad.player": "Teleport to Players",
   "misc.tempad.upgrades": "Installed Upgrades:",
-  "misc.tempad.wandering": "Wandering in"
+  "misc.tempad.wandering": "Wandering in",
+  "location.tempad.saved": [
+    "",
+    { "text": "Saved location: ", "color": "#ff6f00" },
+    { "index": 0, "color": "#91450d" }
+  ],
+  "location.tempad.player.error": [
+    "",
+    { "text": "Error: ", "color": "#ff6f00" },
+    { "text": "Player locations cannot be saved", "color": "#91450d" }
+  ]
 }

@@ -68,6 +68,6 @@ data class StaticNamedGlobalPos(override val name: Component, override val pos: 
 
     override fun consume(player: Player): Component {
         player.savedPositions += this
-        return Component.translatable("location.tempad.saved")
+        return Component.translatable("location.tempad.saved", name)
     }
 }
