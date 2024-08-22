@@ -13,10 +13,9 @@ import earth.terrarium.tempad.api.sizing.TimedoorSizing
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
-import earth.terrarium.tempad.common.registries.ageSinceLastTimedoor
+import earth.terrarium.tempad.common.registries.ageUntilAllowedThroughTimedoor
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
-import net.minecraft.client.particle.DustParticle
 import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -30,13 +29,12 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.Tags
-import org.joml.Vector3f
 import java.util.*
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
-        internal const val IDLE_BEFORE_START = 8
-        internal const val ANIMATION_LENGTH = 5
+        internal const val IDLE_BEFORE_START = 10
+        internal const val ANIMATION_LENGTH = 6
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
         private val TARGET_POS = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
@@ -56,7 +54,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
             if (event.isCanceled) return
             ctx.drain(1000)
-            player.cooldowns.addCooldown(stack.item, CommonConfig.TimeDoor.idleAfterEnter)
+            player.cooldowns.addCooldown(stack.item, 40)
             player.level().addFreshEntity(timedoor)
         }
     }
@@ -68,7 +66,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                     && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
                     && entity.canChangeDimensions(level(), targetLevel)
                     && !entity.isPassenger
-                    && entity.ageSinceLastTimedoor?.let { entity.tickCount - it > 60 } ?: true
+                    && entity.ageUntilAllowedThroughTimedoor?.let { entity.tickCount > it } ?: true
         }
     }
 
@@ -95,7 +93,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     private val selfLocation: StaticNamedGlobalPos
         get() = StaticNamedGlobalPos(
-            Component.translatable("misc.tempad.return", name),
+            name,
             StaticNamedGlobalPos.offsetLocation(this.pos, this.yRot),
             level().dimension(),
             yRot,
@@ -137,6 +135,10 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         if (tickCount < IDLE_BEFORE_START + ANIMATION_LENGTH) {
             return
         }
+        if (tickCount > closingTime && closingTime != -1) {
+            tryClose()
+            return
+        }
         val targetLevel = targetLevel ?: return tryClose()
         val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
         if (entities.isEmpty()) {
@@ -164,6 +166,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 if (entity is Player) {
                     RotatePlayerMomentumPacket(this.yRot - targetAngle).sendToClient(entity)
                 }
+                entity.ageUntilAllowedThroughTimedoor = entity.tickCount + 30
             } else {
                 entity.changeDimension(
                     DimensionTransition(
@@ -176,13 +179,13 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                         DimensionTransition.DO_NOTHING
                     )
                 )
+
+                entity.ageUntilAllowedThroughTimedoor = entity.tickCount + 60
             }
 
             if (entity is Player && entity.uuid == owner && this.closingTime != -1) {
                 this.closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterOwnerEnter
             }
-
-            entity.ageSinceLastTimedoor = entity.tickCount
 
             linkedPortalEntity ?.let { TimedoorEvent.Exit(it, entity).post() }
         }
