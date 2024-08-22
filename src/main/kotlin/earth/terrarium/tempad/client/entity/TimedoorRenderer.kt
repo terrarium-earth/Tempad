@@ -27,6 +27,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         buffer: MultiBufferSource,
         packedLight: Int,
     ) {
+        if (entity.tickCount < TimedoorEntity.IDLE_BEFORE_START) return
         val tickLength = TimedoorEntity.ANIMATION_LENGTH
         val animation: Float
         val ticks = entity.tickCount + partialTick
@@ -34,7 +35,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         if (entity.closingTime < ticks) {
             animation = Mth.clamp(1 - (ticks - entity.closingTime) / tickLength.toFloat(), 0f, 1f)
         } else {
-            animation = Mth.clamp(ticks / tickLength.toFloat(), 0f, 1f)
+            animation = Mth.clamp((ticks - TimedoorEntity.IDLE_BEFORE_START) / tickLength.toFloat(), 0f, 1f)
         }
 
         val width = entity.sizing.widthAtPercent(animation)

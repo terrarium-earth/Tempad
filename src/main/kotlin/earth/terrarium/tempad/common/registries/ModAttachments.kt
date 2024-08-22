@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.registries
 
+import com.mojang.serialization.Codec
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
@@ -35,8 +36,13 @@ object ModAttachments {
             copyOnDeath()
         }
     }
+
+    val ageSinceLastTimedoor: AttachmentType<Int> by registry.register("age_since_last_timedoor") {
+        attachmentType({0}) {}
+    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
 var AttachmentHolder.savedPositions by ModAttachments.locations
 var AttachmentHolder.travelHistory by ModAttachments.travelHistory
+var AttachmentHolder.ageSinceLastTimedoor by ModAttachments.ageSinceLastTimedoor.optional()

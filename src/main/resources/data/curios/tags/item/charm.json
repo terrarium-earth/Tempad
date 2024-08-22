@@ -1,7 +1,7 @@
 {
     "replace": false,
     "values": [
-        "tempad:chronon_generator",
+        "tempad:chronometer",
         "tempad:temporal_beacon"
     ]
 }

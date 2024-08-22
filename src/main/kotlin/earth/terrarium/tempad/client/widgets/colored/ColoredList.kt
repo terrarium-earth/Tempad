@@ -20,25 +20,27 @@ open class ColoredList(width: Int, height: Int, spacing: Int = 0): ListWidget(wi
         partialTicks: Float
     ) {
         graphics.fill(
-            scrollBarX + this.scrollbarPadding,
-            y + this.scrollbarPadding,
-            scrollBarX + this.scrollbarPadding + this.scrollbarThumbWidth - this.scrollbarPadding * 2,
-            y + height - this.scrollbarPadding,
+            scrollBarX + 2,
+            y,
+            scrollBarX + this.scrollbarThumbWidth - 3,
+            y + height,
             Tempad.DARK_ORANGE.value
         )
 
         graphics.bedrockButton(
             scrollBarX,
             scrollBarY,
-            this.scrollbarThumbWidth,
+            this.scrollbarThumbWidth - 1,
             scrollBarHeight,
             false,
             this.isActive
         )
     }
 
-    override fun getScrollbarThumbWidth(): Int = 6
-    override fun getScrollbarPadding(): Int = 2
+
+
+    override fun getScrollbarThumbWidth(): Int = 7
+    override fun getScrollbarPadding(): Int = 0
 
     operator fun iterator(): Iterator<Item> = this.items.iterator()
 }

@@ -26,7 +26,7 @@ data class ProviderHeader(val text: Component, val id: String, val parent: Panel
     override var _y: Int = 0
     override var _focused: Boolean = false
     override var _width: Int = 0
-    override var _height: Int = 14
+    override var _height: Int = 13
 
     override fun setFocused(pFocused: Boolean) {
         _focused = pFocused
@@ -37,11 +37,11 @@ data class ProviderHeader(val text: Component, val id: String, val parent: Panel
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, pPartialTick: Float) {
         val isHovered = mouseX > _x && mouseX < _x + _width && mouseY > _y && mouseY < _y + height
         val color = if (isHovered) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value
-        graphics.drawScrollingString(Minecraft.getInstance().font, text, _x + 4, _x + _width - 14, _y + 2, color)
+        graphics.drawScrollingString(Minecraft.getInstance().font, text, _x + 6, _x + _width - 14, _y + 3, color)
 
         val texture = if (hidden) CHEVRON_UP else CHEVRON_DOWN
-        graphics.blitSprite(texture.get(true, isHovered), _x + _width - 10, _y + 3, 6, 6)
-        graphics.hLine(_x + 3, _x + _width - 3, _y + _height - 3, color)
+        graphics.blitSprite(texture.get(true, isHovered), _x + _width - 10, _y + 4, 6, 6)
+        graphics.renderOutline(_x + 2, y, width - 3, height, color)
     }
 
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {

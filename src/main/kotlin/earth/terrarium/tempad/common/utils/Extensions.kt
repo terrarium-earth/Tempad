@@ -46,6 +46,7 @@ import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.SimpleFluidContent
+import org.joml.Vector3f
 import java.util.*
 import java.util.function.Function
 
@@ -192,3 +193,5 @@ var Slot.contents
     set(value) = this.set(value)
 
 val ResourceKey<Level>.component get() = Component.translatable(this.location().toLanguageKey("dimension"))
+
+val Color.vec3f: Vector3f get() = Vector3f(this.intRed.toFloat() / 255f, this.intGreen.toFloat() / 255f, this.intBlue.toFloat() / 255f)

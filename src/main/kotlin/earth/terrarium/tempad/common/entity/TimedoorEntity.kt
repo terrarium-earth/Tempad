@@ -13,9 +13,11 @@ import earth.terrarium.tempad.api.sizing.TimedoorSizing
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
-import earth.terrarium.tempad.common.registries.ModItems
+import earth.terrarium.tempad.common.registries.ageSinceLastTimedoor
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
+import net.minecraft.client.particle.DustParticle
+import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -28,20 +30,23 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.Tags
+import org.joml.Vector3f
 import java.util.*
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
-        internal const val ANIMATION_LENGTH = 8
+        internal const val IDLE_BEFORE_START = 8
+        internal const val ANIMATION_LENGTH = 5
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
         private val TARGET_POS = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
-        private val TARGET_DIMENSION = createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
+        private val TARGET_DIMENSION =
+            createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
         private val SIZING = createDataKey<TimedoorEntity, TimedoorSizing>(ModEntities.sizingSerializer)
 
         fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos) {
             val stack = ctx.stack
-            if (!player.isCreative() && (stack.item === ModItems.tempad || stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
+            if (!player.isCreative() && (stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
             val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
             timedoor.owner = player.uuid
             timedoor.sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
@@ -56,9 +61,14 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
     }
 
-    private fun canTeleport(entity: Entity): Boolean {
+    private fun canTeleport(entity: Entity, targetLevel: Level): Boolean {
         with(sizing) {
-            return entity !is TimedoorEntity && isInside(entity) && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
+            return entity !is TimedoorEntity
+                    && isInside(entity)
+                    && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
+                    && entity.canChangeDimensions(level(), targetLevel)
+                    && !entity.isPassenger
+                    && entity.ageSinceLastTimedoor?.let { entity.tickCount - it > 60 } ?: true
         }
     }
 
@@ -84,7 +94,13 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         get() = targetDimension.let { level().server[it] }
 
     private val selfLocation: StaticNamedGlobalPos
-        get() = StaticNamedGlobalPos(Component.translatable("misc.tempad.return", name), StaticNamedGlobalPos.offsetLocation(this.pos, this.yRot), level().dimension(), yRot, color)
+        get() = StaticNamedGlobalPos(
+            Component.translatable("misc.tempad.return", name),
+            StaticNamedGlobalPos.offsetLocation(this.pos, this.yRot),
+            level().dimension(),
+            yRot,
+            color
+        )
 
     override fun defineSynchedData(pBuilder: SynchedEntityData.Builder) {
         pBuilder.define(CLOSING_TIME, CommonConfig.TimeDoor.idleAfterEnter)
@@ -104,25 +120,46 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 this.fixupDimensions()
                 this.boundingBox = makeBoundingBox()
             }
+            if (tickCount < IDLE_BEFORE_START) {
+                level().addParticle(
+                    DustParticleOptions(color.vec3f, 1.0f),
+                    true,
+                    x,
+                    y + bbHeight / 2.0,
+                    z,
+                    0.0,
+                    0.0,
+                    0.0,
+                )
+            }
             return
         }
-        val targetLevel = targetLevel
-        val entities = level().getEntities<Entity>(boundingBox, ::canTeleport)
-        if (entities.isEmpty() || targetLevel == null) {
+        if (tickCount < IDLE_BEFORE_START + ANIMATION_LENGTH) {
+            return
+        }
+        val targetLevel = targetLevel ?: return tryClose()
+        val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
+        if (entities.isEmpty()) {
             tryClose()
             return
         }
-        tryInitReceivingPortal()
-        val linkedPortalEntity = linkedPortalEntity ?: return
-        linkedPortalEntity.resetClosingTime()
         this.resetClosingTime()
+        tryInitReceivingPortal()
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()
             if (event.isCanceled) continue
 
             if (entity.level().dimension() == targetLevel.dimension()) {
                 entity.deltaMovement = entity.deltaMovement.yRot(this.yRot - targetAngle)
-                entity.teleportTo(targetLevel, targetPos.x, targetPos.y, targetPos.z, RelativeMovement.ALL, targetAngle, entity.xRot)
+                entity.teleportTo(
+                    targetLevel,
+                    targetPos.x,
+                    targetPos.y,
+                    targetPos.z,
+                    RelativeMovement.ALL,
+                    targetAngle,
+                    entity.xRot
+                )
                 entity.hasImpulse = true
                 if (entity is Player) {
                     RotatePlayerMomentumPacket(this.yRot - targetAngle).sendToClient(entity)
@@ -145,18 +182,22 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 this.closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterOwnerEnter
             }
 
-            TimedoorEvent.Exit(linkedPortalEntity, entity).post()
+            entity.ageSinceLastTimedoor = entity.tickCount
+
+            linkedPortalEntity ?.let { TimedoorEvent.Exit(it, entity).post() }
         }
         tryClose()
     }
 
     private fun tryInitReceivingPortal() {
-        val targetLevel = targetLevel
-        val targetPos = targetPos
-        if (targetLevel == null || linkedPortalEntity != null) return
+        val targetLevel = targetLevel ?: return
+        linkedPortalEntity?.let {
+            it.closingTime = this.closingTime - this.tickCount
+            return
+        }
         val targetPortal = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, targetLevel)
         targetPortal.linkedPortalEntity = this
-        targetPortal.closingTime = CommonConfig.TimeDoor.idleAfterOwnerEnter
+        targetPortal.closingTime = this.closingTime - this.tickCount
         targetPortal.setLocation(selfLocation)
         targetPortal.sizing = sizing
         sizing.placeTimedoor(DoorType.EXIT, targetPos, targetAngle + 180f, targetPortal)
