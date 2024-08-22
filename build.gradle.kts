@@ -19,6 +19,7 @@ base {
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+jarJar.enable()
 
 repositories {
     maven(url = "https://maven.architectury.dev/")
@@ -62,8 +63,16 @@ dependencies {
         isTransitive = false
     }
 
+    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${minecraft_version}", version = resourcefulLibKtVersion).also {
+        jarJar.pin(it, "[${resourcefulLibKtVersion})")
+    }
+
     implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "1.0.1") {
         isTransitive = false
+    }
+
+    jarJar(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "1.0.1").also {
+        jarJar.pin(it, "[1.0.1)")
     }
 
     implementation("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")

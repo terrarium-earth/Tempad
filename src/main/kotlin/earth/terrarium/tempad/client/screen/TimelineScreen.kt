@@ -38,8 +38,8 @@ class TimelineScreen(menu: ModMenus.TimelineMenu, inv: Inventory, title: Compone
         addRenderableWidget(timeline)
 
         val teleportBtn = addRenderableWidget(ColoredButton(teleportButton, height = 16) {
-            (timeline.current as? TimelineEntry).let {
-                BackTrackLocation((timeline.current as TimelineEntry).date, menu.ctxHolder).sendToServer()
+            (timeline.current as? TimelineEntry)?.let {
+                BackTrackLocation(it.date, menu.ctxHolder).sendToServer()
                 onClose()
             }
         })
