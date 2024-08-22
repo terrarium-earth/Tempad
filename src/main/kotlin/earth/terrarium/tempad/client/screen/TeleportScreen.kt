@@ -8,6 +8,7 @@ import earth.terrarium.tempad.client.widgets.buttons.EnumButton
 import earth.terrarium.tempad.client.widgets.buttons.ToggleButton
 import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.client.widgets.location_panel.PanelWidget
+import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.network.c2s.DeleteLocationPacket
 import earth.terrarium.tempad.common.network.c2s.OpenTimedoorPacket
@@ -45,7 +46,12 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
 
         val teleportText = Component.translatable("app.${Tempad.MOD_ID}.teleport")
 
-        var sortMode = Sorting.ALPHABETICAL
+        var sortMode: Sorting
+            get() = Sorting.valueOf(ClientConfig.sortingMode)
+            set(value) {
+                ClientConfig.sortingMode = value.name
+                Tempad.CONFIGURATOR.saveConfig(ClientConfig::class.java)
+            }
     }
 
     var selected: Triple<ResourceLocation, UUID, ClientDisplay>? = null
@@ -209,5 +215,5 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
 }
 
 enum class Sorting {
-    ALPHABETICAL, TYPE, DIMENSION
+    DIMENSION, ALPHABETICAL, TYPE
 }

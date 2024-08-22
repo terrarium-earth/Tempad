@@ -14,6 +14,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.client.tooltip.*
+import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
@@ -97,6 +98,7 @@ object TempadClient {
     init {
         clientFluidRegistry.register("chronon", chrononRenderer)
         NeoForge.EVENT_BUS.addListener(::appendTooltip)
+        Tempad.CONFIGURATOR.register(ClientConfig::class.java)
     }
 
     @SubscribeEvent @JvmStatic
