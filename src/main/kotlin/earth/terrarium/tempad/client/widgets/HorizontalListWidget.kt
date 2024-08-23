@@ -23,7 +23,6 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
     protected var lastWidth: Int = 0
     var isScrolling: Boolean = false
         protected set
-    protected var gap: Int = 2
 
     var current: Item? = null
 
@@ -52,26 +51,26 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
     public override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
         graphics.enableScissor(x + 1, y, x + width, y + height)
 
-        var x = this.x - scroll.toInt()
+        var x = this.x + width / 2 - scroll.toInt() - 10
         this.lastWidth = 0
 
         for (item in items) {
             item.x = x
             item.y = y
-            item.current = x >= (this.x + width / 2) - item.width / 2 && x <= (this.x + width / 2) + item.width / 2
+            item.current = x > (this.x + width / 2) - item.width && x <= (this.x + width / 2)
             if (item.current) {
                 current = item
             }
-            item.render(graphics, this.x + width / 2, this.y + height / 2, partialTicks)
-            x += item.width + gap
-            this.lastWidth += item.width + gap
+            item.render(graphics, this.x, this.y + height / 2, partialTicks)
+            x += item.width
+            this.lastWidth += item.width
         }
 
         graphics.disableScissor()
     }
 
     override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
-        this.scroll = Mth.clamp(this.scroll - scrollX * 10 + scrollY * 10, -this.width / 2.0, max(0.0, (this.lastWidth - this.width * 0.5)))
+        this.scroll = Mth.clamp(this.scroll - scrollX * 10 + scrollY * 10, 0.0, lastWidth.toDouble() - 20)
         return true
     }
 
@@ -79,8 +78,8 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
         this.lastWidth = 0
         var x = this.x - scroll.toInt()
         for (item in items) {
-            item.x = (x)
-            item.y = (y)
+            item.x = x
+            item.y = y
             this.lastWidth += item.width
             x += item.width
         }
@@ -89,12 +88,12 @@ class HorizontalListWidget(width: Int, height: Int) : BaseParentWidget(width, he
     protected fun updateScrollBar() {
         updateLastWidth()
         this.scroll =
-            Mth.clamp(this.scroll, - this.width / 2.0, max(0.0, (this.lastWidth - this.width * 0.5)))
+            Mth.clamp(this.scroll, 0.0, max(0.0, this.lastWidth.toDouble()))
     }
 
     fun scrollToBottom() {
         updateLastWidth()
-        this.scroll = max(0.0, (this.lastWidth - this.width * 0.5))
+        this.scroll = max(0.0, this.lastWidth.toDouble() - 20)
     }
 
     override fun getCursor(): CursorScreen.Cursor {

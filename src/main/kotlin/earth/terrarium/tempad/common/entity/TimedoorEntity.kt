@@ -46,7 +46,6 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val SIZING = createDataKey<TimedoorEntity, TimedoorSizing>(ModEntities.sizingSerializer)
 
         //feedback
-        private val success = Component.translatable("entity.tempad.timedoor.success")
         private val fail = Component.translatable("entity.tempad.timedoor.fail")
         private val posFail = Component.translatable("entity.tempad.timedoor.fail.pos")
         private val interDimFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional")
@@ -56,7 +55,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val leavingFail = Component.translatable("entity.tempad.timedoor.fail.leaving")
         private val noChrononsFail = Component.translatable("entity.tempad.timedoor.fail.no_chronons")
 
-        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos): Component {
+        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos): Component? {
             val stack = ctx.stack
             val targetDimension = location.dimension ?: return posFail
             location.pos ?: return posFail
@@ -100,7 +99,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 player.cooldowns.addCooldown(stack.item, 40)
             }
             player.level().addFreshEntity(timedoor)
-            return success
+            return null
         }
     }
 

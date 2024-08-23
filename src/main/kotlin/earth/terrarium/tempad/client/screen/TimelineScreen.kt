@@ -29,7 +29,6 @@ class TimelineScreen(menu: ModMenus.TimelineMenu, inv: Inventory, title: Compone
         val timeline = HorizontalListWidget(125, 72)
         timeline.setPosition(localLeft + 5, localTop + 21)
 
-
         for ((dateTime, location) in menu.appContent.history.toSortedMap()) {
             timeline.add(TimelineEntry(timeline.width, font, dateTime, location))
         }
