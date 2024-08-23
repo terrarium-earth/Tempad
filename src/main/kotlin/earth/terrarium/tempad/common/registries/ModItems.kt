@@ -6,6 +6,7 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.items.*
 import earth.terrarium.tempad.common.utils.creativeModeTab
+import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTab
@@ -19,7 +20,9 @@ object ModItems {
         creativeModeTab {
             title(Component.translatable("category.tempad"))
             icon {
-                tempad.defaultInstance
+                tempad.stack {
+                    twisterEquipped = true
+                }
             }
         }
     }

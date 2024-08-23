@@ -53,11 +53,11 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
                 override().apply {
                     predicate("charge".tempadId, charge)
 
-                    model(getBuilder("tempad:chronon_generator_${index + 1}").apply {
+                    model(getBuilder("tempad:chronometer_${index + 1}").apply {
                         parent(ModelFile.UncheckedModelFile("item/generated"))
 
-                        texture("layer0", "tempad:item/chronon_generator")
-                        texture("layer1", "tempad:item/chronon_generator/charge_${index + 1}")
+                        texture("layer0", "tempad:item/chronometer")
+                        texture("layer1", "tempad:item/chronometer/charge_${index + 1}")
                     })
                 }
             }

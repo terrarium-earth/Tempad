@@ -2,8 +2,10 @@ package earth.terrarium.tempad.client.widgets.location_panel
 
 import earth.terrarium.tempad.api.locations.ClientDisplay
 import earth.terrarium.tempad.client.screen.Sorting
+import earth.terrarium.tempad.client.widgets.GapWidget
 import earth.terrarium.tempad.client.widgets.colored.ColoredList
 import earth.terrarium.tempad.common.utils.dimDisplay
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import java.util.*
@@ -14,7 +16,7 @@ class PanelWidget(
     private val select: (Triple<ResourceLocation, UUID, ClientDisplay>?) -> Unit,
     val filter: () -> String,
     private val isFavorite: (ResourceLocation, UUID) -> Boolean,
-) : ColoredList(111, 74) {
+) : ColoredList(111, 74, 1) {
     val widgets: SortedMap<ProviderHeader, SortedSet<LocationEntry>> = sortedMapOf()
 
     fun update() {
@@ -91,6 +93,7 @@ class PanelWidget(
 
     private fun getFilteredEntries(): MutableList<Item> {
         val list = mutableListOf<Item>()
+        list += GapWidget(0)
         val sortedWidgets = widgets.mapValues { it.value.sorted() }
         for ((provider, entries) in sortedWidgets) {
             val filtered = entries.filter { it.data.name.string.contains(filter(), ignoreCase = true) }

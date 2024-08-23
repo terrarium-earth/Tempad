@@ -25,6 +25,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimen
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.server.ServerLifecycleHooks
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 val String.tempadId: ResourceLocation
     get() = ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, this)
@@ -44,6 +46,8 @@ class Tempad(bus: IEventBus) {
             get() = ServerLifecycleHooks.getCurrentServer();
 
         val playerUpgrade: ResourceLocation = "player".tempadId
+
+        val logger: Logger = LogManager.getLogger(MOD_ID)
     }
 
     init {

@@ -57,6 +57,7 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
 
     var currentColor = Tempad.ORANGE
     lateinit var textInput: EditBox
+    lateinit var doneBtn: ColoredButton
 
     override fun init() {
         super.init()
@@ -97,8 +98,6 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
 
         val rowHelper = colorLayout.createRowHelper(6)
 
-        Color.initRainbow()
-
         for ((index, color) in COLORS.withIndex()) {
             rowHelper.addChild(ColorChoice(color) {
                 colorLayout.visitWidgets { (it as ColorChoice).selected = false }
@@ -127,20 +126,23 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
                 this.localLeft + 8,
                 this.localTop + 84, 84, 8, CommonComponents.EMPTY
             )
-        )
+        ).apply {
+            this.setMaxLength(32)
+            this.isBordered = false
+            setTextColor(Tempad.ORANGE.value)
+            setResponder {
+                doneBtn.active = it.isNotBlank()
+            }
+        }
 
-        textInput.setMaxLength(32)
-        textInput.isBordered = false
-        textInput.fgColor
-        textInput.setTextColor(Tempad.ORANGE.value)
-
-        val doneButton = addRenderableWidget(ColoredButton(CommonComponents.GUI_DONE) {
+        doneBtn = addRenderableWidget(ColoredButton(CommonComponents.GUI_DONE) {
             CreateLocationPacket(textInput.value, currentColor, menu.ctxHolder).sendToServer()
             this.onClose()
-        })
-
-        doneButton.y = localTop + 98
-        doneButton.x = localLeft + 97 - doneButton.width
+        }).apply {
+            active = textInput.value.isNotBlank()
+            y = localTop + 98
+            x = localLeft + 97 - this.width
+        }
     }
 
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {

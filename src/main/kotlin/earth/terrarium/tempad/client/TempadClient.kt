@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
 import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
+import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.PlayerPos
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
@@ -14,6 +15,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.client.tooltip.*
+import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
@@ -97,6 +99,8 @@ object TempadClient {
     init {
         clientFluidRegistry.register("chronon", chrononRenderer)
         NeoForge.EVENT_BUS.addListener(::appendTooltip)
+        Tempad.CONFIGURATOR.register(ClientConfig::class.java)
+        Color.initRainbow()
     }
 
     @SubscribeEvent @JvmStatic

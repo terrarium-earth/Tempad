@@ -2,7 +2,6 @@ package earth.terrarium.tempad.common.compat.jade
 
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.tempadId
-import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import snownee.jade.api.*

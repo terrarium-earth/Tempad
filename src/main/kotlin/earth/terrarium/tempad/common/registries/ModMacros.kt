@@ -11,7 +11,7 @@ object ModMacros {
     fun init() {
         MacroRegistry[teleportToPinned] = { player, ctx ->
             player.getPinnedLocation(ctx)?.let {
-                TimedoorEntity.openTimedoor(player, ctx, it)
+                TimedoorEntity.openTimedoor(player, ctx, it)?.let { player.displayClientMessage(it, true)}
             }
         }
     }

@@ -35,8 +35,13 @@ object ModAttachments {
             copyOnDeath()
         }
     }
+
+    val ageSinceLastTimedoor: AttachmentType<Int> by registry.register("age_until_allowed_through_timedoor") {
+        attachmentType({0}) {}
+    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
 var AttachmentHolder.savedPositions by ModAttachments.locations
 var AttachmentHolder.travelHistory by ModAttachments.travelHistory
+var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLastTimedoor.optional()

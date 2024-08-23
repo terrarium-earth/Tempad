@@ -24,7 +24,7 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
             NetworkHandle.handle { packet, player ->
                 val ctx = packet.ctx.getCtx(player)
                 if (!player.isCreative && !ctx.drain(1000)) return@handle
-                player.cooldowns.addCooldown(ctx.stack.item, 60)
+                player.cooldowns.addCooldown(ctx.stack.item, 40)
                 player.travelHistory.backtrackTo(player, packet.time)
             }
         )

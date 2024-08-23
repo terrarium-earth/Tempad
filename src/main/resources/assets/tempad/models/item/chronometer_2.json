@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "tempad:item/chronon_generator",
-    "layer1": "tempad:item/chronon_generator/charge_2"
+    "layer0": "tempad:item/chronometer",
+    "layer1": "tempad:item/chronometer/charge_2"
   }
 }

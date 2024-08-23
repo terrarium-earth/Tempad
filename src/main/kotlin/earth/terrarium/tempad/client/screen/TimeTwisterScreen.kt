@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.client.screen
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.platform.MacosUtil
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.BufferUploader
@@ -77,10 +78,20 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
         minecraft?.let { mc ->
             val window = mc.window
             val mouse = mc.mouseHandler
-            val mdx = mouse.xpos() - window.width / 4f
-            val mdy = mouse.ypos() - window.height / 4f
+            val mdx: Double
+            val mdy: Double
+            val minRadius: Double
+            if (Minecraft.ON_OSX) {
+                mdx = mouse.xpos() - window.width / 4f
+                mdy = mouse.ypos() - window.height / 4f
 
-            val minRadius = window.guiScale * START / 2
+                minRadius = window.guiScale * START / 2
+            } else {
+                mdx = mouse.xpos() - window.width / 2f
+                mdy = mouse.ypos() - window.height / 2f
+
+                minRadius = window.guiScale * START
+            }
             if (mdx * mdx + mdy * mdy < minRadius * minRadius) return -1
             var angle = Math.toDegrees(Math.atan2(mdx, -mdy)).toFloat()
             if (angle < 0) angle += 360

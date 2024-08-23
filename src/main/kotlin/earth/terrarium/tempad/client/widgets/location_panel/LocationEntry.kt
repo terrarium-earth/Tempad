@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
+import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.ClientDisplay
 import earth.terrarium.tempad.client.widgets.KListWidgetItem
@@ -39,17 +40,17 @@ class LocationEntry(val id: UUID, val data: ClientDisplay, builder: LocationEntr
         val hovered = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height
 
         if (selected) {
-            graphics.fill(x, y, x + width, y + height, Tempad.ORANGE.value)
+            graphics.fill(x + 2, y, x + width - 1, y + height, Tempad.ORANGE.value)
         }
 
         if (favorite) {
-            graphics.blitSprite(FAVORITE.get(!selected, hovered), x + 4, y + (height - 10) / 2, 10, 10)
+            graphics.blitSprite(FAVORITE.get(!selected, hovered), x + 3, y + (height - 10) / 2, 10, 10)
         }
 
         val color = if (selected) 0x000000 else if (hovered) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value
 
         val font = Minecraft.getInstance().font
-        graphics.drawString(font, data.name, x + 4 + if(favorite) 14 else 0, y + Math.round((height - font.lineHeight) / 2f), color, false)
+        graphics.drawString(font, data.name, x + 4 + if(favorite) 11 else 0, y + Math.round((height - font.lineHeight) / 2f), color, false)
     }
 
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean = onClick()
