@@ -29,7 +29,10 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
                 if (TempadLocations[message.providerId] == null) return@handle
                 val ctx = message.ctx.getCtx(player)
                 val location = TempadLocations[player, ctx, message.providerId]?.let { it[message.locationId] }
-                location?.let { TimedoorEntity.openTimedoor(player, ctx, it) }
+                location?.let {
+                    val msg = TimedoorEntity.openTimedoor(player, ctx, it)
+                    player.displayClientMessage(msg, true)
+                }
             }
         )
     }

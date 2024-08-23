@@ -16,7 +16,10 @@ data class OpenFavoritePacket(val ctx: ContextHolder<*>): Packet<OpenFavoritePac
             ContextHolder.codec.map(::OpenFavoritePacket, OpenFavoritePacket::ctx),
             NetworkHandle.handle { message, player ->
                 val ctx = message.ctx.getCtx(player)
-                player.getPinnedLocation(ctx)?.let { TimedoorEntity.openTimedoor(player, ctx, it) }
+                player.getPinnedLocation(ctx)?.let {
+                    val msg = TimedoorEntity.openTimedoor(player, ctx, it)
+                    player.displayClientMessage(msg, true)
+                }
             }
         )
     }

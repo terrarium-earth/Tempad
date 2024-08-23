@@ -13,10 +13,12 @@ import earth.terrarium.tempad.api.sizing.TimedoorSizing
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
+import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.registries.ageUntilAllowedThroughTimedoor
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.particles.DustParticleOptions
+import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -30,6 +32,7 @@ import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.Tags
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
@@ -42,20 +45,62 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
         private val SIZING = createDataKey<TimedoorEntity, TimedoorSizing>(ModEntities.sizingSerializer)
 
-        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos) {
+        //feedback
+        private val success = Component.translatable("entity.tempad.timedoor.success")
+        private val fail = Component.translatable("entity.tempad.timedoor.fail")
+        private val posFail = Component.translatable("entity.tempad.timedoor.fail.pos")
+        private val interDimFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional")
+        private val intraDimAllFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional_all")
+        private val intraDimFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional")
+        private val enteringFail = Component.translatable("entity.tempad.timedoor.fail.entering")
+        private val leavingFail = Component.translatable("entity.tempad.timedoor.fail.leaving")
+        private val noChrononsFail = Component.translatable("entity.tempad.timedoor.fail.no_chronons")
+
+        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos): Component {
             val stack = ctx.stack
-            if (!player.isCreative() && (stack.chrononContent < 1000 || location.pos == null || location.dimension == null)) return
-            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level())
-            timedoor.owner = player.uuid
-            timedoor.sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
-            timedoor.sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, timedoor)
-            timedoor.setLocation(location)
-            // timedoor.closingTime = -1
+            val targetDimension = location.dimension ?: return posFail
+            location.pos ?: return posFail
+            val lookup = player.level().registryAccess().lookup(Registries.DIMENSION)
+            val targetHolder = lookup.get().get(targetDimension).getOrNull() ?: return posFail
+            val sourceHolder = lookup.get().get(player.level().dimension()).getOrNull() ?: return posFail
+            if (!player.isCreative) {
+                if (stack.chrononContent < 1000) return noChrononsFail
+                player.level().dimension().let {
+                    if (it != location.dimension) {
+                        if (!CommonConfig.allowInterdimensionalTravel) return interDimFail
+                        if (sourceHolder in ModTags.leavingNotSupported) return leavingFail
+                        if (targetHolder in ModTags.enteringNotSupported) return enteringFail
+                    } else {
+                        if (!CommonConfig.allowIntradimensionalTravel) return intraDimAllFail
+                        if (sourceHolder in ModTags.intradimensionalTravelNotSupported) return intraDimFail
+                    }
+                }
+            }
+
+            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level()).apply {
+                owner = player.uuid
+                sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
+                sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, this)
+                setLocation(location)
+            }
             val event = TimedoorEvent.Open(timedoor, player, ctx).post()
-            if (event.isCanceled) return
-            ctx.drain(1000)
-            player.cooldowns.addCooldown(stack.item, 40)
+            if (event.isCanceled) return event.errorMessage ?: fail
+            else if (CommonConfig.TimeDoor.logWhenOpen) {
+                Tempad.logger.debug(
+                    "Player {} opened a timedoor at {} in dimension {} to {} in dimension {}",
+                    player.name.string,
+                    player.blockPosition(),
+                    player.level().dimension(),
+                    location.name,
+                    targetDimension
+                )
+            }
+            if (!player.isCreative) {
+                ctx.drain(1000)
+                player.cooldowns.addCooldown(stack.item, 40)
+            }
             player.level().addFreshEntity(timedoor)
+            return success
         }
     }
 
@@ -63,7 +108,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         with(sizing) {
             return entity !is TimedoorEntity
                     && isInside(entity)
-                    && entity !in Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED
+                    && entity !in ModTags.teleportingNotSupport
                     && entity.canChangeDimensions(level(), targetLevel)
                     && !entity.isPassenger
                     && entity.ageUntilAllowedThroughTimedoor?.let { entity.tickCount > it } ?: true
@@ -187,7 +232,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 this.closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterOwnerEnter
             }
 
-            linkedPortalEntity ?.let { TimedoorEvent.Exit(it, entity).post() }
+            linkedPortalEntity?.let { TimedoorEvent.Exit(it, entity).post() }
         }
         tryClose()
     }

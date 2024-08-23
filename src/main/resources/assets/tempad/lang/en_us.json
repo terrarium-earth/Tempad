@@ -150,5 +150,44 @@
     "",
     { "text": "Error: ", "color": "#ff6f00" },
     { "text": "Player locations cannot be saved", "color": "#91450d" }
+  ],
+
+  "entity.tempad.timedoor": "Timedoor",
+  "entity.tempad.timedoor.success": "Timedoor opened",
+  "entity.tempad.timedoor.fail": "Timedoor failed",
+  "entity.tempad.timedoor.fail.pos": [
+    "",
+    { "text": "Error: ", "color": "#ff6f00" },
+    { "text": "Position is not Initialized", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.interdimensional": [
+    "",
+    { "text": "Error: ", "color": "#ff6f00" },
+    { "text": "Travelling between dimensions is not allowed", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional_all": [
+      "",
+      { "text": "Error: ", "color": "#ff6f00" },
+      { "text": "Travelling within dimensions is not allowed", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional": [
+      "",
+      { "text": "Error: ", "color": "#ff6f00" },
+      { "text": "Travelling within this dimension is not allowed", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.leaving": [
+      "",
+      { "text": "Error: ", "color": "#ff6f00" },
+      { "text": "Leaving this dimension is not allowed", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.entering": [
+      "",
+      { "text": "Error: ", "color": "#ff6f00" },
+      { "text": "Entering this dimension is not allowed", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.no_chronons": [
+      "",
+      { "text": "Error: ", "color": "#ff6f00" },
+      { "text": "Not enough chronons", "color": "#91450d" }
   ]
 }

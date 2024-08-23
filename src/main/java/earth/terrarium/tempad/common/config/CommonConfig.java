@@ -26,6 +26,10 @@ public final class CommonConfig {
     @Comment("Whether or not Time Doors are allowed to be opened to dimensions other than the one they are in.")
     public static boolean allowInterdimensionalTravel = true;
 
+    @ConfigEntry(id = "allow_intradimensional_travel", type = EntryType.BOOLEAN)
+    @Comment("Whether or not Time Doors are allowed to be opened to the same dimension they are in.")
+    public static boolean allowIntradimensionalTravel = true;
+
     @ConfigEntry(id = "allow_exporting", type = EntryType.BOOLEAN)
     @Comment("Whether or not Tempads are allowed to export their stored locations.")
     public static boolean allowExporting = true;
@@ -59,6 +63,10 @@ public final class CommonConfig {
         @ConfigEntry(id = "idle_after_owner_enter", type = EntryType.INTEGER)
         @Comment("The amount of time in ticks that a Time Door will remain open after the owner enters it.")
         public static int idleAfterOwnerEnter = 100;
+
+        @ConfigEntry(id = "log_when_open", type = EntryType.BOOLEAN)
+        @Comment("Whether or not the Time Door should log when it is opened in the console.")
+        public static boolean logWhenOpen = false;
     }
 
     @Category("tempad")
