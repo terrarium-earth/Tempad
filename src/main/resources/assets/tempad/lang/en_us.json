@@ -154,7 +154,11 @@
 
   "entity.tempad.timedoor": "Timedoor",
   "entity.tempad.timedoor.success": "Timedoor opened",
-  "entity.tempad.timedoor.fail": "Timedoor failed",
+  "entity.tempad.timedoor.fail": [
+    "",
+    { "text": "Error: ", "color": "#ff6f00" },
+    { "text": "Failed to open Timedoor", "color": "#91450d" }
+  ],
   "entity.tempad.timedoor.fail.pos": [
     "",
     { "text": "Error: ", "color": "#ff6f00" },

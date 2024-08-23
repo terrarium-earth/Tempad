@@ -7,20 +7,18 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
-import earth.terrarium.tempad.tempadId
-import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.entity.TimedoorEntity
+import earth.terrarium.tempad.tempadId
 import net.minecraft.resources.ResourceLocation
 import java.util.*
 
 data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: UUID, val ctx: ContextHolder<*>) :
     Packet<OpenTimedoorPacket> {
     companion object {
-        val type = CodecPacketType.Server.create(
-            "open_timedoor".tempadId,
-            ObjectByteCodec.create(
-                ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
+        val type = CodecPacketType.Server.create("open_timedoor".tempadId,
+            ObjectByteCodec.create(ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
                 ByteCodec.UUID.fieldOf { it.locationId },
                 ContextHolder.codec.fieldOf { it.ctx },
                 ::OpenTimedoorPacket
@@ -30,11 +28,9 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
                 val ctx = message.ctx.getCtx(player)
                 val location = TempadLocations[player, ctx, message.providerId]?.let { it[message.locationId] }
                 location?.let {
-                    val msg = TimedoorEntity.openTimedoor(player, ctx, it)
-                    player.displayClientMessage(msg, true)
+                    TimedoorEntity.openTimedoor(player, ctx, it)?.let { msg -> player.displayClientMessage(msg, true) }
                 }
-            }
-        )
+            })
     }
 
     override fun type(): PacketType<OpenTimedoorPacket> = type
