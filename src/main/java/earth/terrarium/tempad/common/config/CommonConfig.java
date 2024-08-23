@@ -30,10 +30,6 @@ public final class CommonConfig {
     @Comment("Whether or not Time Doors are allowed to be opened to the same dimension they are in.")
     public static boolean allowIntradimensionalTravel = true;
 
-    @ConfigEntry(id = "allow_exporting", type = EntryType.BOOLEAN)
-    @Comment("Whether or not Tempads are allowed to export their stored locations.")
-    public static boolean allowExporting = true;
-
     @ConfigEntry(id = "allow_location_saving", type = EntryType.BOOLEAN)
     @Comment("Whether or not locations can be saved to the Tempad.")
     public static boolean allowLocationSaving = true;
