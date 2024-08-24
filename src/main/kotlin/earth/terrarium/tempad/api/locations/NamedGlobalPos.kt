@@ -25,7 +25,6 @@ interface NamedGlobalPos {
     val angle: Float
     val color: Color
 
-    val display: List<Component>
     val type: LocationType<*>
 
     fun consume(player: Player): Component

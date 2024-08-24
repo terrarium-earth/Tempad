@@ -2,10 +2,12 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
+import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.items.ChrononContainer
 import earth.terrarium.tempad.common.items.InfiniteChronons
+import earth.terrarium.tempad.common.items.ItemChrononContainer
 import earth.terrarium.tempad.common.items.TempadContainer
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.register
@@ -76,7 +78,7 @@ class Tempad(bus: IEventBus) {
             val fluidHandlers = event.register(Capabilities.FluidHandler.ITEM)
 
             fluidHandlers[ModItems.chronometer] = { stack, _ ->
-                ChrononContainer(stack, 32000)
+                ItemChrononContainer(stack, 32000)
             }
 
             fluidHandlers[ModItems.tempad] = { stack, _ ->
@@ -84,15 +86,21 @@ class Tempad(bus: IEventBus) {
             }
 
             fluidHandlers[ModItems.timeTwister] = { stack, _ ->
-                ChrononContainer(stack, 4000)
+                ItemChrononContainer(stack, 4000)
             }
 
             fluidHandlers[ModItems.rudimentaryTempad] = { stack, _ ->
-                ChrononContainer(stack, 4000)
+                ItemChrononContainer(stack, 4000)
             }
 
             fluidHandlers[ModItems.sacredChronometer] = { stack, _ ->
                 InfiniteChronons(stack)
+            }
+
+            val blockFluidHandlers = event.register(Capabilities.FluidHandler.BLOCK)
+
+            blockFluidHandlers[ModBlocks.rudimentaryTempadBE] = { blockEntity, _ ->
+                (blockEntity as RudimentaryTempadBE).chronons
             }
         }
 

@@ -57,13 +57,6 @@ data class StaticNamedGlobalPos(override val name: Component, override val pos: 
     val z: Int = pos.z.toInt()
     val dimensionText = Component.translatable(dimension.location().toLanguageKey("dimension"))
 
-    override val display: List<Component> = listOf(
-        dimensionText,
-        Component.literal("X: $x"),
-        Component.literal("Y: $y"),
-        Component.literal("Z: $z")
-    )
-
     override val type: LocationType<*> = Companion.type
 
     override fun consume(player: Player): Component {

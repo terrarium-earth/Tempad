@@ -35,7 +35,7 @@ class SacredChronometerItem: Item(Properties().stacksTo(1)) {
     }
 }
 
-class InfiniteChronons(stack: ItemStack): ChrononContainer(stack, Int.MAX_VALUE) {
+class InfiniteChronons(stack: ItemStack): ItemChrononContainer(stack, Int.MAX_VALUE) {
     override var content: Int
         get() = Int.MAX_VALUE
         set(value) {}

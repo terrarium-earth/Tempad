@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.entity
 
+import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.context.SyncableContext
@@ -11,6 +12,7 @@ import earth.terrarium.tempad.api.sizing.DefaultSizing
 import earth.terrarium.tempad.api.sizing.DoorType
 import earth.terrarium.tempad.api.sizing.TimedoorSizing
 import earth.terrarium.tempad.common.config.CommonConfig
+import earth.terrarium.tempad.common.items.chrononContainer
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.registries.ModTags
@@ -28,9 +30,9 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.common.Tags
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
@@ -46,60 +48,93 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val SIZING = createDataKey<TimedoorEntity, TimedoorSizing>(ModEntities.sizingSerializer)
 
         //feedback
-        private val fail = Component.translatable("entity.tempad.timedoor.fail")
-        private val posFail = Component.translatable("entity.tempad.timedoor.fail.pos")
-        private val interDimFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional")
-        private val intraDimAllFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional_all")
-        private val intraDimFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional")
-        private val enteringFail = Component.translatable("entity.tempad.timedoor.fail.entering")
-        private val leavingFail = Component.translatable("entity.tempad.timedoor.fail.leaving")
-        private val noChrononsFail = Component.translatable("entity.tempad.timedoor.fail.no_chronons")
+        val fail = Component.translatable("entity.tempad.timedoor.fail")
+        val posFail = Component.translatable("entity.tempad.timedoor.fail.pos")
+        val interDimFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional")
+        val intraDimAllFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional_all")
+        val intraDimFail = Component.translatable("entity.tempad.timedoor.fail.interdimensional")
+        val enteringFail = Component.translatable("entity.tempad.timedoor.fail.entering")
+        val leavingFail = Component.translatable("entity.tempad.timedoor.fail.leaving")
+        val noChrononsFail = Component.translatable("entity.tempad.timedoor.fail.no_chronons")
 
-        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos): Component? {
+        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalPos, onOpen: (TimedoorEntity) -> Unit = {}): Component? {
             val stack = ctx.stack
-            val targetDimension = location.dimension ?: return posFail
-            location.pos ?: return posFail
-            val lookup = player.level().registryAccess().lookup(Registries.DIMENSION)
-            val targetHolder = lookup.get().get(targetDimension).getOrNull() ?: return posFail
-            val sourceHolder = lookup.get().get(player.level().dimension()).getOrNull() ?: return posFail
+            if (!player.isCreative && stack.chrononContent < 1000) return noChrononsFail
+
+            val result = getTimedoor(player, location)
+            result.right().getOrNull()?.let { return it }
+
+            val timedoor = result.left().getOrNull() ?: return fail
+
+            val event = TimedoorEvent.OpenWithItem(timedoor, player, ctx).post()
+            if (event.isCanceled) return event.errorMessage ?: fail
+            else logTimedoorOpen(player, location, timedoor)
+
             if (!player.isCreative) {
-                if (stack.chrononContent < 1000) return noChrononsFail
+                ctx.drain(1000)
+                player.cooldowns.addCooldown(stack.item, 40)
+            }
+
+            player.level().addFreshEntity(timedoor)
+            onOpen(timedoor)
+            return null
+        }
+
+        fun openTimedoor(player: Player, block: BlockEntity, location: NamedGlobalPos, onOpen: (TimedoorEntity) -> Unit = {}): Component? {
+            if (block.chrononContainer.content < 1000) return noChrononsFail
+            val result = getTimedoor(player, location)
+            result.right().getOrNull()?.let { return it }
+
+            val timedoor = result.left().getOrNull() ?: return fail
+
+            val event = TimedoorEvent.OpenWithBlock(timedoor, player, block).post()
+            if (event.isCanceled) return event.errorMessage ?: fail
+            else logTimedoorOpen(player, location, timedoor)
+
+            block.level!!.addFreshEntity(timedoor)
+            block.chrononContainer -= 1000
+            onOpen(timedoor)
+            return null
+        }
+
+        fun getTimedoor(player: Player, location: NamedGlobalPos): Either<TimedoorEntity, Component> {
+            val targetDimension = location.dimension ?: return Either.right(posFail)
+            location.pos ?: return Either.right(posFail)
+            val lookup = player.level().registryAccess().lookup(Registries.DIMENSION)
+            val targetHolder = lookup.get().get(targetDimension).getOrNull() ?: return Either.right(posFail)
+            val sourceHolder = lookup.get().get(player.level().dimension()).getOrNull() ?: return Either.right(posFail)
+            if (!player.isCreative) {
                 player.level().dimension().let {
                     if (it != location.dimension) {
-                        if (!CommonConfig.allowInterdimensionalTravel) return interDimFail
-                        if (sourceHolder in ModTags.leavingNotSupported) return leavingFail
-                        if (targetHolder in ModTags.enteringNotSupported) return enteringFail
+                        if (!CommonConfig.allowInterdimensionalTravel) return Either.right(interDimFail)
+                        if (sourceHolder in ModTags.leavingNotSupported) return Either.right(leavingFail)
+                        if (targetHolder in ModTags.enteringNotSupported) return Either.right(enteringFail)
                     } else {
-                        if (!CommonConfig.allowIntradimensionalTravel) return intraDimAllFail
-                        if (sourceHolder in ModTags.intradimensionalTravelNotSupported) return intraDimFail
+                        if (!CommonConfig.allowIntradimensionalTravel) return Either.right(intraDimAllFail)
+                        if (sourceHolder in ModTags.intradimensionalTravelNotSupported) return Either.right(intraDimFail)
                     }
                 }
             }
 
-            val timedoor = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level()).apply {
+            return Either.left(TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level()).apply {
                 owner = player.uuid
                 sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
                 sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, this)
                 setLocation(location)
-            }
-            val event = TimedoorEvent.Open(timedoor, player, ctx).post()
-            if (event.isCanceled) return event.errorMessage ?: fail
-            else if (CommonConfig.TimeDoor.logWhenOpen) {
+            })
+        }
+
+        private fun logTimedoorOpen(player: Player, location: NamedGlobalPos, timedoor: TimedoorEntity) {
+            if (CommonConfig.TimeDoor.logWhenOpen) {
                 Tempad.logger.debug(
                     "Player {} opened a timedoor at {} in dimension {} to {} in dimension {}",
                     player.name.string,
                     player.blockPosition(),
                     player.level().dimension(),
                     location.name,
-                    targetDimension
+                    timedoor.targetDimension
                 )
             }
-            if (!player.isCreative) {
-                ctx.drain(1000)
-                player.cooldowns.addCooldown(stack.item, 40)
-            }
-            player.level().addFreshEntity(timedoor)
-            return null
         }
     }
 

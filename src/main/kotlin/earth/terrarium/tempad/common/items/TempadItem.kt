@@ -99,6 +99,6 @@ class TempadItem : ChrononItem() {
     }
 }
 
-class TempadContainer(stack: ItemStack) : ChrononContainer(stack, 0) {
+class TempadContainer(stack: ItemStack) : ItemChrononContainer(stack, 0) {
     override val capacity: Int get() = if (stack.twisterEquipped) 12000 else 8000
 }

@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
@@ -148,6 +149,12 @@ object TempadClient {
         val stack = event.itemStack
         if(stack.item === ModItems.tempad && stack.installedUpgrades.upgrades.isNotEmpty()) {
             event.tooltipElements.add(2, Either.right(stack.installedUpgrades))
+        }
+
+        if (stack.item=== ModItems.rudimentaryTempad && stack.staticLocation != null) {
+            (stack.staticLocation as? TooltipComponent)?.let {
+                event.tooltipElements.add(2, Either.right(it))
+            }
         }
     }
 }

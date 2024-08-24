@@ -23,16 +23,6 @@ data class PlayerPos(val playerProfile: GameProfile): NamedGlobalPos, TooltipCom
     override val dimension: ResourceKey<Level> get() = player?.level()?.dimension() ?: Level.OVERWORLD
     override val angle: Float get() = player?.yRot ?: 0f
 
-    override val display: List<Component> get() {
-        val player = player ?: return listOf(Component.translatable("tempad.location.player_unavailable"))
-        return listOf(
-            Component.translatable(player.level().dimension().location().toLanguageKey("dimension")),
-            Component.literal("X: ${player.blockX}"),
-            Component.literal("Y: ${player.blockY}"),
-            Component.literal("Z: ${player.blockZ}")
-        )
-    }
-
     override val type: LocationType<*> = Companion.type
 
     override fun consume(player: Player): Component {

@@ -41,7 +41,7 @@ class ComponentDelegate<T : Any>(private val key: DataComponentType<T>, private 
 }
 
 operator fun <T : Any> DataComponentType<T>.getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T? = thisRef[this]
-operator fun <T : Any> DataComponentType<T>.setValue(thisRef: MutableDataComponentHolder, property: KProperty<*>, value: T?) { thisRef[this] = value }
+operator fun <T : Any> DataComponentType<T>.setValue(thisRef: MutableDataComponentHolder, property: KProperty<*>, value: T?) { value?.let { thisRef[this] = it } }
 
 fun <T : Any> DataComponentType<T>.withDefault(default: T) = ComponentDelegate(this, default)
 
