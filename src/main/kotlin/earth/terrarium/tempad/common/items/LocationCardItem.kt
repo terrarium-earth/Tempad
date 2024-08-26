@@ -1,6 +1,6 @@
 package earth.terrarium.tempad.common.items
 
-import earth.terrarium.tempad.common.registries.staticLocation
+import earth.terrarium.tempad.common.registries.targetPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.player.Player
@@ -13,7 +13,7 @@ import java.util.*
 class LocationCardItem: Item(Properties()) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (!level.isClientSide) {
-            player.getItemInHand(usedHand).staticLocation?.let { pos ->
+            player.getItemInHand(usedHand).targetPos?.let { pos ->
                 player.displayClientMessage(pos.consume(player), true)
             }
         }
@@ -21,6 +21,6 @@ class LocationCardItem: Item(Properties()) {
     }
 
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
-        return (stack.staticLocation as? TooltipComponent)?.let { pos -> Optional.of(pos) } ?: Optional.empty()
+        return (stack.targetPos as? TooltipComponent)?.let { pos -> Optional.of(pos) } ?: Optional.empty()
     }
 }

@@ -27,7 +27,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (level.isClientSide) return InteractionResultHolder.success(player.getItemInHand(usedHand))
         val ctx = player.ctx(usedHand.getSlot(player))
-        ctx.stack.staticLocation?.let {
+        ctx.stack.targetPos?.let {
             TimedoorEntity.openTimedoor(player, ctx, it)
         } ?: {
             player.displayClientMessage(TimedoorEntity.posFail, true)
@@ -39,7 +39,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
         if (context.player?.isShiftKeyDown == true) return super.useOn(context)
         val player = context.player ?: return InteractionResult.PASS
         context.syncableCtx?.let { ctx ->
-            context.itemInHand.staticLocation?.let { pos ->
+            context.itemInHand.targetPos?.let { pos ->
                 if (!context.level.isClientSide) TimedoorEntity.openTimedoor(player, ctx, pos)
             } ?: {
                 if (!context.level.isClientSide) player.displayClientMessage(TimedoorEntity.posFail, true)
@@ -50,15 +50,15 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
 
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
         if (action != ClickAction.SECONDARY) return false
-        if (stack.staticLocation != null) {
+        if (stack.targetPos != null) {
             if (slot.hasItem()) return false
             slot.contents = ModItems.locationCard.stack {
-                staticLocation = stack.staticLocation
+                targetPos = stack.targetPos
             }
-            stack.staticLocation = null
+            stack.targetPos = null
             return true
-        } else if (slot.contents.item === ModItems.locationCard && slot.contents.staticLocation != null) {
-            stack.staticLocation = slot.contents.staticLocation
+        } else if (slot.contents.item === ModItems.locationCard && slot.contents.targetPos != null) {
+            stack.targetPos = slot.contents.targetPos
             slot.contents -= 1
             return true
         }
@@ -73,8 +73,9 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
         state: BlockState,
     ): Boolean {
         level.getBlockEntity(pos)?.let { blockEntity ->
-            stack.staticLocation?.let { blockEntity.targetLocation = it }
-            player?.let { blockEntity.tempadOwner = it.gameProfile }
+            stack.targetPos?.let { blockEntity.targetLocation = it }
+            player?.let { blockEntity.owner = it.gameProfile }
+            blockEntity.chrononContent = stack.chrononContent
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state)
     }
@@ -87,9 +88,9 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
         player: Player,
         access: SlotAccess,
     ): Boolean {
-        if (stack.staticLocation == null) {
-            if (other.item === ModItems.locationCard && other.staticLocation != null) {
-                stack.staticLocation = other.staticLocation
+        if (stack.targetPos == null) {
+            if (other.item === ModItems.locationCard && other.targetPos != null) {
+                stack.targetPos = other.targetPos
                 access.set(other - 1)
                 return true
             }

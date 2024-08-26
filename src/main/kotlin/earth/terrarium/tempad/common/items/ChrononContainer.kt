@@ -62,7 +62,7 @@ abstract class ChrononContainer(open val capacity: Int) : IFluidHandler {
 }
 
 val ItemStack.chrononContainer get() = this[Capabilities.FluidHandler.ITEM] as ChrononContainer
-val BlockEntity.chrononContainer get() = level!!.getCapability(Capabilities.FluidHandler.BLOCK, blockPos, Direction.UP) as ChrononContainer
+val BlockEntity.chrononContainer get() = level!!.getCapability(Capabilities.FluidHandler.BLOCK, blockPos, Direction.UP) as? ChrononContainer
 
 fun move(from: IFluidHandler, to: IFluidHandler, amount: Int) {
     var extracted = from.drain(amount, IFluidHandler.FluidAction.SIMULATE)

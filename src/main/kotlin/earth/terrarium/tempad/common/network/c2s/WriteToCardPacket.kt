@@ -7,14 +7,12 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
-import com.teamresourceful.resourcefullibkt.common.contains
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.menu.menuCtx
 import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.registries.ModTags
-import earth.terrarium.tempad.common.registries.staticLocation
+import earth.terrarium.tempad.common.registries.targetPos
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.resources.ResourceLocation
 import java.util.UUID
@@ -38,7 +36,7 @@ class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, 
                 if (!menuCtx.stack.`is`(ModItems.locationCard)) return@handle
                 menuCtx.exchange(
                     ModItems.locationCard.stack {
-                        staticLocation = pos
+                        targetPos = pos
                     }
                 )
             }

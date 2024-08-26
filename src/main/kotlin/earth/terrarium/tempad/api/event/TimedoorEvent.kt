@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.api.event
 
+import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.network.chat.Component
@@ -14,7 +15,9 @@ open class TimedoorEvent(timedoor: TimedoorEntity): EntityEvent(timedoor) {
         return super.getEntity() as TimedoorEntity
     }
 
-    class OpenWithItem(timedoor: TimedoorEntity, val opener: Player, val tempadCtx: SyncableContext<*>): TimedoorEvent(timedoor), ICancellableEvent {
+    open class Open(timedoor: TimedoorEntity): TimedoorEvent(timedoor), ICancellableEvent
+
+    class OpenWithItem(timedoor: TimedoorEntity, val opener: Player, val tempadCtx: SyncableContext<*>): Open(timedoor) {
         var errorMessage: Component? = null
 
         /**
@@ -25,7 +28,8 @@ open class TimedoorEvent(timedoor: TimedoorEntity): EntityEvent(timedoor) {
             errorMessage = message
         }
     }
-    class OpenWithBlock(timedoor: TimedoorEntity, val opener: Player, val block: BlockEntity): TimedoorEvent(timedoor), ICancellableEvent {
+
+    class OpenWithBlock(timedoor: TimedoorEntity, val opener: GameProfile, val block: BlockEntity): Open(timedoor) {
         var errorMessage: Component? = null
 
         /**

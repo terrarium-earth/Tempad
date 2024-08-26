@@ -2,13 +2,13 @@ package earth.terrarium.tempad.common.registries
 
 import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
+import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.EmptyLocation
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
@@ -16,6 +16,7 @@ import earth.terrarium.tempad.common.utils.*
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.NeoForgeRegistries
+import java.util.UUID
 
 object ModAttachments {
     val registry: ResourcefulRegistry<AttachmentType<*>> = ResourcefulRegistries.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tempad.MOD_ID)
@@ -45,7 +46,7 @@ object ModAttachments {
         attachmentType({0}) {}
     }
 
-    val tempadOwner: AttachmentType<GameProfile> by registry.register("tempad_owner") {
+    val owner: AttachmentType<GameProfile> by registry.register("owner") {
         attachmentType({GameProfile(null, "null")}) {
             codec = GAME_PROFILE_CODEC.codec()
         }
@@ -62,6 +63,18 @@ object ModAttachments {
             codec = Codec.INT
         }
     }
+
+    val color: AttachmentType<Color> by registry.register("color") {
+        attachmentType({ Tempad.ORANGE }) {
+            codec = Color.CODEC
+        }
+    }
+
+    val posId: AttachmentType<UUID> by registry.register("pos_id") {
+        attachmentType({ UUID.randomUUID() }) {
+            codec = Codec.STRING.xmap(UUID::fromString, UUID::toString)
+        }
+    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
@@ -69,6 +82,8 @@ var AttachmentHolder.savedPositions by ModAttachments.locations
 var AttachmentHolder.travelHistory by ModAttachments.travelHistory
 var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLastTimedoor.optional()
 
-var AttachmentHolder.tempadOwner by ModAttachments.tempadOwner.optional()
+var AttachmentHolder.owner by ModAttachments.owner.optional()
 var AttachmentHolder.targetLocation by ModAttachments.targetLocation.optional()
 var AttachmentHolder.chrononContent by ModAttachments.chrononContent
+var AttachmentHolder.color by ModAttachments.color
+var AttachmentHolder.posId by ModAttachments.posId.optional()

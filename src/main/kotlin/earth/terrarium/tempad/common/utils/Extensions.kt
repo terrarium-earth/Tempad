@@ -16,6 +16,8 @@ import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.Holder
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtOps
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
@@ -38,7 +40,9 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -50,6 +54,7 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent
 import org.joml.Vector3f
 import java.util.*
 import java.util.function.Function
+import kotlin.jvm.optionals.getOrNull
 
 operator fun TagKey<EntityType<*>>.contains(entity: EntityType<*>): Boolean = entity.`is`(this)
 
@@ -202,12 +207,19 @@ val UseOnContext.syncableCtx get() = this.player?.let { InventoryContext(it, thi
 inline fun <T1: Any, T2: Any, R: Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2)->R?): R? {
     return if (p1 != null && p2 != null) block(p1, p2) else null
 }
+
 inline fun <T1: Any, T2: Any, T3: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, block: (T1, T2, T3)->R?): R? {
     return if (p1 != null && p2 != null && p3 != null) block(p1, p2, p3) else null
 }
+
 inline fun <T1: Any, T2: Any, T3: Any, T4: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, p4: T4?, block: (T1, T2, T3, T4)->R?): R? {
     return if (p1 != null && p2 != null && p3 != null && p4 != null) block(p1, p2, p3, p4) else null
 }
+
 inline fun <T1: Any, T2: Any, T3: Any, T4: Any, T5: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, p4: T4?, p5: T5?, block: (T1, T2, T3, T4, T5)->R?): R? {
     return if (p1 != null && p2 != null && p3 != null && p4 != null && p5 != null) block(p1, p2, p3, p4, p5) else null
 }
+
+val BlockEntity.angle: Float get() = this.blockState.getValue(BlockStateProperties.FACING).toYRot()
+
+fun <T: Any> Codec<T>.parse(tag: CompoundTag): T? = this.parse(NbtOps.INSTANCE, tag).result().getOrNull()

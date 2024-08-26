@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.entity
 
+import com.mojang.authlib.GameProfile
 import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
@@ -31,6 +32,7 @@ import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
 import java.util.*
@@ -61,14 +63,18 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             val stack = ctx.stack
             if (!player.isCreative && stack.chrononContent < 1000) return noChrononsFail
 
-            val result = getTimedoor(player, location)
+            val result = getTimedoor(player.level(), location)
             result.right().getOrNull()?.let { return it }
 
             val timedoor = result.left().getOrNull() ?: return fail
 
+            timedoor.owner = player.uuid
+            timedoor.sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
+            timedoor.sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, timedoor)
+
             val event = TimedoorEvent.OpenWithItem(timedoor, player, ctx).post()
             if (event.isCanceled) return event.errorMessage ?: fail
-            else logTimedoorOpen(player, location, timedoor)
+            else logTimedoorOpen(player.name.string, location, timedoor)
 
             if (!player.isCreative) {
                 ctx.drain(1000)
@@ -80,31 +86,34 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             return null
         }
 
-        fun openTimedoor(player: Player, block: BlockEntity, location: NamedGlobalPos, onOpen: (TimedoorEntity) -> Unit = {}): Component? {
-            if (block.chrononContainer.content < 1000) return noChrononsFail
-            val result = getTimedoor(player, location)
+        fun openTimedoor(player: GameProfile, block: BlockEntity, location: NamedGlobalPos, onOpen: (TimedoorEntity) -> Unit = {}): Component? {
+            if (block.chrononContainer!!.content < 1000) return noChrononsFail
+            val result = getTimedoor(block.level!!, location)
             result.right().getOrNull()?.let { return it }
 
             val timedoor = result.left().getOrNull() ?: return fail
+            timedoor.owner = player.id
+            timedoor.sizing = DefaultSizing.DEFAULT
+            timedoor.sizing.placeTimedoor(DoorType.ENTRY, Vec3.atCenterOf(block.blockPos).add(0.0, -1.5, 0.0), block.blockState.getValue(BlockStateProperties.FACING).toYRot() + 180, timedoor)
 
             val event = TimedoorEvent.OpenWithBlock(timedoor, player, block).post()
             if (event.isCanceled) return event.errorMessage ?: fail
-            else logTimedoorOpen(player, location, timedoor)
+            else logTimedoorOpen(player.name, location, timedoor)
 
             block.level!!.addFreshEntity(timedoor)
-            block.chrononContainer -= 1000
+            block.chrononContainer!! -= 1000
             onOpen(timedoor)
             return null
         }
 
-        fun getTimedoor(player: Player, location: NamedGlobalPos): Either<TimedoorEntity, Component> {
+        fun getTimedoor(level: Level, location: NamedGlobalPos, ignoreRestrictions: Boolean = false): Either<TimedoorEntity, Component> {
             val targetDimension = location.dimension ?: return Either.right(posFail)
             location.pos ?: return Either.right(posFail)
-            val lookup = player.level().registryAccess().lookup(Registries.DIMENSION)
+            val lookup = level.registryAccess().lookup(Registries.DIMENSION)
             val targetHolder = lookup.get().get(targetDimension).getOrNull() ?: return Either.right(posFail)
-            val sourceHolder = lookup.get().get(player.level().dimension()).getOrNull() ?: return Either.right(posFail)
-            if (!player.isCreative) {
-                player.level().dimension().let {
+            val sourceHolder = lookup.get().get(level.dimension()).getOrNull() ?: return Either.right(posFail)
+            if (!ignoreRestrictions) {
+                level.dimension().let {
                     if (it != location.dimension) {
                         if (!CommonConfig.allowInterdimensionalTravel) return Either.right(interDimFail)
                         if (sourceHolder in ModTags.leavingNotSupported) return Either.right(leavingFail)
@@ -116,21 +125,18 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 }
             }
 
-            return Either.left(TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, player.level()).apply {
-                owner = player.uuid
-                sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
-                sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, this)
+            return Either.left(TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, level).apply {
                 setLocation(location)
             })
         }
 
-        private fun logTimedoorOpen(player: Player, location: NamedGlobalPos, timedoor: TimedoorEntity) {
+        private fun logTimedoorOpen(player: String, location: NamedGlobalPos, timedoor: TimedoorEntity) {
             if (CommonConfig.TimeDoor.logWhenOpen) {
                 Tempad.logger.debug(
                     "Player {} opened a timedoor at {} in dimension {} to {} in dimension {}",
-                    player.name.string,
-                    player.blockPosition(),
-                    player.level().dimension(),
+                    player,
+                    timedoor.blockPosition(),
+                    timedoor.level().dimension(),
                     location.name,
                     timedoor.targetDimension
                 )
@@ -224,7 +230,6 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             tryClose()
             return
         }
-        this.resetClosingTime()
         tryInitReceivingPortal()
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()
@@ -258,12 +263,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                         DimensionTransition.DO_NOTHING
                     )
                 )
-
                 entity.ageUntilAllowedThroughTimedoor = entity.tickCount + 60
-            }
-
-            if (entity is Player && entity.uuid == owner && this.closingTime != -1) {
-                this.closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterOwnerEnter
             }
 
             linkedPortalEntity?.let { TimedoorEvent.Exit(it, entity).post() }
@@ -299,12 +299,6 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         super.onRemovedFromLevel()
         if (this.linkedPortalEntity != null) this.linkedPortalEntity!!.linkedPortalEntity = null
         this.linkedPortalEntity = null
-    }
-
-    fun resetClosingTime() {
-        if (closingTime != -1) {
-            closingTime = this.tickCount + CommonConfig.TimeDoor.idleAfterEnter
-        }
     }
 
     fun setLocation(location: NamedGlobalPos) {

@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.block
 import com.mojang.serialization.MapCodec
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.registries.staticLocation
+import earth.terrarium.tempad.common.registries.targetPos
 import earth.terrarium.tempad.common.registries.targetLocation
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
@@ -15,10 +15,9 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.DispenserBlock
-import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
@@ -30,20 +29,20 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of()) {
 
     init {
         this.registerDefaultState(
-            stateDefinition.any().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
+            stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.NORTH)
                 .setValue(BlockStateProperties.TRIGGERED, false)
         )
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
-        return defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, context.horizontalDirection.opposite)
+        return defaultBlockState().setValue(BlockStateProperties.FACING, context.horizontalDirection.opposite)
     }
 
     override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
         return mutableListOf(
             ModItems.rudimentaryTempad.stack {
                 (params.getParameter(LootContextParams.BLOCK_ENTITY) as? RudimentaryTempadBE)?.let {
-                    staticLocation = it.targetLocation
+                    targetPos = it.targetLocation
                 }
             }
         )
@@ -75,4 +74,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of()) {
 
     override fun codec(): MapCodec<out BaseEntityBlock> = codec
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = RudimentaryTempadBE(pos, state)
+    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
+        builder.add(BlockStateProperties.FACING, BlockStateProperties.TRIGGERED)
+    }
 }

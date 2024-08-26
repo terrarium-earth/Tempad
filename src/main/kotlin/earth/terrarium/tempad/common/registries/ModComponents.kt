@@ -3,13 +3,13 @@ package earth.terrarium.tempad.common.registries
 import com.mojang.serialization.Codec
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
+import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.NamedGlobalPos
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
-import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
@@ -41,7 +41,7 @@ object ModComponents {
         }
     }
 
-    val staticLocation: DataComponentType<NamedGlobalPos> by registry.register("card_location") {
+    val targetPos: DataComponentType<NamedGlobalPos> by registry.register("target_position") {
         componentType {
             serialize = NamedGlobalPos.codec
             networkSerialize = NamedGlobalPos.byteCodec
@@ -68,6 +68,13 @@ object ModComponents {
             networkSerialize = InstalledUpgradesComponent.byteCodec
         }
     }
+
+    val color: DataComponentType<Color> by registry.register("color") {
+        componentType {
+            serialize = Color.CODEC
+            networkSerialize = Color.BYTE_CODEC
+        }
+    }
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
@@ -76,10 +83,12 @@ var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.withDe
 
 var MutableDataComponentHolder.chrononContent by ModComponents.chrononContent.withDefault(0)
 
-var MutableDataComponentHolder.staticLocation by ModComponents.staticLocation
+var MutableDataComponentHolder.targetPos by ModComponents.targetPos
 
 var MutableDataComponentHolder.enabled by ModComponents.enabled.withDefault(true)
 
 var MutableDataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.withDefault(false)
 
 var MutableDataComponentHolder.installedUpgrades by ModComponents.installedUpgrades.withDefault(InstalledUpgradesComponent(emptyList()))
+
+var MutableDataComponentHolder.color by ModComponents.color

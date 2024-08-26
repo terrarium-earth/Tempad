@@ -80,7 +80,7 @@ object TempadClient {
         step(tank.getFluidInTank(0).amount.toFloat() / tank.getTankCapacity(0), 0.33f)
     }
 
-    val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.staticLocation != null }
+    val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.targetPos != null }
 
     val clientFluidRegistry = ResourcefulClientFluidRegistry(Tempad.MOD_ID)
 
@@ -151,8 +151,8 @@ object TempadClient {
             event.tooltipElements.add(2, Either.right(stack.installedUpgrades))
         }
 
-        if (stack.item=== ModItems.rudimentaryTempad && stack.staticLocation != null) {
-            (stack.staticLocation as? TooltipComponent)?.let {
+        if (stack.item=== ModItems.rudimentaryTempad && stack.targetPos != null) {
+            (stack.targetPos as? TooltipComponent)?.let {
                 event.tooltipElements.add(2, Either.right(it))
             }
         }
