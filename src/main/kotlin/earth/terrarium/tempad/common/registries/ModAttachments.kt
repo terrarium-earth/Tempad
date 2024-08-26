@@ -13,6 +13,8 @@ import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.utils.*
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.NeoForgeRegistries
@@ -73,6 +75,12 @@ object ModAttachments {
     val posId: AttachmentType<UUID> by registry.register("pos_id") {
         attachmentType({ UUID.randomUUID() }) {
             codec = Codec.STRING.xmap(UUID::fromString, UUID::toString)
+        }
+    }
+
+    val name: AttachmentType<Component> by registry.register("name") {
+        attachmentType({ Component.empty() }) {
+            codec = ComponentSerialization.CODEC
         }
     }
 }

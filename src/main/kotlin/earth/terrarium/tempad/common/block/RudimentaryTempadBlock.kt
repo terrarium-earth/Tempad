@@ -10,32 +10,46 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.ItemInteractionResult
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.BlockPlaceContext
+import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.VoxelShape
 
-class RudimentaryTempadBlock : BaseEntityBlock(Properties.of()) {
+class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
     companion object {
         val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.rudimentaryTempad }
+        val hasCardProperty = BooleanProperty.create("has_card")
+
+        val shape = Block.box(0.0, 0.0, 0.0, 16.0, 9.0, 16.0)
     }
 
     init {
         this.registerDefaultState(
-            stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.NORTH)
+            stateDefinition.any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
                 .setValue(BlockStateProperties.TRIGGERED, false)
+                .setValue(hasCardProperty, false)
         )
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
-        return defaultBlockState().setValue(BlockStateProperties.FACING, context.horizontalDirection.opposite)
+        val hasCard = context.itemInHand.targetPos != null
+        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection).setValue(hasCardProperty, hasCard)
     }
 
     override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
@@ -46,6 +60,18 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of()) {
                 }
             }
         )
+    }
+
+    override fun useItemOn(
+        stack: ItemStack,
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hand: InteractionHand,
+        result: BlockHitResult,
+    ): ItemInteractionResult {
+        return super.useItemOn(stack, state, level, pos, player, hand, result)
     }
 
     override fun neighborChanged(
@@ -75,6 +101,14 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of()) {
     override fun codec(): MapCodec<out BaseEntityBlock> = codec
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = RudimentaryTempadBE(pos, state)
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
-        builder.add(BlockStateProperties.FACING, BlockStateProperties.TRIGGERED)
+        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.TRIGGERED, hasCardProperty)
+    }
+
+    override fun getRenderShape(state: BlockState): RenderShape {
+        return RenderShape.MODEL
+    }
+
+    override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
+        return shape
     }
 }

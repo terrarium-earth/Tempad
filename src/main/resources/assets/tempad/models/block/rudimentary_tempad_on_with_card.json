@@ -1,0 +1,6 @@
+{
+    "parent": "tempad:block/rudimentary_tempad",
+    "textures": {
+        "tempad": "tempad:block/rudimentary_tempad_on_with_card"
+    }
+}

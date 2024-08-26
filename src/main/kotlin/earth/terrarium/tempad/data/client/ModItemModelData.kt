@@ -68,6 +68,12 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         basicItem(ModItems.timeTwister)
         basicItem(ModItems.newLocationUpgrade)
         basicItem(ModItems.playerTeleportUpgrade)
+
+        withExistingParent("tempad:item/rudimentary_tempad", "tempad:block/rudimentary_tempad_off")
+            .override()
+            .predicate("has_card".tempadId, 1f)
+            .model(withExistingParent("tempad:item/rudimentary_tempad_with_card", "tempad:block/rudimentary_tempad_off_with_card"))
+            .end()
     }
 
     fun enablableItem(item: Item): ItemModelBuilder {

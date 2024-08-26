@@ -40,8 +40,8 @@ import kotlin.jvm.optionals.getOrNull
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
-        internal const val IDLE_BEFORE_START = 10
-        internal const val ANIMATION_LENGTH = 6
+        internal const val IDLE_BEFORE_START = 15
+        internal const val ANIMATION_LENGTH = 5
         private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
         private val TARGET_POS = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
@@ -94,7 +94,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             val timedoor = result.left().getOrNull() ?: return fail
             timedoor.owner = player.id
             timedoor.sizing = DefaultSizing.DEFAULT
-            timedoor.sizing.placeTimedoor(DoorType.ENTRY, Vec3.atCenterOf(block.blockPos).add(0.0, -1.5, 0.0), block.blockState.getValue(BlockStateProperties.FACING).toYRot() + 180, timedoor)
+            timedoor.sizing.placeTimedoor(DoorType.ENTRY, Vec3.atCenterOf(block.blockPos).add(0.0, -1.5, 0.0), block.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180, timedoor)
 
             val event = TimedoorEvent.OpenWithBlock(timedoor, player, block).post()
             if (event.isCanceled) return event.errorMessage ?: fail

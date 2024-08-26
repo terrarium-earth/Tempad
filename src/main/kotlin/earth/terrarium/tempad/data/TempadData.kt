@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.data
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.data.client.ModBlockStateData
 import earth.terrarium.tempad.data.client.ModItemModelData
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.bus.api.SubscribeEvent
@@ -21,5 +22,6 @@ class TempadData(bus: IEventBus) {
         val lookupProvider = event.lookupProvider
 
         generator.addProvider(event.includeClient(), ModItemModelData(output, existingFileHelper))
+        generator.addProvider(event.includeClient(), ModBlockStateData(output, existingFileHelper))
     }
 }

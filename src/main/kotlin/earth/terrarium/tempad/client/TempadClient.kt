@@ -113,6 +113,7 @@ object TempadClient {
         ItemProperties.register(ModItems.chronometer, "charge".tempadId, chargeProperty)
         ItemProperties.register(ModItems.statusEmitter, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
+        ItemProperties.register(ModItems.rudimentaryTempad, "has_card".tempadId, writtenProperty)
     }
 
     @SubscribeEvent @JvmStatic

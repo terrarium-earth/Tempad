@@ -1,0 +1,11 @@
+{
+  "parent": "tempad:block/rudimentary_tempad_off",
+  "overrides": [
+    {
+      "model": "tempad:item/rudimentary_tempad_with_card",
+      "predicate": {
+        "tempad:has_card": 1.0
+      }
+    }
+  ]
+}
