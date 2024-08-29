@@ -1,12 +1,17 @@
-// 1.21	2024-08-08T16:22:39.44563	Item Models: tempad
-b082791e0cd6b411cdddc9cee15b1a26a275dea3 assets/tempad/models/item/blank_card.json
-f427fd812e3771ea58aad949a0f18012337248ba assets/tempad/models/item/chronon_generator.json
-cfd8d5ad10e6fef4451144d3e8498c3082d95e4f assets/tempad/models/item/chronon_generator_1.json
-0a50f68f8d5c2893d31f7472795d74a8e2e17833 assets/tempad/models/item/chronon_generator_2.json
-dbcaa12278503891be96d4ed97f70076883bc549 assets/tempad/models/item/chronon_generator_3.json
-aad2eaa06be7fda98d61da34e91618e6abd4b1f4 assets/tempad/models/item/location_card.json
+// 1.21	2024-08-28T22:14:49.433706	Item Models: tempad
+b45bf523ec1fb2017e743238f6c2a10cbf4d13e1 assets/tempad/models/item/chronometer.json
+017a2fe85a57c2f6cb55e580429ef5aa6c86ebc7 assets/tempad/models/item/chronometer_1.json
+076b82971f353f167f7363d05e1637ccd7cb4ddb assets/tempad/models/item/chronometer_2.json
+90e678bcdfb995087a50774bbfe1cb8bfad801d4 assets/tempad/models/item/chronometer_3.json
+af4e4b13d79af99ef85eb7647c5f583da9ec429f assets/tempad/models/item/handbook.json
+cfc671af9f7e9fc63b5a96429982aa468e28bde9 assets/tempad/models/item/inexorable_alloy.json
+21a5891fa66ad3899b659d67b15ee53c7ec4577b assets/tempad/models/item/location_card.json
+540d49fda11a2c867ce40e7b50a24e5474f00728 assets/tempad/models/item/location_card_written.json
 755a24eed4ef1a60e211debf7100ae74acc85d94 assets/tempad/models/item/new_location_upgrade.json
 bf3ed08965e4dc2013579cbcd3f506ed0298d4c2 assets/tempad/models/item/player_teleport_upgrade.json
+23e50cc63aa0b6947ec962e0d5b29000b8fc0f4a assets/tempad/models/item/sacred_chronometer.json
+2e573519814492f776e19d5e5ae258789f14d226 assets/tempad/models/item/status_emitter.json
+cddb176271a6ca71ffff8b198dbae306fb5910d0 assets/tempad/models/item/status_emitter_enabled.json
 fb0bc39d28d65dc627aee6391afc8cfdb98d383d assets/tempad/models/item/tempad.json
 2db9c2f6ab8a412b41107e2d1155e2790e6ba47d assets/tempad/models/item/tempad/attached_idle_0.json
 a6764bfdd5412c7e770b979812260b8c3a7c9e10 assets/tempad/models/item/tempad/attached_idle_1.json
@@ -24,6 +29,4 @@ dd41f855de3b860b2e4de106bfae68a548705a0c assets/tempad/models/item/tempad/base_i
 5e664209ef686a0aeb7e23c4504e555785788850 assets/tempad/models/item/tempad/base_in_use_1.json
 90f82972ef92ca2c814ad2879d75c846a50813ea assets/tempad/models/item/tempad/base_in_use_2.json
 af05fa778f7b708bf0712518e63c6e01e416953e assets/tempad/models/item/tempad/base_in_use_3.json
-c2f35aac567f05aaa9b3892551d8dda7995e8bfb assets/tempad/models/item/temporal_beacon.json
-52aed78867fd1e1e241ace0302e93647cbfe75e0 assets/tempad/models/item/temporal_beacon_on.json
 b4d9d0d641442d2f783900d2697efb40f749f28a assets/tempad/models/item/time_twister.json

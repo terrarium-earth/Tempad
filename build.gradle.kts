@@ -187,6 +187,12 @@ runs {
     }
 }
 
+sourceSets.main.configure {
+    resources {
+        srcDir("src/generated/resources")
+    }
+}
+
 idea {
     module {
         isDownloadJavadoc = true

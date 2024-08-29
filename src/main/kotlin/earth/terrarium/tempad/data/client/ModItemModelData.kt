@@ -63,23 +63,27 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             }
         }
 
-        enablableItem(ModItems.statusEmitter)
+        booleanItem(ModItems.statusEmitter, "enabled")
+        booleanItem(ModItems.locationCard, "written")
 
         basicItem(ModItems.timeTwister)
         basicItem(ModItems.newLocationUpgrade)
         basicItem(ModItems.playerTeleportUpgrade)
+        basicItem(ModItems.inexorableAlloy)
+        basicItem(ModItems.sacredChronometer)
+        basicItem("handbook".tempadId)
     }
 
-    fun enablableItem(item: Item): ItemModelBuilder {
+    fun booleanItem(item: Item, propName: String): ItemModelBuilder {
         val itemId = BuiltInRegistries.ITEM.getKey(item)
         return getBuilder(itemId.toString())
             .parent(ModelFile.UncheckedModelFile("item/generated"))
             .texture("layer0", ResourceLocation.fromNamespaceAndPath(itemId.namespace, "item/" + itemId.path))
             .override()
-            .predicate("enabled".tempadId, 1f)
-            .model(getBuilder(itemId.toString() + "_on").apply {
+            .predicate(propName.tempadId, 1f)
+            .model(getBuilder(itemId.toString() + "_$propName").apply {
                 parent(ModelFile.UncheckedModelFile("item/generated"))
-                texture("layer0", ResourceLocation.fromNamespaceAndPath(itemId.namespace, "item/${itemId.path}_on"))
+                texture("layer0", ResourceLocation.fromNamespaceAndPath(itemId.namespace, "item/${itemId.path}_$propName"))
             })
             .end()
     }

@@ -1,0 +1,9 @@
+{
+    "name": "TVA Official Handbook",
+    "landing_text": "The Time Variance Authority Official Handbook. A guide to all the technology created and utilized by the TVA. Failure to read this handbook may result in severe consequences.",
+    "version": 1,
+    "creative_tab": "tempad:main",
+    "use_resource_pack": true,
+    "pamphlet": true,
+    "model": "tempad:handbook"
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Introduction to the TVA",
+    "icon": "tempad:sacred_chronometer",
+    "category": "tempad:main",
+    "pages": [
+        {
+            "type": "patchouli:text",
+            "text": "empty"
+        }
+    ]
+}

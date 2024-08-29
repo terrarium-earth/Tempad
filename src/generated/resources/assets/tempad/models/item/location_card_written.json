@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "tempad:item/status_emitter_on"
+    "layer0": "tempad:item/location_card_written"
   }
 }

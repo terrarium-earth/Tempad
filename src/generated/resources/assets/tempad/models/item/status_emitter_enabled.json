@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "tempad:item/blank_card"
+    "layer0": "tempad:item/status_emitter_enabled"
   }
 }
