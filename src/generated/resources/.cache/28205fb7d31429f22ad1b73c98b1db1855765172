@@ -1,14 +1,18 @@
-// 1.21	2024-08-26T17:30:02.011054	Item Models: tempad
+// 1.21	2024-08-29T18:39:02.626117	Item Models: tempad
 b45bf523ec1fb2017e743238f6c2a10cbf4d13e1 assets/tempad/models/item/chronometer.json
 017a2fe85a57c2f6cb55e580429ef5aa6c86ebc7 assets/tempad/models/item/chronometer_1.json
 076b82971f353f167f7363d05e1637ccd7cb4ddb assets/tempad/models/item/chronometer_2.json
 90e678bcdfb995087a50774bbfe1cb8bfad801d4 assets/tempad/models/item/chronometer_3.json
+cfc671af9f7e9fc63b5a96429982aa468e28bde9 assets/tempad/models/item/inexorable_alloy.json
+21a5891fa66ad3899b659d67b15ee53c7ec4577b assets/tempad/models/item/location_card.json
+540d49fda11a2c867ce40e7b50a24e5474f00728 assets/tempad/models/item/location_card_written.json
 755a24eed4ef1a60e211debf7100ae74acc85d94 assets/tempad/models/item/new_location_upgrade.json
 bf3ed08965e4dc2013579cbcd3f506ed0298d4c2 assets/tempad/models/item/player_teleport_upgrade.json
 9a5b6f1dc19c6308dbeb50b3ebf1207e0558511b assets/tempad/models/item/rudimentary_tempad.json
 bb86681c0759421fad79939149add7a2ff00f026 assets/tempad/models/item/rudimentary_tempad_with_card.json
-2dc956c56ff57a23376ba043ef1820e73183d8b3 assets/tempad/models/item/status_emitter.json
-b7fde07a3664678a83585e452275b4ab3806938d assets/tempad/models/item/status_emitter_on.json
+23e50cc63aa0b6947ec962e0d5b29000b8fc0f4a assets/tempad/models/item/sacred_chronometer.json
+2e573519814492f776e19d5e5ae258789f14d226 assets/tempad/models/item/status_emitter.json
+cddb176271a6ca71ffff8b198dbae306fb5910d0 assets/tempad/models/item/status_emitter_enabled.json
 fb0bc39d28d65dc627aee6391afc8cfdb98d383d assets/tempad/models/item/tempad.json
 2db9c2f6ab8a412b41107e2d1155e2790e6ba47d assets/tempad/models/item/tempad/attached_idle_0.json
 a6764bfdd5412c7e770b979812260b8c3a7c9e10 assets/tempad/models/item/tempad/attached_idle_1.json

@@ -2,7 +2,7 @@
   "parent": "minecraft:item/generated",
   "overrides": [
     {
-      "model": "tempad:item/status_emitter_on",
+      "model": "tempad:item/status_emitter_enabled",
       "predicate": {
         "tempad:enabled": 1.0
       }

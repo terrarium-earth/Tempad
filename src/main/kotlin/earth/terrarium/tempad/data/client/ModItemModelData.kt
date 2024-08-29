@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
+import net.neoforged.neoforge.client.model.generators.ModelBuilder
 import net.neoforged.neoforge.client.model.generators.ModelFile
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 
@@ -63,29 +64,26 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             }
         }
 
-        enablableItem(ModItems.statusEmitter)
-
-        basicItem(ModItems.timeTwister)
-        basicItem(ModItems.newLocationUpgrade)
-        basicItem(ModItems.playerTeleportUpgrade)
-
+        basicItem(ModItems.statusEmitter).booleanProp("enabled")
+        basicItem(ModItems.locationCard).booleanProp("written")
         withExistingParent("tempad:item/rudimentary_tempad", "tempad:block/rudimentary_tempad_off")
             .override()
             .predicate("has_card".tempadId, 1f)
             .model(withExistingParent("tempad:item/rudimentary_tempad_with_card", "tempad:block/rudimentary_tempad_off_with_card"))
-            .end()
+
+        basicItem(ModItems.timeTwister)
+        basicItem(ModItems.newLocationUpgrade)
+        basicItem(ModItems.playerTeleportUpgrade)
+        basicItem(ModItems.inexorableAlloy)
+        basicItem(ModItems.sacredChronometer)
     }
 
-    fun enablableItem(item: Item): ItemModelBuilder {
-        val itemId = BuiltInRegistries.ITEM.getKey(item)
-        return getBuilder(itemId.toString())
-            .parent(ModelFile.UncheckedModelFile("item/generated"))
-            .texture("layer0", ResourceLocation.fromNamespaceAndPath(itemId.namespace, "item/" + itemId.path))
-            .override()
-            .predicate("enabled".tempadId, 1f)
-            .model(getBuilder(itemId.toString() + "_on").apply {
+    fun ItemModelBuilder.booleanProp(propName: String): ItemModelBuilder {
+        return this.override()
+            .predicate(propName.tempadId, 1f)
+            .model(getBuilder(this.location.toString() + "_$propName").apply {
                 parent(ModelFile.UncheckedModelFile("item/generated"))
-                texture("layer0", ResourceLocation.fromNamespaceAndPath(itemId.namespace, "item/${itemId.path}_on"))
+                texture("layer0", ResourceLocation.fromNamespaceAndPath(this.location.namespace, this.location.path))
             })
             .end()
     }
