@@ -1,11 +1,11 @@
 {
     "name": "Introduction to the TVA",
-    "icon": "tempad:sacred_chronometer",
+    "icon": "patchouli:guide_book[patchouli:book='tempad:tva_guidebook']",
     "category": "tempad:main",
     "pages": [
         {
             "type": "patchouli:text",
-            "text": "empty"
+            "text": "The Time Variance Authority is an organization charged with keeping watch over all timelines in the multiverse. It is likely that whoever is reading this text is being and has always been monitored by the TVA."
         }
     ]
 }
