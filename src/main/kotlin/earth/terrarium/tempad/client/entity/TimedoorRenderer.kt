@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import org.joml.Matrix4f
@@ -46,6 +47,13 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         poseStack.pushPose()
         poseStack.mulPose(Axis.YN.rotationDegrees(entity.yRot))
         poseStack.translate(width / -2.0, finalHeight / 2.0 - height / 2.0 + 0.01, depth / -2.0)
+        if (entity.glitching && ticks % 65 > 60) {
+            val randomX = Mth.randomBetween(entity.random, -0.05f, 0.05f)
+            val randomY = Mth.randomBetween(entity.random, -0.05f, 0.05f)
+            val randomZ = Mth.randomBetween(entity.random, -0.05f, 0.05f)
+            poseStack.translate(randomX, randomY, randomZ)
+        }
+
         if (width >= 0) renderTimedoor(poseStack, buffer, width, height, depth, entity.color.value, packedLight, entity.tickCount, entity.sizing.showLineAnimation)
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
         poseStack.popPose()

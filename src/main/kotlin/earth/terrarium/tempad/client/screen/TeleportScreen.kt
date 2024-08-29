@@ -81,24 +81,17 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         super.init()
 
         val searchValue = if (::search.isInitialized) search.value else ""
-        this.search = addRenderableWidget(
-            ModWidgets.search(
-                localLeft + 20,
-                localTop + 24,
-                64,
-                12
-            ) { _ -> if (::locationList.isInitialized) locationList.update() }
-        )
+        this.search = addRenderableWidget(ModWidgets.search(
+            localLeft + 20, localTop + 24, 64, 12
+        ) { _ -> if (::locationList.isInitialized) locationList.update() })
 
         search.value = searchValue
 
-        this.locationList = addRenderableWidget(PanelWidget(
-            menu.appContent.locations,
+        this.locationList = addRenderableWidget(PanelWidget(menu.appContent.locations,
             this::selected,
             { selected = it },
             { search.value },
-            { provider, locationId -> favorite?.matches(provider, locationId) ?: false }
-        ))
+            { provider, locationId -> favorite?.matches(provider, locationId) ?: false }))
 
         locationList.setPosition(localLeft + 4, localTop + 39)
         locationList.update()

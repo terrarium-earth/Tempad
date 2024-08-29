@@ -11,6 +11,7 @@ import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
@@ -36,7 +37,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.rudimentaryTempad }
         val hasCardProperty = BooleanProperty.create("has_card")
 
-        val shape = Block.box(0.0, 0.0, 0.0, 16.0, 9.0, 16.0)
+        val shape = Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0)
     }
 
     init {
@@ -71,7 +72,45 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         hand: InteractionHand,
         result: BlockHitResult,
     ): ItemInteractionResult {
+        if (stack.item == ModItems.locationCard && stack.targetPos != null) {
+            if (level.isClientSide) {
+                return ItemInteractionResult.SUCCESS
+            }
+            val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return ItemInteractionResult.FAIL
+            if (blockEntity.targetLocation != null) {
+                player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
+                    targetPos = blockEntity.targetLocation
+                })
+            }
+            blockEntity.targetLocation = stack.targetPos
+            level.setBlock(pos, state.setValue(hasCardProperty, true), 2)
+            stack.shrink(1)
+            return ItemInteractionResult.SUCCESS
+        }
         return super.useItemOn(stack, state, level, pos, player, hand, result)
+    }
+
+    override fun useWithoutItem(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hitResult: BlockHitResult,
+    ): InteractionResult {
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS
+        }
+        val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return InteractionResult.FAIL
+        if (player.isShiftKeyDown) {
+            // TODO: Open GUI
+        } else if (blockEntity.targetLocation != null) {
+            player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
+                targetPos = blockEntity.targetLocation
+            })
+            blockEntity.targetLocation = null
+            level.setBlock(pos, state.setValue(hasCardProperty, false), 2)
+        }
+        return InteractionResult.SUCCESS
     }
 
     override fun neighborChanged(

@@ -15,6 +15,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.client.tooltip.*
+import earth.terrarium.tempad.common.compat.ars_nouvaue.ArsCompat
 import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
@@ -32,6 +33,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.ModList
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.neoforge.capabilities.Capabilities
@@ -114,6 +116,10 @@ object TempadClient {
         ItemProperties.register(ModItems.statusEmitter, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
         ItemProperties.register(ModItems.rudimentaryTempad, "has_card".tempadId, writtenProperty)
+
+        if(ModList.get().isLoaded("ars_nouveau")) {
+            ArsCompat.init()
+        }
     }
 
     @SubscribeEvent @JvmStatic

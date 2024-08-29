@@ -20,6 +20,11 @@ import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.registries.ageUntilAllowedThroughTimedoor
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.core.BlockPos.MutableBlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
@@ -28,6 +33,7 @@ import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.Mth
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
@@ -37,6 +43,7 @@ import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
+import kotlin.math.abs
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
@@ -48,6 +55,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val TARGET_DIMENSION =
             createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
         private val SIZING = createDataKey<TimedoorEntity, TimedoorSizing>(ModEntities.sizingSerializer)
+        private val GLITCHING = createDataKey<TimedoorEntity, Boolean>(EntityDataSerializers.BOOLEAN)
 
         //feedback
         val fail = Component.translatable("entity.tempad.timedoor.fail")
@@ -172,6 +180,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private set
 
     var owner: UUID? = null
+    var glitching: Boolean by DataDelegate(GLITCHING)
 
     private val targetLevel: ServerLevel?
         get() = targetDimension.let { level().server[it] }
@@ -191,6 +200,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         pBuilder.define(TARGET_POS, Vec3.ZERO)
         pBuilder.define(TARGET_DIMENSION, Level.OVERWORLD)
         pBuilder.define(SIZING, DefaultSizing.DEFAULT)
+        pBuilder.define(GLITCHING, false)
     }
 
     override fun getDimensions(pose: Pose): EntityDimensions = sizing.dimensions
@@ -198,6 +208,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun isAlwaysTicking() = true
 
     override fun tick() {
+        super.tick()
         if (level().isClientSide()) {
             if (sizing.dimensions.width != bbWidth || sizing.dimensions.height != bbHeight) {
                 this.fixupDimensions()
@@ -308,6 +319,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         this.targetAngle = location.angle
         this.color = location.color
     }
+
+    override fun fireImmune(): Boolean = true
 
     override fun readAdditionalSaveData(pCompound: CompoundTag) {}
     override fun addAdditionalSaveData(pCompound: CompoundTag) {}

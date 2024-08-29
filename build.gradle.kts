@@ -29,6 +29,7 @@ repositories {
     maven(url = "https://maven.octo-studios.com/releases")
     maven(url = "https://modmaven.dev/" )
     maven(url = "https://api.modrinth.com/maven")
+    maven(url = "https://maven.blamejared.com" )
     mavenLocal()
 }
 
@@ -45,6 +46,7 @@ dependencies {
     val patchouliVersion: String by project
     val jadeVersion: String by project
     val jeiVersion: String by project
+    val arsNouveauVersion: String by project
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
@@ -87,6 +89,9 @@ dependencies {
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jeiVersion}")
     // at runtime, use the full JEI jar for NeoForge
     runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jeiVersion}")
+    implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraft_version}.0:${arsNouveauVersion}") {
+        exclude(group = "curse.maven")
+    }
 }
 
 java {
