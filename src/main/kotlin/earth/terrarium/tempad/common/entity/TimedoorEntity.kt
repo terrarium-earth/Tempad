@@ -20,11 +20,6 @@ import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.registries.ageUntilAllowedThroughTimedoor
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.LevelRenderer
-import net.minecraft.core.BlockPos.MutableBlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
@@ -33,7 +28,6 @@ import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.util.Mth
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
@@ -43,7 +37,6 @@ import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
-import kotlin.math.abs
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
@@ -91,6 +84,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
             player.level().addFreshEntity(timedoor)
             onOpen(timedoor)
+            timedoor.tryInitReceivingPortal()
             return null
         }
 
@@ -108,9 +102,9 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             if (event.isCanceled) return event.errorMessage ?: fail
             else logTimedoorOpen(player.name, location, timedoor)
 
+            onOpen(timedoor)
             block.level!!.addFreshEntity(timedoor)
             block.chrononContainer!! -= 1000
-            onOpen(timedoor)
             return null
         }
 
@@ -176,11 +170,10 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             this.fixupDimensions()
         }
 
-    var linkedPortalEntity: TimedoorEntity? = null
-        private set
-
     var owner: UUID? = null
     var glitching: Boolean by DataDelegate(GLITCHING)
+
+    private var linkedPortalEntity: TimedoorEntity? = null
 
     private val targetLevel: ServerLevel?
         get() = targetDimension.let { level().server[it] }
@@ -292,7 +285,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         targetPortal.linkedPortalEntity = this
         targetPortal.closingTime = this.closingTime - this.tickCount
         targetPortal.setLocation(selfLocation)
-        targetPortal.sizing = sizing
+        targetPortal.sizing = this.sizing
+        targetPortal.glitching = this.glitching
         sizing.placeTimedoor(DoorType.EXIT, targetPos, targetAngle + 180f, targetPortal)
         linkedPortalEntity = targetPortal
         targetLevel.addFreshEntity(targetPortal)

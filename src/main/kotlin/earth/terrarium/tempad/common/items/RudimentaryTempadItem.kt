@@ -29,7 +29,9 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
         if (level.isClientSide) return InteractionResultHolder.success(player.getItemInHand(usedHand))
         val ctx = player.ctx(usedHand.getSlot(player))
         ctx.stack.targetPos?.let {
-            TimedoorEntity.openTimedoor(player, ctx, it)
+            TimedoorEntity.openTimedoor(player, ctx, it) {
+                it.glitching = true
+            }
         } ?: {
             player.displayClientMessage(TimedoorEntity.posFail, true)
         }

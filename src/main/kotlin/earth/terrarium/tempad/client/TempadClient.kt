@@ -2,6 +2,7 @@
 
 package earth.terrarium.tempad.client
 
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.datafixers.util.Either
@@ -22,6 +23,8 @@ import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.vanillaId
+import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderType.*
@@ -29,6 +32,7 @@ import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
 import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.neoforged.api.distmarker.Dist
@@ -47,17 +51,17 @@ import java.io.IOException
 @EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object TempadClient {
     var timedoorShader: ShaderInstance? = null
-    val renderType: RenderType = CompositeState.builder()
+    fun renderType(textureId: ResourceLocation) : RenderType = CompositeState.builder()
         .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
         .setCullState(NO_CULL)
-        .setLightmapState(LIGHTMAP)
         .setLayeringState(NO_LAYERING)
-        .setShaderState(ShaderStateShard { timedoorShader })
+        .setShaderState(ShaderStateShard { if(ShaderModBridge.shadersEnabled) GameRenderer.getPositionTexColorShader() else timedoorShader })
+        .setTextureState(RenderStateShard.TextureStateShard(textureId, false, true))
         .createCompositeState(true)
         .let {
             create(
                 "timedoorBlur",
-                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+                DefaultVertexFormat.POSITION_TEX_COLOR,
                 VertexFormat.Mode.QUADS,
                 256,
                 false,
