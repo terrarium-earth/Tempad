@@ -27,5 +27,5 @@ object ShaderModBridge {
             } catch (_: Throwable) {
                 false
             }
-        } ?: true
+        } ?: false
 }
