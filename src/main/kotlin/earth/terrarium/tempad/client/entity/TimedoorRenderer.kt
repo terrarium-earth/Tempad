@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
 import earth.terrarium.tempad.api.sizing.TimedoorSizing
+import earth.terrarium.tempad.client.ShaderModBridge
 import earth.terrarium.tempad.client.TempadClient
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.tempadId
@@ -61,7 +62,17 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
             poseStack.translate(randomX, randomY, randomZ)
         }
 
-        if (width >= 0) renderTimedoor(entity.sizing, poseStack, buffer, width, height, depth, entity.color.value, packedLight, entity.tickCount, entity.sizing.showLineAnimation)
+        if (width > 0) renderTimedoor(
+            entity.sizing,
+            poseStack,
+            buffer,
+            width,
+            height,
+            depth,
+            entity.color.value,
+            entity.tickCount,
+            entity.sizing.showLineAnimation
+        )
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
         poseStack.popPose()
     }
@@ -71,17 +82,24 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         return NativeImage(textureWidth, textureHeight, true).apply {
             repeat(textureWidth) { x ->
                 repeat(textureHeight) { y ->
-                    val x2: Float = x / 8f - 1
-                    val y2: Float = y / 8f - 1
-                    val alpha = ((x2 * x2 / 3 + y2 * y2 / 3) * 255).toInt()
-                    setPixelRGBA(x, y, 0)
+                    val x2: Float = x * 2f / textureWidth - 1
+                    val y2: Float = y * 2f / textureHeight - 1
+                    val alpha = (x2 * x2 / 3 + y2 * y2 / 3)
+                    val modAlpha = alpha - (alpha.mod(0.07))
+                    setPixelRGBA(x, y, ((modAlpha * 255).toInt() + 26) shl 24 or 0xFFFFFF)
                 }
             }
         }
     }
 
-    fun registerFaceTexture(sizing: TimedoorSizing, face: BoxFace, color: Int): ResourceLocation {
-        return Minecraft.getInstance().textureManager.register(sizing.type.id.path + face.name.lowercase(), DynamicTexture(sizing.texture(face)))
+    fun registerFaceTexture(sizing: TimedoorSizing, face: BoxFace): ResourceLocation? {
+        if (!ShaderModBridge.shadersEnabled) return null
+        return faceTextures.computeIfAbsent(sizing to face) { _ ->
+            Minecraft.getInstance().textureManager.register(
+                sizing.type.id.path + face.name.lowercase(),
+                DynamicTexture(sizing.texture(face))
+            )
+        }
     }
 
     fun renderTimedoor(
@@ -92,7 +110,6 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         height: Float,
         depth: Float,
         color: Int,
-        packedLight: Int,
         age: Int,
         animate: Boolean = true,
     ) {
@@ -111,43 +128,58 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         val green = ((color shr 8) and 0xFF) / 255.0f
         val blue = (color and 0xFF) / 255.0f
 
-        fun VertexConsumer.color(opacity: Float = 1f) = setColor(red, green, blue, opacity)
+        fun VertexConsumer.color() = setColor(red, green, blue, 1f)
+        fun VertexConsumer.size(u: Float, v: Float): VertexConsumer {
+            if (!ShaderModBridge.shadersEnabled) {
+                setUv2((u * 16).toInt(), (v * 16).toInt())
+            }
+            return this
+        }
 
-        multiBufferSource.getBuffer(TempadClient.renderType(faceTextures.computeIfAbsent(sizing to BoxFace.FrontBack) { (size, face) -> registerFaceTexture(size, face, color) }))
+        var buffer = multiBufferSource.getBuffer(TempadClient.renderType(registerFaceTexture(sizing, BoxFace.FrontBack)))
+        buffer
             //Front
-            .addVertex(model, minX, maxY, minZ).setUv(minX, maxY).color(.4f)
-            .addVertex(model, maxX, maxY, minZ).setUv(maxX, maxY).color(.4f)
-            .addVertex(model, maxX, minY, minZ).setUv(maxX, minY).color(.4f)
-            .addVertex(model, minX, minY, minZ).setUv(minX, minY).color(.4f)
+            .addVertex(model, minX, maxY, minZ).color().setUv(0f, 1f).size(minX, maxY)
+            .addVertex(model, maxX, maxY, minZ).color().setUv(1f, 1f).size(maxX, maxY)
+            .addVertex(model, maxX, minY, minZ).color().setUv(1f, 0f).size(maxX, minY)
+            .addVertex(model, minX, minY, minZ).color().setUv(0f, 0f).size(minX, minY)
             //Back
-            .addVertex(model, maxX, maxY, maxZ).setUv(maxX, maxY).color(.4f)
-            .addVertex(model, minX, maxY, maxZ).setUv(minX, maxY).color(.4f)
-            .addVertex(model, minX, minY, maxZ).setUv(minX, minY).color(.4f)
-            .addVertex(model, maxX, minY, maxZ).setUv(maxX, minY).color(.4f)
+            .addVertex(model, maxX, maxY, maxZ).color().setUv(1f, 1f).size(maxX, maxY)
+            .addVertex(model, minX, maxY, maxZ).color().setUv(0f, 1f).size(minX, maxY)
+            .addVertex(model, minX, minY, maxZ).color().setUv(0f, 0f).size(minX, minY)
+            .addVertex(model, maxX, minY, maxZ).color().setUv(1f, 0f).size(maxX, minY)
 
-        multiBufferSource.getBuffer(TempadClient.renderType(faceTextures.computeIfAbsent(sizing to BoxFace.TopBottom) { (size, face) -> registerFaceTexture(size, face, color) }))
+        if(ShaderModBridge.shadersEnabled) {
+            buffer = multiBufferSource.getBuffer(TempadClient.renderType(registerFaceTexture(sizing, BoxFace.TopBottom)))
+        }
+
+        buffer
             //Top
-            .addVertex(model, minX, maxY, maxZ).setUv(minX, maxZ).color(.4f)
-            .addVertex(model, maxX, maxY, maxZ).setUv(maxX, maxZ).color(.4f)
-            .addVertex(model, maxX, maxY, minZ).setUv(maxX, minZ).color(.4f)
-            .addVertex(model, minX, maxY, minZ).setUv(minX, minZ).color(.4f)
+            .addVertex(model, minX, maxY, maxZ).color().setUv(0f, 1f).size(minX, maxZ)
+            .addVertex(model, maxX, maxY, maxZ).color().setUv(1f, 1f).size(maxX, maxZ)
+            .addVertex(model, maxX, maxY, minZ).color().setUv(1f, 0f).size(maxX, minZ)
+            .addVertex(model, minX, maxY, minZ).color().setUv(0f, 0f).size(minX, minZ)
             //Bottom
-            .addVertex(model, minX, minY, minZ).setUv(minX, minZ).color(.4f)
-            .addVertex(model, maxX, minY, minZ).setUv(maxX, minZ).color(.4f)
-            .addVertex(model, maxX, minY, maxZ).setUv(maxX, maxZ).color(.4f)
-            .addVertex(model, minX, minY, maxZ).setUv(minX, maxZ).color(.4f)
+            .addVertex(model, minX, minY, minZ).color().setUv(0f, 0f).size(minX, minZ)
+            .addVertex(model, maxX, minY, minZ).color().setUv(1f, 0f).size(maxX, minZ)
+            .addVertex(model, maxX, minY, maxZ).color().setUv(1f, 1f).size(maxX, maxZ)
+            .addVertex(model, minX, minY, maxZ).color().setUv(0f, 1f).size(minX, maxZ)
 
-        multiBufferSource.getBuffer(TempadClient.renderType(faceTextures.computeIfAbsent(sizing to BoxFace.LeftRight) { (size, face) -> registerFaceTexture(size, face, color) }))
+        if(ShaderModBridge.shadersEnabled) {
+            buffer = multiBufferSource.getBuffer(TempadClient.renderType(registerFaceTexture(sizing, BoxFace.LeftRight)))
+        }
+
+        buffer
             //Left
-            .addVertex(model, minX, maxY, maxZ).setUv(maxZ, maxY).color(.4f)
-            .addVertex(model, minX, maxY, minZ).setUv(minZ, maxY).color(.4f)
-            .addVertex(model, minX, minY, minZ).setUv(minZ, minY).color(.4f)
-            .addVertex(model, minX, minY, maxZ).setUv(maxZ, minY).color(.4f)
+            .addVertex(model, minX, maxY, maxZ).color().setUv(1f, 1f).size(maxZ, maxY)
+            .addVertex(model, minX, maxY, minZ).color().setUv(0f, 1f).size(minZ, maxY)
+            .addVertex(model, minX, minY, minZ).color().setUv(0f, 0f).size(minZ, minY)
+            .addVertex(model, minX, minY, maxZ).color().setUv(1f, 0f).size(maxZ, minY)
             //Right
-            .addVertex(model, maxX, maxY, minZ).setUv(minZ, maxY).color(.4f)
-            .addVertex(model, maxX, maxY, maxZ).setUv(maxZ, maxY).color(.4f)
-            .addVertex(model, maxX, minY, maxZ).setUv(maxZ, minY).color(.4f)
-            .addVertex(model, maxX, minY, minZ).setUv(minZ, minY).color(.4f)
+            .addVertex(model, maxX, maxY, minZ).color().setUv(0f, 1f).size(minZ, maxY)
+            .addVertex(model, maxX, maxY, maxZ).color().setUv(1f, 1f).size(maxZ, maxY)
+            .addVertex(model, maxX, minY, maxZ).color().setUv(1f, 0f).size(maxZ, minY)
+            .addVertex(model, maxX, minY, minZ).color().setUv(0f, 0f).size(minZ, minY)
 
         val lineBuffer = multiBufferSource.getBuffer(RenderType.lines())
 
@@ -161,15 +193,19 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         val bottomPercent: Float
         val leftPercent: Float
         if (widthPart > heightPart) {
-            topPercent = 1 - (((age + widthPart) % total) - widthPart) / (widthPart - (widthPart * widthLine * 1.5f)) + widthLine
+            topPercent =
+                1 - (((age + widthPart) % total) - widthPart) / (widthPart - (widthPart * widthLine * 1.5f)) + widthLine
             rightPercent = 1 - (age % total - widthPart) / heightPart
-            bottomPercent = 1 - (age % total - widthPart - heightPart) / (widthPart - (widthPart * widthLine * 1.5f)) + widthLine
+            bottomPercent =
+                1 - (age % total - widthPart - heightPart) / (widthPart - (widthPart * widthLine * 1.5f)) + widthLine
             leftPercent = 1 - ((age - widthPart) % total - widthPart - heightPart) / heightPart
         } else {
             topPercent = 1 - (((age + widthPart) % total) - widthPart) / widthPart
-            rightPercent = 1 - (((age + widthPart) % total) - widthPart * 2) / (heightPart - (heightPart * heightLine * 1.5f)) + heightLine
+            rightPercent =
+                1 - (((age + widthPart) % total) - widthPart * 2) / (heightPart - (heightPart * heightLine * 1.5f)) + heightLine
             bottomPercent = 1 - (age % total - widthPart - heightPart) / widthPart
-            leftPercent = 1 - ((age - widthPart) % total - widthPart - heightPart) / (heightPart - (heightPart * heightLine * 1.5f)) + heightLine
+            leftPercent =
+                1 - ((age - widthPart) % total - widthPart - heightPart) / (heightPart - (heightPart * heightLine * 1.5f)) + heightLine
         }
 
 
@@ -314,9 +350,20 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
 
         fun getDimensions(sizing: TimedoorSizing): Vector2i {
             return when (this) {
-                FrontBack -> Vector2i((sizing.widthAtPercent(1f) * 16).toInt(), (sizing.heightAtPercent(1f) * 16).toInt())
-                TopBottom -> Vector2i((sizing.widthAtPercent(1f) * 16).toInt(), (sizing.depthAtPercent(1f) * 16).toInt())
-                LeftRight -> Vector2i((sizing.depthAtPercent(1f) * 16).toInt(), (sizing.heightAtPercent(1f) * 16).toInt())
+                FrontBack -> Vector2i(
+                    (sizing.widthAtPercent(1f) * 16).toInt(),
+                    (sizing.heightAtPercent(1f) * 16).toInt()
+                )
+
+                TopBottom -> Vector2i(
+                    (sizing.widthAtPercent(1f) * 16).toInt(),
+                    (sizing.depthAtPercent(1f) * 16).toInt()
+                )
+
+                LeftRight -> Vector2i(
+                    (sizing.depthAtPercent(1f) * 16).toInt(),
+                    (sizing.heightAtPercent(1f) * 16).toInt()
+                )
             }
         }
     }

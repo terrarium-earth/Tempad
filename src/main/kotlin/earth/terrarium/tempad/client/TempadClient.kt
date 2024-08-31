@@ -2,9 +2,9 @@
 
 package earth.terrarium.tempad.client
 
-import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.blaze3d.vertex.VertexFormatElement
 import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
 import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
@@ -12,7 +12,6 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.PlayerPos
 import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
-import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.client.tooltip.*
@@ -23,6 +22,7 @@ import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.vanillaId
+import earth.terrarium.tempad.tempadId
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
@@ -51,17 +51,24 @@ import java.io.IOException
 @EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object TempadClient {
     var timedoorShader: ShaderInstance? = null
-    fun renderType(textureId: ResourceLocation) : RenderType = CompositeState.builder()
+    fun renderType(textureId: ResourceLocation?): RenderType = CompositeState.builder()
         .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
         .setCullState(NO_CULL)
         .setLayeringState(NO_LAYERING)
-        .setShaderState(ShaderStateShard { if(ShaderModBridge.shadersEnabled) GameRenderer.getPositionTexColorShader() else timedoorShader })
-        .setTextureState(RenderStateShard.TextureStateShard(textureId, false, true))
+        .setShaderState(ShaderStateShard {
+            textureId?.let { GameRenderer.getPositionTexColorShader() } ?: timedoorShader
+        })
+        .apply {
+            if (textureId != null) {
+                setTextureState(RenderStateShard.TextureStateShard(textureId, false, true))
+            }
+        }
+        .setOutputState(RenderStateShard.PARTICLES_TARGET)
         .createCompositeState(true)
         .let {
             create(
-                "timedoorBlur",
-                DefaultVertexFormat.POSITION_TEX_COLOR,
+                "timedoor",
+                textureId?.let { DefaultVertexFormat.POSITION_TEX_COLOR } ?: DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
                 VertexFormat.Mode.QUADS,
                 256,
                 false,
@@ -110,7 +117,8 @@ object TempadClient {
         Color.initRainbow()
     }
 
-    @SubscribeEvent @JvmStatic
+    @SubscribeEvent
+    @JvmStatic
     fun init(event: FMLClientSetupEvent) {
         EntityRenderers.register(ModEntities.TIMEDOOR_ENTITY, ::TimedoorRenderer)
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
@@ -121,12 +129,13 @@ object TempadClient {
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
         ItemProperties.register(ModItems.rudimentaryTempad, "has_card".tempadId, writtenProperty)
 
-        if(ModList.get().isLoaded("ars_nouveau")) {
+        if (ModList.get().isLoaded("ars_nouveau")) {
             ArsCompat.init()
         }
     }
 
-    @SubscribeEvent @JvmStatic
+    @SubscribeEvent
+    @JvmStatic
     fun registerScreens(event: RegisterMenuScreensEvent) {
         event.register(ModMenus.TELEPORT_MENU, ::TeleportScreen)
         event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
@@ -134,21 +143,23 @@ object TempadClient {
         event.register(ModMenus.TIMELINE_MENU, ::TimelineScreen)
     }
 
-    @SubscribeEvent @JvmStatic
+    @SubscribeEvent
+    @JvmStatic
     @Throws(IOException::class)
     fun registerShaders(event: RegisterShadersEvent) {
         event.registerShader(
             ShaderInstance(
                 event.resourceProvider,
                 "rendertype_timedoor".vanillaId,
-                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP
+                DefaultVertexFormat.POSITION_COLOR
             )
         ) { shaderInstance: ShaderInstance ->
             timedoorShader = shaderInstance
         }
     }
 
-    @SubscribeEvent @JvmStatic
+    @SubscribeEvent
+    @JvmStatic
     fun registerTooltip(event: RegisterClientTooltipComponentFactoriesEvent) {
         event.register(ChrononData::class.java, ::ChrononTooltip)
         event.register(PlayerPos::class.java, ::PlayerPosTooltip)
@@ -158,11 +169,11 @@ object TempadClient {
 
     fun appendTooltip(event: RenderTooltipEvent.GatherComponents) {
         val stack = event.itemStack
-        if(stack.item === ModItems.tempad && stack.installedUpgrades.upgrades.isNotEmpty()) {
+        if (stack.item === ModItems.tempad && stack.installedUpgrades.upgrades.isNotEmpty()) {
             event.tooltipElements.add(2, Either.right(stack.installedUpgrades))
         }
 
-        if (stack.item=== ModItems.rudimentaryTempad && stack.targetPos != null) {
+        if (stack.item === ModItems.rudimentaryTempad && stack.targetPos != null) {
             (stack.targetPos as? TooltipComponent)?.let {
                 event.tooltipElements.add(2, Either.right(it))
             }
