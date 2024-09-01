@@ -29,11 +29,6 @@ class FluidPropertyBuilder {
     var viscosity = 1000
     var rarity = Rarity.COMMON
     var sounds = FluidSounds()
-    var still: ResourceLocation? = null
-    var flowing: ResourceLocation? = null
-    var overlay: ResourceLocation? = null
-    var screenOverlay: ResourceLocation? = null
-    var tintColor = -1
     var tickRate = 5
     var slopeFindDistance = 4
     var dropOff = 1
@@ -58,11 +53,6 @@ class FluidPropertyBuilder {
         viscosity,
         rarity,
         sounds,
-        still,
-        flowing,
-        overlay,
-        screenOverlay,
-        tintColor,
         tickRate,
         slopeFindDistance,
         dropOff,

@@ -14,5 +14,6 @@ object ModLocations {
         LocationTypeRegistry.register(StaticNamedGlobalPos.type)
         LocationTypeRegistry.register(PlayerPos.type)
         LocationTypeRegistry.register(EmptyLocation.type)
+        LocationTypeRegistry.register(AnchorPointPos.type)
     }
 }

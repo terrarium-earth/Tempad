@@ -21,11 +21,6 @@ object ModFluids {
         density = 1000
         viscosity = 1000
         temperature = 300
-        still = "block/water_still".vanillaId
-        flowing = "block/water_flow".vanillaId
-        overlay = "block/water_overlay".vanillaId
-        screenOverlay = "textures/misc/underwater.png".vanillaId
-        tintColor = Tempad.ORANGE.value
         canConvertToSource = false
         canPlace = false
     }

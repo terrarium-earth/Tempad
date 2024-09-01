@@ -33,17 +33,14 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
 
         val COLORS = listOf(
             Tempad.ORANGE,
-            Color.RAINBOW,
-            ConstantColors.red,
             ConstantColors.yellow,
             ConstantColors.lime,
             ConstantColors.cyan,
-            ConstantColors.lightblue,
-            ConstantColors.indigo,
-            ConstantColors.violet,
-            ConstantColors.hotpink,
+            ConstantColors.purple,
+            ConstantColors.red,
             ConstantColors.white,
-            ConstantColors.black // TODO replace black
+            ConstantColors.black,
+            Color.RAINBOW
         )
 
         fun getEntries(pos: Vec3i): List<Component> {

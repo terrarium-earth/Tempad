@@ -1,6 +1,5 @@
 import groovy.json.StringEscapeUtils
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
@@ -35,7 +34,7 @@ repositories {
 
 dependencies {
     val neoforgeVersion: String by project
-    val minecraft_version: String by project
+    val minecraftVersion: String by project
 
     val resourcefulConfigVersion: String by project
     val resourcefulLibVersion: String by project
@@ -57,23 +56,23 @@ dependencies {
     runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
     runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 
-    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraft_version}:${resourcefulConfigVersion}")
-    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraft_version}:${resourcefulLibVersion}")
+    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraftVersion}:${resourcefulConfigVersion}")
+    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraftVersion}:${resourcefulLibVersion}")
     compileOnly("com.teamresourceful:bytecodecs:1.1.0")
     implementation("thedarkcolour:kotlinforforge-neoforge:${kotlinForForgeVersion}")
-    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}") {
+    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraftVersion}:${resourcefulLibKtVersion}") {
         isTransitive = false
     }
 
-    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${minecraft_version}", version = resourcefulLibKtVersion).also {
+    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${minecraftVersion}", version = resourcefulLibKtVersion).also {
         jarJar.pin(it, "[${resourcefulLibKtVersion})")
     }
 
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "1.0.1") {
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${this@Build_gradle.minecraftVersion}", version = "1.0.1") {
         isTransitive = false
     }
 
-    jarJar(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "1.0.1").also {
+    jarJar(group = "earth.terrarium.olympus", name = "olympus-neoforge-${this@Build_gradle.minecraftVersion}", version = "1.0.1").also {
         jarJar.pin(it, "[1.0.1)")
     }
 
@@ -85,11 +84,11 @@ dependencies {
     implementation("maven.modrinth:jade:$jadeVersion")
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jeiVersion}")
-    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jeiVersion}")
+    compileOnly("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}")
+    compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
     // at runtime, use the full JEI jar for NeoForge
-    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jeiVersion}")
-    implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraft_version}.0:${arsNouveauVersion}") {
+    runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
+    implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}.0:${arsNouveauVersion}") {
         exclude(group = "curse.maven")
     }
 }

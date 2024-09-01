@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 
-class AnchorPointPos(val globalPos: GlobalPos): NamedGlobalPos {
+data class AnchorPointPos(val globalPos: GlobalPos): NamedGlobalPos {
     companion object {
         val byteCodec = ExtraByteCodecs.GLOBAL_POS.map(::AnchorPointPos) { it.globalPos }
         val codec = GlobalPos.MAP_CODEC.xmap(::AnchorPointPos) { it.globalPos }
