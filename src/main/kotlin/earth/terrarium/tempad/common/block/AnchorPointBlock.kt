@@ -53,7 +53,7 @@ class AnchorPointBlock : BaseEntityBlock(Properties.of()) {
     ): ItemInteractionResult {
         if (stack.item === ModItems.locationCard) {
             if (level.isClientSide) return ItemInteractionResult.sidedSuccess(level.isClientSide)
-            val blockEntity = level.getBlockEntity(pos) as AnchorPointBE
+            val blockEntity = level.getBlockEntity(pos) as SpatialAnchorBE
             level.anchorPointData[blockEntity.posId!!]?.let {
                 stack.targetPos = it
             }
@@ -80,7 +80,7 @@ class AnchorPointBlock : BaseEntityBlock(Properties.of()) {
             else -> return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
         }
         (level as? ServerLevel)?.getBlockEntity(pos)?.let {
-            it as AnchorPointBE
+            it as SpatialAnchorBE
             it.color = color
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide)
@@ -99,7 +99,7 @@ class AnchorPointBlock : BaseEntityBlock(Properties.of()) {
     override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
         return mutableListOf(
             ModItems.anchorPoint.stack {
-                (params.getParameter(LootContextParams.BLOCK_ENTITY) as? AnchorPointBE)?.let {
+                (params.getParameter(LootContextParams.BLOCK_ENTITY) as? SpatialAnchorBE)?.let {
                     color = it.color
                     set(DataComponents.CUSTOM_NAME, it.name)
                 }
@@ -121,7 +121,7 @@ class AnchorPointBlock : BaseEntityBlock(Properties.of()) {
         return codec
     }
 
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = AnchorPointBE(pos, state)
+    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = SpatialAnchorBE(pos, state)
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
         builder.add(BlockStateProperties.FACING)

@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.utils
 
+import earth.terrarium.tempad.Tempad
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializer
@@ -40,6 +41,29 @@ class OptionalAttachmentDelegate<T : Any>(private val key: AttachmentType<T>) :
 }
 
 fun <T : Any> AttachmentType<T>.optional() = OptionalAttachmentDelegate(this)
+
+val <T : Any> AttachmentType<T>.serverData get() = ServerDataDelegate(this)
+val <T : Any> AttachmentType<T>.optionalServerData get() = OptionalServerDataDelegate(this)
+
+class ServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWriteProperty<Any?, T> {
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>): T = Tempad.server?.overworld()?.getData(key)!!
+    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        Tempad.server?.overworld()?.setData(key, value)
+    }
+}
+
+class OptionalServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWriteProperty<Any?, T?> {
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>): T? =
+        Tempad.server?.overworld()?.getExistingData(key)?.orElse(null)
+
+    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+        if (value == null) {
+            Tempad.server?.overworld()?.removeData(key)
+        } else {
+            Tempad.server?.overworld()?.setData(key, value)
+        }
+    }
+}
 
 class ComponentDelegate<T : Any>(private val key: DataComponentType<T>, private val default: T) {
     operator fun getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T = thisRef[key] ?: default

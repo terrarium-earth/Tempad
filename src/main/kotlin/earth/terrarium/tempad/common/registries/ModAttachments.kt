@@ -7,14 +7,16 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.EmptyLocation
-import earth.terrarium.tempad.api.locations.NamedGlobalPos
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
+import earth.terrarium.tempad.common.location_handlers.AnchorPointsData
 import earth.terrarium.tempad.common.utils.*
+import earth.terrarium.tempad.tempadId
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
+import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.NeoForgeRegistries
@@ -54,12 +56,6 @@ object ModAttachments {
         }
     }
 
-    val targetLocation: AttachmentType<NamedGlobalPos> by registry.register("target_location") {
-        attachmentType({ EmptyLocation }) {
-            codec = NamedGlobalPos.codec
-        }
-    }
-
     val chrononContent: AttachmentType<Int> by registry.register("chronon_content") {
         attachmentType({0}) {
             codec = Codec.INT
@@ -69,6 +65,12 @@ object ModAttachments {
     val color: AttachmentType<Color> by registry.register("color") {
         attachmentType({ Tempad.ORANGE }) {
             codec = Color.CODEC
+        }
+    }
+
+    val visibility: AttachmentType<ResourceLocation> by registry.register("visibility") {
+        attachmentType({ "private".tempadId }) {
+            codec = ResourceLocation.CODEC
         }
     }
 
@@ -83,6 +85,12 @@ object ModAttachments {
             codec = ComponentSerialization.CODEC
         }
     }
+
+    val anchorPoints: AttachmentType<AnchorPointsData> by registry.register("anchor_points") {
+        attachmentType({ AnchorPointsData(emptyMap()) }) {
+            codec = AnchorPointsData.codec
+        }
+    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
@@ -91,7 +99,8 @@ var AttachmentHolder.travelHistory by ModAttachments.travelHistory
 var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLastTimedoor.optional()
 
 var AttachmentHolder.owner by ModAttachments.owner.optional()
-var AttachmentHolder.targetLocation by ModAttachments.targetLocation.optional()
 var AttachmentHolder.chrononContent by ModAttachments.chrononContent
 var AttachmentHolder.color by ModAttachments.color
 var AttachmentHolder.posId by ModAttachments.posId.optional()
+
+val anchorPoints by ModAttachments.anchorPoints.serverData

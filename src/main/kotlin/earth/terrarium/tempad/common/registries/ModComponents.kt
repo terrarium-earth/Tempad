@@ -8,13 +8,11 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.NamedGlobalPos
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.common.MutableDataComponentHolder
 
@@ -43,10 +41,10 @@ object ModComponents {
         }
     }
 
-    val targetPos: DataComponentType<NamedGlobalPos> by registry.register("target_position") {
+    val targetPos: DataComponentType<NamedGlobalVec3> by registry.register("target_position") {
         componentType {
-            serialize = NamedGlobalPos.codec
-            networkSerialize = NamedGlobalPos.byteCodec
+            serialize = NamedGlobalVec3.codec
+            networkSerialize = NamedGlobalVec3.byteCodec
         }
     }
 

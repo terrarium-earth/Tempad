@@ -7,9 +7,8 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.tempadId
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.context.ContextHolder
-import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.savedPositions
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
@@ -27,7 +26,7 @@ data class CreateLocationPacket(val name: String, val color: Color, val ctx: Con
             ),
             NetworkHandle.handle { message, player ->
                 if ({ message.ctx.getCtx(player).stack.item === ModItems.tempad } !in player.inventory) return@handle
-                player.savedPositions += StaticNamedGlobalPos(
+                player.savedPositions += NamedGlobalVec3(
                     Component.literal(message.name),
                     player.position(),
                     player.level().dimension(),

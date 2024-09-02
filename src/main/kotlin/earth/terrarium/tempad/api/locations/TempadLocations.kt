@@ -1,27 +1,19 @@
 package earth.terrarium.tempad.api.locations
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.RecordCodecBuilder
-import com.teamresourceful.bytecodecs.base.ByteCodec
-import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
-import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import earth.terrarium.tempad.api.context.ItemContext
-import earth.terrarium.tempad.api.context.SyncableContext
+import com.mojang.authlib.GameProfile
+import earth.terrarium.tempad.api.tva_device.TempadDevice
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.player.Player
 import java.util.*
 
 interface LocationHandler {
-    val locations: Map<UUID, NamedGlobalPos>
+    val locations: Map<UUID, NamedGlobalVec3>
 
-    @Suppress("INAPPLICABLE_JVM_NAME")
-    @JvmName("delete")
     operator fun minusAssign(locationId: UUID)
 
-    operator fun get(locationId: UUID): NamedGlobalPos? = locations[locationId]
+    operator fun get(locationId: UUID): NamedGlobalVec3? = locations[locationId]
 }
 
-typealias LocationProvider = (Player, SyncableContext<*>) -> LocationHandler
+typealias LocationProvider = (GameProfile, TempadDevice) -> LocationHandler
 
 object TempadLocations {
     val registry: Map<ResourceLocation, LocationProvider>
@@ -37,10 +29,10 @@ object TempadLocations {
     operator fun get(id: ResourceLocation): LocationProvider? = registry[id]
 
     @JvmStatic
-    operator fun get(player: Player, ctx: SyncableContext<*>, id: ResourceLocation): LocationHandler? =
+    operator fun get(player: GameProfile, ctx: TempadDevice, id: ResourceLocation): LocationHandler? =
         registry[id]?.let { it(player, ctx) }
 
     @JvmStatic
-    operator fun get(player: Player, ctx: SyncableContext<*>): Map<ResourceLocation, Map<UUID, NamedGlobalPos>> =
+    operator fun get(player: GameProfile, ctx: TempadDevice): Map<ResourceLocation, Map<UUID, NamedGlobalVec3>> =
         registry.mapValues { it.value(player, ctx).locations }
 }

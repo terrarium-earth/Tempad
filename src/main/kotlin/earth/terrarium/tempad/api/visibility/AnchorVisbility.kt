@@ -3,15 +3,20 @@ package earth.terrarium.tempad.api.visibility
 import com.mojang.authlib.GameProfile
 import net.minecraft.resources.ResourceLocation
 
-interface AnchorVisibility {
+interface Visbility {
     fun isVisible(owner: GameProfile, accessor: GameProfile): Boolean
 }
 
-object AnchorVisbilityApi {
-    val visbility: Map<ResourceLocation, AnchorVisibility>
+object VisbilityApi {
+    val visbility: Map<ResourceLocation, Visbility>
         field = mutableMapOf()
 
-    fun registerVisibility(id: ResourceLocation, visibility: AnchorVisibility) {
+    @JvmStatic
+    @JvmName("register")
+    operator fun set(id: ResourceLocation, visibility: Visbility) {
         visbility[id] = visibility
     }
+
+    @JvmStatic
+    operator fun get(id: ResourceLocation): Visbility = visbility[id] ?: DefaultVisbility.PRIVATE
 }

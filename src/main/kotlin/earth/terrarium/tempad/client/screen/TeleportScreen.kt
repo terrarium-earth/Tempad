@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.client.screen
 
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.ClientDisplay
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.client.widgets.InformationPanel
 import earth.terrarium.tempad.client.widgets.ModWidgets
 import earth.terrarium.tempad.client.widgets.buttons.EnumButton
@@ -27,6 +27,7 @@ import net.minecraft.client.gui.components.ImageButton
 import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -54,7 +55,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             }
     }
 
-    var selected: Triple<ResourceLocation, UUID, ClientDisplay>? = null
+    var selected: Triple<ResourceLocation, UUID, NamedGlobalVec3>? = null
         set(value) {
             field = value
             teleportBtn.active = value != null
@@ -64,7 +65,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 widget.visible = value != null
             }
 
-            value?.third?.let { infoTextWidget.update(it.pos.display) }
+            value?.third?.let { infoTextWidget.update(BlockPos.containing(it.pos).display) }
         }
 
     private lateinit var locationButtons: LinearLayout

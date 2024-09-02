@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.registries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.block.AnchorPointBE
+import earth.terrarium.tempad.common.block.SpatialAnchorBE
 import earth.terrarium.tempad.common.block.AnchorPointBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
@@ -26,7 +26,7 @@ object ModBlocks {
         AnchorPointBlock()
     }
 
-    val anchorPointBE by blockEntities.register("anchor_point") {
-        BlockEntityType.Builder.of(::AnchorPointBE, anchorPoint).build(null)
+    val spatialAnchorBE by blockEntities.register("anchor_point") {
+        BlockEntityType.Builder.of(::SpatialAnchorBE, anchorPoint).build(null)
     }
 }

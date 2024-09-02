@@ -1,19 +1,18 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
-import earth.terrarium.tempad.api.locations.ClientDisplay
+import earth.terrarium.tempad.api.locations.PositionSnapshot
 import earth.terrarium.tempad.client.screen.Sorting
 import earth.terrarium.tempad.client.widgets.GapWidget
 import earth.terrarium.tempad.client.widgets.colored.ColoredList
 import earth.terrarium.tempad.common.utils.dimDisplay
-import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import java.util.*
 
 class PanelWidget(
-    val locations: Map<ResourceLocation, Map<UUID, ClientDisplay>>,
-    private val selected: () -> Triple<ResourceLocation, UUID, ClientDisplay>?,
-    private val select: (Triple<ResourceLocation, UUID, ClientDisplay>?) -> Unit,
+    val locations: Map<ResourceLocation, Map<UUID, PositionSnapshot>>,
+    private val selected: () -> Triple<ResourceLocation, UUID, PositionSnapshot>?,
+    private val select: (Triple<ResourceLocation, UUID, PositionSnapshot>?) -> Unit,
     val filter: () -> String,
     private val isFavorite: (ResourceLocation, UUID) -> Boolean,
 ) : ColoredList(111, 74, 1) {
@@ -73,7 +72,7 @@ class PanelWidget(
         update()
     }
 
-    fun createEntry(provider: ResourceLocation, id: UUID, display: ClientDisplay): LocationEntry {
+    fun createEntry(provider: ResourceLocation, id: UUID, display: PositionSnapshot): LocationEntry {
         return LocationEntry(id, display) {
             isFavorite {
                 isFavorite(provider, id)

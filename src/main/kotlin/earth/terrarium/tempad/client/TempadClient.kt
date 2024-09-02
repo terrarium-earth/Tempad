@@ -4,14 +4,12 @@ package earth.terrarium.tempad.client
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
-import com.mojang.blaze3d.vertex.VertexFormatElement
 import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
 import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.PlayerPos
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.*
 import earth.terrarium.tempad.client.tooltip.*
@@ -162,8 +160,6 @@ object TempadClient {
     @JvmStatic
     fun registerTooltip(event: RegisterClientTooltipComponentFactoriesEvent) {
         event.register(ChrononData::class.java, ::ChrononTooltip)
-        event.register(PlayerPos::class.java, ::PlayerPosTooltip)
-        event.register(StaticNamedGlobalPos::class.java, ::StaticPosTooltip)
         event.register(InstalledUpgradesComponent::class.java, ::UpgradesTooltip)
     }
 

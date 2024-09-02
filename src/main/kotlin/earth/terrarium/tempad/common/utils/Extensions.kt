@@ -14,6 +14,7 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.context.InventoryContext
 import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
+import net.minecraft.core.BlockPos
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.Holder
 import net.minecraft.nbt.CompoundTag
@@ -185,14 +186,16 @@ val String.vanillaId: ResourceLocation
 val <T> StreamCodec<RegistryFriendlyByteBuf, T>.byteCodec: ByteCodec<T> get() = StreamCodecByteCodec.ofRegistry(this)
 
 val GlobalPos.dimDisplay: Component get() = Component.translatable(this.dimension.location().toLanguageKey("dimension"))
-val GlobalPos.xDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.x", this.pos().x)
-val GlobalPos.yDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.y", this.pos().y)
-val GlobalPos.zDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.z", this.pos().z)
+val BlockPos.xDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.x", this.x)
+val BlockPos.yDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.y", this.y)
+val BlockPos.zDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.z", this.z)
+
+val BlockPos.display: List<Component> get() = listOf(this.xDisplay, this.yDisplay, this.zDisplay)
 
 val Vec3.component: Component get() = Component.literal("XYZ: ${this.x.toInt()} / ${this.y.toInt()} / ${this.z.toInt()}")
 
 val GlobalPos.display: List<Component>
-    get() = listOf(this.dimDisplay, this.xDisplay, this.yDisplay, this.zDisplay)
+    get() = listOf(this.dimDisplay) + this.pos().display
 
 var Slot.contents
     get() = this.item
@@ -223,3 +226,5 @@ inline fun <T1: Any, T2: Any, T3: Any, T4: Any, T5: Any, R: Any> safeLet(p1: T1?
 val BlockEntity.angle: Float get() = this.blockState.getValue(BlockStateProperties.FACING).toYRot()
 
 fun <T: Any> Codec<T>.parse(tag: CompoundTag): T? = this.parse(NbtOps.INSTANCE, tag).result().getOrNull()
+
+val String.translatable: Component get() = Component.translatable(this)

@@ -1,16 +1,14 @@
 package earth.terrarium.tempad.client.widgets.location_panel
 
-import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.ClientDisplay
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.client.widgets.KListWidgetItem
 import earth.terrarium.tempad.common.utils.btnSprites
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.network.chat.Component
 import java.util.UUID
 
-class LocationEntry(val id: UUID, val data: ClientDisplay, builder: LocationEntryBuilder.() -> Unit = {}):
+class LocationEntry(val id: UUID, val data: NamedGlobalVec3, builder: LocationEntryBuilder.() -> Unit = {}):
     KListWidgetItem, Comparable<LocationEntry> {
     companion object {
         val FAVORITE = "unpin".btnSprites()

@@ -1,64 +1,54 @@
 package earth.terrarium.tempad.common.location_handlers
 
+import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
 import com.teamresourceful.resourcefullib.common.utils.SaveHandler
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.LocationHandler
-import earth.terrarium.tempad.api.locations.AnchorPointPos
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.common.block.SpatialAnchorBE
+import earth.terrarium.tempad.common.registries.anchorPoints
 import earth.terrarium.tempad.common.registries.posId
+import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.parse
+import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import java.util.*
 
-class AnchorPointsData: SaveHandler() {
+class AnchorPointsData(anchors: Map<UUID, GlobalPos>) {
     companion object {
-        val codec = Codec.unboundedMap(UUIDUtil.STRING_CODEC, AnchorPointPos.codec.codec())
-        val clientOnly = AnchorPointsData()
-        val type = HandlerType.create(clientOnly, ::AnchorPointsData)
+        val codec = Codec.unboundedMap(UUIDUtil.STRING_CODEC, GlobalPos.CODEC).xmap<AnchorPointsData>(::AnchorPointsData, AnchorPointsData::anchors)
     }
 
-    val anchors: Map<UUID, AnchorPointPos>
-        field = mutableMapOf()
+    val anchors = mutableMapOf<UUID, GlobalPos>()
 
-    override fun loadData(tag: CompoundTag) {
-        anchors.clear()
-        codec.parse(tag)?.let {
-            anchors.putAll(it)
-        }
+    init {
+        this.anchors.putAll(anchors)
     }
 
-    override fun saveData(tag: CompoundTag) {
-        codec.encode(anchors, NbtOps.INSTANCE, tag)
+    fun getPostions(accessor: GameProfile): Map<UUID, NamedGlobalVec3> {
+        return anchors.mapValues { getBlockEntity(it.value) }.filterValues { it != null }.mapValues { it.value!!.namedGlobalVec3 }
     }
 
-    operator fun plusAssign(pos: AnchorPointPos) {
-        val id = UUID.randomUUID()
-        anchors[id] = pos
-        pos.blockEntity?.posId = id
-        setDirty()
+    operator fun plusAssign(block: SpatialAnchorBE) {
+        anchors[block.posId!!] = GlobalPos.of(block.level!!.dimension(), block.blockPos)
     }
 
     operator fun minusAssign(locationId: UUID) {
         anchors.remove(locationId)
-        setDirty()
     }
-
-    operator fun get(locationId: UUID): AnchorPointPos? = anchors[locationId]
 }
 
-val Level.anchorPointData get() = SaveHandler.read(this, AnchorPointsData.type, "tempad_anchor_points")
+fun getBlockEntity(pos: GlobalPos): SpatialAnchorBE? {
+    val level = Tempad.server?.get(pos.dimension())
+    return level?.getBlockEntity(pos.pos)?.let { it as? SpatialAnchorBE }
+}
 
-class AnchorPointsHandler(val player: Player): LocationHandler {
-    companion object {
-        val id = "warps".tempadId
-    }
-
-    override val locations: Map<UUID, AnchorPointPos>
-        get() = player.level().anchorPointData.anchors
-
+class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
+    override val locations: Map<UUID, NamedGlobalVec3> get() = anchorPoints.getPostions(gameProfile)
     override fun minusAssign(locationId: UUID) {}
 }
