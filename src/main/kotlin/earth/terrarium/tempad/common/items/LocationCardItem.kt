@@ -14,7 +14,7 @@ class LocationCardItem: Item(Properties()) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (!level.isClientSide) {
             player.getItemInHand(usedHand).targetPos?.let { pos ->
-                player.displayClientMessage(pos.consume(player), true)
+                // player.displayClientMessage(pos.consume(player), true) TODO: Implement this
             }
         }
         return InteractionResultHolder.success(player.getItemInHand(usedHand))

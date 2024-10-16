@@ -4,7 +4,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.block.SpatialAnchorBE
-import earth.terrarium.tempad.common.block.AnchorPointBlock
+import earth.terrarium.tempad.common.block.SpatialAnchorBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import net.minecraft.core.registries.BuiltInRegistries
@@ -22,11 +22,11 @@ object ModBlocks {
         BlockEntityType.Builder.of(::RudimentaryTempadBE, rudimentaryTempad).build(null)
     }
 
-    val anchorPoint by blocks.register("anchor_point") {
-        AnchorPointBlock()
+    val spatialAnchor by blocks.register("spatial_anchor") {
+        SpatialAnchorBlock()
     }
 
-    val spatialAnchorBE by blockEntities.register("anchor_point") {
-        BlockEntityType.Builder.of(::SpatialAnchorBE, anchorPoint).build(null)
+    val spatialAnchorBE by blockEntities.register("spatial_anchor") {
+        BlockEntityType.Builder.of(::SpatialAnchorBE, spatialAnchor).build(null)
     }
 }

@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
 import java.util.*
 
-class TimelineEntry(parentWidth: Int, val font: Font, val date: Date, val location: HistoricalLocation): HorizontalListWidget.Item() {
+class TimelineEntry(parentWidth: Int, val font: Font, val date: Date, val location: HistoricalLocation): TimelineWidget.Item() {
     companion object {
         val dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT, Minecraft.getInstance().locale)
     }

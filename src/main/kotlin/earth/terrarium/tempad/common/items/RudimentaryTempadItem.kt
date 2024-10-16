@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.items
 
+import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.tooltip.tooltip
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.*
@@ -76,7 +77,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
         state: BlockState,
     ): Boolean {
         level.getBlockEntity(pos)?.let { blockEntity ->
-            stack.targetPos?.let { blockEntity.targetLocation = it }
+            // stack.targetPos?.let { blockEntity.targetLocation = it } // TODO implement dynamic providers
             player?.let { blockEntity.owner = it.gameProfile }
             blockEntity.chrononContent = stack.chrononContent
         }
@@ -102,7 +103,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
     }
 
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
-        return Optional.of(stack.chrononContainer.tooltip)
+        return Optional.of(stack.chronons!!.tooltip)
     }
 
     override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean {

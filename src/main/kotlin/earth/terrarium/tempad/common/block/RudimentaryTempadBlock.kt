@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.targetPos
-import earth.terrarium.tempad.common.registries.targetLocation
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -57,7 +56,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         return mutableListOf(
             ModItems.rudimentaryTempad.stack {
                 (params.getParameter(LootContextParams.BLOCK_ENTITY) as? RudimentaryTempadBE)?.let {
-                    targetPos = it.targetLocation
+                    // targetPos = it.targetLocation // TODO implement dynamic providers
                 }
             }
         )
@@ -77,12 +76,14 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
                 return ItemInteractionResult.SUCCESS
             }
             val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return ItemInteractionResult.FAIL
+            /* // TODO implement dynamic providers
             if (blockEntity.targetLocation != null) {
                 player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
                     targetPos = blockEntity.targetLocation
                 })
             }
             blockEntity.targetLocation = stack.targetPos
+             */
             level.setBlock(pos, state.setValue(hasCardProperty, true), 2)
             stack.shrink(1)
             return ItemInteractionResult.SUCCESS
@@ -103,13 +104,13 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return InteractionResult.FAIL
         if (player.isShiftKeyDown) {
             // TODO: Open GUI
-        } else if (blockEntity.targetLocation != null) {
+        } /* else if (blockEntity.targetLocation != null) {
             player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
                 targetPos = blockEntity.targetLocation
             })
             blockEntity.targetLocation = null
             level.setBlock(pos, state.setValue(hasCardProperty, false), 2)
-        }
+        } */  // TODO implement dynamic providers
         return InteractionResult.SUCCESS
     }
 

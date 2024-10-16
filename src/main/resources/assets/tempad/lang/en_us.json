@@ -60,7 +60,7 @@
   "item.tempad.sacred_chronometer": "Sacred Chronometer",
   "item.tempad.sacred_chronometer.infinite": "Infinite",
   "block.tempad.rudimentary_tempad": "Rudimentary Tempad",
-  "block.tempad.anchor_point": "Anchor Point",
+  "block.tempad.spatial_anchor": "Spatial Anchor",
 
   "fluid_type.tempad.chronon": "Chronon",
 
@@ -108,9 +108,9 @@
   "app.tempad.timeline.tracking": "Tracking",
   "app.tempad.timeline.teleport": "Teleport",
 
+  "app.tempad.teleport.pin": "Pin",
+  "app.tempad.teleport.unpin": "Unpin",
   "app.tempad.teleport.teleport": "Teleport",
-  "app.tempad.teleport.favorite": "Favorite",
-  "app.tempad.teleport.unfavorite": "Unfavorite",
   "app.tempad.teleport.delete": "Delete",
   "app.tempad.teleport.no_selection": "No location selected. Click on a location view details",
 

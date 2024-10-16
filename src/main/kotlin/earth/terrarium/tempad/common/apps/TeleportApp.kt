@@ -7,8 +7,7 @@ import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.app.TempadApp
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.api.context.SyncableContext
-import earth.terrarium.tempad.api.locations.PositionSnapshot
-import earth.terrarium.tempad.api.locations.positionSnapshot
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.registries.pinnedPosition
@@ -32,20 +31,20 @@ data class TeleportApp(val ctx: SyncableContext<*>): TempadApp<TeleportData> {
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.teleport")
 
-    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations[player, ctx].mapValues { map -> map.value.mapNotNull { pos -> pos.value.positionSnapshot?.let { pos.key to it } }.toMap() }, player.pinnedPosition, ctx.holder)
+    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations[player, ctx], player.pinnedPosition, ctx.holder)
 
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class TeleportData(val locations: Map<ResourceLocation, Map<UUID, PositionSnapshot>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ContextHolder<*>): AppContent<TeleportData>(ctx, codec) {
-    constructor(locations: Map<ResourceLocation, Map<UUID, PositionSnapshot>>, fav: Optional<FavoriteLocationAttachment>, ctx: ContextHolder<*>): this(locations, fav.getOrNull(), ctx)
+class TeleportData(val locations: Map<ResourceLocation, Map<UUID, NamedGlobalVec3>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ContextHolder<*>): AppContent<TeleportData>(ctx, codec) {
+    constructor(locations: Map<ResourceLocation, Map<UUID, NamedGlobalVec3>>, fav: Optional<FavoriteLocationAttachment>, ctx: ContextHolder<*>): this(locations, fav.getOrNull(), ctx)
     companion object {
         val codec: ByteCodec<TeleportData> = ObjectByteCodec.create(
             ByteCodec.mapOf(
                 ExtraByteCodecs.RESOURCE_LOCATION,
                 ByteCodec.mapOf(
                     ByteCodec.UUID,
-                    PositionSnapshot.byteCodec
+                    NamedGlobalVec3.BYTE_CODEC
                 )
             ).fieldOf { it.locations },
             ObjectByteCodec.create(

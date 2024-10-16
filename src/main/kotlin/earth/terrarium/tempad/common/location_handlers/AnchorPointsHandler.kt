@@ -2,21 +2,16 @@ package earth.terrarium.tempad.common.location_handlers
 
 import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
-import com.teamresourceful.resourcefullib.common.utils.SaveHandler
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.block.SpatialAnchorBE
 import earth.terrarium.tempad.common.registries.anchorPoints
-import earth.terrarium.tempad.common.registries.posId
+import earth.terrarium.tempad.common.registries.id
 import earth.terrarium.tempad.common.utils.get
-import earth.terrarium.tempad.common.utils.parse
+import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.NbtOps
-import net.minecraft.world.level.Level
 import java.util.*
 
 class AnchorPointsData(anchors: Map<UUID, GlobalPos>) {
@@ -35,7 +30,10 @@ class AnchorPointsData(anchors: Map<UUID, GlobalPos>) {
     }
 
     operator fun plusAssign(block: SpatialAnchorBE) {
-        anchors[block.posId!!] = GlobalPos.of(block.level!!.dimension(), block.blockPos)
+        if (block.id == null) block.id = UUID.randomUUID()
+        safeLet(block.id, block.level) { id, level ->
+            anchors[id] = GlobalPos.of(level.dimension(), block.blockPos)
+        }
     }
 
     operator fun minusAssign(locationId: UUID) {

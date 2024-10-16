@@ -10,9 +10,9 @@ import earth.terrarium.tempad.tempadId
 
 object ModLocations {
     fun init() {
-        TempadLocations[DefaultLocationHandler.ID] = { player, _ -> DefaultLocationHandler(player) }
-        TempadLocations["spatial_anchors".tempadId] = { player, _ -> AnchorPointsHandler(player) }
-        TempadLocations[PlayerHandler.ID] = ::PlayerHandler
+        TempadLocations[DefaultLocationHandler.ID] = { player, _, _ -> DefaultLocationHandler(player) }
+        TempadLocations["spatial_anchors".tempadId] = { player, _, _ -> AnchorPointsHandler(player) }
+        TempadLocations[PlayerHandler.ID] = { player, upgrades, _ -> PlayerHandler(player, upgrades) }
 
         VisbilityApi["private".tempadId] = DefaultVisbility.PRIVATE
         VisbilityApi["public".tempadId] = DefaultVisbility.PUBLIC

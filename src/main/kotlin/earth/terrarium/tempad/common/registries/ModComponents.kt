@@ -11,10 +11,13 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.utils.*
+import net.minecraft.core.UUIDUtil
+import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.common.MutableDataComponentHolder
+import java.util.UUID
 
 object ModComponents {
     val registry: ResourcefulRegistry<DataComponentType<*>> =
@@ -41,10 +44,31 @@ object ModComponents {
         }
     }
 
+    val chrononContentTempad: DataComponentType<Int> by registry.register("chronon_content_tempad") {
+        componentType {
+            serialize = Codec.INT
+            networkSerialize = ByteCodec.INT
+        }
+    }
+
+    val chrononContentTimeTwister : DataComponentType<Int> by registry.register("chronon_content_time_twister") {
+        componentType {
+            serialize = Codec.INT
+            networkSerialize = ByteCodec.INT
+        }
+    }
+
+    val twisterData: DataComponentType<DataComponentPatch> by registry.register("twister_data") {
+        componentType {
+            serialize = DataComponentPatch.CODEC
+            networkSynchronized(DataComponentPatch.STREAM_CODEC)
+        }
+    }
+
     val targetPos: DataComponentType<NamedGlobalVec3> by registry.register("target_position") {
         componentType {
-            serialize = NamedGlobalVec3.codec
-            networkSerialize = NamedGlobalVec3.byteCodec
+            serialize = NamedGlobalVec3.CODEC.codec()
+            networkSerialize = NamedGlobalVec3.BYTE_CODEC
         }
     }
 
@@ -75,6 +99,13 @@ object ModComponents {
             networkSerialize = Color.BYTE_CODEC
         }
     }
+
+    val anchorId: DataComponentType<UUID> by registry.register("anchor_id") {
+        componentType {
+            serialize = UUIDUtil.STRING_CODEC
+            networkSerialize = ByteCodec.UUID
+        }
+    }
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
@@ -82,6 +113,12 @@ var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefaul
 var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.withDefault(ModMacros.teleportToPinned)
 
 var MutableDataComponentHolder.chrononContent by ModComponents.chrononContent.withDefault(0)
+
+var MutableDataComponentHolder.chrononContentTempad by ModComponents.chrononContentTempad.withDefault(0)
+
+var MutableDataComponentHolder.chrononContentTimeTwister by ModComponents.chrononContentTimeTwister.withDefault(0)
+
+var MutableDataComponentHolder.twisterData by ModComponents.twisterData
 
 var MutableDataComponentHolder.targetPos by ModComponents.targetPos
 
@@ -92,3 +129,5 @@ var MutableDataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.
 var MutableDataComponentHolder.installedUpgrades by ModComponents.installedUpgrades.withDefault(InstalledUpgradesComponent(emptyList()))
 
 var MutableDataComponentHolder.color by ModComponents.color
+
+var MutableDataComponentHolder.anchorId by ModComponents.anchorId

@@ -7,6 +7,7 @@ import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.ctx
 import earth.terrarium.tempad.common.utils.getSlot
+import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
@@ -47,25 +48,26 @@ class TempadItem : ChrononItem() {
             if (stack.twisterEquipped) {
                 if (!slot.hasItem()) {
                     stack.twisterEquipped = false
-                    slot.contents = stack.transmuteCopy(ModItems.timeTwister).also {
-                        val toMove = it.chrononContent.coerceAtMost(it.chrononContainer.capacity)
-                        it.chrononContent = toMove
-                        stack.chrononContent -= toMove
+                    slot.contents = ModItems.timeTwister.stack {
+                        stack.twisterData?.let(::applyComponents)
+                        chrononContent = stack.chrononContentTimeTwister
+                        stack.chrononContentTimeTwister = 0
                     }
                     return true
-                } else if (slot.contents.item === ModItems.tempad) {
-                    val toMove = stack.chrononContent.coerceAtMost(4000)
-                    stack.chrononContent -= toMove
+                } else if (slot.contents.item === ModItems.tempad && !slot.contents.twisterEquipped) {
                     stack.twisterEquipped = false
                     slot.contents.twisterEquipped = true
-                    slot.contents.chrononContent += toMove
+                    slot.contents.chrononContentTimeTwister = stack.chrononContentTimeTwister
+                    slot.contents.twisterData = stack.twisterData
+                    stack.chrononContentTimeTwister = 0
+                    stack.twisterData = null
                     return true
                 }
             } else if (slot.contents.item === ModItems.timeTwister) {
-                val chronons = slot.contents.chrononContent
-                slot.contents = ItemStack.EMPTY
                 stack.twisterEquipped = true
-                stack.chrononContent += chronons
+                stack.chrononContentTimeTwister += slot.contents.chrononContent
+                stack.twisterData = slot.contents.componentsPatch
+                slot.contents = ItemStack.EMPTY
                 return true
             }
         }
@@ -82,7 +84,8 @@ class TempadItem : ChrononItem() {
     ): Boolean {
         if (action == ClickAction.SECONDARY && other.item === ModItems.timeTwister && !stack.twisterEquipped) {
             stack.twisterEquipped = true
-            stack.chrononContent += other.chrononContent
+            stack.chrononContentTimeTwister += other.chrononContent
+            stack.twisterData = other.componentsPatch
             access.set(ItemStack.EMPTY)
             return true
         }
@@ -99,8 +102,4 @@ class TempadItem : ChrononItem() {
     ) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
     }
-}
-
-class TempadContainer(stack: ItemStack) : ItemChrononContainer(stack, 0) {
-    override val capacity: Int get() = if (stack.twisterEquipped) 12000 else 8000
 }

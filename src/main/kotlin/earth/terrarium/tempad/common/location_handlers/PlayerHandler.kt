@@ -6,17 +6,16 @@ import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.locations.namedGlobalVec3
-import earth.terrarium.tempad.api.tva_device.TempadDevice
+import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.enabled
 import earth.terrarium.tempad.tempadId
-import net.minecraft.world.entity.player.Player
 import java.util.UUID
 
-class PlayerHandler(val player: GameProfile, val tempad: TempadDevice) : LocationHandler {
+class PlayerHandler(val player: GameProfile, val upgrades: UpgradeHandler) : LocationHandler {
     override val locations: Map<UUID, NamedGlobalVec3>
         get() {
-            if (Tempad.playerUpgrade !in tempad) return emptyMap()
+            if (Tempad.playerUpgrade !in upgrades) return emptyMap()
             return Tempad.server?.let {
                 it.playerList.players
                     .filter { it.uuid != player.id }

@@ -68,12 +68,12 @@ dependencies {
         jarJar.pin(it, "[${resourcefulLibKtVersion})")
     }
 
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${this@Build_gradle.minecraftVersion}", version = "1.0.1") {
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${minecraftVersion}", version = "1.0.9+beta.6") {
         isTransitive = false
     }
 
-    jarJar(group = "earth.terrarium.olympus", name = "olympus-neoforge-${this@Build_gradle.minecraftVersion}", version = "1.0.1").also {
-        jarJar.pin(it, "[1.0.1)")
+    jarJar(group = "earth.terrarium.olympus", name = "olympus-neoforge-${minecraftVersion}", version = "1.0.9+beta.6").also {
+        jarJar.pin(it, "[1.0.9+beta.6)")
     }
 
     implementation("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
@@ -84,10 +84,10 @@ dependencies {
     implementation("maven.modrinth:jade:$jadeVersion")
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}")
     compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
     // at runtime, use the full JEI jar for NeoForge
     runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
+
     implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}.0:${arsNouveauVersion}") {
         exclude(group = "curse.maven")
     }

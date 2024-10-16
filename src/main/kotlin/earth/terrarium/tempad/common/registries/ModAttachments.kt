@@ -7,13 +7,13 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.location_handlers.AnchorPointsData
 import earth.terrarium.tempad.common.utils.*
 import earth.terrarium.tempad.tempadId
+import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
@@ -74,9 +74,9 @@ object ModAttachments {
         }
     }
 
-    val posId: AttachmentType<UUID> by registry.register("pos_id") {
+    val id: AttachmentType<UUID> by registry.register("id") {
         attachmentType({ UUID.randomUUID() }) {
-            codec = Codec.STRING.xmap(UUID::fromString, UUID::toString)
+            codec = UUIDUtil.STRING_CODEC
         }
     }
 
@@ -101,6 +101,6 @@ var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLa
 var AttachmentHolder.owner by ModAttachments.owner.optional()
 var AttachmentHolder.chrononContent by ModAttachments.chrononContent
 var AttachmentHolder.color by ModAttachments.color
-var AttachmentHolder.posId by ModAttachments.posId.optional()
+var AttachmentHolder.id by ModAttachments.id.optional()
 
 val anchorPoints by ModAttachments.anchorPoints.serverData

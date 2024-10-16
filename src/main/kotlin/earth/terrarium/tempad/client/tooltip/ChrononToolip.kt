@@ -2,7 +2,7 @@ package earth.terrarium.tempad.client.tooltip
 
 import com.teamresourceful.resourcefullibkt.client.scissor
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.items.ChrononContainer
+import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
@@ -41,7 +41,7 @@ class ChrononTooltip(container: ChrononData): ClientTooltipComponent {
     }
 }
 
-val ChrononContainer.tooltip: TooltipComponent get() = ChrononData(content, capacity)
+val ChrononHandler.tooltip: TooltipComponent get() = ChrononData(power, maxPower)
 
 data class ChrononData(val content: Int, val capacity: Int): TooltipComponent {
     companion object {

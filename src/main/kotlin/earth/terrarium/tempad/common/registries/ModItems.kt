@@ -33,7 +33,7 @@ object ModItems {
     val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }
     val sacredChronometer: Item by registry.register("sacred_chronometer") { SacredChronometerItem() }
     val rudimentaryTempad: Item by registry.register("rudimentary_tempad") { RudimentaryTempadItem() }
-    val anchorPoint: Item by registry.register("anchor_point") { AnchorPointItem() }
+    val spatialAnchor: Item by registry.register("spatial_anchor") { SpatialAnchorItem() }
 
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val inexorableAlloy: Item by registry.register("inexorable_alloy") { Item(Item.Properties()) }

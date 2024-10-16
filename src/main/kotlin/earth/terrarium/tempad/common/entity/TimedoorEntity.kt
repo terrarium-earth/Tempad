@@ -4,15 +4,17 @@ import com.mojang.authlib.GameProfile
 import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.context.drain
 import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.api.locations.offsetLocation
 import earth.terrarium.tempad.api.sizing.DefaultSizing
 import earth.terrarium.tempad.api.sizing.DoorType
 import earth.terrarium.tempad.api.sizing.TimedoorSizing
+import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.common.config.CommonConfig
-import earth.terrarium.tempad.common.items.chrononContainer
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.registries.ModTags
@@ -59,7 +61,12 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         val leavingFail = Component.translatable("entity.tempad.timedoor.fail.leaving")
         val noChrononsFail = Component.translatable("entity.tempad.timedoor.fail.no_chronons")
 
-        fun openTimedoor(player: Player, ctx: SyncableContext<*>, location: NamedGlobalVec3, onOpen: (TimedoorEntity) -> Unit = {}): Component? {
+        fun openTimedoor(
+            player: Player,
+            ctx: SyncableContext<*>,
+            location: NamedGlobalVec3,
+            onOpen: (TimedoorEntity) -> Unit = {},
+        ): Component? {
             val stack = ctx.stack
             if (!player.isCreative && stack.chrononContent < 1000) return noChrononsFail
 
@@ -87,15 +94,25 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             return null
         }
 
-        fun openTimedoor(player: GameProfile, block: BlockEntity, location: NamedGlobalVec3, onOpen: (TimedoorEntity) -> Unit = {}): Component? {
-            if (block.chrononContainer!!.content < 1000) return noChrononsFail
+        fun openTimedoor(
+            player: GameProfile,
+            block: BlockEntity,
+            location: NamedGlobalVec3,
+            onOpen: (TimedoorEntity) -> Unit = {},
+        ): Component? {
+            if (block.chronons!!.power < 1000) return noChrononsFail
             val result = getTimedoor(block.level!!, location)
             result.right().getOrNull()?.let { return it }
 
             val timedoor = result.left().getOrNull() ?: return fail
             timedoor.owner = player.id
             timedoor.sizing = DefaultSizing.DEFAULT
-            timedoor.sizing.placeTimedoor(DoorType.ENTRY, Vec3.atCenterOf(block.blockPos).add(0.0, -1.5, 0.0), block.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180, timedoor)
+            timedoor.sizing.placeTimedoor(
+                DoorType.ENTRY,
+                Vec3.atCenterOf(block.blockPos).add(0.0, -1.5, 0.0),
+                block.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180,
+                timedoor
+            )
 
             val event = TimedoorEvent.OpenWithBlock(timedoor, player, block).post()
             if (event.isCanceled) return event.errorMessage ?: fail
@@ -103,11 +120,15 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
             onOpen(timedoor)
             block.level!!.addFreshEntity(timedoor)
-            block.chrononContainer!! -= 1000
+            block.chronons?.extract(1000, ActionType.Execute)
             return null
         }
 
-        fun getTimedoor(level: Level, location: NamedGlobalVec3, ignoreRestrictions: Boolean = false): Either<TimedoorEntity, Component> {
+        fun getTimedoor(
+            level: Level,
+            location: NamedGlobalVec3,
+            ignoreRestrictions: Boolean = false,
+        ): Either<TimedoorEntity, Component> {
             val targetDimension = location.dimension ?: return Either.right(posFail)
             location.pos ?: return Either.right(posFail)
             val lookup = level.registryAccess().lookup(Registries.DIMENSION)
@@ -180,7 +201,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     private val selfLocation: NamedGlobalVec3
         get() = NamedGlobalVec3(
             name,
-            NamedGlobalVec3.offsetLocation(this.pos, this.yRot),
+            offsetLocation(this.pos, this.yRot),
             level().dimension(),
             yRot,
             color

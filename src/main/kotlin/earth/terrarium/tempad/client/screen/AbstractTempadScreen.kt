@@ -2,9 +2,13 @@ package earth.terrarium.tempad.client.screen
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
+import com.teamresourceful.resourcefullib.client.screens.AbstractContainerCursorScreen
+import com.teamresourceful.resourcefullib.client.screens.CursorScreen
+import earth.terrarium.olympus.client.components.textbox.TextBox
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
@@ -14,8 +18,10 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
+import org.lwjgl.glfw.GLFW
+import java.util.UUID
 
-abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: ResourceLocation?, menu: T, val inv: Inventory, title: Component): AbstractContainerScreen<T>(menu, inv, title) {
+abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: ResourceLocation?, menu: T, val inv: Inventory, title: Component): AbstractContainerCursorScreen<T>(menu, inv, title) {
     init {
         this.imageWidth = 256
         this.imageHeight = 256
@@ -52,6 +58,20 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
             RenderSystem.enableBlend()
             graphics.blitSprite(it, this.leftPos + 30, this.topPos + 20, 198, 118)
         }
+    }
+
+    override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
+        (focused as? TextBox)?.let {
+            if (pKeyCode == GLFW.GLFW_KEY_ESCAPE) {
+                focused = null
+                return true
+            } else if ((!it.keyPressed(pKeyCode, pScanCode, pModifiers) && !it.isFocused && !it.isActive && !it.isVisible) || pKeyCode == GLFW.GLFW_KEY_TAB) {
+                return super.keyPressed(pKeyCode, pScanCode, pModifiers)
+            } else {
+                return true
+            }
+        }
+        return super.keyPressed(pKeyCode, pScanCode, pModifiers)
     }
 
     override fun renderLabels(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {

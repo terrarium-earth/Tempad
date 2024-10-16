@@ -1,11 +1,14 @@
 package earth.terrarium.tempad.client.screen
 
-import com.ibm.icu.text.DateFormat
+import earth.terrarium.olympus.client.components.Widgets
+import earth.terrarium.olympus.client.components.buttons.Button
+import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
+import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.tempadId
-import earth.terrarium.tempad.client.widgets.HorizontalListWidget
+import earth.terrarium.tempad.client.widgets.TimelineWidget
 import earth.terrarium.tempad.client.widgets.TimelineEntry
-import earth.terrarium.tempad.client.widgets.colored.ColoredButton
 import earth.terrarium.tempad.common.network.c2s.BackTrackLocation
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.sendToServer
@@ -26,7 +29,7 @@ class TimelineScreen(menu: ModMenus.TimelineMenu, inv: Inventory, title: Compone
     override fun init() {
         super.init()
 
-        val timeline = HorizontalListWidget(125, 72)
+        val timeline = TimelineWidget(125, 72)
         timeline.setPosition(localLeft + 5, localTop + 21)
 
         for ((dateTime, location) in menu.appContent.history.toSortedMap()) {
@@ -36,10 +39,15 @@ class TimelineScreen(menu: ModMenus.TimelineMenu, inv: Inventory, title: Compone
         timeline.scrollToBottom()
         addRenderableWidget(timeline)
 
-        val teleportBtn = addRenderableWidget(ColoredButton(teleportButton, height = 16) {
-            (timeline.current as? TimelineEntry)?.let {
-                BackTrackLocation(it.date, menu.ctxHolder).sendToServer()
-                onClose()
+        val teleportBtn = addRenderableWidget(Widgets.button {
+            it.withSize(font.width(teleportButton) + 12, 16)
+            it.withTexture(TempadUI.button)
+            it.withRenderer(WidgetRenderers.text<Button>(teleportButton).withColor(MinecraftColors.BLACK))
+            it.withCallback {
+                (timeline.current as? TimelineEntry)?.let {
+                    BackTrackLocation(it.date, menu.ctxHolder).sendToServer()
+                    onClose()
+                }
             }
         })
 

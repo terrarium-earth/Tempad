@@ -2,13 +2,15 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
-import earth.terrarium.tempad.common.block.RudimentaryTempadBE
+import earth.terrarium.tempad.api.tva_device.ChrononHandler
+import earth.terrarium.tempad.api.tva_device.UpgradeHandler
+import earth.terrarium.tempad.api.tva_device.impl.BlockChrononHandler
+import earth.terrarium.tempad.api.tva_device.impl.InfiniteChrononHandler
+import earth.terrarium.tempad.api.tva_device.impl.ItemChrononHandler
+import earth.terrarium.tempad.api.tva_device.impl.ItemUpgradeHandler
+import earth.terrarium.tempad.api.tva_device.impl.TempadChrononHandler
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
-import earth.terrarium.tempad.common.items.ChrononContainer
-import earth.terrarium.tempad.common.items.InfiniteChronons
-import earth.terrarium.tempad.common.items.ItemChrononContainer
-import earth.terrarium.tempad.common.items.TempadContainer
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.register
 import net.minecraft.resources.ResourceLocation
@@ -17,7 +19,6 @@ import net.minecraft.world.entity.player.Player
 import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
-import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent
@@ -76,32 +77,36 @@ class Tempad(bus: IEventBus) {
         ModLocations.init()
 
         bus.addListener { event: RegisterCapabilitiesEvent ->
-            val fluidHandlers = event.register(Capabilities.FluidHandler.ITEM)
+            val chrononBlocks = event.register(ChrononHandler.block)
+            val chrononItems = event.register(ChrononHandler.item)
+            val upgradeItems = event.register(UpgradeHandler.item)
 
-            fluidHandlers[ModItems.chronometer] = { stack, _ ->
-                ItemChrononContainer(stack, 32000)
+            chrononBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
+                BlockChrononHandler(it, 4000)
             }
 
-            fluidHandlers[ModItems.tempad] = { stack, _ ->
-                TempadContainer(stack)
+            chrononItems[ModItems.rudimentaryTempad] = { it, _ ->
+                ItemChrononHandler(it, 4000)
             }
 
-            fluidHandlers[ModItems.timeTwister] = { stack, _ ->
-                ItemChrononContainer(stack, 4000)
+            chrononItems[ModItems.timeTwister] = { it, _ ->
+                ItemChrononHandler(it, 4000)
             }
 
-            fluidHandlers[ModItems.rudimentaryTempad] = { stack, _ ->
-                ItemChrononContainer(stack, 4000)
+            chrononItems[ModItems.tempad] = { it, _ ->
+                TempadChrononHandler(it, 8000, 4000)
             }
 
-            fluidHandlers[ModItems.sacredChronometer] = { stack, _ ->
-                InfiniteChronons(stack)
+            chrononItems[ModItems.chronometer] = { it, _ ->
+                ItemChrononHandler(it, 32000)
             }
 
-            val blockFluidHandlers = event.register(Capabilities.FluidHandler.BLOCK)
+            chrononItems[ModItems.sacredChronometer] = { _, _ ->
+                InfiniteChrononHandler
+            }
 
-            blockFluidHandlers[ModBlocks.rudimentaryTempadBE] = { blockEntity, _ ->
-                (blockEntity as RudimentaryTempadBE).chronons
+            upgradeItems[ModItems.tempad] = { it, _ ->
+                ItemUpgradeHandler(it)
             }
         }
 
