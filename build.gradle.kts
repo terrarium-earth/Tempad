@@ -73,11 +73,11 @@ dependencies {
         isTransitive = false
     }.also { jarJar(it) }
 
-    implementation(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-${minecraftVersion}", version = "2.0.0") {
+    implementation(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-${minecraftVersion}", version = "2.0.0-beta.3") {
         isTransitive = false
     }
 
-    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${minecraftVersion}", version = "2.0.0") {
+    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${minecraftVersion}", version = "2.0.0-beta.4") {
         isTransitive = false
     }
 

@@ -2,6 +2,7 @@ package earth.terrarium.tempad.data.client
 
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
+import earth.terrarium.tempad.common.block.WorkstationBlock
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.Direction
@@ -29,6 +30,17 @@ class ModBlockStateData(output: PackOutput, helper: ExistingFileHelper) : BlockS
                 ConfiguredModel.builder()
                     .modelFile(ModelFile.UncheckedModelFile(model.tempadId))
                     .rotationY(if (dir.axis.isVertical) 0 else ((dir.toYRot().toInt())) % 360)
+                    .build()
+            }
+
+        getVariantBuilder(ModBlocks.workstation)
+            .forAllStates { state: BlockState ->
+                val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
+                val hasTape = state.getValue(WorkstationBlock.HAS_TAPE)
+
+                ConfiguredModel.builder()
+                    .modelFile(ModelFile.UncheckedModelFile("block/workstation${if (hasTape) "_with_tape" else ""}".tempadId))
+                    .rotationY((dir.toYRot().toInt()) % 360)
                     .build()
             }
     }

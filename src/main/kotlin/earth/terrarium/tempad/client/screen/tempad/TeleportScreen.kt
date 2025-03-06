@@ -47,7 +47,13 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         val noSelectionText = Component.translatable("app.${Tempad.MOD_ID}.teleport.no_selection")
         val deleteText = Component.translatable("app.${Tempad.MOD_ID}.teleport.delete")
         val sectionVisibility = mutableMapOf<Component, MutableState<Boolean>>()
-        val sortMode = DropdownState.of(Sorting.valueOf(ClientConfig.sortingMode))
+        val sortMode = DropdownState.of(
+            try {
+                Sorting.valueOf(ClientConfig.sortingMode)
+            } catch (_: IllegalArgumentException) {
+                Sorting.Dimension
+            }
+        )
 
         val scrollbarYRenderer: WidgetRenderer<LayoutWidget<ClearableGridLayout>> =
             WidgetRenderer { graphics, context, partialTick ->
@@ -79,6 +85,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 )
             }
     }
+
     var selected: Triple<ResourceLocation, UUID, NamedGlobalVec3>? = null
         set(value) {
             field = value
@@ -102,7 +109,11 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
     private var teleportBtn = AppearanceState().apply { active = false }
 
     private var favorite: FavoriteLocationAttachment? = menu.appContent.favoriteLocation
-    private val isSelectedPinned: Boolean get() = safeLet(selected?.first, selected?.second) { provider, id -> favorite?.matches(provider, id) == true } == true
+    private val isSelectedPinned: Boolean
+        get() = safeLet(
+            selected?.first,
+            selected?.second
+        ) { provider, id -> favorite?.matches(provider, id) == true } == true
 
     private lateinit var locationList: LayoutWidget<ClearableGridLayout>
     private lateinit var infoTextWidget: LayoutWidget<ClearableGridLayout>
@@ -236,7 +247,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             it.withSize(16, 16)
             it.withTexture(TempadUI.button)
             it.withRenderer(sortMode.withRenderer { mode ->
-                WidgetRenderers.icon<Button>("icons/${mode.toString().lowercase()}".tempadId).withColor(MinecraftColors.BLACK).withCentered(12, 12)
+                WidgetRenderers.icon<Button>("icons/${mode.toString().lowercase()}".tempadId)
+                    .withColor(MinecraftColors.BLACK).withCentered(12, 12)
             })
             it.withTooltip(Translatable.toComponent(sortMode.get()))
         }))
@@ -276,7 +288,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             it.withTexture(null)
             it.withSize(7, 7)
             it.withRenderer { graphics, ctx, dunno ->
-                WidgetRenderers.icon<Button>(("icons/mini/${if(isSelectedPinned) "unpin" else "pin"}").tempadId)
+                WidgetRenderers.icon<Button>(("icons/mini/${if (isSelectedPinned) "unpin" else "pin"}").tempadId)
                     .colored()
                     .withCentered(7, 7)
                     .render(graphics, ctx, dunno)
@@ -292,9 +304,9 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                     favorite = FavoriteLocationAttachment(provider, locationId)
                 }
                 updateLocationPanel()
-                it.withTooltip("app.tempad.teleport.${if(isSelectedPinned) "unpin" else "pin"}".translatable)
+                it.withTooltip("app.tempad.teleport.${if (isSelectedPinned) "unpin" else "pin"}".translatable)
             }
-            it.withTooltip("app.tempad.teleport.${if(isSelectedPinned) "unpin" else "pin"}".translatable)
+            it.withTooltip("app.tempad.teleport.${if (isSelectedPinned) "unpin" else "pin"}".translatable)
         })
 
         locationButtons += options.addChild(
@@ -361,7 +373,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
     }
 }
 
-enum class Sorting: Translatable {
+enum class Sorting : Translatable {
     Dimension, Alphabetical, Type;
 
     override fun getTranslationKey(): String? {
@@ -377,6 +389,7 @@ enum class Sorting: Translatable {
                 }.groupBy { (_, _, pos) -> Component.translatable(pos.dimension.location().toLanguageKey("dimension")) }
                 return dimensionMap.mapValues { (_, value) -> value.sortedBy { it.third.toString() } }
             }
+
             Alphabetical -> {
                 // provider to map of id to pos -> alphabetical letter to list of provider to id to pos
                 val alphabetMap = values.flatMap { (provider, locations) ->
@@ -385,6 +398,7 @@ enum class Sorting: Translatable {
                     .groupBy { Component.literal(it.third.name.string.first().uppercaseChar().toString()) }
                 return alphabetMap.mapValues { (_, value) -> value.sortedBy { it.third.name.string } }
             }
+
             Type -> {
                 // provider to map of id to pos -> type to list of provider to id to pos
                 val typeMap = values.flatMap { (provider, locations) ->

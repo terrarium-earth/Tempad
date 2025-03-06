@@ -72,7 +72,7 @@ class Tempad(bus: IEventBus) {
         ModMacros.init()
         ModMenus.registry.init()
         ModNetworking.init()
-        ModRecipes.serializers.init()
+        ModRecipes.init()
         ModFluids.dataRegistry.init()
         ModFluids.registry.init()
         ModSounds.registry.init()

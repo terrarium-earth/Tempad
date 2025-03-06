@@ -1,14 +1,10 @@
 {
     "type": "tempad:upgrade",
-    "template": [
+    "item": [
         {
             "item": "tempad:player_teleport_upgrade"
         }
     ],
-    "addition": [
-        {
-            "item": "tempad:location_card"
-        }
-    ],
+    "download_time": 40,
     "upgrade": "tempad:player"
 }
