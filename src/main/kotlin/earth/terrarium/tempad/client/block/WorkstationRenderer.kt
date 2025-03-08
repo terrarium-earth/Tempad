@@ -3,7 +3,6 @@ package earth.terrarium.tempad.client.block
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import earth.terrarium.tempad.common.block.WorkstationBE
-import earth.terrarium.tempad.common.block.WorkstationBlock
 import earth.terrarium.tempad.common.utils.get
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer

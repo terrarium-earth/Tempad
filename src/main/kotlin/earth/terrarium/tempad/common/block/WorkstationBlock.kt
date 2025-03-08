@@ -15,28 +15,53 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
+import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
+import net.minecraft.world.level.block.state.properties.BedPart
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
+import net.minecraft.world.phys.shapes.VoxelShape
 import kotlin.jvm.optionals.getOrNull
 
 class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
     val codec: MapCodec<out BaseEntityBlock?> = simpleCodec { ModBlocks.workstation }
     companion object: BlockEntityTicker<WorkstationBE> {
         val HAS_TAPE: BooleanProperty = BooleanProperty.create("has_tape")
+
+        val NORTH_SHAPE: VoxelShape = Shapes.or(
+            box(0.0, 0.0, 1.0, 14.0, 2.0, 15.0),
+            box(0.0, 2.0, 1.0, 14.0, 4.0, 5.0),
+        )
+
+        val SOUTH_SHAPE: VoxelShape = Shapes.or(
+            box(2.0, 0.0, 1.0, 16.0, 2.0, 15.0),
+            box(2.0, 2.0, 11.0, 16.0, 4.0, 15.0),
+        )
+
+        val WEST_SHAPE: VoxelShape = Shapes.or(
+            box(1.0, 0.0, 2.0, 15.0, 2.0, 16.0),
+            box(1.0, 2.0, 2.0, 5.0, 4.0, 16.0),
+        )
+
+        val EAST_SHAPE: VoxelShape = Shapes.or(
+            box(1.0, 0.0, 0.0, 15.0, 2.0, 14.0),
+            box(11.0, 2.0, 0.0, 15.0, 4.0, 14.0),
+        )
 
         override fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: WorkstationBE) {
             if (level !is ServerLevel) return
@@ -125,8 +150,30 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         return InteractionResult.SUCCESS
     }
 
-    override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
-        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection)
+    fun getPos(dir: Direction, pos: BlockPos): BlockPos {
+        return pos.relative(Direction.fromYRot(dir.toYRot() - 90.0))
+    }
+
+    override fun getStateForPlacement(context: BlockPlaceContext): BlockState? {
+        val direction: Direction = context.horizontalDirection
+        val childPos: BlockPos = getPos(direction, context.clickedPos);
+        val level: Level = context.level
+        return if (level.getBlockState(childPos).canBeReplaced(context) && level.worldBorder.isWithinBounds(childPos))
+            this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, direction)
+        else
+            null
+    }
+
+    override fun setPlacedBy(level: Level, pos: BlockPos, state: BlockState, placer: LivingEntity?, stack: ItemStack) {
+        super.setPlacedBy(level, pos, state, placer, stack)
+        if (!level.isClientSide) {
+            val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
+            val newState = ModBlocks.workstationChild.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, dir)
+            val blockpos = getPos(dir, pos)
+            level.setBlock(blockpos, newState, UPDATE_ALL)
+            level.blockUpdated(pos, Blocks.AIR)
+            newState.updateNeighbourShapes(level, pos, UPDATE_ALL)
+        }
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
@@ -138,4 +185,21 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = WorkstationBE(pos, state)
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
+
+    override fun getShape(
+        state: BlockState,
+        level: BlockGetter,
+        pos: BlockPos,
+        context: CollisionContext,
+    ): VoxelShape {
+        return when(state.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            Direction.NORTH -> NORTH_SHAPE
+            Direction.SOUTH -> SOUTH_SHAPE
+            Direction.WEST -> WEST_SHAPE
+            Direction.EAST -> EAST_SHAPE
+            else -> NORTH_SHAPE
+        }
+    }
 }
+
+private inline val Number.px: Double get() = this.toDouble() / 16.0

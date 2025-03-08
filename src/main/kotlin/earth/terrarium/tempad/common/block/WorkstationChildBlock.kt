@@ -1,0 +1,77 @@
+package earth.terrarium.tempad.common.block
+
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.LevelAccessor
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.StateDefinition
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
+import net.minecraft.world.phys.shapes.VoxelShape
+
+class WorkstationChildBlock: Block(Properties.of()) {
+    companion object {
+        val NORTH_SHAPE: VoxelShape = Shapes.or(
+            box(1.0, 0.0, 0.0, 15.0, 2.0, 16.0),
+            box(1.0, 2.0, 0.0, 15.0, 11.0, 10.0),
+        )
+
+        val SOUTH_SHAPE: VoxelShape = Shapes.or(
+            box(1.0, 0.0, 0.0, 15.0, 2.0, 16.0),
+            box(1.0, 2.0, 6.0, 15.0, 11.0, 16.0),
+        )
+
+        val WEST_SHAPE: VoxelShape = Shapes.or(
+            box(0.0, 0.0, 1.0, 16.0, 2.0, 15.0),
+            box(0.0, 2.0, 1.0, 10.0, 11.0, 15.0),
+        )
+
+        val EAST_SHAPE: VoxelShape = Shapes.or(
+            box(0.0, 0.0, 1.0, 16.0, 2.0, 15.0),
+            box(6.0, 2.0, 1.0, 16.0, 11.0, 15.0),
+        )
+    }
+
+    init {
+        this.registerDefaultState(
+            stateDefinition
+                .any()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+        )
+    }
+
+    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
+        builder.add(BlockStateProperties.HORIZONTAL_FACING)
+    }
+
+    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
+
+    override fun destroy(
+        level: LevelAccessor,
+        pos: BlockPos,
+        state: BlockState,
+    ) {
+        super.destroy(level, pos, state)
+    }
+
+    override fun getShape(
+        state: BlockState,
+        level: BlockGetter,
+        pos: BlockPos,
+        context: CollisionContext,
+    ): VoxelShape {
+        return when(state.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            Direction.NORTH -> NORTH_SHAPE
+            Direction.SOUTH -> SOUTH_SHAPE
+            Direction.WEST -> WEST_SHAPE
+            Direction.EAST -> EAST_SHAPE
+            else -> NORTH_SHAPE
+        }
+    }
+}
+
+private inline val Number.px: Double get() = this.toDouble() / 16.0
