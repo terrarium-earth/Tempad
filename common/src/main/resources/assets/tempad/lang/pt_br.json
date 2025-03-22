@@ -1,0 +1,197 @@
+{
+  "gui.tempad.search_field": "Pesquisar...",
+  "gui.tempad.name_field": "Nome...",
+  "gui.tempad.teleport_disabled": "Você não pode se teletransportar para este local",
+  "gui.tempad.delete": "Excluir localização",
+  "gui.tempad.delete_disabled": "Você não pode excluir esta localização",
+  "gui.tempad.favorite": "Favoritar localização",
+  "gui.tempad.unfavorite": "Remover dos favoritos",
+  "gui.tempad.timedoor": "Portal Temporal",
+  "gui.tempad.dimension": "Dim: %s",
+  "gui.tempad.no_locations.first_line": "Pressione [+] para",
+  "gui.tempad.no_locations.second_line": "adicionar uma localização",
+  "gui.tempad.no_selection.first_line": "Selecione uma localização",
+  "gui.tempad.no_selection.second_line": "para mais detalhes",
+  "gui.tempad.x": "X: %s",
+  "gui.tempad.y": "Y: %s",
+  "gui.tempad.z": "Z: %s",
+  "gui.tempad.angle": "Ângulo: %s",
+  "tooltip.tempad.durability_cost": "Usos restantes: %s/%s",
+  "tooltip.tempad.timeleft": "Recarregando: %s",
+  "tooltip.tempad.fullycharged": "Totalmente Carregado",
+  "tooltip.tempad.timer_cost": "Tempo de recarga: %s",
+  "tooltip.tempad.energy_info": "Energia: %s/%s RF",
+  "tooltip.tempad.energy_cost": "Consome %s RF por uso",
+  "tooltip.tempad.item_option_info": "Requer item de combustível para usar",
+  "tooltip.tempad.experience_level_cost": "Requer %s Nível(is) para abrir o Portal Temporal",
+  "tooltip.tempad.experience_points_cost": "Requer %s Ponto(s) de Experiência para abrir o Portal Temporal",
+  "item.tempad.tempad": [
+    { "text": "Tempad", "color": "#ff6f00" }
+  ],
+  "advancements.tempad.tempad": "Por Todo o Tempo. Sempre.",
+  "advancements.tempad.tempad.description": "Obtenha um Tempad",
+  "advancements.tempad.he_who_remains": "Glorioso Propósito!",
+  "advancements.tempad.he_who_remains.description": "Obtenha o Tempad de 'Aquele Que Permanece'",
+  "subtitles.tempad.entity.timedoor.open": "Portal Temporal se abre",
+  "dimension.minecraft.overworld": "Mundo Superior",
+  "dimension.minecraft.the_nether": "O Nether",
+  "dimension.minecraft.the_end": "O Fim",
+  "tempad_option.tempad.energy": "Energia: %s/%s §b⚡§r",
+  "tempad_option.tempad.energy_cost": "Custa %s §b⚡§r",
+  "item.tempad.empty_tank": "Vazio",
+  "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r",
+
+  "item.tempad.blank_card": "Cartão em Branco",
+  "item.tempad.location_card": "Cartão de Localização",
+  "item.tempad.location_card.creator_toolip": "Criado por %s",
+  "item.tempad.location_card.shift_toolip": "Segure [%s] para mais informações",
+  "item.tempad.location_card.added_location": "Localização adicionada: %s",
+  "item.tempad.location_card.add_location": "Clique com o botão direito para definir localização",
+  "item.tempad.location_card.set_name": "Renomeie na bigorna para definir o nome da localização",
+  "item.tempad.location_card.set_location": "Localização definida: %s",
+
+  "item.tempad.temporal_shielding": "Blindagem Temporal",
+  "item.tempad.chronometer": "Cronômetro",
+  "item.tempad.status_emitter": "Emissor de Status",
+  "item.tempad.time_twister": "Torcedor do Tempo",
+  "item.tempad.new_location_upgrade": "Melhoria: Salvamento de Localização",
+  "item.tempad.player_teleport_upgrade": "Melhoria: Teletransporte para Jogadores",
+  "item.tempad.inexorable_alloy": "Liga Inexorável",
+  "item.tempad.sacred_chronometer": "Cronômetro Sagrado",
+  "item.tempad.sacred_chronometer.infinite": "Infinito",
+
+  "fluid_type.tempad.chronon": "Crônon",
+
+  "fuel.tempad.empty": "Vazio",
+  "fuel.tempad.empty.description": "Este item não pode armazenar combustível",
+
+  "fuel.tempad.display": [
+    "",
+    { "text": "Cargas: ", "color": "#91450d" },
+    { "index": 0, "color": "#ff6f00" },
+    { "text": "/", "color": "#ffcc54" },
+    { "index": 1, "color": "#ff6f00" }
+  ],
+
+  "category.tempad": "Tempad",
+  "key.tempad.favorite": "Abrir localização favorita",
+  "key.tempad.shortcut": "Abrir tela do Tempad",
+
+  "app.tempad.new_location": "Nova Localização",
+  "app.tempad.teleport": "Teletransporte",
+  "app.tempad.settings": "Configurações",
+  "app.tempad.fuel": "Gerenciar Combustível",
+  "app.tempad.timeline": "Linha do Tempo de Viagem",
+  "app.tempad.tp_to": "Teletransportar para Jogador",
+
+  "app.tempad.settings.default_macro": "Macro Padrão",
+  "app.tempad.settings.default_macro.subtitle": "Macro padrão para usar ao clicar com Shift no Tempad ou pressionar a tecla [F]",
+
+  "app.tempad.settings.default_app": "App Padrão",
+  "app.tempad.settings.default_app.subtitle": "App padrão para abrir ao clicar com o botão direito no Tempad",
+
+  "app.tempad.settings.organization_method": "Organização",
+  "app.tempad.settings.organization_method.subtitle": "Forma padrão de organizar as localizações mostradas no Tempad",
+
+  "app.tempad.new_location.name": "Nome:",
+  "app.tempad.new_location.color": "Cor:",
+
+  "app.tempad.fuel.auto_use": "Uso Automático",
+  "app.tempad.fuel.auto_use.description": "Encontra e usa automaticamente itens de combustível do jogador ou do seu inventário",
+  "app.tempad.fuel.use": "Usar",
+  "app.tempad.fuel.use.description": "Usa o item no slot para abastecer o Tempad",
+  "app.tempad.fuel.transfer": "Combustível",
+  "app.tempad.fuel.transfer.description": "Transfere combustível do Tempad para o item no slot",
+
+  "app.tempad.timeline.tracking": "Rastreamento",
+  "app.tempad.timeline.teleport": "Teletransporte",
+
+  "app.tempad.teleport.teleport": "Teletransporte",
+  "app.tempad.teleport.favorite": "Favoritar",
+  "app.tempad.teleport.unfavorite": "Desfavoritar",
+  "app.tempad.teleport.delete": "Excluir",
+  "app.tempad.teleport.no_selection": "Nenhuma localização selecionada. Clique em uma localização para ver detalhes",
+
+  "app.tempad.tp_to.teleport": "Teletransporte",
+  "app.tempad.tp_to.selected": "Selecionado",
+
+  "provider.tempad.default": "No Dispositivo",
+  "provider.tempad.warps": "De Distorções",
+  "provider.tempad.player": "Jogadores",
+
+  "macro.tempad.default": "Abrir Favorito",
+  "macro.tempad.default.description": "Teletransportar para a localização favorita",
+
+  "button.tempad.type": "Ordenar por Tipo",
+  "button.tempad.alphabetical": "Ordenar Alfabeticamente",
+  "button.tempad.dimension": "Ordenar por Dimensão",
+
+  "marker.tempad.death": "Morreu em",
+  "marker.tempad.respawn": "Renasceu em",
+  "marker.tempad.dimension_exit": "Saiu da dimensão em",
+  "marker.tempad.dimension_enter": "Entrou na dimensão em",
+
+  "config.jade.plugin_tempad.timedoor": "Tempad",
+  "jade.tempad.will_close": "Fechando em %s segundos",
+  "jade.tempad.closing": "Fechando...",
+  "jade.tempad.pos": "Teletransportando para %s em %s",
+  "misc.tempad.return": "Retornando para %s",
+  "tempad.tooltip.player_pos": "Alvo: %s",
+
+  "upgrade.tempad.player": "Teletransporte para Jogadores",
+  "misc.tempad.upgrades": "Melhorias Instaladas:",
+  "misc.tempad.wandering": "Vagando em",
+  "location.tempad.saved": [
+    "",
+    { "text": "Localização salva: ", "color": "#ff6f00" },
+    { "index": 0, "color": "#91450d" }
+  ],
+  "location.tempad.player.error": [
+    "",
+    { "text": "Erro: ", "color": "#ff6f00" },
+    { "text": "Localizações de jogadores não podem ser salvas", "color": "#91450d" }
+  ],
+
+  "entity.tempad.timedoor": "Portal Temporal",
+  "entity.tempad.timedoor.success": "Portal Temporal aberto",
+  "entity.tempad.timedoor.fail": [
+    "",
+    { "text": "Erro: ", "color": "#ff6f00" },
+    { "text": "Falha ao abrir o Portal Temporal", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.pos": [
+    "",
+    { "text": "Erro: ", "color": "#ff6f00" },
+    { "text": "Posição não está inicializada", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.interdimensional": [
+    "",
+    { "text": "Erro: ", "color": "#ff6f00" },
+    { "text": "Viagem entre dimensões não é permitida", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional_all": [
+      "",
+      { "text": "Erro: ", "color": "#ff6f00" },
+      { "text": "Viagem dentro de dimensões não é permitida", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional": [
+      "",
+      { "text": "Erro: ", "color": "#ff6f00" },
+      { "text": "Viagem dentro desta dimensão não é permitida", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.leaving": [
+      "",
+      { "text": "Erro: ", "color": "#ff6f00" },
+      { "text": "Sair desta dimensão não é permitido", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.entering": [
+      "",
+      { "text": "Erro: ", "color": "#ff6f00" },
+      { "text": "Entrar nesta dimensão não é permitido", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.no_chronons": [
+      "",
+      { "text": "Erro: ", "color": "#ff6f00" },
+      { "text": "Crônons insuficientes", "color": "#91450d" }
+  ]
+}
