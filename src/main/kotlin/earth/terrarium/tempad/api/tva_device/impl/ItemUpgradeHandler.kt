@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.api.tva_device.impl
 
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
+import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.registries.installedUpgrades
 import net.minecraft.resources.ResourceLocation
@@ -18,7 +19,7 @@ class ItemUpgradeHandler(val stack: ItemStack): UpgradeHandler {
     }
 
     override fun plusAssign(upgrade: ResourceLocation) {
-        installedUpgrades += upgrade
+        if (upgrade !in installedUpgrades) installedUpgrades += upgrade
     }
 
     override fun minusAssign(upgrade: ResourceLocation) {
@@ -30,6 +31,6 @@ class ItemUpgradeHandler(val stack: ItemStack): UpgradeHandler {
     }
 
     override fun isRemovable(upgrade: ResourceLocation): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 }

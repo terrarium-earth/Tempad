@@ -2,6 +2,8 @@ package earth.terrarium.tempad.api.sizing
 
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
+import earth.terrarium.tempad.api.locations.offsetLocation
+import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.tempadId
 import net.minecraft.world.phys.Vec3
@@ -25,7 +27,12 @@ class VerticalPlacementSettings(val xOffset: Float, val yOffset: Float, val zOff
         angle: Float,
         timedoor: TimedoorEntity,
     ) {
-        timedoor.setPos(anchor.x + xOffset, anchor.y + yOffset, anchor.z + zOffset)
+        if (type == DoorType.ENTRY) {
+            timedoor.setPos(anchor.x + xOffset, anchor.y + yOffset, anchor.z + zOffset)
+        } else {
+            val offset = offsetLocation(anchor, angle, 1)
+            timedoor.setPos(offset.x, anchor.y, offset.z)
+        }
         timedoor.yRot = angle
     }
 }

@@ -12,12 +12,13 @@ import net.minecraft.world.phys.Vec3
 
 open class DynamicAngledPlacement: TimedoorPlacementSettings {
     companion object {
-        val type = SizingType("default".tempadId, ByteCodec.unit(DynamicAngledPlacement()))
+        val type = SizingType("default".tempadId, ByteCodec.unit(::DynamicAngledPlacement))
     }
 
     val width: Float = 20 / 16f
     val height: Float = 36 / 16f
     val depth: Float = 6 / 16f
+
     override val showLineAnimation: Boolean = true
     override val type: SizingType<*> = Companion.type
     override val dimensions: EntityDimensions = EntityDimensions.fixed(width, height)
