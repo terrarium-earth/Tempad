@@ -99,14 +99,6 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
 
-    override fun destroy(
-        level: LevelAccessor,
-        pos: BlockPos,
-        state: BlockState,
-    ) {
-        super.destroy(level, pos, state)
-    }
-
     override fun getShape(
         state: BlockState,
         level: BlockGetter,
@@ -158,16 +150,12 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
 
     override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
         if (!level.isClientSide) {
-            if (player.isCreative) {
-                val blockpos = getPos(state, pos)
-                val blockstate = level.getBlockState(blockpos)
-                val dir = blockstate.getValue(BlockStateProperties.HORIZONTAL_FACING)
-                if (blockstate.`is`(ModBlocks.workstation) && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir) {
-                    level.destroyBlock(blockpos, false)
-                    level.levelEvent(player, 2001, blockpos, getId(blockstate))
-                }
-            } else {
-                dropResources(state, level, pos, null, player, player.getMainHandItem())
+            val blockpos = getPos(state, pos)
+            val blockstate = level.getBlockState(blockpos)
+            val dir = blockstate.getValue(BlockStateProperties.HORIZONTAL_FACING)
+            if (blockstate.`is`(ModBlocks.workstation) && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir) {
+                level.destroyBlock(blockpos, !player.isCreative)
+                level.levelEvent(player, 2001, blockpos, getId(blockstate))
             }
         }
         return super.playerWillDestroy(level, pos, state, player)

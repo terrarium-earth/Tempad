@@ -22,7 +22,7 @@ interface ChrononHandler {
     }
 }
 
-val ChrononHandler.hasRoom get() = power < maxPower
+val ChrononHandler.hasRoom get() = insert(1, ActionType.Simulate) == 1
 
 fun move(from: ChrononHandler, to: ChrononHandler, amount: Int) {
     val extracted = from.extract(amount, ActionType.Simulate)

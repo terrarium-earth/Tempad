@@ -5,9 +5,11 @@ import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
+import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.context.ContextHolder
-import earth.terrarium.tempad.api.context.drain
+import earth.terrarium.tempad.api.context.modify
+import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.common.registries.travelHistory
 import earth.terrarium.tempad.common.utils.DATE_BYTE_CODEC
 import java.util.*
@@ -23,7 +25,10 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
             ),
             NetworkHandle.handle { packet, player ->
                 val ctx = packet.ctx.getCtx(player)
-                if (!player.isCreative && !ctx.drain(1000)) return@handle
+                if (!player.isCreative && ctx.stack.chronons!!.extract(1000, ActionType.Simulate) == 1000) return@handle
+                ctx.modify {
+                    it.chronons?.extract(1000, ActionType.Execute)
+                }
                 player.cooldowns.addCooldown(ctx.stack.item, 40)
                 player.travelHistory.backtrackTo(player, packet.time)
             }

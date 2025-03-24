@@ -20,7 +20,7 @@ class ChronometerItem : ChrononItem() {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         super.inventoryTick(stack, level, entity, slot, selected)
         if (level.isClientSide || entity.tickCount % 24 != 0) return // 1 mb every 1.2 seconds, 1 bucket per day
-        if (entity !is Player || ContextRegistry.locate(entity) { it.item is ChronometerItem && it !== stack } != null) return
+        if (entity !is Player || ContextRegistry.locate(entity) { it.chronons?.hasRoom == true && it !== stack } == null) return
 
         stack.chronons?.insert(1, ActionType.Execute)
 

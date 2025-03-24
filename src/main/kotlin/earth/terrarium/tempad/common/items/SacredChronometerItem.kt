@@ -2,6 +2,7 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.context.ContextRegistry
+import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.hasRoom
 import earth.terrarium.tempad.client.tooltip.ChrononData
@@ -26,7 +27,7 @@ class SacredChronometerItem : Item(Properties().stacksTo(1)) {
         ContextRegistry.locate(entity) {
             it.chronons?.hasRoom == true && it !== stack
         }?.let {
-            stack.chronons?.insert(1, ActionType.Execute)
+            it.stack.chronons?.insert(Int.MAX_VALUE, ActionType.Execute)
         }
     }
 }

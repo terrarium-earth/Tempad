@@ -120,7 +120,7 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
             return ItemInteractionResult.SUCCESS
         } else if (!blockEntity.inventory[0].isEmpty && blockEntity.cookingTime == 0) {
             val recipe = level.recipeManager.getRecipeFor(ModRecipes.upgradeRecipe, UpgradeRecipeInput(blockEntity.inventory[0], stack), level).getOrNull()?.value
-            if (recipe == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+            if (recipe == null || recipe.output in blockEntity.upgrades!!) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
             blockEntity.cookingTime = recipe.downloadTime
             blockEntity.recipe = recipe.output
             stack.shrink(1)
@@ -216,7 +216,7 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
     }
 
     override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
-        if (!level.isClientSide && player.isCreative()) {
+        if (!level.isClientSide && player.isCreative) {
             val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
 
             val blockpos = getPos(dir, pos)
@@ -229,14 +229,6 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         }
 
         return super.playerWillDestroy(level, pos, state, player)
-    }
-
-    override fun destroy(
-        level: LevelAccessor,
-        pos: BlockPos,
-        state: BlockState,
-    ) {
-        super.destroy(level, pos, state)
     }
 
     override fun updateShape(

@@ -6,7 +6,7 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.context.SyncableContext
-import earth.terrarium.tempad.api.context.drain
+import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.locations.offsetLocation
@@ -70,7 +70,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
             val stack = ctx.stack
-            if (!player.isCreative && stack.chrononContent < 1000) return noChrononsFail
+            if (!player.isCreative && (stack.chronons?.extract(1000, ActionType.Simulate) ?: 0) < 1000) return noChrononsFail
 
             val result = getTimedoor(player.level(), location)
             result.right().getOrNull()?.let { return it }
@@ -86,7 +86,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             else logTimedoorOpen(player.name.string, location, timedoor)
 
             if (!player.isCreative) {
-                ctx.drain(1000)
+                stack.chronons?.extract(1000, ActionType.Execute)
                 player.cooldowns.addCooldown(stack.item, 40)
             }
 
@@ -103,7 +103,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             sizing: TimedoorPlacementSettings = DynamicAngledPlacement(),
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
-            if (block.chronons!!.power < 1000) return noChrononsFail
+            if ((block.chronons?.extract(1000, ActionType.Simulate) ?: 0) < 1000) return noChrononsFail
             val result = getTimedoor(block.level!!, location)
             result.right().getOrNull()?.let { return it }
 

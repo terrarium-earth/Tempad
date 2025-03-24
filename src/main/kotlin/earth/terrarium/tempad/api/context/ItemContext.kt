@@ -30,14 +30,6 @@ fun ItemContext.modify(execute: (ItemStack) -> Unit) {
     stack = stack.also(execute)
 }
 
-fun ItemContext.drain(amount: Int): Boolean {
-    val handler = stack[Capabilities.FluidHandler.ITEM] ?: return false
-    val drained = handler.drain(FluidStack(ModFluids.stillChronon, amount), IFluidHandler.FluidAction.SIMULATE)
-    if (drained.amount != amount) return false
-    handler.drain(FluidStack(ModFluids.stillChronon, amount), IFluidHandler.FluidAction.EXECUTE)
-    return true
-}
-
 fun Container.ctx(slot: Int, dropper: (ItemStack) -> Unit) = object: ItemContext {
     override var stack: ItemStack
         get() = getItem(slot)
