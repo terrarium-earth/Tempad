@@ -36,7 +36,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.common.Tags
 
-class SpatialAnchorBlock : BaseEntityBlock(Properties.of()) {
+class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
     companion object {
         val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.spatialAnchor }
         val shape = Shapes.or(

@@ -26,7 +26,7 @@ data class SyncPortalSettingsPacket(
     val xOffset: Float,
     val yOffset: Float,
     val zOffset: Float,
-    val angle: Float,
+    val angle: Int,
     val isVertical: Boolean,
     val providerId: ResourceLocation?,
     val id: UUID?,
@@ -36,7 +36,7 @@ data class SyncPortalSettingsPacket(
         xOffset: Float,
         yOffset: Float,
         zOffset: Float,
-        angle: Float,
+        angle: Int,
         isVertical: Boolean,
         providerId: Optional<ResourceLocation>,
         id: Optional<UUID>,
@@ -58,7 +58,7 @@ data class SyncPortalSettingsPacket(
             ByteCodec.FLOAT.fieldOf { it.xOffset },
             ByteCodec.FLOAT.fieldOf { it.yOffset },
             ByteCodec.FLOAT.fieldOf { it.zOffset },
-            ByteCodec.FLOAT.fieldOf { it.angle },
+            ByteCodec.INT.fieldOf { it.angle },
             ByteCodec.BOOLEAN.fieldOf { it.isVertical },
             ExtraByteCodecs.RESOURCE_LOCATION.nullableFieldOf { it.providerId },
             ByteCodec.UUID.nullableFieldOf { it.id },
@@ -69,11 +69,11 @@ data class SyncPortalSettingsPacket(
         override fun onReceive(message: SyncPortalSettingsPacket, player: Player) {
             message.ctx.getCtx(player).modify {
                 it.portalOffset = PortalPlacementComponent(
-                    message.xOffset,
-                    message.yOffset,
-                    message.zOffset,
+                    Math.clamp(message.xOffset, -5f, 5f),
+                    Math.clamp(message.yOffset, -5f, 5f),
+                    Math.clamp(message.zOffset, -5f, 5f),
                     message.angle,
-                    message.isVertical
+                    message.isVertical,
                 )
                 safeLet(message.providerId, message.id) { provider, id ->
                     val ctx = message.ctx.getCtx(player) as? WorkstationContext ?: return@safeLet

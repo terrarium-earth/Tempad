@@ -69,7 +69,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
             pos.get(upgrades, chronons)?.let {
                 TimedoorEntity.openTimedoor(player, this, it, getSizing()) {
                     timedoorId = it.id
-                    it.yRot += 180
+                    it.yRot = inventory[0].portalOffset.angle.toFloat()
                 }?.let { msg ->
                     nearby.error(msg)
                 }

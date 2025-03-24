@@ -25,6 +25,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
@@ -34,13 +35,15 @@ import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BedPart
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.storage.loot.LootParams
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import kotlin.jvm.optionals.getOrNull
 
-class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
+class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(3.0f, 1200f)) {
     val codec: MapCodec<out BaseEntityBlock?> = simpleCodec { ModBlocks.workstation }
     companion object: BlockEntityTicker<WorkstationBE> {
         val HAS_TAPE: BooleanProperty = BooleanProperty.create("has_tape")
@@ -161,6 +164,10 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         return pos.relative(Direction.fromYRot(dir.toYRot() - 90.0))
     }
 
+    fun relativeDir(state: BlockState): Direction {
+        return Direction.fromYRot(state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() - 90.0)
+    }
+
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState? {
         val direction: Direction = context.horizontalDirection
         val childPos: BlockPos = getPos(direction, context.clickedPos);
@@ -222,6 +229,38 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         }
 
         return super.playerWillDestroy(level, pos, state, player)
+    }
+
+    override fun destroy(
+        level: LevelAccessor,
+        pos: BlockPos,
+        state: BlockState,
+    ) {
+        super.destroy(level, pos, state)
+    }
+
+    override fun updateShape(
+        state: BlockState,
+        facing: Direction,
+        facingState: BlockState,
+        level: LevelAccessor,
+        currentPos: BlockPos,
+        neighborPos: BlockPos,
+    ): BlockState {
+        return if (facing == relativeDir(state) && facingState.block == Blocks.AIR) {
+            Blocks.AIR.defaultBlockState()
+        } else {
+            super.updateShape(state, facing, facingState, level, currentPos, neighborPos)
+        }
+    }
+
+    override fun getDrops(state: BlockState, params: LootParams.Builder): List<ItemStack> {
+        val drops = super.getDrops(state, params).toMutableList()
+        val blockE = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (blockE is WorkstationBE && !blockE.inventory[0].isEmpty) {
+            drops.add(blockE.inventory[0]);
+        }
+        return drops.toList()
     }
 }
 

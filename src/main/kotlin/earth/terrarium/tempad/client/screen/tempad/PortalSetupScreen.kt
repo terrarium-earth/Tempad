@@ -7,10 +7,8 @@ import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
 import earth.terrarium.olympus.client.components.buttons.Button
 import earth.terrarium.olympus.client.components.compound.LayoutWidget
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
-import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.layouts.Layouts
 import earth.terrarium.olympus.client.ui.ClearableGridLayout
-import earth.terrarium.olympus.client.ui.UIIcons
 import earth.terrarium.olympus.client.utils.ListenableState
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
@@ -29,12 +27,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
-import java.util.Locale
-import java.util.UUID
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.iterator
-import kotlin.collections.set
+import java.util.*
 
 class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.PortalSetupMenu>(null, menu, inv, title) {
@@ -62,84 +55,64 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
     override fun init() {
         super.init()
 
-        val offsetOptions = Layouts.column().withGap(2).withPosition(localLeft + 4, localTop + 18)
+        val offsetOptions = Layouts.column().withGap(2).withPosition(localLeft + 4, localTop + 20)
 
         offsetOptions.withChildren(
-            Widgets.text(Component.literal("Offset")).withColor(Tempad.ORANGE).withShadow(),
+            Widgets.text(Component.literal("Offset (+/-)"))
+                .withColor(Tempad.ORANGE)
+                .withLeftAlignment()
+                .withShadow()
+                .withSize(200, 11),
             Layouts.row().withGap(2).withChildren(
-                Widgets.text(Component.literal("X: ")).withColor(Tempad.ORANGE).withShadow().withLeftAlignment().withSize(16, 16),
-                Widgets.button {
-                    it.withRenderer(
-                        WidgetRenderers.icon<Button>(UIIcons.CHEVRON_DOWN).withColor(MinecraftColors.BLACK)
-                            .withCentered(10, 10)
-                    )
-                    it.withTexture(TempadUI.button)
-                    it.withSize(16)
-                },
+                Widgets.text(Component.translatable("app.tempad.portal_setup.left_right"))
+                    .withColor(Tempad.ORANGE)
+                    .withShadow()
+                    .withLeftAlignment()
+                    .withSize(40, 15)
+                    .withTooltip(Component.translatable("app.tempad.portal_setup.left_right.desc")),
                 TempadUI.floatInput(xOffset) {
-                    it.withSize(24, 16)
+                    it.withSize(36, 15)
                 },
-                Widgets.button {
-                    it.withRenderer(
-                        WidgetRenderers.icon<Button>(UIIcons.CHEVRON_UP).withColor(MinecraftColors.BLACK)
-                            .withCentered(10, 10)
-                    )
-                    it.withTexture(TempadUI.button)
-                    it.withSize(16)
-                }
             ),
             Layouts.row().withGap(2).withChildren(
-                Widgets.text(Component.literal("Y: ")).withColor(Tempad.ORANGE).withShadow().withLeftAlignment().withSize(16, 16),
-                Widgets.button {
-                    it.withRenderer(
-                        WidgetRenderers.icon<Button>(UIIcons.CHEVRON_DOWN).withColor(MinecraftColors.BLACK)
-                            .withCentered(10, 10)
-                    )
-                    it.withTexture(TempadUI.button)
-                    it.withSize(16)
-                },
+                Widgets.text(Component.translatable("app.tempad.portal_setup.up_down"))
+                    .withColor(Tempad.ORANGE)
+                    .withShadow()
+                    .withLeftAlignment()
+                    .withSize(40, 15)
+                    .withTooltip(Component.translatable("app.tempad.portal_setup.up_down.desc")),
                 TempadUI.floatInput(yOffset) {
-                    it.withSize(24, 16)
+                    it.withSize(36, 15)
                 },
-                Widgets.button {
-                    it.withRenderer(
-                        WidgetRenderers.icon<Button>(UIIcons.CHEVRON_UP).withColor(MinecraftColors.BLACK)
-                            .withCentered(10, 10)
-                    )
-                    it.withTexture(TempadUI.button)
-                    it.withSize(16)
-                }
             ),
             Layouts.row().withGap(2).withChildren(
-                Widgets.text(Component.literal("Z: ")).withColor(Tempad.ORANGE).withShadow().withLeftAlignment().withSize(16, 16),
-                Widgets.button {
-                    it.withRenderer(
-                        WidgetRenderers.icon<Button>(UIIcons.CHEVRON_DOWN).withColor(MinecraftColors.BLACK)
-                            .withCentered(10, 10)
-                    )
-                    it.withTexture(TempadUI.button)
-                    it.withSize(16)
-                },
+                Widgets
+                    .text(Component.translatable("app.tempad.portal_setup.front_back"))
+                    .withColor(Tempad.ORANGE)
+                    .withShadow()
+                    .withLeftAlignment()
+                    .withSize(40, 15)
+                    .withTooltip(Component.translatable("app.tempad.portal_setup.front_back.desc")),
                 TempadUI.floatInput(zOffset) {
-                    it.withSize(24, 16)
-                },
-                Widgets.button {
-                    it.withRenderer(
-                        WidgetRenderers.icon<Button>(UIIcons.CHEVRON_UP).withColor(MinecraftColors.BLACK)
-                            .withCentered(10, 10)
-                    )
-                    it.withTexture(TempadUI.button)
-                    it.withSize(16)
-                }
-            ),
-            Layouts.row().withGap(2).withChildren(
-                Widgets.text(Component.literal("Angle: ")).withColor(Tempad.ORANGE).withShadow().withLeftAlignment().withSize(34, 16),
-                TempadUI.floatInput(angle) {
-                    it.withSize(42, 16)
+                    it.withSize(36, 15)
                 },
             ),
             Layouts.row().withGap(2).withChildren(
-                Widgets.text(Component.literal("Vertical: ")).withColor(Tempad.ORANGE).withShadow().withLeftAlignment().withSize(56, 12),
+                Widgets.text(Component.literal("Angle: "))
+                    .withColor(Tempad.ORANGE)
+                    .withShadow()
+                    .withLeftAlignment()
+                    .withSize(40, 15),
+                TempadUI.intInput(angle) {
+                    it.withSize(36, 15)
+                },
+            ),
+            Layouts.row().withGap(2).withChildren(
+                Widgets.text(Component.literal("Vertical: "))
+                    .withColor(Tempad.ORANGE)
+                    .withShadow()
+                    .withLeftAlignment()
+                    .withSize(56, 12),
                 TempadUI.toggle(isVertical).withSize(20, 12),
             )
         )
@@ -244,7 +217,15 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
 
     override fun onClose() {
         super.onClose()
-
-        SyncPortalSettingsPacket(xOffset.get(), yOffset.get(), zOffset.get(), angle.get(), isVertical.get(), selected?.first, selected?.second, menu.ctx.holder).sendToServer()
+        SyncPortalSettingsPacket(
+            xOffset.get(),
+            yOffset.get(),
+            zOffset.get(),
+            angle.get(),
+            isVertical.get(),
+            selected?.first,
+            selected?.second,
+            menu.ctx.holder
+        ).sendToServer()
     }
 }

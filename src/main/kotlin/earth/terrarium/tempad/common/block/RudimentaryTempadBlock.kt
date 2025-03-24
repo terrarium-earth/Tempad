@@ -31,7 +31,7 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
+class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
     companion object {
         val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.rudimentaryTempad }
         val hasCardProperty = BooleanProperty.create("has_card")

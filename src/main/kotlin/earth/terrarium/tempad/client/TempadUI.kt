@@ -78,6 +78,14 @@ object TempadUI {
         return Widgets.button(switchFactory)
     }
 
+    fun intInput(state: State<Int>, modify: (TextBox) -> Unit): TextBox {
+        return Widgets.intInput(state) {
+            it.withTexture(element)
+            it.withTextColor(Tempad.ORANGE)
+            modify(it)
+        }
+    }
+
     fun floatInput(state: State<Float>, modify: (TextBox) -> Unit): TextBox {
         return Widgets.doubleInput(state.map(Float::toDouble, Double::toFloat)) {
             it.withTexture(element)

@@ -3,6 +3,7 @@ package earth.terrarium.tempad.common.block
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.context.WorkstationContext
 import earth.terrarium.tempad.common.registries.ModApps
+import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.defaultApp
 import earth.terrarium.tempad.common.utils.get
 import net.minecraft.core.BlockPos
@@ -16,6 +17,7 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
@@ -25,7 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class WorkstationChildBlock: Block(Properties.of()) {
+class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
     companion object {
         val NORTH_SHAPE: VoxelShape = Shapes.or(
             box(1.0, 0.0, 0.0, 15.0, 2.0, 16.0),
@@ -71,12 +73,28 @@ class WorkstationChildBlock: Block(Properties.of()) {
 
         if (storageBE.inventory[0].isEmpty) return InteractionResult.PASS
 
-        (AppRegistry[storageBE.inventory[0].defaultApp, ctx, true] ?: AppRegistry[ModApps.portalSetup, ctx, true])!!.openMenu(player as ServerPlayer)
+        (AppRegistry[storageBE.inventory[0].defaultApp, ctx, true]
+            ?: AppRegistry[ModApps.portalSetup, ctx, true])!!.openMenu(player as ServerPlayer)
         return super.useWithoutItem(state, level, pos, player, hitResult)
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
         builder.add(BlockStateProperties.HORIZONTAL_FACING).add(BlockStateProperties.TRIGGERED)
+    }
+
+    override fun updateShape(
+        state: BlockState,
+        facing: Direction,
+        facingState: BlockState,
+        level: LevelAccessor,
+        currentPos: BlockPos,
+        neighborPos: BlockPos,
+    ): BlockState {
+        return if (facing == relativeDir(state) && facingState.block == Blocks.AIR) {
+            Blocks.AIR.defaultBlockState()
+        } else {
+            super.updateShape(state, facing, facingState, level, currentPos, neighborPos)
+        }
     }
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
@@ -95,7 +113,7 @@ class WorkstationChildBlock: Block(Properties.of()) {
         pos: BlockPos,
         context: CollisionContext,
     ): VoxelShape {
-        return when(state.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+        return when (state.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
             Direction.NORTH -> NORTH_SHAPE
             Direction.SOUTH -> SOUTH_SHAPE
             Direction.WEST -> WEST_SHAPE
@@ -105,7 +123,11 @@ class WorkstationChildBlock: Block(Properties.of()) {
     }
 
     fun getPos(state: BlockState, pos: BlockPos): BlockPos {
-        return pos.relative(Direction.fromYRot(state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 90.0))
+        return pos.relative(relativeDir(state))
+    }
+
+    fun relativeDir(state: BlockState): Direction {
+        return Direction.fromYRot(state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 90.0)
     }
 
     override fun neighborChanged(
@@ -132,6 +154,23 @@ class WorkstationChildBlock: Block(Properties.of()) {
         val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
         val blockEntity = level.getBlockEntity(controllerPos) as? WorkstationBE ?: return
         blockEntity.openTimedoor()
+    }
+
+    override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
+        if (!level.isClientSide) {
+            if (player.isCreative) {
+                val blockpos = getPos(state, pos)
+                val blockstate = level.getBlockState(blockpos)
+                val dir = blockstate.getValue(BlockStateProperties.HORIZONTAL_FACING)
+                if (blockstate.`is`(ModBlocks.workstation) && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir) {
+                    level.destroyBlock(blockpos, false)
+                    level.levelEvent(player, 2001, blockpos, getId(blockstate))
+                }
+            } else {
+                dropResources(state, level, pos, null, player, player.getMainHandItem())
+            }
+        }
+        return super.playerWillDestroy(level, pos, state, player)
     }
 }
 
