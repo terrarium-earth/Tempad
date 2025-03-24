@@ -18,7 +18,8 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
     Packet<OpenTimedoorPacket> {
     companion object {
         val type = CodecPacketType.Server.create("open_timedoor".tempadId,
-            ObjectByteCodec.create(ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
+            ObjectByteCodec.create(
+                ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
                 ByteCodec.UUID.fieldOf { it.locationId },
                 ContextHolder.codec.fieldOf { it.ctx },
                 ::OpenTimedoorPacket

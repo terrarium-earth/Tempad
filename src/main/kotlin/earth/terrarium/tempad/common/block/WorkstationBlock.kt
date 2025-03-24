@@ -2,10 +2,13 @@ package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
 import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.recipe.UpgradeRecipeInput
 import earth.terrarium.tempad.common.registries.ModBlocks
+import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.ModRecipes
 import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.set
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
@@ -16,7 +19,6 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -70,7 +72,12 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
                 if (blockEntity.cookingTime == 0) {
                     popResource(level, pos, Items.DRIED_KELP.stack(level.random.nextInt(3)))
                     level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.x + 0.5, pos.y + 0.25, pos.z + 0.5, 10, 0.2, 0.2, 0.2, 0.0)
+                    safeLet(blockEntity.inventory[0].upgrades, blockEntity.recipe) { upgrades, recipe ->
+                        upgrades.install(recipe)
+                        blockEntity.setChanged()
+                    }
                     level.setBlock(pos, state.setValue(HAS_TAPE, false), UPDATE_ALL)
+
                 } else {
                     level.sendParticles(ParticleTypes.SMOKE, pos.x + 0.5, pos.y + 0.25, pos.z + 0.5, 2, 0.2, 0.2, 0.2, 0.0)
                 }
@@ -102,7 +109,7 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
 
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
             ?: return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
-        if (blockEntity.inventory[0].isEmpty && stack.chronons != null) {
+        if (blockEntity.inventory[0].isEmpty && stack.`is`(ModItems.tempad)) {
             blockEntity.inventory[0] = stack
             blockEntity.setChanged()
             player.setItemInHand(hand, ItemStack.EMPTY)
@@ -199,6 +206,22 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
             Direction.EAST -> EAST_SHAPE
             else -> NORTH_SHAPE
         }
+    }
+
+    override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
+        if (!level.isClientSide && player.isCreative()) {
+            val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
+
+            val blockpos = getPos(dir, pos)
+
+            val blockstate = level.getBlockState(blockpos)
+            if (blockstate.`is`(ModBlocks.workstationChild) && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir) {
+                level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35)
+                level.levelEvent(player, 2001, blockpos, getId(blockstate))
+            }
+        }
+
+        return super.playerWillDestroy(level, pos, state, player)
     }
 }
 

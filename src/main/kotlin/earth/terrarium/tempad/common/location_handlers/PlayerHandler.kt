@@ -3,6 +3,8 @@ package earth.terrarium.tempad.common.location_handlers
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.context.ContextRegistry
+import earth.terrarium.tempad.api.locations.IndirectLocation
+import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.locations.namedGlobalVec3
@@ -20,13 +22,16 @@ class PlayerHandler(val player: GameProfile, val upgrades: UpgradeHandler) : Loc
                 it.playerList.players
                     .filter { it.uuid != player.id }
                     .filter { ContextRegistry.locate(it) { it.item === ModItems.statusEmitter && it.enabled } != null }
-                    .map { it.uuid to it.namedGlobalVec3 }
-                    .toMap()
+                    .associate { it.uuid to it.namedGlobalVec3 }
             } ?: emptyMap()
         }
 
     override fun minusAssign(locationId: UUID) {
         // NO-OP
+    }
+
+    override fun getSerializable(locationId: UUID): LocationGetter? {
+        return IndirectLocation(player, ID, locationId)
     }
 
     companion object {

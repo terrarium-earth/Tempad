@@ -1,4 +1,5 @@
 import groovy.json.StringEscapeUtils
+import io.github.offz.githubPackage
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,6 +9,7 @@ plugins {
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
     id("net.neoforged.gradle.userdev") version "7.0.153"
+    id("io.github.0ffz.github-packages") version "1.2.1"
 }
 
 val minecraftVersion: String by project
@@ -31,6 +33,12 @@ repositories {
     maven(url = "https://maven.blamejared.com" )
     maven(url = "https://cursemaven.com" )
     mavenLocal()
+
+    githubPackage("compactmods/gander") {
+        content {
+            includeGroup("dev.compactmods.gander")
+        }
+    }
 }
 
 dependencies {
@@ -69,7 +77,7 @@ dependencies {
         jarJar.pin(it, "[${resourcefulLibKtVersion})")
     }
 
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${minecraftVersion}", version = "1.0.10") {
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${minecraftVersion}", version = "1.0.14") {
         isTransitive = false
     }.also { jarJar(it) }
 
@@ -102,6 +110,10 @@ dependencies {
     implementation(group = "earth.terrarium.common_storage_lib", name = "common-storage-lib-data-neoforge-$minecraftVersion", version = "0.0.1") {
         isTransitive = false
     }.let { jarJar(it) }
+
+    implementation(compactmods.bundles.gander)
+    accessTransformer(compactmods.ganderRendering)
+    jarJar(compactmods.bundles.gander)
 }
 
 java {

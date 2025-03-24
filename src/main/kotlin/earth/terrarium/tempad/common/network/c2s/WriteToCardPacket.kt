@@ -12,7 +12,7 @@ import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.menu.menuCtx
 import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.registries.targetPos
+import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.resources.ResourceLocation
 import java.util.UUID
@@ -32,11 +32,12 @@ class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, 
                 val ctx = message.ctx.getCtx(player)
                 val menuCtx = player.menuCtx
 
-                val pos = TempadLocations[player, ctx, message.providerId]?.get(message.locationId) ?: return@handle
                 if (!menuCtx.stack.`is`(ModItems.locationCard)) return@handle
                 menuCtx.exchange(
                     ModItems.locationCard.stack {
-                        targetPos = pos
+                        TempadLocations[player, ctx, message.providerId]?.getSerializable(message.locationId)?.let {
+                            portalTarget = it
+                        }
                     }
                 )
             }

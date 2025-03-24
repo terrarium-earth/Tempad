@@ -16,27 +16,28 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 
-data class SettingsApp(val ctx: SyncableContext<*>) : TempadApp<SettingsData> {
+data class SettingsApp(val ctx: SyncableContext<*>, val isStationary: Boolean) : TempadApp<SettingsData> {
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
         return ModMenus.SettingsMenu(
             pContainerId,
             pPlayerInventory,
-            Optional.of(SettingsData(TempadLocations.registry.keys, ctx.holder))
+            Optional.of(SettingsData(TempadLocations.registry.keys, isStationary, ctx.holder))
         )
     }
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.settings")
 
     override fun createContent(player: ServerPlayer): SettingsData =
-        SettingsData(TempadLocations.registry.keys, ctx.holder)
+        SettingsData(TempadLocations.registry.keys, isStationary, ctx.holder)
 
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class SettingsData(val providers: Set<ResourceLocation>, ctx: ContextHolder<*>) : AppContent<SettingsData>(ctx, codec) {
+class SettingsData(val providers: Set<ResourceLocation>, isStationary: Boolean, ctx: ContextHolder<*>) : AppContent<SettingsData>(ctx, isStationary, codec) {
     companion object {
         val codec: ByteCodec<SettingsData> = ObjectByteCodec.create(
             ExtraByteCodecs.RESOURCE_LOCATION.setOf().fieldOf { it.providers },
+            ByteCodec.BOOLEAN.fieldOf { it.isStationary },
             ContextHolder.codec.fieldOf { it.ctx },
             ::SettingsData
         )

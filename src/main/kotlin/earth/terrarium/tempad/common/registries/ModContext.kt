@@ -4,6 +4,7 @@ import earth.terrarium.tempad.api.Priority
 import earth.terrarium.tempad.api.PriorityId
 import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.api.context.InventoryContext
+import earth.terrarium.tempad.api.context.WorkstationContext
 import earth.terrarium.tempad.common.compat.initCuriosCompat
 import earth.terrarium.tempad.common.menu.CarriedMenuCtx
 import earth.terrarium.tempad.tempadId
@@ -13,6 +14,7 @@ object ModContext {
     fun init() {
         ContextRegistry.register(InventoryContext.type, ::InventoryContext)
         ContextRegistry.register(CarriedMenuCtx.type) { player, _ -> CarriedMenuCtx(player) }
+        ContextRegistry.register(WorkstationContext.type, ::WorkstationContext)
 
         if (ModList.get().isLoaded("curios")) {
             initCuriosCompat()

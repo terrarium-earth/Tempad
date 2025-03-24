@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 
 data class OpenAppPacket(val appHolder: AppHolder) : Packet<OpenAppPacket> {
-    constructor(appID: ResourceLocation, data: ContextHolder<*>) : this(AppHolder(appID, data))
+    constructor(appID: ResourceLocation, data: ContextHolder<*>, isStationary: Boolean) : this(AppHolder(appID, data, isStationary))
 
     companion object {
         val type = CodecPacketType.Server.create(

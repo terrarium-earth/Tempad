@@ -26,6 +26,10 @@ interface ItemContext {
     fun addStack(stack: ItemStack)
 }
 
+fun ItemContext.modify(execute: (ItemStack) -> Unit) {
+    stack = stack.also(execute)
+}
+
 fun ItemContext.drain(amount: Int): Boolean {
     val handler = stack[Capabilities.FluidHandler.ITEM] ?: return false
     val drained = handler.drain(FluidStack(ModFluids.stillChronon, amount), IFluidHandler.FluidAction.SIMULATE)

@@ -4,11 +4,15 @@ import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
+import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.impl.BlockChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.InfiniteChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemUpgradeHandler
+import earth.terrarium.tempad.api.tva_device.impl.RudimentaryUpgradeHandler
 import earth.terrarium.tempad.api.tva_device.impl.TempadChrononHandler
+import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.registries.*
@@ -82,9 +86,14 @@ class Tempad(bus: IEventBus) {
             val chrononBlocks = event.register(ChrononHandler.block)
             val chrononItems = event.register(ChrononHandler.item)
             val upgradeItems = event.register(UpgradeHandler.item)
+            val upgradeBlocks = event.register(UpgradeHandler.block)
 
             chrononBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
                 BlockChrononHandler(it, 4000)
+            }
+
+            chrononBlocks[ModBlocks.workstationBE] = { it, _ ->
+                (it as? WorkstationBE)?.inventory?.getStackInSlot(0)?.chronons
             }
 
             chrononItems[ModItems.rudimentaryTempad] = { it, _ ->
@@ -109,6 +118,18 @@ class Tempad(bus: IEventBus) {
 
             upgradeItems[ModItems.tempad] = { it, _ ->
                 ItemUpgradeHandler(it)
+            }
+
+            upgradeItems[ModItems.rudimentaryTempad] = { it, _ ->
+                RudimentaryUpgradeHandler
+            }
+
+            upgradeBlocks[ModBlocks.workstationBE] = { it, _ ->
+                (it as? WorkstationBE)?.inventory?.getStackInSlot(0)?.upgrades
+            }
+
+            upgradeBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
+                RudimentaryUpgradeHandler
             }
         }
 

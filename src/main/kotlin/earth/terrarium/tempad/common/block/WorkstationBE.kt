@@ -1,21 +1,37 @@
 package earth.terrarium.tempad.common.block
 
+import earth.terrarium.tempad.api.sizing.FloorPlacementSettings
+import earth.terrarium.tempad.api.sizing.TimedoorPlacementSettings
+import earth.terrarium.tempad.api.sizing.VerticalPlacementSettings
+import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.ModBlocks
+import earth.terrarium.tempad.common.registries.owner
+import earth.terrarium.tempad.common.registries.portalOffset
+import earth.terrarium.tempad.common.registries.portalTarget
+import earth.terrarium.tempad.common.registries.selectedPos
+import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.AABB
 import net.neoforged.neoforge.items.ItemStackHandler
 
 class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.workstationBE, pos, state) {
     val inventory = ItemStackHandler(1)
     var cookingTime: Int = 0
     var recipe: ResourceLocation? = null
+    var timedoorId: Int? = null
 
     companion object {
         val downloadKey = "DownloadTime"
@@ -44,7 +60,37 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         return tag
     }
 
+    fun openTimedoor() {
+        val level = level
+        if(level == null || level.isClientSide()) return
+        val nearby = level.getEntitiesOfClass(ServerPlayer::class.java, AABB(blockPos).inflate(5.0))
+        if(timedoorId?.let { id -> level.getEntity(id) } != null) return nearby.error(Component.translatable("tempad.error.timedoor_already_open"))
+        safeLet(inventory[0].selectedPos, upgrades, chronons, owner) { pos, upgrades, chronons, player ->
+            pos.get(upgrades, chronons)?.let {
+                TimedoorEntity.openTimedoor(player, this, it, getSizing()) {
+                    timedoorId = it.id
+                    it.yRot += 180
+                }?.let { msg ->
+                    nearby.error(msg)
+                }
+            }
+        }
+    }
+
+    fun getSizing(): TimedoorPlacementSettings {
+        val (x, y, z, _, isVertical) = inventory[0].portalOffset
+        return if (isVertical) {
+            VerticalPlacementSettings(x, y, z)
+        } else {
+            FloorPlacementSettings(x, y, z)
+        }
+    }
+
     override fun getUpdatePacket(): Packet<ClientGamePacketListener?>? {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    fun List<ServerPlayer>.error(msg: Component) {
+        forEach { it.displayClientMessage(msg, true) }
     }
 }

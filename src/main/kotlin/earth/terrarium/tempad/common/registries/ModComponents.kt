@@ -8,8 +8,10 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.api.locations.IndirectLocation
+import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
+import earth.terrarium.tempad.common.data.PortalPlacementComponent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.UUIDUtil
 import net.minecraft.core.component.DataComponentPatch
@@ -18,6 +20,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.common.MutableDataComponentHolder
 import java.util.UUID
+import javax.sound.sampled.Port
 
 object ModComponents {
     val registry: ResourcefulRegistry<DataComponentType<*>> =
@@ -65,13 +68,6 @@ object ModComponents {
         }
     }
 
-    val targetPos: DataComponentType<NamedGlobalVec3> by registry.register("target_position") {
-        componentType {
-            serialize = NamedGlobalVec3.CODEC.codec()
-            networkSerialize = NamedGlobalVec3.BYTE_CODEC
-        }
-    }
-
     val enabled: DataComponentType<Boolean> by registry.register("enabled") {
         componentType {
             serialize = Codec.BOOL
@@ -106,6 +102,27 @@ object ModComponents {
             networkSerialize = ByteCodec.UUID
         }
     }
+
+    val portalOffset: DataComponentType<PortalPlacementComponent> by registry.register("portal_offset") {
+        componentType {
+            serialize = PortalPlacementComponent.codec
+            networkSerialize = PortalPlacementComponent.byteCodec
+        }
+    }
+
+    val portalTarget: DataComponentType<LocationGetter> by registry.register("portal_target") {
+        componentType {
+            serialize = LocationGetter.codec
+            networkSerialize = LocationGetter.byteCodec
+        }
+    }
+
+    val selectedPos: DataComponentType<IndirectLocation> by registry.register("selected_portal") {
+        componentType {
+            serialize = IndirectLocation.codec
+            networkSerialize = IndirectLocation.byteCodec
+        }
+    }
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
@@ -120,8 +137,6 @@ var MutableDataComponentHolder.chrononContentTimeTwister by ModComponents.chrono
 
 var MutableDataComponentHolder.twisterData by ModComponents.twisterData
 
-var MutableDataComponentHolder.targetPos by ModComponents.targetPos
-
 var MutableDataComponentHolder.enabled by ModComponents.enabled.withDefault(true)
 
 var MutableDataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.withDefault(false)
@@ -131,3 +146,9 @@ var MutableDataComponentHolder.installedUpgrades by ModComponents.installedUpgra
 var MutableDataComponentHolder.color by ModComponents.color
 
 var MutableDataComponentHolder.anchorId by ModComponents.anchorId
+
+var MutableDataComponentHolder.portalOffset by ModComponents.portalOffset.withDefault(PortalPlacementComponent(0f, 0f, 0f, 0f, true))
+
+var MutableDataComponentHolder.portalTarget by ModComponents.portalTarget
+
+var MutableDataComponentHolder.selectedPos by ModComponents.selectedPos

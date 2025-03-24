@@ -35,7 +35,7 @@ object ModItems {
     val sacredChronometer: Item by registry.register("sacred_chronometer") { SacredChronometerItem() }
     val rudimentaryTempad: Item by registry.register("rudimentary_tempad") { RudimentaryTempadItem() }
     val spatialAnchor: Item by registry.register("spatial_anchor") { SpatialAnchorItem() }
-    val workstation: Item by registry.register("workstation") { BlockItem(ModBlocks.workstation, Item.Properties()) }
+    val workstation: Item by registry.register("workstation") { WorkstationItem() }
 
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val inexorableAlloy: Item by registry.register("inexorable_alloy") { Item(Item.Properties()) }

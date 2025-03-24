@@ -14,7 +14,7 @@ import net.neoforged.fml.ModList
 object ModLocations {
     fun init() {
         TempadLocations[DefaultLocationHandler.ID] = { player, _, _ -> DefaultLocationHandler(player) }
-        TempadLocations["spatial_anchors".tempadId] = { player, _, _ -> AnchorPointsHandler(player) }
+        TempadLocations[AnchorPointsHandler.ID] = { player, _, _ -> AnchorPointsHandler(player) }
         TempadLocations[PlayerHandler.ID] = { player, upgrades, _ -> PlayerHandler(player, upgrades) }
 
         AnchorAccessApi["private".tempadId] = DefaultAccess.Private

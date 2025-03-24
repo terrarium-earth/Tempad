@@ -13,6 +13,7 @@ import earth.terrarium.tempad.client.block.WorkstationRenderer
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.anchor.SpatialAnchorScreen
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
+import earth.terrarium.tempad.client.screen.tempad.PortalSetupScreen
 import earth.terrarium.tempad.client.screen.tempad.SettingsScreen
 import earth.terrarium.tempad.client.screen.tempad.TeleportScreen
 import earth.terrarium.tempad.client.screen.tempad.TimelineScreen
@@ -103,7 +104,7 @@ object TempadClient {
         step(tank.getFluidInTank(0).amount.toFloat() / tank.getTankCapacity(0), 0.33f)
     }
 
-    val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.targetPos != null }
+    val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.portalTarget != null }
 
     val clientFluidRegistry = ResourcefulClientFluidRegistry(Tempad.MOD_ID)
 
@@ -163,6 +164,7 @@ object TempadClient {
         event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
         event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
         event.register(ModMenus.TIMELINE_MENU, ::TimelineScreen)
+        event.register(ModMenus.PORTAL_SETUP_MENU, ::PortalSetupScreen)
     }
 
     @SubscribeEvent
@@ -205,8 +207,8 @@ object TempadClient {
             event.tooltipElements.add(2, Either.right(stack.installedUpgrades))
         }
 
-        if (stack.item === ModItems.rudimentaryTempad && stack.targetPos != null) {
-            (stack.targetPos as? TooltipComponent)?.let {
+        if (stack.item === ModItems.rudimentaryTempad && stack.portalTarget != null) {
+            (stack.portalTarget as? TooltipComponent)?.let {
                 event.tooltipElements.add(2, Either.right(it))
             }
         }

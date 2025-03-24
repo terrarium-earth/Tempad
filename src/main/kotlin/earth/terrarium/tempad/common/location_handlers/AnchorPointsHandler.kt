@@ -3,6 +3,8 @@ package earth.terrarium.tempad.common.location_handlers
 import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.locations.IndirectLocation
+import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.block.SpatialAnchorBE
@@ -10,6 +12,7 @@ import earth.terrarium.tempad.common.registries.anchorPoints
 import earth.terrarium.tempad.common.registries.id
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
+import earth.terrarium.tempad.tempadId
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
 import java.util.*
@@ -49,4 +52,12 @@ fun getBlockEntity(pos: GlobalPos): SpatialAnchorBE? {
 class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
     override val locations: Map<UUID, NamedGlobalVec3> get() = anchorPoints.getPostions(gameProfile)
     override fun minusAssign(locationId: UUID) {}
+
+    override fun getSerializable(locationId: UUID): LocationGetter? {
+        return IndirectLocation(gameProfile, ID, locationId)
+    }
+
+    companion object {
+        val ID = "spatial_anchors".tempadId
+    }
 }

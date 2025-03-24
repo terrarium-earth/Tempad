@@ -37,7 +37,7 @@ class TempadItem : ChrononItem() {
         if (player.isShiftKeyDown) {
             MacroRegistry[stack.defaultMacro]?.run(player, ctx)
         } else {
-            (AppRegistry[stack.defaultApp, ctx]?: AppRegistry[ModApps.teleport, ctx])!!.openMenu(player as ServerPlayer)
+            (AppRegistry[stack.defaultApp, ctx, false]?: AppRegistry[ModApps.teleport, ctx, false])!!.openMenu(player as ServerPlayer)
         }
 
         return InteractionResultHolder.success(stack)

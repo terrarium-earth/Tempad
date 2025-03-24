@@ -3,6 +3,8 @@ package earth.terrarium.tempad.common.location_handlers
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.context.SyncableContext
+import earth.terrarium.tempad.api.locations.DirectLocation
+import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.registries.savedPositions
@@ -22,5 +24,9 @@ class DefaultLocationHandler(val gameProfile: GameProfile) : LocationHandler {
 
     override fun minusAssign(locationId: UUID) {
         player.savedPositions -= locationId
+    }
+
+    override fun getSerializable(locationId: UUID): LocationGetter? {
+        return get(locationId)?.let { DirectLocation(it) }
     }
 }

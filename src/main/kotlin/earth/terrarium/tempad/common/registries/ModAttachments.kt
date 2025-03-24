@@ -10,6 +10,9 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.common_storage_lib.data.NeoDataLib
 import earth.terrarium.common_storage_lib.data.sync.DataSyncSerializer
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.locations.DirectLocation
+import earth.terrarium.tempad.api.locations.LocationGetter
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
@@ -20,6 +23,8 @@ import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.level.Level
+import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.NeoForgeRegistries
@@ -99,6 +104,12 @@ object ModAttachments {
             codec = AnchorPointsData.codec
         }
     }
+
+    val portalTarget: AttachmentType<LocationGetter> by registry.register("") {
+        attachmentType({ DirectLocation(NamedGlobalVec3.nowhere) }) {
+            codec = LocationGetter.codec
+        }
+    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
@@ -111,5 +122,6 @@ var AttachmentHolder.chrononContent by ModAttachments.chrononContent
 var AttachmentHolder.color by ModAttachments.color.synced(ModAttachments.syncedColor)
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
+var AttachmentHolder.portalTarget by ModAttachments.portalTarget.optional()
 
 val anchorPoints by ModAttachments.anchorPoints.serverData

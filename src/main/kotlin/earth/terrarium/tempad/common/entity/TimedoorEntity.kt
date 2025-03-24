@@ -10,9 +10,10 @@ import earth.terrarium.tempad.api.context.drain
 import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.locations.offsetLocation
-import earth.terrarium.tempad.api.sizing.DefaultSizing
 import earth.terrarium.tempad.api.sizing.DoorType
-import earth.terrarium.tempad.api.sizing.TimedoorSizing
+import earth.terrarium.tempad.api.sizing.DynamicAngledPlacement
+import earth.terrarium.tempad.api.sizing.FloorPlacementSettings
+import earth.terrarium.tempad.api.sizing.TimedoorPlacementSettings
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
@@ -23,9 +24,6 @@ import earth.terrarium.tempad.common.registries.ageUntilAllowedThroughTimedoor
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.particles.DustParticleOptions
-import net.minecraft.core.particles.ParticleOptions
-import net.minecraft.core.particles.ParticleType
-import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -33,7 +31,6 @@ import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
@@ -53,7 +50,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val TARGET_POS = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
         private val TARGET_DIMENSION =
             createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
-        private val SIZING = createDataKey<TimedoorEntity, TimedoorSizing>(ModEntities.sizingSerializer)
+        private val SIZING = createDataKey<TimedoorEntity, TimedoorPlacementSettings>(ModEntities.sizingSerializer)
         private val GLITCHING = createDataKey<TimedoorEntity, Boolean>(EntityDataSerializers.BOOLEAN)
 
         //feedback
@@ -81,7 +78,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             val timedoor = result.left().getOrNull() ?: return fail
 
             timedoor.owner = player.uuid
-            timedoor.sizing = if (player.xRot > 45) DefaultSizing.FLOOR else DefaultSizing.DEFAULT
+            timedoor.sizing = if (player.xRot > 45) FloorPlacementSettings() else DynamicAngledPlacement()
             timedoor.sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, timedoor)
 
             val event = TimedoorEvent.OpenWithItem(timedoor, player, ctx).post()
@@ -103,6 +100,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             player: GameProfile,
             block: BlockEntity,
             location: NamedGlobalVec3,
+            sizing: TimedoorPlacementSettings = DynamicAngledPlacement(),
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
             if (block.chronons!!.power < 1000) return noChrononsFail
@@ -111,7 +109,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
             val timedoor = result.left().getOrNull() ?: return fail
             timedoor.owner = player.id
-            timedoor.sizing = DefaultSizing.DEFAULT
+            timedoor.sizing = sizing
             timedoor.sizing.placeTimedoor(
                 DoorType.ENTRY,
                 Vec3.atCenterOf(block.blockPos).add(0.0, -1.5, 0.0),
@@ -188,7 +186,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var targetDimension by DataDelegate(TARGET_DIMENSION)
     var color by DataDelegate(COLOR)
     var closingTime by DataDelegate(CLOSING_TIME)
-    var sizing: TimedoorSizing
+    var sizing: TimedoorPlacementSettings
         get() = entityData.get(SIZING)
         set(value) {
             entityData.set(SIZING, value)
@@ -217,7 +215,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         pBuilder.define(COLOR, Tempad.ORANGE)
         pBuilder.define(TARGET_POS, Vec3.ZERO)
         pBuilder.define(TARGET_DIMENSION, Level.OVERWORLD)
-        pBuilder.define(SIZING, DefaultSizing.DEFAULT)
+        pBuilder.define(SIZING, DynamicAngledPlacement())
         pBuilder.define(GLITCHING, false)
     }
 

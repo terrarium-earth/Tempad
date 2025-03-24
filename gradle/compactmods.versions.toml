@@ -1,0 +1,21 @@
+[versions]
+gander = "[0.2.31]"
+
+[libraries.ganderCore]
+module = "dev.compactmods.gander:core"
+version.ref = "gander"
+
+[libraries.ganderLevels]
+module = "dev.compactmods.gander:levels"
+version.ref = "gander"
+
+[libraries.ganderRendering]
+module = "dev.compactmods.gander:rendering"
+version.ref = "gander"
+
+[libraries.ganderUI]
+module = "dev.compactmods.gander:ui"
+version.ref = "gander"
+
+[bundles]
+gander = ["ganderCore", "ganderLevels", "ganderRendering", "ganderUI"]

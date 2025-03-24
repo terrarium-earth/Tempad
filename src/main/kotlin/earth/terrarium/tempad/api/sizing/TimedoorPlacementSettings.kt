@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityDimensions
 import net.minecraft.world.phys.Vec3
 
-interface TimedoorSizing {
+interface TimedoorPlacementSettings {
     val dimensions: EntityDimensions
     val showLineAnimation: Boolean
     val type: SizingType<*>
@@ -22,7 +22,7 @@ interface TimedoorSizing {
     fun TimedoorEntity.isInside(entity: Entity): Boolean
 
     companion object {
-        val codec: ByteCodec<TimedoorSizing> = SizingType.codec.dispatch({ it.codec as ByteCodec<TimedoorSizing> }, { it.type })
+        val codec: ByteCodec<TimedoorPlacementSettings> = SizingType.codec.dispatch({ it.codec as ByteCodec<TimedoorPlacementSettings> }, { it.type })
     }
 }
 
@@ -30,7 +30,7 @@ enum class DoorType {
     ENTRY, EXIT
 }
 
-data class SizingType<T: TimedoorSizing>(val id: ResourceLocation, val codec: ByteCodec<T>) {
+data class SizingType<T: TimedoorPlacementSettings>(val id: ResourceLocation, val codec: ByteCodec<T>) {
     companion object {
         val codec: ByteCodec<SizingType<*>> = ExtraByteCodecs.RESOURCE_LOCATION.map(SizingRegistry::get, SizingType<*>::id)
     }
@@ -40,7 +40,7 @@ object SizingRegistry {
     val sizings: Map<ResourceLocation, SizingType<*>>
         field = mutableMapOf()
 
-    fun <T: TimedoorSizing> register(type: SizingType<T>) {
+    fun <T: TimedoorPlacementSettings> register(type: SizingType<T>) {
         sizings[type.id] = type
     }
 

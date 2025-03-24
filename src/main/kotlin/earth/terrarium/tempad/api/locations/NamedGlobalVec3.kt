@@ -41,6 +41,8 @@ data class NamedGlobalVec3(val name: Component, val pos: Vec3, val dimension: Re
             COLOR_BYTE_CODEC.fieldOf { it.color },
             ::NamedGlobalVec3
         )
+
+        val nowhere = NamedGlobalVec3(Component.empty(), Vec3.ZERO, Level.OVERWORLD, 0f, Color.DEFAULT);
     }
 
     val offsetLocation = offsetLocation(pos, angle + 180)

@@ -16,6 +16,8 @@ interface LocationHandler {
     operator fun minusAssign(locationId: UUID)
 
     operator fun get(locationId: UUID): NamedGlobalVec3? = locations[locationId]
+
+    fun getSerializable(locationId: UUID): LocationGetter?
 }
 
 typealias LocationProvider = (GameProfile, UpgradeHandler, ChrononHandler) -> LocationHandler

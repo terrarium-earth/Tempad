@@ -24,7 +24,7 @@ data class NewLocationApp(val ctx: SyncableContext<*>) : TempadApp<NewStaticName
     override fun createContent(player: ServerPlayer?) = NewStaticNamedGlobalPos(CommonConfig.allowLocationSaving, ctx.holder)
 }
 
-class NewStaticNamedGlobalPos(val allowLocationSaving: Boolean, ctx: ContextHolder<*>) : AppContent<NewStaticNamedGlobalPos>(ctx, codec) {
+class NewStaticNamedGlobalPos(val allowLocationSaving: Boolean, ctx: ContextHolder<*>) : AppContent<NewStaticNamedGlobalPos>(ctx, false, codec) {
     companion object {
         val codec: ByteCodec<NewStaticNamedGlobalPos> = ObjectByteCodec.create(
             ByteCodec.BOOLEAN.fieldOf { it.allowLocationSaving },

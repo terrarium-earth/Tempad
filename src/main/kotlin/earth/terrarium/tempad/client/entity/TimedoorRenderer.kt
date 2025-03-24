@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
-import earth.terrarium.tempad.api.sizing.TimedoorSizing
+import earth.terrarium.tempad.api.sizing.TimedoorPlacementSettings
 import earth.terrarium.tempad.client.ShaderModBridge
 import earth.terrarium.tempad.client.TempadClient
 import earth.terrarium.tempad.common.entity.TimedoorEntity
@@ -23,7 +23,7 @@ import org.joml.Vector2i
 
 class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<TimedoorEntity>(ctx) {
     companion object {
-        private val faceTextures = hashMapOf<Pair<TimedoorSizing, BoxFace>, ResourceLocation>()
+        private val faceTextures = hashMapOf<Pair<TimedoorPlacementSettings, BoxFace>, ResourceLocation>()
     }
 
     override fun getTextureLocation(pEntity: TimedoorEntity): ResourceLocation = "".tempadId
@@ -77,7 +77,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         poseStack.popPose()
     }
 
-    fun TimedoorSizing.texture(face: BoxFace): NativeImage {
+    fun TimedoorPlacementSettings.texture(face: BoxFace): NativeImage {
         val (textureWidth, textureHeight) = face.getDimensions(this)
         return NativeImage(textureWidth, textureHeight, true).apply {
             repeat(textureWidth) { x ->
@@ -92,7 +92,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         }
     }
 
-    fun registerFaceTexture(sizing: TimedoorSizing, face: BoxFace): ResourceLocation? {
+    fun registerFaceTexture(sizing: TimedoorPlacementSettings, face: BoxFace): ResourceLocation? {
         if (!ShaderModBridge.shadersEnabled) return null
         return faceTextures.computeIfAbsent(sizing to face) { _ ->
             Minecraft.getInstance().textureManager.register(
@@ -103,7 +103,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
     }
 
     fun renderTimedoor(
-        sizing: TimedoorSizing,
+        sizing: TimedoorPlacementSettings,
         poseStack: PoseStack,
         multiBufferSource: MultiBufferSource,
         width: Float,
@@ -348,7 +348,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
     enum class BoxFace {
         FrontBack, TopBottom, LeftRight;
 
-        fun getDimensions(sizing: TimedoorSizing): Vector2i {
+        fun getDimensions(sizing: TimedoorPlacementSettings): Vector2i {
             return when (this) {
                 FrontBack -> Vector2i(
                     (sizing.widthAtPercent(1f) * 16).toInt(),

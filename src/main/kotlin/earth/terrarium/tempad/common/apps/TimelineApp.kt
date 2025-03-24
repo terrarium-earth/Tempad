@@ -16,20 +16,20 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 
-class TimelineApp(val ctx: SyncableContext<*>): TempadApp<TimelineData> {
+class TimelineApp(val ctx: SyncableContext<*>, val isStationary: Boolean): TempadApp<TimelineData> {
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
         return ModMenus.TimelineMenu(pContainerId, pPlayerInventory, Optional.of(createContent(pPlayer as ServerPlayer)))
     }
     override fun getDisplayName(): Component = Component.translatable("app.tempad.timeline")
 
-    override fun createContent(player: ServerPlayer): TimelineData = TimelineData(player.travelHistory, ctx.holder)
-
+    override fun createContent(player: ServerPlayer): TimelineData = TimelineData(player.travelHistory, isStationary, ctx.holder)
 }
 
-class TimelineData(val history: Map<Date, HistoricalLocation>, ctx: ContextHolder<*>): AppContent<TimelineData>(ctx, codec) {
+class TimelineData(val history: Map<Date, HistoricalLocation>, isStationary: Boolean, ctx: ContextHolder<*>): AppContent<TimelineData>(ctx, isStationary, codec) {
     companion object {
         val codec = ObjectByteCodec.create(
             ByteCodec.mapOf(DATE_BYTE_CODEC, HistoricalLocation.BYTE_CODEC).fieldOf { it.history },
+            ByteCodec.BOOLEAN.fieldOf { it.isStationary },
             ContextHolder.codec.fieldOf { it.ctx },
             ::TimelineData
         )

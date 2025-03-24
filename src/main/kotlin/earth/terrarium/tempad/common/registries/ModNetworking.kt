@@ -23,5 +23,6 @@ object ModNetworking {
         channel.register(RotatePlayerMomentumPacket.type)
         channel.register(OpenTimeTwister.type)
         channel.register(OpenSpatialAnchor)
+        channel.register(SyncPortalSettingsPacket)
     }
 }

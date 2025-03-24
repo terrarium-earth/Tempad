@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.block
 import com.mojang.serialization.MapCodec
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.registries.targetPos
+import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -48,7 +48,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
-        val hasCard = context.itemInHand.targetPos != null
+        val hasCard = context.itemInHand.portalTarget != null
         return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection).setValue(hasCardProperty, hasCard)
     }
 
@@ -56,7 +56,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         return mutableListOf(
             ModItems.rudimentaryTempad.stack {
                 (params.getParameter(LootContextParams.BLOCK_ENTITY) as? RudimentaryTempadBE)?.let {
-                    // targetPos = it.targetLocation // TODO implement dynamic providers
+                    portalTarget = it.portalTarget
                 }
             }
         )
@@ -71,19 +71,17 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         hand: InteractionHand,
         result: BlockHitResult,
     ): ItemInteractionResult {
-        if (stack.item == ModItems.locationCard && stack.targetPos != null) {
+        if (stack.item == ModItems.locationCard && stack.portalTarget != null) {
             if (level.isClientSide) {
                 return ItemInteractionResult.SUCCESS
             }
             val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return ItemInteractionResult.FAIL
-            /* // TODO implement dynamic providers
-            if (blockEntity.targetLocation != null) {
+            if (blockEntity.portalTarget != null) {
                 player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
-                    targetPos = blockEntity.targetLocation
+                    portalTarget = blockEntity.portalTarget
                 })
             }
-            blockEntity.targetLocation = stack.targetPos
-             */
+            blockEntity.portalTarget = stack.portalTarget
             level.setBlock(pos, state.setValue(hasCardProperty, true), 2)
             stack.shrink(1)
             return ItemInteractionResult.SUCCESS
@@ -102,15 +100,13 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
             return InteractionResult.SUCCESS
         }
         val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return InteractionResult.FAIL
-        if (player.isShiftKeyDown) {
-            // TODO: Open GUI
-        } /* else if (blockEntity.targetLocation != null) {
+        if (blockEntity.portalTarget != null) {
             player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
-                targetPos = blockEntity.targetLocation
+                portalTarget = blockEntity.portalTarget
             })
-            blockEntity.targetLocation = null
+            blockEntity.portalTarget = null
             level.setBlock(pos, state.setValue(hasCardProperty, false), 2)
-        } */  // TODO implement dynamic providers
+        }
         return InteractionResult.SUCCESS
     }
 
@@ -122,12 +118,12 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().noOcclusion()) {
         fromPos: BlockPos,
         isMoving: Boolean,
     ) {
-        val flag = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above())
-        val flag1 = state.getValue(BlockStateProperties.TRIGGERED)
-        if (flag && !flag1) {
+        val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above())
+        val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
+        if (neighborPowered && !currentlyPowered) {
             level.scheduleTick(pos, this, 4)
             level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, true), 2)
-        } else if (!flag && flag1) {
+        } else if (!neighborPowered && currentlyPowered) {
             level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, false), 2)
         }
     }

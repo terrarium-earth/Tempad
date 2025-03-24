@@ -3,6 +3,8 @@ package earth.terrarium.tempad.common.block
 import com.mojang.serialization.MapCodec
 import com.teamresourceful.resourcefullib.common.color.ConstantColors
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.locations.IndirectLocation
+import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
 import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contains
@@ -61,11 +63,7 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of()) {
         if (stack.item === ModItems.locationCard) {
             if (level.isClientSide) return ItemInteractionResult.sidedSuccess(level.isClientSide)
             val blockEntity = level.getBlockEntity(pos) as SpatialAnchorBE
-            /* // TODO implement dynamic providers
-            level.anchorPointData[blockEntity.posId!!]?.let {
-                stack.targetPos = it
-            }
-             */
+            stack.portalTarget = IndirectLocation(player.gameProfile, AnchorPointsHandler.ID, blockEntity.id!!)
             return ItemInteractionResult.sidedSuccess(level.isClientSide)
         }
 

@@ -38,10 +38,10 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         this.localLeft = this.leftPos + 30
 
         val appList = SelectionList<AppButton>(localLeft - 16, localTop + 1, 16, 116, 15) { button ->
-            OpenAppPacket(button!!.appId, menu.ctxHolder).sendToServer()
+            OpenAppPacket(button!!.appId, menu.ctxHolder, menu.appContent.isStationary).sendToServer()
         }
 
-        for ((id, app) in AppRegistry.getAll(menu.ctxHolder.getCtx(minecraft!!.player!!))) {
+        for ((id, app) in AppRegistry.getAll(menu.ctxHolder.getCtx(minecraft!!.player!!), menu.appContent.isStationary)) {
             appList.addEntry(AppButton(app, id))
         }
 

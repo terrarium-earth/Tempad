@@ -45,9 +45,9 @@
   "item.tempad.location_card": "Location Card",
   "item.tempad.location_card.creator_toolip": "Created by %s",
   "item.tempad.location_card.shift_toolip": "Hold [%s] for more info",
-  "item.tempad.location_card.added_location": "Added location: %s",
   "item.tempad.location_card.add_location": "Right click to set location",
-  "item.tempad.location_card.set_name": "Rename in anvil to set location name",
+  "item.tempad.location_card.added_location": "Added location: %s",
+  "item.tempad.location_card.dynamic_error": "You may not add player, spatial anchor, or other dynamic locations to this device",
   "item.tempad.location_card.set_location": "Set location: %s",
 
   "item.tempad.temporal_shielding": "Temporal Shielding",
@@ -126,6 +126,8 @@
 
   "app.tempad.tp_to.teleport": "Teleport",
   "app.tempad.tp_to.selected": "Selected",
+
+  "app.tempad.portal_setup": "Portal Setup",
 
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",
