@@ -51,6 +51,7 @@
   "item.tempad.location_card.set_location": "Set location: %s",
 
   "item.tempad.temporal_shielding": "Temporal Shielding",
+  "item.tempad.capacitor": "Capacitor",
   "item.tempad.chronometer": "Chronometer",
   "item.tempad.status_emitter": "Status Emitter",
   "item.tempad.time_twister": "Time Twister",

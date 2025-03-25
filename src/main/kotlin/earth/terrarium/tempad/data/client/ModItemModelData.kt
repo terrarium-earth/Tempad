@@ -50,15 +50,29 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         }
 
         basicItem(ModItems.chronometer).apply {
-            for ((index, charge) in arrayOf(0.33f, 0.66f, 1f).withIndex()) {
+            for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
                 override().apply {
                     predicate("charge".tempadId, charge)
 
-                    model(getBuilder("tempad:chronometer_${index + 1}").apply {
+                    model(getBuilder("tempad:chronometer_${index}").apply {
                         parent(ModelFile.UncheckedModelFile("item/generated"))
 
                         texture("layer0", "tempad:item/chronometer")
-                        texture("layer1", "tempad:item/chronometer/charge_${index + 1}")
+                        if (index > 0) texture("layer1", "tempad:item/chronometer/charge_${index}")
+                    })
+                }
+            }
+        }
+
+        basicItem(ModItems.capacitor).apply {
+            for ((index, charge) in arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f).withIndex()) {
+                override().apply {
+                    predicate("charge".tempadId, charge)
+
+                    model(getBuilder("tempad:capacitor_${index}").apply {
+                        parent(ModelFile.UncheckedModelFile("item/generated"))
+
+                        texture("layer0", "tempad:item/capacitor/charge_${index}")
                     })
                 }
             }

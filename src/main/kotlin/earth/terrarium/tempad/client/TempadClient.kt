@@ -145,6 +145,7 @@ object TempadClient {
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
         ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
         ItemProperties.register(ModItems.tempad, "charge".tempadId, chargeProperty)
+        ItemProperties.register(ModItems.capacitor, "charge".tempadId, chargeProperty)
         ItemProperties.register(ModItems.chronometer, "charge".tempadId, chargeProperty)
         ItemProperties.register(ModItems.statusEmitter, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)

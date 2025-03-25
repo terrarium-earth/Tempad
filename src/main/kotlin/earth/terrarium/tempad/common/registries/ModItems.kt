@@ -29,6 +29,7 @@ object ModItems {
     }
 
     val tempad: TempadItem by registry.register("tempad") { TempadItem() }
+    val capacitor: CapacitorItem by registry.register("capacitor") { CapacitorItem() }
     val chronometer: ChronometerItem by registry.register("chronometer") { ChronometerItem() }
     val statusEmitter: Item by registry.register("status_emitter") { StatusEmitterItem() }
     val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }

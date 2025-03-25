@@ -2,6 +2,12 @@
   "parent": "minecraft:item/generated",
   "overrides": [
     {
+      "model": "tempad:item/chronometer_0",
+      "predicate": {
+        "tempad:charge": 0.0
+      }
+    },
+    {
       "model": "tempad:item/chronometer_1",
       "predicate": {
         "tempad:charge": 0.33
