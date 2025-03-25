@@ -32,9 +32,9 @@ import java.util.*
 class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.PortalSetupMenu>(null, menu, inv, title) {
 
-    val xOffset = MutableState.of(menu.ctx.stack.portalOffset.x)
-    val yOffset = MutableState.of(menu.ctx.stack.portalOffset.y)
-    val zOffset = MutableState.of(menu.ctx.stack.portalOffset.z)
+    val xOffset = MutableState.of(menu.ctx.stack.portalOffset.leftRight)
+    val yOffset = MutableState.of(menu.ctx.stack.portalOffset.upDown)
+    val zOffset = MutableState.of(menu.ctx.stack.portalOffset.forwardBack)
     val angle = MutableState.of(menu.ctx.stack.portalOffset.angle)
     val isVertical = MutableState.of(menu.ctx.stack.portalOffset.isVertical)
     private var selected: Pair<ResourceLocation, UUID>? = menu.ctx.stack.selectedPos?.let { it.provider to it.id }

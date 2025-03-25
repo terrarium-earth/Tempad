@@ -9,11 +9,11 @@ import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.portalOffset
-import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.registries.selectedPos
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -24,14 +24,20 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.AABB
 import net.neoforged.neoforge.items.ItemStackHandler
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.component1
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.component2
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.component3
 
 class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.workstationBE, pos, state) {
     val inventory = ItemStackHandler(1)
     var cookingTime: Int = 0
     var recipe: ResourceLocation? = null
     var timedoorId: Int? = null
+
+    val direction: Direction get() = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
 
     companion object {
         val downloadKey = "DownloadTime"
@@ -69,7 +75,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
             pos.get(upgrades, chronons)?.let {
                 TimedoorEntity.openTimedoor(player, this, it, getSizing()) {
                     timedoorId = it.id
-                    it.yRot = inventory[0].portalOffset.angle.toFloat()
+                    it.yRot = inventory[0].portalOffset.angle.toFloat() + direction.toYRot()
                 }?.let { msg ->
                     nearby.error(msg)
                 }
@@ -78,8 +84,9 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
     }
 
     fun getSizing(): TimedoorPlacementSettings {
-        val (x, y, z, _, isVertical) = inventory[0].portalOffset
-        return if (isVertical) {
+        val offset = inventory[0].portalOffset
+        val (x, y, z) = offset.calcOffset(direction)
+        return if (offset.isVertical) {
             VerticalPlacementSettings(x, y, z)
         } else {
             FloorPlacementSettings(x, y, z)
