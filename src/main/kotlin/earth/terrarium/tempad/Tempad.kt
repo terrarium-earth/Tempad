@@ -108,6 +108,10 @@ class Tempad(bus: IEventBus) {
                 TempadChrononHandler(it, 8000, 4000)
             }
 
+            chrononItems[ModItems.capacitor] = { it, _ ->
+                ItemChrononHandler(it, 4000)
+            }
+
             chrononItems[ModItems.chronometer] = { it, _ ->
                 ItemChrononHandler(it, 32000)
             }
