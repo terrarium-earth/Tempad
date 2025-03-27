@@ -9,7 +9,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
-import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
+import earth.terrarium.tempad.common.network.c2s.RedirectAppPacket
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
@@ -38,7 +38,7 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         this.localLeft = this.leftPos + 30
 
         val appList = SelectionList<AppButton>(localLeft - 16, localTop + 1, 16, 116, 15) { button ->
-            OpenAppPacket(button!!.appId, menu.ctxHolder, menu.appContent.isStationary).sendToServer()
+            RedirectAppPacket(button!!.appId, menu.ctxHolder, menu.appContent.isStationary).sendToServer()
         }
 
         for ((id, app) in AppRegistry.getAll(menu.ctxHolder.getCtx(minecraft!!.player!!), menu.appContent.isStationary)) {
