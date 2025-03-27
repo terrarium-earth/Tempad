@@ -39,15 +39,20 @@ import net.neoforged.neoforge.common.Tags
 class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
     companion object {
         val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.spatialAnchor }
-        val shape = Shapes.or(
+        val upShape = Shapes.or(
             box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
             box(3.0, 3.0, 3.0, 13.0, 4.0, 13.0)
+        )
+
+        val downShape = Shapes.or(
+            box(0.0, 14.0, 0.0, 16.0, 16.0, 16.0),
+            box(3.0, 12.0, 3.0, 13.0, 13.0, 13.0)
         )
     }
 
     init {
         this.registerDefaultState(
-            stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.NORTH)
+            stateDefinition.any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH).setValue(BlockStateProperties.UP, true)
         )
     }
 
@@ -63,7 +68,7 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
         if (stack.item === ModItems.locationCard) {
             if (level.isClientSide) return ItemInteractionResult.sidedSuccess(level.isClientSide)
             val blockEntity = level.getBlockEntity(pos) as SpatialAnchorBE
-            stack.portalTarget = IndirectLocation(player.gameProfile, AnchorPointsHandler.ID, blockEntity.id!!)
+            stack.portalTarget = AnchorPointsHandler(player.gameProfile).getSerializable(blockEntity.id!!)
             return ItemInteractionResult.sidedSuccess(level.isClientSide)
         }
 
@@ -140,11 +145,12 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = SpatialAnchorBE(pos, state)
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
-        builder.add(BlockStateProperties.FACING)
+        builder.add(BlockStateProperties.HORIZONTAL_FACING).add(BlockStateProperties.UP)
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
-        return defaultBlockState().setValue(BlockStateProperties.FACING, context.horizontalDirection.opposite)
+        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite).setValue(
+            BlockStateProperties.UP, context.nearestLookingVerticalDirection == Direction.DOWN)
     }
 
     override fun getShape(
@@ -153,6 +159,6 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
         pos: BlockPos,
         context: CollisionContext,
     ): VoxelShape {
-        return shape
+        return if(state.getValue(BlockStateProperties.UP)) upShape else downShape
     }
 }

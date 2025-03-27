@@ -8,6 +8,8 @@ import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
 import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.locations.DirectLocation
+import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.client.block.SpatialAnchorRenderer
 import earth.terrarium.tempad.client.block.WorkstationRenderer
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
@@ -188,6 +190,8 @@ object TempadClient {
     fun registerTooltip(event: RegisterClientTooltipComponentFactoriesEvent) {
         event.register(ChrononData::class.java, ::ChrononTooltip)
         event.register(InstalledUpgradesComponent::class.java, ::UpgradesTooltip)
+        event.register(DirectLocation::class.java, ::DirectPosTooltip)
+        event.register(IndirectLocation::class.java, ::IndirectPosTooltip)
     }
 
     @SubscribeEvent

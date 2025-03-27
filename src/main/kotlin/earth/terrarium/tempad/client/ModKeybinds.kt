@@ -2,12 +2,14 @@ package earth.terrarium.tempad.client
 
 import com.mojang.blaze3d.platform.InputConstants
 import earth.terrarium.argonauts.client.utils.ClientUtils
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
 import earth.terrarium.tempad.common.network.c2s.OpenTempadPacket
 import earth.terrarium.tempad.common.network.c2s.UseMacroPacket
 import earth.terrarium.tempad.common.registries.ModApps
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.KeyMapping
+import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
@@ -16,7 +18,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
 import net.neoforged.neoforge.common.NeoForge
 
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = [Dist.CLIENT], bus = EventBusSubscriber.Bus.MOD, modid = Tempad.MOD_ID)
 object ModKeybinds {
     val openDefaultApp: KeyMapping = KeyMapping(
         "key.tempad.shortcut",  // The translation key of the keybinding's name
@@ -46,7 +48,7 @@ object ModKeybinds {
         "category.tempad"
     )
 
-    @SubscribeEvent
+    @SubscribeEvent @JvmStatic
     fun init(event: FMLClientSetupEvent) {
         NeoForge.EVENT_BUS.addListener(::onClientTick);
     }

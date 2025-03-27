@@ -19,7 +19,7 @@ import net.minecraft.world.entity.player.Player
 
 data class OpenAppPacket(val id: ResourceLocation): Packet<OpenAppPacket> {
     companion object: ServerPacketCompanion<OpenAppPacket> {
-        override val id = "open_tempad".tempadId
+        override val id = "open_app".tempadId
         override val byteCodec: ByteCodec<OpenAppPacket> = ExtraByteCodecs.RESOURCE_LOCATION.map(::OpenAppPacket) {it.id}
 
         override fun onReceive(packet: OpenAppPacket, player: Player) {

@@ -19,6 +19,7 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -100,14 +101,25 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
             return InteractionResult.SUCCESS
         }
         val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return InteractionResult.FAIL
-        if (blockEntity.portalTarget != null) {
+        if (player.isShiftKeyDown) {
+            getDrops(state, level as ServerLevel, pos, level.getBlockEntity(pos)).forEach {
+                if (player.mainHandItem.isEmpty) {
+                    player.setItemInHand(InteractionHand.MAIN_HAND, it)
+                } else {
+                    player.inventory.placeItemBackInInventory(it)
+                }
+            }
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_ALL)
+            return InteractionResult.SUCCESS
+        } else if (blockEntity.portalTarget != null) {
             player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
                 portalTarget = blockEntity.portalTarget
             })
             blockEntity.portalTarget = null
             level.setBlock(pos, state.setValue(hasCardProperty, false), 2)
+            return InteractionResult.SUCCESS
         }
-        return InteractionResult.SUCCESS
+        return InteractionResult.PASS
     }
 
     override fun neighborChanged(

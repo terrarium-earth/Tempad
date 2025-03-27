@@ -13,8 +13,11 @@ import earth.terrarium.tempad.common.registries.id
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.tempadId
+import net.minecraft.ChatFormatting
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import java.util.*
 
 class AnchorPointsData(anchors: Map<UUID, GlobalPos>) {
@@ -54,7 +57,9 @@ class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
     override fun minusAssign(locationId: UUID) {}
 
     override fun getSerializable(locationId: UUID): LocationGetter? {
-        return IndirectLocation(gameProfile, ID, locationId)
+        val pos = locations[locationId] ?: return null
+        return IndirectLocation(gameProfile, Component.translatable("locations.tempad.anchor_point", MutableComponent.create(pos.name.contents).withStyle(
+            ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY), ID, locationId)
     }
 
     companion object {

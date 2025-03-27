@@ -17,6 +17,7 @@ import earth.terrarium.tempad.common.registries.selectedPos
 import earth.terrarium.tempad.common.utils.nullableFieldOf
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.tempadId
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import java.util.*
@@ -77,7 +78,7 @@ data class SyncPortalSettingsPacket(
                 )
                 safeLet(message.providerId, message.id) { provider, id ->
                     val ctx = message.ctx.getCtx(player) as? WorkstationContext ?: return@safeLet
-                    it.selectedPos = IndirectLocation(ctx.workstation!!.owner!!, provider, id)
+                    it.selectedPos = IndirectLocation(ctx.workstation!!.owner!!, Component.empty(), provider, id)
                 }
             }
         }

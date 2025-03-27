@@ -41,6 +41,9 @@
   "item.tempad.empty_tank": "Empty",
   "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r",
 
+  "locations.tempad.anchor_point": "Anchor Point Named: \"%s\"",
+  "locations.tempad.player": "Tracking Player: %s",
+
   "item.tempad.blank_card": "Blank Card",
   "item.tempad.location_card": "Location Card",
   "item.tempad.location_card.creator_toolip": "Created by %s",
@@ -49,6 +52,9 @@
   "item.tempad.location_card.added_location": "Added location: %s",
   "item.tempad.location_card.dynamic_error": "You may not add player, spatial anchor, or other dynamic locations to this device",
   "item.tempad.location_card.set_location": "Set location: %s",
+  "item.tempad.location_card.redeem": "%s: [%s] To Use",
+  "item.tempad.location_card.created_by": "Created by: %s",
+  "item.tempad.location_card.id": "ID: %s",
 
   "item.tempad.temporal_shielding": "Temporal Shielding",
   "item.tempad.capacitor": "Capacitor",

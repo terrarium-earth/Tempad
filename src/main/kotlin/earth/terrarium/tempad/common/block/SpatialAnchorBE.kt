@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.Vec3
 import kotlin.jvm.optionals.getOrNull
 
@@ -23,7 +24,8 @@ class SpatialAnchorBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.s
             setData(ModAttachments.name, value)
         }
 
-    val namedGlobalVec3 get() = NamedGlobalVec3(name, Vec3.atCenterOf(worldPosition), level!!.dimension(), 0f, color)
+    val landingPosition: Vec3 get() = if(blockState.getValue(BlockStateProperties.UP)) Vec3.atCenterOf(worldPosition) else Vec3.atBottomCenterOf(worldPosition.below(2))
+    val namedGlobalVec3 get() = NamedGlobalVec3(name, landingPosition, level!!.dimension(), blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot(), color)
 
     fun canAccess(player: GameProfile): Boolean {
         return AnchorAccessApi[this.accessId].canAccess(level!!, owner!!, player)

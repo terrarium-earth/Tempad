@@ -11,8 +11,11 @@ import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_BYTE_CODEC
 import net.minecraft.core.UUIDUtil
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.world.inventory.tooltip.TooltipComponent
 import java.util.*
 
 sealed interface LocationGetter {
@@ -47,7 +50,7 @@ sealed interface LocationGetter {
     }
 }
 
-data class DirectLocation(val location: NamedGlobalVec3) : LocationGetter {
+data class DirectLocation(val location: NamedGlobalVec3) : LocationGetter, TooltipComponent {
     companion object {
         val codec: Codec<DirectLocation> = NamedGlobalVec3.CODEC.xmap(::DirectLocation) { it.location }.codec()
 
@@ -57,16 +60,18 @@ data class DirectLocation(val location: NamedGlobalVec3) : LocationGetter {
     override fun get(upgrades: UpgradeHandler, energy: ChrononHandler): NamedGlobalVec3 = location
 }
 
-data class IndirectLocation(val accessor: GameProfile, val provider: ResourceLocation, val id: UUID) : LocationGetter {
+data class IndirectLocation(val accessor: GameProfile, val info: Component, val provider: ResourceLocation, val id: UUID) : LocationGetter, TooltipComponent {
     companion object {
         val codec: Codec<IndirectLocation> = RecordCodecBuilder.create { it.group(
             ExtraCodecs.GAME_PROFILE.fieldOf("accessor").forGetter(IndirectLocation::accessor),
+            ComponentSerialization.CODEC.fieldOf("info").forGetter(IndirectLocation::info),
             ResourceLocation.CODEC.fieldOf("provider").forGetter(IndirectLocation::provider),
             UUIDUtil.CODEC.fieldOf("id").forGetter(IndirectLocation::id),
         ).apply(it, ::IndirectLocation) }
 
         val byteCodec: ByteCodec<IndirectLocation> = ObjectByteCodec.create(
             GAME_PROFILE_BYTE_CODEC.fieldOf { it.accessor },
+            ExtraByteCodecs.COMPONENT.fieldOf { it.info },
             ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.provider },
             ByteCodec.UUID.fieldOf { it.id },
             ::IndirectLocation,
