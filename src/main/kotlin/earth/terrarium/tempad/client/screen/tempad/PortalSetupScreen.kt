@@ -36,7 +36,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
     val yOffset = MutableState.of(menu.ctx.stack.portalOffset.upDown)
     val zOffset = MutableState.of(menu.ctx.stack.portalOffset.forwardBack)
     val angle = MutableState.of(menu.ctx.stack.portalOffset.angle)
-    val isVertical = MutableState.of(menu.ctx.stack.portalOffset.isVertical)
+    val isUpright = MutableState.of(menu.ctx.stack.portalOffset.isUpright)
     private var selected: Pair<ResourceLocation, UUID>? = menu.ctx.stack.selectedPos?.let { it.provider to it.id }
 
     val search = ListenableState.of("").apply {
@@ -58,7 +58,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
         val offsetOptions = Layouts.column().withGap(2).withPosition(localLeft + 4, localTop + 20)
 
         offsetOptions.withChildren(
-            Widgets.text(Component.literal("Offset (+/-)"))
+            Widgets.text(Component.translatable("app.tempad.portal_setup.offset"))
                 .withColor(Tempad.ORANGE)
                 .withLeftAlignment()
                 .withShadow()
@@ -98,7 +98,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
                 },
             ),
             Layouts.row().withGap(2).withChildren(
-                Widgets.text(Component.literal("Angle: "))
+                Widgets.text(Component.translatable("app.tempad.portal_setup.angle"))
                     .withColor(Tempad.ORANGE)
                     .withShadow()
                     .withLeftAlignment()
@@ -108,12 +108,12 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
                 },
             ),
             Layouts.row().withGap(2).withChildren(
-                Widgets.text(Component.literal("Vertical: "))
+                Widgets.text(Component.translatable("app.tempad.portal_setup.upright"))
                     .withColor(Tempad.ORANGE)
                     .withShadow()
                     .withLeftAlignment()
                     .withSize(56, 12),
-                TempadUI.toggle(isVertical).withSize(20, 12),
+                TempadUI.toggle(isUpright).withSize(20, 12),
             )
         )
 
@@ -222,7 +222,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
             yOffset.get(),
             zOffset.get(),
             angle.get(),
-            isVertical.get(),
+            isUpright.get(),
             selected?.first,
             selected?.second,
             menu.ctx.holder

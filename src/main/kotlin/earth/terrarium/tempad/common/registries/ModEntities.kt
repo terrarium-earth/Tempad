@@ -26,15 +26,13 @@ object ModEntities {
     val colorSerializer by serializers.register("color") { createSerializer(COLOR_BYTE_CODEC) }
     val vec3Serializer by serializers.register("vec3") { createSerializer(VEC3_BYTE_CODEC) }
     val dimensionKeySerializer by serializers.register("dimension_key") { createSerializer(ExtraByteCodecs.DIMENSION) }
-    val sizingSerializer by serializers.register("sizing") { createSerializer(TimedoorPlacementSettings.codec) }
+    val sizingSerializer by serializers.register("sizing") { createSerializer(TimedoorPlacementSettings.byteCodec) }
 
     private fun <T> createSerializer(codec: ByteCodec<T>): EntityDataSerializer<T> {
         return EntityDataSerializer.forValueType(StreamCodecByteCodec.to(codec))
     }
 
     val TIMEDOOR_ENTITY by entities.register("timedoor",
-        entityType(::TimedoorEntity, MobCategory.MISC) {
-            noSave()
-        }
+        entityType(::TimedoorEntity, MobCategory.MISC) {}
     )
 }

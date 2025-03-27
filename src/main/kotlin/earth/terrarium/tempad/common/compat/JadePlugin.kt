@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import snownee.jade.api.*
 import snownee.jade.api.config.IPluginConfig
+import kotlin.math.roundToInt
 
 @WailaPlugin
 class JadePlugin: IWailaPlugin {
@@ -19,8 +20,10 @@ object TimedoorComponentProvider: IEntityComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: EntityAccessor, config: IPluginConfig) {
         val timedoorEntity = accessor.entity as? TimedoorEntity ?: return
-        if (timedoorEntity.closingTime > 0 && timedoorEntity.closingTime > timedoorEntity.tickCount) {
-            tooltip.add(Component.translatable("jade.tempad.will_close", Math.round((timedoorEntity.closingTime - timedoorEntity.tickCount) / 20f)))
+        if (timedoorEntity.closingTime - TimedoorEntity.ANIMATION_LENGTH > 0) {
+            tooltip.add(Component.translatable("jade.tempad.will_close",
+                ((timedoorEntity.closingTime) / 20f).roundToInt()
+            ))
         } else if (timedoorEntity.closingTime != -1) {
             tooltip.add(Component.translatable("jade.tempad.closing"))
         }

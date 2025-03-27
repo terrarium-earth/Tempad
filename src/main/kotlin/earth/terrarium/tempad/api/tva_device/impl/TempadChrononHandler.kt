@@ -4,6 +4,7 @@ import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.common.registries.chrononContentTempad
 import earth.terrarium.tempad.common.registries.chrononContentTimeTwister
+import earth.terrarium.tempad.common.registries.twisterEquipped
 import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemStack
 
@@ -20,7 +21,7 @@ class TempadChrononHandler(val stack: ItemStack, val tempadLimit: Int, timeTwist
             stack.chrononContentTimeTwister += diff - tempadDiff
         }
 
-    override val maxPower: Int = tempadLimit + timeTwisterLimit
+    override val maxPower: Int = tempadLimit + if(stack.twisterEquipped) timeTwisterLimit else 0
 
     override fun extract(amount: Int, action: ActionType): Int {
         val extracted = Mth.clamp(power, 0, amount)

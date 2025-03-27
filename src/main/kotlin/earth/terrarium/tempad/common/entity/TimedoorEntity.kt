@@ -6,7 +6,6 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.context.SyncableContext
-import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.event.TimedoorEvent
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.locations.offsetLocation
@@ -21,7 +20,6 @@ import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.registries.ModSounds
 import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.registries.ageUntilAllowedThroughTimedoor
-import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.core.registries.Registries
@@ -132,10 +130,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             location: NamedGlobalVec3,
             ignoreRestrictions: Boolean = false,
         ): Either<TimedoorEntity, Component> {
-            val targetDimension = location.dimension ?: return Either.right(posFail)
-            location.pos ?: return Either.right(posFail)
             val lookup = level.registryAccess().lookup(Registries.DIMENSION)
-            val targetHolder = lookup.get().get(targetDimension).getOrNull() ?: return Either.right(posFail)
+            val targetHolder = lookup.get().get(location.dimension).getOrNull() ?: return Either.right(posFail)
             val sourceHolder = lookup.get().get(level.dimension()).getOrNull() ?: return Either.right(posFail)
             if (!ignoreRestrictions) {
                 level.dimension().let {
@@ -169,19 +165,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
     }
 
-    private fun canTeleport(entity: Entity, targetLevel: Level): Boolean {
-        with(sizing) {
-            return entity !is TimedoorEntity
-                    && isInside(entity)
-                    && entity !in ModTags.teleportingNotSupport
-                    && entity.canChangeDimensions(level(), targetLevel)
-                    && !entity.isPassenger
-                    && entity.ageUntilAllowedThroughTimedoor?.let { entity.tickCount > it } ?: true
-        }
-    }
-
+    var beganClosing = 0;
     var targetAngle = 0f
-
     var targetPos by DataDelegate(TARGET_POS)
     var targetDimension by DataDelegate(TARGET_DIMENSION)
     var color by DataDelegate(COLOR)
@@ -196,7 +181,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var owner: UUID? = null
     var glitching: Boolean by DataDelegate(GLITCHING)
 
-    private var linkedPortalEntity: TimedoorEntity? = null
+    var linkedPortalEntity: TimedoorEntity? = null
+        private set
 
     private val targetLevel: ServerLevel?
         get() = targetDimension.let { level().server[it] }
@@ -210,13 +196,48 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             color
         )
 
-    override fun defineSynchedData(pBuilder: SynchedEntityData.Builder) {
-        pBuilder.define(CLOSING_TIME, CommonConfig.TimeDoor.idleAfterEnter)
-        pBuilder.define(COLOR, Tempad.ORANGE)
-        pBuilder.define(TARGET_POS, Vec3.ZERO)
-        pBuilder.define(TARGET_DIMENSION, Level.OVERWORLD)
-        pBuilder.define(SIZING, DynamicAngledPlacement())
-        pBuilder.define(GLITCHING, false)
+
+    private fun canTeleport(entity: Entity, targetLevel: Level): Boolean {
+        with(sizing) {
+            return entity !is TimedoorEntity
+                    && isInside(entity)
+                    && entity !in ModTags.teleportingNotSupport
+                    && entity.canChangeDimensions(level(), targetLevel)
+                    && !entity.isPassenger
+                    && entity.ageUntilAllowedThroughTimedoor?.let { entity.tickCount > it } ?: true
+        }
+    }
+
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {
+        builder.define(CLOSING_TIME, CommonConfig.TimeDoor.idleAfterEnter)
+        builder.define(COLOR, Tempad.ORANGE)
+        builder.define(TARGET_POS, Vec3.ZERO)
+        builder.define(TARGET_DIMENSION, Level.OVERWORLD)
+        builder.define(SIZING, DynamicAngledPlacement())
+        builder.define(GLITCHING, false)
+    }
+
+    override fun saveWithoutId(compound: CompoundTag): CompoundTag {
+        val tag = super.saveWithoutId(compound)
+        tag.putInt("ClosingTime", closingTime)
+        tag.putFloat("TargetAngle", targetAngle)
+        tag.putBoolean("IsGlitching", glitching)
+        tag.save(Color.CODEC, "Color", color)
+        tag.save(Vec3.CODEC, "TargetPos", targetPos)
+        tag.save(ResourceKey.codec(Registries.DIMENSION), "TargetDimension", targetDimension)
+        tag.save(TimedoorPlacementSettings.codec, "PlacementSettings", sizing)
+        return tag
+    }
+
+    override fun load(compound: CompoundTag) {
+        super.load(compound)
+        closingTime = compound.getInt("ClosingTime")
+        targetAngle = compound.getFloat("TargetAngle")
+        glitching = compound.getBoolean("IsGlitching")
+        compound.load(Color.CODEC, "Color")?.let { color = it }
+        compound.load(Vec3.CODEC, "TargetPos")?.let { targetPos = it }
+        compound.load(ResourceKey.codec(Registries.DIMENSION), "TargetDimension")?.let { targetDimension = it }
+        compound.load(TimedoorPlacementSettings.codec, "PlacementSettings")?.let { sizing = it }
     }
 
     override fun getDimensions(pose: Pose): EntityDimensions = sizing.dimensions
@@ -247,20 +268,14 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             }
             return
         }
-        if (tickCount < IDLE_BEFORE_START + ANIMATION_LENGTH) {
-            return
-        }
-        if (tickCount > closingTime && closingTime != -1) {
-            tryClose()
-            return
-        }
-        val targetLevel = targetLevel ?: return tryClose()
-        val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
-        if (entities.isEmpty()) {
-            tryClose()
+        closingTime--
+        tryClose()
+        if (tickCount < IDLE_BEFORE_START + ANIMATION_LENGTH || closingTime < ANIMATION_LENGTH) {
             return
         }
         tryInitReceivingPortal()
+        val targetLevel = targetLevel ?: return
+        val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()
             if (event.isCanceled) continue
@@ -298,18 +313,16 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
             linkedPortalEntity?.let { TimedoorEvent.Exit(it, entity).post() }
         }
-        tryClose()
     }
 
     private fun tryInitReceivingPortal() {
+        if (closingTime <= 0 && closingTime != -1) return
         val targetLevel = targetLevel ?: return
-        linkedPortalEntity?.let {
-            it.closingTime = this.closingTime - this.tickCount
-            return
-        }
+        linkedPortalEntity?.let { return }
         val targetPortal = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, targetLevel)
+        Tempad.ticketController.forceChunk(level() as ServerLevel, targetPortal, chunkPosition().x, chunkPosition().z, true, false)
         targetPortal.linkedPortalEntity = this
-        targetPortal.closingTime = this.closingTime - this.tickCount
+        targetPortal.closingTime = this.closingTime
         targetPortal.setLocation(selfLocation)
         targetPortal.sizing = this.sizing
         targetPortal.glitching = this.glitching
@@ -319,22 +332,23 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     private fun tryClose() {
-        if (tickCount > closingTime + ANIMATION_LENGTH && closingTime != -1) {
+        if (closingTime <= 0 && closingTime != -1) {
             TimedoorEvent.Close(this).post()
             this.linkedPortalEntity?.linkedPortalEntity = null
             this.discard()
         }
     }
 
-    override fun onRemovedFromLevel() {
-        super.onRemovedFromLevel()
+    override fun remove(reason: RemovalReason) {
+        super.remove(reason)
         if (this.linkedPortalEntity != null) this.linkedPortalEntity!!.linkedPortalEntity = null
         this.linkedPortalEntity = null
+        Tempad.ticketController.forceChunk(level() as ServerLevel, this, chunkPosition().x, chunkPosition().z, false, false)
     }
 
     fun setLocation(location: NamedGlobalVec3) {
-        this.targetPos = location.pos!!
-        this.targetDimension = location.dimension!!
+        this.targetPos = location.pos
+        this.targetDimension = location.dimension
         this.customName = location.name
         this.targetAngle = location.angle
         this.color = location.color
@@ -348,6 +362,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun onAddedToLevel() {
         super.onAddedToLevel()
         if (level().isClientSide) return
+        Tempad.ticketController.forceChunk(level() as ServerLevel, this, chunkPosition().x, chunkPosition().z, true, false)
         level().playSound(null, blockPosition(), ModSounds.timedoorOpen, soundSource, 1.0f, 1.0f)
     }
 }

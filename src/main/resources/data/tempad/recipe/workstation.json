@@ -1,29 +1,26 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "#G ",
-        "CET",
-        "#G "
+        "TT ",
+        "CCC",
+        "#Q#"
     ],
     "key": {
         "#": {
             "item": "tempad:inexorable_alloy"
         },
-        "E": {
-            "item": "minecraft:ender_pearl"
-        },
         "T": {
             "item": "minecraft:tinted_glass"
         },
-        "G": {
-            "item": "minecraft:gold_ingot"
+        "Q": {
+            "item": "minecraft:quartz"
         },
         "C": {
-            "item": "tempad:capacitor"
+            "item": "minecraft:copper_ingot"
         }
     },
     "result": {
-        "id": "tempad:time_twister",
+        "id": "tempad:workstation",
         "count": 1
     }
 }

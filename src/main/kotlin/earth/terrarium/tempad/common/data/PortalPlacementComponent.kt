@@ -7,7 +7,7 @@ import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import net.minecraft.core.Direction
 import org.joml.Vector3f
 
-data class PortalPlacementComponent(val leftRight: Float, val upDown: Float, val forwardBack: Float, val angle: Int, val isVertical: Boolean) {
+data class PortalPlacementComponent(val leftRight: Float, val upDown: Float, val forwardBack: Float, val angle: Int, val isUpright: Boolean) {
     companion object {
         val codec: Codec<PortalPlacementComponent> = RecordCodecBuilder.create { it ->
             it.group(
@@ -15,7 +15,7 @@ data class PortalPlacementComponent(val leftRight: Float, val upDown: Float, val
                 Codec.FLOAT.fieldOf("upDown").forGetter { it.upDown },
                 Codec.FLOAT.fieldOf("forwardBack").forGetter { it.forwardBack },
                 Codec.INT.fieldOf("angle").forGetter { it.angle },
-                Codec.BOOL.fieldOf("isVertical").forGetter { it.isVertical }
+                Codec.BOOL.fieldOf("isUpright").forGetter { it.isUpright }
             ).apply(it, ::PortalPlacementComponent)
         }
 
@@ -24,7 +24,7 @@ data class PortalPlacementComponent(val leftRight: Float, val upDown: Float, val
             ByteCodec.FLOAT.fieldOf { it.upDown },
             ByteCodec.FLOAT.fieldOf { it.forwardBack },
             ByteCodec.INT.fieldOf { it.angle },
-            ByteCodec.BOOLEAN.fieldOf { it.isVertical },
+            ByteCodec.BOOLEAN.fieldOf { it.isUpright },
             ::PortalPlacementComponent,
         )
     }

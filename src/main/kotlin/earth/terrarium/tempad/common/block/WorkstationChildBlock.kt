@@ -75,7 +75,7 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
 
         (AppRegistry[storageBE.inventory[0].defaultApp, ctx, true]
             ?: AppRegistry[ModApps.portalSetup, ctx, true])!!.openMenu(player as ServerPlayer)
-        return super.useWithoutItem(state, level, pos, player, hitResult)
+        return InteractionResult.SUCCESS
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
@@ -130,7 +130,8 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         fromPos: BlockPos,
         isMoving: Boolean,
     ) {
-        val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above())
+        val ogBlock = getPos(state, pos)
+        val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above()) || level.hasNeighborSignal(ogBlock)
         val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
         if (neighborPowered && !currentlyPowered) {
             level.scheduleTick(pos, this, 4)
@@ -143,9 +144,11 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
     override fun tick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
         super.tick(state, level, pos, random)
         val controllerPos = getPos(state, pos)
-        val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
         val blockEntity = level.getBlockEntity(controllerPos) as? WorkstationBE ?: return
-        blockEntity.openTimedoor()
+        if (state.getValue(BlockStateProperties.TRIGGERED)) {
+            blockEntity.openTimedoor()
+            level.scheduleTick(pos, this, 20)
+        }
     }
 
     override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {

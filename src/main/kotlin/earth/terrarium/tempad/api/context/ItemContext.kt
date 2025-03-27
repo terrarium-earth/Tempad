@@ -1,12 +1,7 @@
 package earth.terrarium.tempad.api.context
 
-import earth.terrarium.tempad.common.registries.ModFluids
-import earth.terrarium.tempad.common.utils.get
 import net.minecraft.world.Container
 import net.minecraft.world.item.ItemStack
-import net.neoforged.neoforge.capabilities.Capabilities
-import net.neoforged.neoforge.fluids.FluidStack
-import net.neoforged.neoforge.fluids.capability.IFluidHandler
 
 interface ItemContext {
     var stack: ItemStack

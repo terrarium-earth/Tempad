@@ -1,5 +1,7 @@
 package earth.terrarium.tempad.api.sizing
 
+import com.mojang.serialization.Codec
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import earth.terrarium.tempad.api.locations.offsetLocation
@@ -15,7 +17,13 @@ class VerticalPlacementSettings(val xOffset: Float, val yOffset: Float, val zOff
             ByteCodec.FLOAT.fieldOf { it.yOffset },
             ByteCodec.FLOAT.fieldOf { it.zOffset },
             ::VerticalPlacementSettings
-        ))
+        ), RecordCodecBuilder.mapCodec {
+            it.group(
+                Codec.FLOAT.fieldOf("x").forGetter { it.yOffset },
+                Codec.FLOAT.fieldOf("y").forGetter { it.yOffset },
+                Codec.FLOAT.fieldOf("z").forGetter { it.yOffset }
+            ).apply(it, ::VerticalPlacementSettings)
+        })
     }
 
     override val type: SizingType<*>

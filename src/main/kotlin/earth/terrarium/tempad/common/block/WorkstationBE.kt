@@ -70,7 +70,12 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         val level = level
         if(level == null || level.isClientSide()) return
         val nearby = level.getEntitiesOfClass(ServerPlayer::class.java, AABB(blockPos).inflate(5.0))
-        if(timedoorId?.let { id -> level.getEntity(id) } != null) return nearby.error(Component.translatable("tempad.error.timedoor_already_open"))
+        val potentialDoor = timedoorId?.let { id -> level.getEntity(id) }
+        if(potentialDoor as? TimedoorEntity != null) {
+            potentialDoor.closingTime += 20;
+            potentialDoor.linkedPortalEntity?.let { it.closingTime += 20 }
+            return
+        }
         safeLet(inventory[0].selectedPos, upgrades, chronons, owner) { pos, upgrades, chronons, player ->
             pos.get(upgrades, chronons)?.let {
                 TimedoorEntity.openTimedoor(player, this, it, getSizing()) {
@@ -86,7 +91,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
     fun getSizing(): TimedoorPlacementSettings {
         val offset = inventory[0].portalOffset
         val (x, y, z) = offset.calcOffset(direction)
-        return if (offset.isVertical) {
+        return if (offset.isUpright) {
             VerticalPlacementSettings(x, y, z)
         } else {
             FloorPlacementSettings(x, y, z)

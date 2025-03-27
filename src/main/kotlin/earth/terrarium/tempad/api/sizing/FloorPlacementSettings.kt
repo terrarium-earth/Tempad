@@ -1,5 +1,7 @@
 package earth.terrarium.tempad.api.sizing
 
+import com.mojang.serialization.Codec
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import earth.terrarium.tempad.common.entity.TimedoorEntity
@@ -16,7 +18,13 @@ class FloorPlacementSettings(val xOffset: Float, val yOffset: Float, val zOffset
             ByteCodec.FLOAT.fieldOf { it.yOffset },
             ByteCodec.FLOAT.fieldOf { it.zOffset },
             ::FloorPlacementSettings
-        ))
+        ), RecordCodecBuilder.mapCodec {
+            it.group(
+                Codec.FLOAT.fieldOf("x").forGetter { it.yOffset },
+                Codec.FLOAT.fieldOf("y").forGetter { it.yOffset },
+                Codec.FLOAT.fieldOf("z").forGetter { it.yOffset }
+            ).apply(it, ::FloorPlacementSettings)
+        })
 
         val width: Float = 20 / 16f
         val height: Float = 4 / 16f

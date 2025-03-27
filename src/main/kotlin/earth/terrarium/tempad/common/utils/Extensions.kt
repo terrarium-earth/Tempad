@@ -233,3 +233,11 @@ val String.translatable: Component get() = Component.translatable(this)
 operator fun ItemStackHandler.get(slot: Int): ItemStack = this.getStackInSlot(slot)
 
 operator fun ItemStackHandler.set(slot: Int, stack: ItemStack) = this.setStackInSlot(slot, stack)
+
+fun <T> CompoundTag.save(codec: Codec<T>, key: String, value: T) {
+    codec.encodeStart(NbtOps.INSTANCE, value).result().getOrNull()?.let { put(key, it) }
+}
+
+fun <T> CompoundTag.load(codec: Codec<T>, key: String): T? {
+    return codec.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull()?.first
+}

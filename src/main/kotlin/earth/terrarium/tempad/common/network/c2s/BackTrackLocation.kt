@@ -25,7 +25,7 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
             ),
             NetworkHandle.handle { packet, player ->
                 val ctx = packet.ctx.getCtx(player)
-                if (!player.isCreative && ctx.stack.chronons!!.extract(1000, ActionType.Simulate) == 1000) return@handle
+                if (!player.isCreative && ctx.stack.chronons?.extract(1000, ActionType.Simulate) != 1000) return@handle
                 ctx.modify {
                     it.chronons?.extract(1000, ActionType.Execute)
                 }

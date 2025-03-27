@@ -25,6 +25,8 @@ import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent
+import net.neoforged.neoforge.common.world.chunk.TicketController
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
@@ -56,6 +58,8 @@ class Tempad(bus: IEventBus) {
         val playerUpgrade: ResourceLocation = "player".tempadId
 
         val logger: Logger = LogManager.getLogger(MOD_ID)
+
+        val ticketController = TicketController("timedoor".tempadId, null)
     }
 
     init {
@@ -77,8 +81,6 @@ class Tempad(bus: IEventBus) {
         ModMenus.registry.init()
         ModNetworking.init()
         ModRecipes.init()
-        ModFluids.dataRegistry.init()
-        ModFluids.registry.init()
         ModSounds.registry.init()
         ModLocations.init()
 
@@ -144,6 +146,10 @@ class Tempad(bus: IEventBus) {
             }
         }
 
+        bus.addListener { event: RegisterTicketControllersEvent ->
+            event.register(ticketController)
+        }
+
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->
             if (event.entity.tickCount % 1200 != 0) return@addListener
             event.entity.travelHistory.logLocation(event.entity)
@@ -167,5 +173,7 @@ class Tempad(bus: IEventBus) {
         NeoForge.EVENT_BUS.addListener { event: PlayerChangedDimensionEvent ->
             event.entity.travelHistory.logLocation(event.entity, TravelHistoryAttachment.DIM_ENTER_MARKER)
         }
+
+
     }
 }

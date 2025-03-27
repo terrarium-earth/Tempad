@@ -28,7 +28,7 @@ abstract class ChrononItem: Item(Properties().stacksTo(1)) {
             it.chronons?.hasRoom == true && it !== stack
         }?.let {
             safeLet(stack.chronons, it.stack.chronons) { from, to ->
-                move(from, to, 1)
+                move(from, to, Int.MAX_VALUE)
             }
         }
     }

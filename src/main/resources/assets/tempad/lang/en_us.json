@@ -130,12 +130,15 @@
   "app.tempad.tp_to.selected": "Selected",
 
   "app.tempad.portal_setup": "Portal Setup",
+  "app.tempad.portal_setup.offset": "Offset: (-/+)",
   "app.tempad.portal_setup.left_right": "L/R: ",
   "app.tempad.portal_setup.left_right.desc": "Positive places portal to your left, negative to your right \n\nAccepts decimal (e.g 1.3)",
   "app.tempad.portal_setup.up_down": "U/D: ",
   "app.tempad.portal_setup.up_down.desc": "Positive places portal higher, negative lower \n\nAccepts decimal (e.g 1.3)",
   "app.tempad.portal_setup.front_back": "F/B: ",
   "app.tempad.portal_setup.front_back.desc": "Positive places portal in front of you, negative behind you \n\nAccepts decimal (e.g 1.3)",
+  "app.tempad.portal_setup.angle": "Angle: ",
+  "app.tempad.portal_setup.upright": "Is upright: ",
 
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",

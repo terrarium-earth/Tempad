@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.api.sizing
 
+import com.mojang.serialization.MapCodec
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import earth.terrarium.tempad.api.locations.offsetLocation
 import earth.terrarium.tempad.common.config.CommonConfig
@@ -12,7 +13,7 @@ import net.minecraft.world.phys.Vec3
 
 open class DynamicAngledPlacement: TimedoorPlacementSettings {
     companion object {
-        val type = SizingType("default".tempadId, ByteCodec.unit(::DynamicAngledPlacement))
+        val type = SizingType("default".tempadId, ByteCodec.unit(::DynamicAngledPlacement), MapCodec.unit(::DynamicAngledPlacement))
     }
 
     val width: Float = 20 / 16f
