@@ -2,6 +2,7 @@ package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
 import com.teamresourceful.resourcefullib.common.color.ConstantColors
+import com.teamresourceful.resourcefullibkt.common.id
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
@@ -10,15 +11,19 @@ import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.sendToClient
 import earth.terrarium.tempad.common.utils.stack
+import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.component.DataComponents
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -54,6 +59,21 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
         this.registerDefaultState(
             stateDefinition.any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH).setValue(BlockStateProperties.UP, true)
         )
+    }
+
+    override fun appendHoverText(
+        stack: ItemStack,
+        context: Item.TooltipContext,
+        tooltipComponents: MutableList<Component?>,
+        tooltipFlag: TooltipFlag,
+    ) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
+        stack.owner?.let {
+            tooltipComponents.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
+        }
+        stack.anchorId?.let {
+            tooltipComponents.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
+        }
     }
 
     override fun useItemOn(
@@ -121,6 +141,7 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
                     color = it.color
                     set(DataComponents.CUSTOM_NAME, it.name)
                     anchorId = it.id
+                    owner = it.owner
                 }
             }
         )

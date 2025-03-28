@@ -1,4 +1,5 @@
 {
+  "config.jade.plugin_tempad.chronon": "Chronon",
   "gui.tempad.search_field": "Search...",
   "gui.tempad.name_field": "Name...",
   "gui.tempad.teleport_disabled": "You may not teleport to this location",

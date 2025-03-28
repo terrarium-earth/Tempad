@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.registries
 
+import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -103,6 +104,13 @@ object ModComponents {
         }
     }
 
+    val owner: DataComponentType<GameProfile> by registry.register("owner") {
+        componentType {
+            serialize = GAME_PROFILE_CODEC.codec()
+            networkSerialize = GAME_PROFILE_BYTE_CODEC
+        }
+    }
+
     val portalOffset: DataComponentType<PortalPlacementComponent> by registry.register("portal_offset") {
         componentType {
             serialize = PortalPlacementComponent.codec
@@ -144,6 +152,8 @@ var MutableDataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.
 var MutableDataComponentHolder.installedUpgrades by ModComponents.installedUpgrades.withDefault(InstalledUpgradesComponent(emptyList()))
 
 var MutableDataComponentHolder.color by ModComponents.color
+
+var MutableDataComponentHolder.owner by ModComponents.owner
 
 var MutableDataComponentHolder.anchorId by ModComponents.anchorId
 
