@@ -2,10 +2,17 @@ package earth.terrarium.tempad.common.compat
 
 import com.teamresourceful.resourcefullib.client.scissor.ScissorBox
 import com.teamresourceful.resourcefullib.client.utils.RenderUtils
+import com.teamresourceful.resourcefullibkt.common.holder
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.client.TempadUI
+import earth.terrarium.tempad.common.block.SpatialAnchorBE
+import earth.terrarium.tempad.common.block.SpatialAnchorBlock
 import earth.terrarium.tempad.common.entity.TimedoorEntity
+import earth.terrarium.tempad.common.registries.anchorId
+import earth.terrarium.tempad.common.registries.id
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
@@ -24,6 +31,7 @@ class JadePlugin: IWailaPlugin {
     override fun registerClient(registration: IWailaClientRegistration) {
         registration.registerEntityComponent(TimedoorComponentProvider, TimedoorEntity::class.java)
         registration.registerBlockComponent(ChrononComponentProvider, Block::class.java)
+        registration.registerBlockComponent(AnchorComponentProvider, SpatialAnchorBlock::class.java)
     }
 }
 
@@ -59,16 +67,18 @@ object AnchorComponentProvider: IBlockComponentProvider {
     override fun getUid(): ResourceLocation = id
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
-        
+        (accessor.blockEntity as? SpatialAnchorBE)?.let {
+            it.owner?.let {
+                tooltip.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
+            }
+            it.id?.let {
+                tooltip.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
+            }
+        }
     }
 }
 
 class ChrononElement(val chronons: ChrononHandler): Element() {
-    companion object {
-        val bg = "power/background".tempadId
-        val bar = "power/overlay".tempadId
-    }
-
     init {
         size(Vec2(74f, 13f))
     }
@@ -76,20 +86,6 @@ class ChrononElement(val chronons: ChrononHandler): Element() {
     override fun getSize(): Vec2? = size
 
     override fun render(graphics: GuiGraphics, x: Float, y: Float, maxX: Float, maxY: Float) {
-        graphics.blitSprite(bg, x.toInt(), y.toInt(), 74, 13)
-        val uWidth = ((chronons.power.toFloat() / chronons.maxPower) * 72).roundToInt()
-        graphics.blitSprite(bar, 72, 11, 0, 0, x.toInt() + 1, y.toInt() + 1, uWidth, 11)
-
-        val minecraft = Minecraft.getInstance()
-        val text = "${chronons.power}/${chronons.maxPower}"
-        val xOffset = (74 - minecraft.font.width(text)) / 2
-        RenderUtils.createScissor(minecraft, graphics, x.toInt() + 1, y.toInt() + 1, uWidth, 11).use {
-            graphics.drawString(minecraft.font, text, x.toInt() + xOffset, y.toInt() + 3,
-                0xFF000000.toInt(), false)
-        }
-        RenderUtils.createScissor(minecraft, graphics, x.toInt() + 1 + uWidth, y.toInt() + 1, 72 - uWidth, 11).use {
-            graphics.drawString(minecraft.font, text, x.toInt() + xOffset, y.toInt() + 3,
-                ChatFormatting.GOLD.color ?: 0, false)
-        }
+        TempadUI.renderEnergyBar(graphics, Minecraft.getInstance().font, x.toInt(), y.toInt(), chronons.power, chronons.maxPower)
     }
 }

@@ -24,9 +24,6 @@ import net.minecraft.world.level.block.state.BlockState
 import java.util.*
 
 class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties().stacksTo(1)) {
-    companion object {
-    }
-
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (level.isClientSide) return InteractionResultHolder.success(player.getItemInHand(usedHand))
         val ctx = player.ctx(usedHand.getSlot(player))

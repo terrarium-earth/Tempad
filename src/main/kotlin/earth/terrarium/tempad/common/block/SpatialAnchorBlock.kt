@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec
 import com.teamresourceful.resourcefullib.common.color.ConstantColors
 import com.teamresourceful.resourcefullibkt.common.id
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
 import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
 import earth.terrarium.tempad.common.registries.*
@@ -15,6 +14,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
@@ -129,7 +129,7 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
     ): InteractionResult {
         if (level.isClientSide) return InteractionResult.sidedSuccess(level.isClientSide)
         (level.getBlockEntity(pos) as? SpatialAnchorBE)?.let {
-            OpenSpatialAnchor(pos, it.color, it.name.string, it.accessId).sendToClient(player)
+            OpenSpatialAnchor(pos, it.color, it.posName.string, it.accessId).sendToClient(player)
         }
         return InteractionResult.sidedSuccess(level.isClientSide)
     }
@@ -139,7 +139,7 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
             ModItems.spatialAnchor.stack {
                 (params.getParameter(LootContextParams.BLOCK_ENTITY) as? SpatialAnchorBE)?.let {
                     color = it.color
-                    set(DataComponents.CUSTOM_NAME, it.name)
+                    set(DataComponents.CUSTOM_NAME, it.posName)
                     anchorId = it.id
                     owner = it.owner
                 }

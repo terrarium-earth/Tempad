@@ -32,7 +32,7 @@ data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name
         override fun onReceive(packet: UpdateAnchorPacket, player: Player) {
             (player.level().getBlockEntity(packet.blockPos) as? SpatialAnchorBE)?.let {
                 it.color = packet.color
-                it.name = Component.literal(packet.name)
+                it.posName = Component.literal(packet.name)
                 it.accessId = packet.access
                 it.setChanged()
             }

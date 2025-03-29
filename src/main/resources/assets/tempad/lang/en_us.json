@@ -163,7 +163,8 @@
   "marker.tempad.dimension_exit": "Left dimension at",
   "marker.tempad.dimension_enter": "Entered dimension at",
 
-  "config.jade.plugin_tempad.timedoor": "Tempad",
+  "config.jade.plugin_tempad.timedoor": "Timedoor",
+  "config.jade.plugin_tempad.anchor": "Spatial Anchor",
   "jade.tempad.will_close": "Closing in %s seconds",
   "jade.tempad.closing": "Closing...",
   "jade.tempad.pos": "Teleporting to %s at %s",

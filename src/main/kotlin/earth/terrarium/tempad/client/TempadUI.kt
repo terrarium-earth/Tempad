@@ -1,5 +1,7 @@
 package earth.terrarium.tempad.client
 
+import com.teamresourceful.resourcefullib.client.utils.RenderUtils
+import com.teamresourceful.resourcefullibkt.client.scissor
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRendererContext
@@ -9,18 +11,19 @@ import earth.terrarium.olympus.client.components.renderers.ColorableWidget
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.components.textbox.TextBox
 import earth.terrarium.olympus.client.constants.MinecraftColors
-import earth.terrarium.olympus.client.ui.UIConstants
 import earth.terrarium.olympus.client.utils.State
 import earth.terrarium.olympus.client.utils.StateUtils
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
+import net.minecraft.ChatFormatting
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.network.chat.Component
-import org.apache.commons.lang3.math.NumberUtils.toFloat
-import org.openjdk.nashorn.internal.runtime.JSType.toDouble
 import java.util.function.Consumer
+import kotlin.math.roundToInt
 
 object TempadUI {
     val button = WidgetSprites("button/normal".tempadId, "button/disabled".tempadId, "button/hover".tempadId)
@@ -29,6 +32,9 @@ object TempadUI {
 
     val toggleEnabled = WidgetSprites("toggle/enabled/normal".tempadId, "toggle/enabled/disabled".tempadId, "toggle/enabled/hover".tempadId)
     val toggleDisabled = WidgetSprites("toggle/disabled/normal".tempadId, "toggle/disabled/disabled".tempadId, "toggle/disabled/hover".tempadId)
+
+    val powerBg = "power/background".tempadId
+    val powerBar = "power/overlay".tempadId
 
     fun <T: AbstractWidget, W> W.colored(): WidgetRenderer<T> where W: WidgetRenderer<T>, W: ColorableWidget  {
         return WidgetRenderers.withColors(this, Tempad.DARK_ORANGE, Tempad.ORANGE, Tempad.HIGHLIGHTED_ORANGE)
@@ -91,6 +97,25 @@ object TempadUI {
             it.withTexture(element)
             it.withTextColor(Tempad.ORANGE)
             modify(it)
+        }
+    }
+
+    fun renderEnergyBar(graphics: GuiGraphics, font: Font, x: Int, y: Int, power: Int, maxPower: Int) {
+        graphics.blitSprite(powerBg, x, y, 74, 13)
+        val uWidth = ((power.toFloat() / maxPower) * 72).roundToInt()
+        graphics.blitSprite(powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
+
+        val text = if(power == -1) Component.translatable("item.tempad.sacred_chronometer.infinite") else Component.literal("${power}/${maxPower}")
+        val xOffset = (74 - font.width(text)) / 2
+
+        graphics.flush()
+
+        RenderUtils.createScissor(Minecraft.getInstance(), graphics, x + 1, y + 1, uWidth, 11).use {
+            graphics.drawString(font, text, x + xOffset, y + 3, 0xFF000000.toInt(), false)
+        }
+
+        RenderUtils.createScissor(Minecraft.getInstance(), graphics, x + 1 + uWidth, y + 1, 72 - uWidth, 11).use {
+            graphics.drawString(font, text, x + xOffset, y + 3, ChatFormatting.GOLD.color ?: 0, false)
         }
     }
 }
