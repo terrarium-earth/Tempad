@@ -15,11 +15,20 @@ import earth.terrarium.tempad.common.registries.enabled
 import earth.terrarium.tempad.common.registries.playerPoints
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
+import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import java.util.UUID
 
-data class PlayerPointsData(val data: MutableMap<UUID, MutableMap<UUID, NamedGlobalVec3>>) {
+class PlayerPointsData(data: Map<UUID, Map<UUID, NamedGlobalVec3>>) {
+    val data = mutableMapOf<UUID, MutableMap<UUID, NamedGlobalVec3>>()
+
+    init {
+        for ((id, values) in data) {
+            this.data[id] = values.toMutableMap()
+        }
+    }
+
     companion object {
         val codec: Codec<PlayerPointsData> = Codec.unboundedMap<UUID, MutableMap<UUID, NamedGlobalVec3>>(UUIDUtil.STRING_CODEC, Codec.unboundedMap<UUID, NamedGlobalVec3>(UUIDUtil.STRING_CODEC, NamedGlobalVec3.CODEC.codec())).xmap(::PlayerPointsData, PlayerPointsData::data)
     }
