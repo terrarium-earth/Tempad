@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.client.screen.tempad
+package earth.terrarium.tempad.client.screen.time_twister
 
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.systems.RenderSystem
@@ -23,9 +23,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import org.joml.Vector2f
 import java.util.Date
-import kotlin.collections.toList
-import kotlin.let
-import kotlin.ranges.until
 
 class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: ContextHolder<*>) : Screen(CommonComponents.EMPTY) {
     companion object {
@@ -211,7 +208,7 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
                                 append(history.dimension.component)
                             }.visualOrderText,
                             history.pos.component.visualOrderText,
-                            Component.literal(TimelineEntry.dateFormat.format(date)).visualOrderText
+                            Component.literal(TimelineEntry.Companion.dateFormat.format(date)).visualOrderText
                         )
                     )
                 }

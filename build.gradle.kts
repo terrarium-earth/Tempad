@@ -108,10 +108,12 @@ dependencies {
     }
 
     compileOnly(group = "curse.maven", name = "ftb-teams-forge-404468", version = "5631446")
+    compileOnly(group = "curse.maven", name = "dark-mode-everywhere-574123", version = "5922655")
 
     implementation(group = "earth.terrarium.common_storage_lib", name = "common-storage-lib-data-neoforge-$minecraftVersion", version = "0.0.1") {
         isTransitive = false
     }.let { jarJar(it) }
+
 }
 
 java {

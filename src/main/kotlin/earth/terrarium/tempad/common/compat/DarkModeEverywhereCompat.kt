@@ -1,0 +1,25 @@
+package earth.terrarium.tempad.common.compat
+
+import earth.terrarium.tempad.Tempad
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.InterModComms
+import net.neoforged.fml.ModList
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
+
+@EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
+object DarkModeEverywhereCompat {
+    @JvmStatic @SubscribeEvent
+    fun sendIMC(event: FMLClientSetupEvent) {
+        if (!ModList.get().isLoaded("dark-mode-everywhere")) return
+        val blacklist = listOf(
+            { "tempad" },
+            { "olympus" }
+        )
+
+        for (screen in blacklist) {
+            InterModComms.sendTo("dark-mode-everywhere", "dme-shaderblacklist", screen)
+        }
+    }
+}
