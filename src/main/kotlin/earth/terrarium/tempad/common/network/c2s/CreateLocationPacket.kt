@@ -9,8 +9,8 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.registries.savedPositions
 import earth.terrarium.tempad.common.utils.COLOR_BYTE_CODEC
 import net.minecraft.network.chat.Component
 
@@ -26,7 +26,7 @@ data class CreateLocationPacket(val name: String, val color: Color, val ctx: Con
             ),
             NetworkHandle.handle { message, player ->
                 if ({ message.ctx.getCtx(player).stack.item === ModItems.tempad } !in player.inventory) return@handle
-                player.savedPositions += NamedGlobalVec3(
+                DefaultLocationHandler(player.gameProfile) += NamedGlobalVec3(
                     Component.literal(message.name),
                     player.position(),
                     player.level().dimension(),

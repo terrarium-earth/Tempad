@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.location_handlers
 
 import com.mojang.authlib.GameProfile
+import com.mojang.serialization.Codec
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.api.locations.IndirectLocation
@@ -11,10 +12,22 @@ import earth.terrarium.tempad.api.locations.namedGlobalVec3
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.enabled
+import earth.terrarium.tempad.common.registries.playerPoints
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
+import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import java.util.UUID
+
+data class PlayerPointsData(val data: MutableMap<UUID, MutableMap<UUID, NamedGlobalVec3>>) {
+    companion object {
+        val codec: Codec<PlayerPointsData> = Codec.unboundedMap<UUID, MutableMap<UUID, NamedGlobalVec3>>(UUIDUtil.STRING_CODEC, Codec.unboundedMap<UUID, NamedGlobalVec3>(UUIDUtil.STRING_CODEC, NamedGlobalVec3.CODEC.codec())).xmap(::PlayerPointsData, PlayerPointsData::data)
+    }
+
+    operator fun get(playerId: UUID): MutableMap<UUID, NamedGlobalVec3> {
+        return data.getOrPut(playerId) { mutableMapOf() }
+    }
+}
 
 class PlayerHandler(val player: GameProfile, val upgrades: UpgradeHandler) : LocationHandler {
     override val locations: Map<UUID, NamedGlobalVec3>

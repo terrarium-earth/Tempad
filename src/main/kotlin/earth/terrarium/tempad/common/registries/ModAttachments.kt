@@ -17,14 +17,13 @@ import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.location_handlers.AnchorPointsData
+import earth.terrarium.tempad.common.location_handlers.PlayerPointsData
 import earth.terrarium.tempad.common.utils.*
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.level.Level
-import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.NeoForgeRegistries
@@ -33,13 +32,6 @@ import java.util.UUID
 object ModAttachments {
     val registry: ResourcefulRegistry<AttachmentType<*>> = ResourcefulRegistries.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tempad.MOD_ID)
     val syncer: ResourcefulRegistry<DataSyncSerializer<*>> = ResourcefulRegistries.create(NeoDataLib.SYNC_SERIALIZERS, Tempad.MOD_ID)
-
-    val locations: AttachmentType<NamedGlobalPosAttachment> by registry.register("saved_positions") {
-        attachmentType(::NamedGlobalPosAttachment) {
-            codec = NamedGlobalPosAttachment.CODEC
-            copyOnDeath()
-        }
-    }
 
     val pinnedLocation: AttachmentType<FavoriteLocationAttachment> by registry.register("pinned_location") {
         attachmentType(::FavoriteLocationAttachment) {
@@ -100,12 +92,18 @@ object ModAttachments {
     }
 
     val anchorPoints: AttachmentType<AnchorPointsData> by registry.register("anchor_points") {
-        attachmentType({ AnchorPointsData(emptyMap()) }) {
+        attachmentType({ AnchorPointsData(mutableMapOf()) }) {
             codec = AnchorPointsData.codec
         }
     }
 
-    val portalTarget: AttachmentType<LocationGetter> by registry.register("") {
+    val playerPoints: AttachmentType<PlayerPointsData> by registry.register("player_points") {
+        attachmentType({ PlayerPointsData(mutableMapOf()) }) {
+            codec = PlayerPointsData.codec
+        }
+    }
+
+    val portalTarget: AttachmentType<LocationGetter> by registry.register("portal_target") {
         attachmentType({ DirectLocation(NamedGlobalVec3.nowhere) }) {
             codec = LocationGetter.codec
         }
@@ -113,7 +111,6 @@ object ModAttachments {
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
-var AttachmentHolder.savedPositions by ModAttachments.locations
 var AttachmentHolder.travelHistory by ModAttachments.travelHistory
 var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLastTimedoor.optional()
 
@@ -125,3 +122,4 @@ var AttachmentHolder.accessId by ModAttachments.access
 var AttachmentHolder.portalTarget by ModAttachments.portalTarget.optional()
 
 val anchorPoints by ModAttachments.anchorPoints.serverData
+val playerPoints by ModAttachments.playerPoints.serverData
