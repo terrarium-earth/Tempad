@@ -134,6 +134,7 @@
   "access.tempad.guild": "Guild",
   "access.tempad.party": "Party",
   "access.tempad.guild_or_party": "Guild or Party",
+  "access.tempad.ftb": "Team",
 
   "app.tempad.tp_to.teleport": "Teleport",
   "app.tempad.tp_to.selected": "Selected",
@@ -150,7 +151,7 @@
   "app.tempad.portal_setup.upright": "Is upright: ",
 
   "provider.tempad.default": "On Device",
-  "provider.tempad.warps": "From Warps",
+  "provider.tempad.spatial_anchors": "Spatial Anchors",
   "provider.tempad.player": "Players",
 
   "macro.tempad.default": "Open Fav",

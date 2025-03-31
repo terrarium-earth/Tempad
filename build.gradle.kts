@@ -112,10 +112,6 @@ dependencies {
     implementation(group = "earth.terrarium.common_storage_lib", name = "common-storage-lib-data-neoforge-$minecraftVersion", version = "0.0.1") {
         isTransitive = false
     }.let { jarJar(it) }
-
-    implementation(compactmods.bundles.gander)
-    accessTransformer(compactmods.ganderRendering)
-    jarJar(compactmods.bundles.gander)
 }
 
 java {
