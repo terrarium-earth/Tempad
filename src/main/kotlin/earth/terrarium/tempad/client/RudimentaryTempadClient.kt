@@ -12,6 +12,6 @@ object RudimentaryTempadClient: IClientItemExtensions {
         hand: InteractionHand,
         itemStack: ItemStack,
     ): HumanoidModel.ArmPose? {
-        return super.getArmPose(entityLiving, hand, itemStack)
+        return ModEnums.rudimentaryTempadPos.value
     }
 }

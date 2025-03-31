@@ -62,7 +62,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
                 .withColor(Tempad.ORANGE)
                 .withLeftAlignment()
                 .withShadow()
-                .withSize(200, 11),
+                .withSize(78, 11),
             Layouts.row().withGap(2).withChildren(
                 Widgets.text(Component.translatable("app.tempad.portal_setup.left_right"))
                     .withColor(Tempad.ORANGE)
@@ -122,8 +122,10 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
         addRenderableWidget(Widgets.textInput(search) {
             it.withTexture(TempadUI.element)
             it.withTextColor(Tempad.ORANGE)
-            it.withSize(109, 16)
+            it.withPlaceholder("Search...")
+            it.withPlaceholderColor(Tempad.DARK_ORANGE)
             it.withPosition(localLeft + 84, localTop + 18)
+            it.withSize(109, 16)
         })
 
         locationList = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {

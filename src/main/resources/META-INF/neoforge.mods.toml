@@ -12,6 +12,7 @@ logoFile = "icon.png"
 authors = "CodexAdrian"
 credits = "MsRandom1, ThatGravyBoat, Kekie6, AlexNijjar, ShrimpPixels, Jooosh, abused_master"
 description = "Create a portal to anywhere from anywhere!"
+enumExtensions="META-INF/enumextensions.json"
 
 [[dependencies.tempad]]
 modId = "neoforge"

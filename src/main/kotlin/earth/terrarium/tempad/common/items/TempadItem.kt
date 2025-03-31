@@ -92,8 +92,6 @@ class TempadItem : ChrononItem() {
         return super.overrideOtherStackedOnMe(stack, other, slot, action, player, access)
     }
 
-    override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean = false
-
     override fun appendHoverText(
         stack: ItemStack,
         context: TooltipContext,

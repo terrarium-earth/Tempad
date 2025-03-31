@@ -35,12 +35,15 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
                             model(getBuilder(path).apply {
                                 parent(ModelFile.UncheckedModelFile("item/generated"))
 
+                                var layer = 0
                                 texture("layer0", "item/tempad/base${if (attached == 1f) "_with_twister" else ""}".tempadId)
+
                                 if (inUse == 1f) {
-                                    texture("layer1", "item/tempad/screen_on".tempadId)
+                                    texture("layer" + ++layer, "item/tempad/screen_on".tempadId)
                                 }
+
                                 if (charge > 0) {
-                                    texture("layer2", "item/tempad/charge_${index}")
+                                    texture("layer"+ ++layer, "item/tempad/charge_${index}")
                                 }
                             })
                         }

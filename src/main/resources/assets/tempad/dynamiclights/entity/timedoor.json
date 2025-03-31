@@ -1,0 +1,6 @@
+{
+    "match": {
+        "type": "tempad:timedoor"
+    },
+    "luminance": 8
+}

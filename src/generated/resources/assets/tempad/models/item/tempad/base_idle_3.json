@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "tempad:item/tempad/base",
-    "layer2": "tempad:item/tempad/charge_3"
+    "layer1": "tempad:item/tempad/charge_3"
   }
 }

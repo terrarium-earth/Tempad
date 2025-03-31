@@ -3,10 +3,13 @@ package earth.terrarium.tempad.client.screen.tempad
 import com.mojang.blaze3d.systems.RenderSystem
 import com.teamresourceful.resourcefullib.client.components.selection.SelectionList
 import com.teamresourceful.resourcefullib.client.screens.AbstractContainerCursorScreen
+import com.teamresourceful.resourcefullib.client.utils.ScreenUtils
 import earth.terrarium.olympus.client.components.textbox.TextBox
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.client.TempadUI.powerBar
 import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.c2s.RedirectAppPacket
@@ -29,7 +32,8 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
     var localTop: Int = 0
 
     companion object {
-        val SPRITE = "screen/tempad".tempadId
+        val backgrouind = "screen/tempad".tempadId
+        val power = "power/overlay_vertical".tempadId
     }
 
     override fun init() {
@@ -49,10 +53,18 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        graphics.blitSprite(SPRITE, this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+        graphics.blitSprite(backgrouind, this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
         appSprite?.let {
             RenderSystem.enableBlend()
             graphics.blitSprite(it, this.leftPos + 30, this.topPos + 20, 198, 118)
+        }
+        menu.ctx.stack.chronons?.let {
+            val height = ((it.power.toFloat() / it.maxPower) * 54).toInt()
+            graphics.blitSprite(power, 6, 54, 0, 54 - height, localLeft + 207, localTop + 32 + 54 - height, 6, height)
+
+            if (mouseX >= localLeft + 207 && mouseX <= localLeft + 211 && mouseY >= localTop + 32 && mouseY <= localTop + 86) {
+                ScreenUtils.setTooltip(Component.literal("${it.power}/${it.maxPower}"))
+            }
         }
     }
 

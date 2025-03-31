@@ -14,6 +14,7 @@ import earth.terrarium.tempad.api.tva_device.impl.TempadChrononHandler
 import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.config.CommonConfig
+import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.register
@@ -91,7 +92,7 @@ class Tempad(bus: IEventBus) {
             val upgradeBlocks = event.register(UpgradeHandler.block)
 
             chrononBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
-                BlockChrononHandler(it, 4000)
+                BlockChrononHandler(it, CommonConfigCache.RudimentaryTempad.capacity)
             }
 
             chrononBlocks[ModBlocks.workstationBE] = { it, _ ->
@@ -99,23 +100,27 @@ class Tempad(bus: IEventBus) {
             }
 
             chrononItems[ModItems.rudimentaryTempad] = { it, _ ->
-                ItemChrononHandler(it, 4000)
+                ItemChrononHandler(it, CommonConfigCache.RudimentaryTempad.capacity)
             }
 
             chrononItems[ModItems.timeTwister] = { it, _ ->
-                ItemChrononHandler(it, 4000)
+                ItemChrononHandler(it, CommonConfigCache.TimeTwister.capacity)
             }
 
             chrononItems[ModItems.tempad] = { it, _ ->
-                TempadChrononHandler(it, 8000, 4000)
+                TempadChrononHandler(it, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
             }
 
             chrononItems[ModItems.capacitor] = { it, _ ->
-                ItemChrononHandler(it, 4000)
+                ItemChrononHandler(it, CommonConfigCache.Capacitor.capacity)
             }
 
-            chrononItems[ModItems.chronometer] = { it, _ ->
-                ItemChrononHandler(it, 32000)
+            chrononItems[ModItems.chronometer] = { stack, _ ->
+                CommonConfigCache.Chronometer.capacity.let {
+                    if (it > 0) {
+                        ItemChrononHandler(stack, it)
+                    } else null
+                }
             }
 
             chrononItems[ModItems.sacredChronometer] = { _, _ ->

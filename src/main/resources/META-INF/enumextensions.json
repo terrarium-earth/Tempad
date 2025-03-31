@@ -1,0 +1,13 @@
+{
+    "entries": [
+        {
+            "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+            "name": "TEMPAD_RUDIMENTARY_TEMPAD",
+            "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+            "parameters": {
+                "class": "earth/terrarium/tempad/client/ModEnums",
+                "field": "rudimentaryTempadPos"
+            }
+        }
+    ]
+}

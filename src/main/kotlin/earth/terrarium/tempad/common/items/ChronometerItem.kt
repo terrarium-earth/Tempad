@@ -5,6 +5,7 @@ import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.hasRoom
 import earth.terrarium.tempad.api.tva_device.move
+import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.registries.ModTags
 import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.contents
@@ -19,8 +20,16 @@ import net.minecraft.world.level.Level
 class ChronometerItem : CapacitorItem() {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         super.inventoryTick(stack, level, entity, slot, selected)
-        if (level.isClientSide || entity.tickCount % 24 != 0 || cannotDistribute(entity, stack)) return // 1 mb every 1.2 seconds, 1 bucket per day
+        if (level.isClientSide || entity.tickCount % CommonConfig.Chronometer.generationRate != 0 || cannotDistribute(entity, stack)) return // 1 mb every 1.2 seconds, 1 bucket per day
         stack.chronons?.insert(1, ActionType.Execute)
-        distribute(entity as Player, stack)
+        if (stack.chronons != null) {
+            distribute(entity as Player, stack)
+        } else {
+            ContextRegistry.locate(entity as Player) {
+                it.chronons?.hasRoom == true && it !== stack
+            }?.let {
+                it.stack.chronons?.insert(1, ActionType.Execute)
+            }
+        }
     }
 }

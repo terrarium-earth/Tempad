@@ -209,7 +209,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData(builder: SynchedEntityData.Builder) {
-        builder.define(CLOSING_TIME, CommonConfig.TimeDoor.idleAfterEnter)
+        builder.define(CLOSING_TIME, CommonConfig.TimeDoor.timeInWorld)
         builder.define(COLOR, Tempad.ORANGE)
         builder.define(TARGET_POS, Vec3.ZERO)
         builder.define(TARGET_DIMENSION, Level.OVERWORLD)

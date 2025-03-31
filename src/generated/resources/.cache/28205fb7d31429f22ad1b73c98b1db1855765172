@@ -1,4 +1,4 @@
-// 1.21	2025-03-25T11:14:25.51351	Item Models: tempad
+// 1.21.1	2025-03-30T14:44:56.009819	Item Models: tempad
 dc600fb9e31ac7c3cc9819eb29ce7c1c3ee441fa assets/tempad/models/item/capacitor.json
 62fe58ae979316216ab868341c7663b3a7cd7e19 assets/tempad/models/item/capacitor_0.json
 1397b96851940d6d61555f6bdeaa132458bbb3ca assets/tempad/models/item/capacitor_1.json
@@ -22,17 +22,17 @@ bb86681c0759421fad79939149add7a2ff00f026 assets/tempad/models/item/rudimentary_t
 cddb176271a6ca71ffff8b198dbae306fb5910d0 assets/tempad/models/item/status_emitter_enabled.json
 fb0bc39d28d65dc627aee6391afc8cfdb98d383d assets/tempad/models/item/tempad.json
 2db9c2f6ab8a412b41107e2d1155e2790e6ba47d assets/tempad/models/item/tempad/attached_idle_0.json
-a6764bfdd5412c7e770b979812260b8c3a7c9e10 assets/tempad/models/item/tempad/attached_idle_1.json
-d93eedaa4b6b4e5ecb66a45d9e1d75d121face28 assets/tempad/models/item/tempad/attached_idle_2.json
-faf6b816061bf0b85e13513575eca1269fe7ed1e assets/tempad/models/item/tempad/attached_idle_3.json
+1e736ecce1c1978fc33ab672b5b8ae5b43589c77 assets/tempad/models/item/tempad/attached_idle_1.json
+db518cd8a1dcec50856a928d7e44d09df7a46658 assets/tempad/models/item/tempad/attached_idle_2.json
+4c187fa159dfee993d0008e34e6225482e00597a assets/tempad/models/item/tempad/attached_idle_3.json
 a04d9f6dd658cb1b5c65d4897556e451a3b9004b assets/tempad/models/item/tempad/attached_in_use_0.json
 f31e96dd6730a54c309af3628e39b1f7718867c4 assets/tempad/models/item/tempad/attached_in_use_1.json
 17cf3e7c409bed28eb9044bbfe7f1c305bb6f2d2 assets/tempad/models/item/tempad/attached_in_use_2.json
 3708d3b90c46ae1cd66a14965039b6c39e4131d3 assets/tempad/models/item/tempad/attached_in_use_3.json
 76bedc41fef25db9456e7446eb4cc521cfe36920 assets/tempad/models/item/tempad/base_idle_0.json
-dd41f855de3b860b2e4de106bfae68a548705a0c assets/tempad/models/item/tempad/base_idle_1.json
-3c61910892b55be947b154e482269737ec805bff assets/tempad/models/item/tempad/base_idle_2.json
-204e94e5746c6f028270c60e852c0333b28a4a35 assets/tempad/models/item/tempad/base_idle_3.json
+25324989d7f0c3644218222b31590dacd7bbec64 assets/tempad/models/item/tempad/base_idle_1.json
+f33c041ce8fdbfb4ab44fd13e82105a281e00109 assets/tempad/models/item/tempad/base_idle_2.json
+34428fb467c17a204e34d1081569d274a6ac20a1 assets/tempad/models/item/tempad/base_idle_3.json
 5c32fd417a7fd74446ffbf7a2d6f4a4ad6751701 assets/tempad/models/item/tempad/base_in_use_0.json
 5e664209ef686a0aeb7e23c4504e555785788850 assets/tempad/models/item/tempad/base_in_use_1.json
 90f82972ef92ca2c814ad2879d75c846a50813ea assets/tempad/models/item/tempad/base_in_use_2.json

@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm") version "2.0.20"
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("net.neoforged.gradle.userdev") version "7.0.153"
+    id("net.neoforged.gradle.userdev") version "7.0.182"
     id("io.github.0ffz.github-packages") version "1.2.1"
 }
 
@@ -55,6 +55,7 @@ dependencies {
     val jadeVersion: String by project
     val jeiVersion: String by project
     val arsNouveauVersion: String by project
+    val lambdaDynamicLights: String by project
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
@@ -95,13 +96,14 @@ dependencies {
     runtimeOnly("vazkii.patchouli:Patchouli:${patchouliVersion}")
 
     implementation("maven.modrinth:jade:$jadeVersion")
+    implementation("maven.modrinth:lambdynamiclights-unofficial-neoforge:$lambdaDynamicLights")
 
     // compile against the JEI API but do not include it at runtime
     compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
     // at runtime, use the full JEI jar for NeoForge
     runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
 
-    implementation("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}.0:${arsNouveauVersion}") {
+    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}.0:${arsNouveauVersion}") {
         exclude(group = "curse.maven")
     }
 

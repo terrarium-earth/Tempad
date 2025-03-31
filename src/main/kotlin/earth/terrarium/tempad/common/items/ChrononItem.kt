@@ -16,7 +16,7 @@ import java.util.*
 
 abstract class ChrononItem: Item(Properties().stacksTo(1)) {
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
-        return Optional.of(stack.chronons!!.tooltip)
+        return Optional.ofNullable(stack.chronons?.tooltip)
     }
 
     fun cannotDistribute(entity: Entity, stack: ItemStack): Boolean {
@@ -31,5 +31,9 @@ abstract class ChrononItem: Item(Properties().stacksTo(1)) {
                 move(from, to, Int.MAX_VALUE)
             }
         }
+    }
+
+    override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean {
+        return false
     }
 }

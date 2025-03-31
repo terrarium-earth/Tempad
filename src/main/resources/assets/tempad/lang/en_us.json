@@ -72,6 +72,8 @@
   "block.tempad.workstation": "Workstation",
   "block.tempad.workstation_child": "Workstation Terminal",
 
+  "block.tempad.spatial.anchor.owner_mismatch": "Error: User != Anchor Owner. Return to owner or Reset anchor",
+
   "fluid_type.tempad.chronon": "Chronon",
 
   "fuel.tempad.empty": "Empty",

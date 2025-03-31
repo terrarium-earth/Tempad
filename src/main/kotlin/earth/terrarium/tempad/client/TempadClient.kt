@@ -10,6 +10,7 @@ import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClien
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.DirectLocation
 import earth.terrarium.tempad.api.locations.IndirectLocation
+import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.block.SpatialAnchorRenderer
 import earth.terrarium.tempad.client.block.WorkstationRenderer
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
@@ -26,7 +27,6 @@ import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
 import earth.terrarium.tempad.common.registries.*
-import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.vanillaId
 import earth.terrarium.tempad.tempadId
@@ -52,12 +52,12 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.ModList
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
-import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
 import net.neoforged.neoforge.client.event.RenderTooltipEvent
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
 import net.neoforged.neoforge.common.NeoForge
 import java.io.IOException
 
@@ -101,9 +101,14 @@ object TempadClient {
         return@BooleanItemPropertyFunction menu.ctx.stack === stack
     }
 
-    val chargeProperty = ClampedItemPropertyFunction { stack, level, entity, seed ->
-        val tank = stack[Capabilities.FluidHandler.ITEM] ?: return@ClampedItemPropertyFunction 0f
-        step(tank.getFluidInTank(0).amount.toFloat() / tank.getTankCapacity(0), 0.33f)
+    val charge3Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
+        val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
+        return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.33f)
+    }
+
+    val charge4Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
+        val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
+        return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.25f)
     }
 
     val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.portalTarget != null }
@@ -130,7 +135,7 @@ object TempadClient {
     }
 
     fun step(value: Float, step: Float): Float {
-        if (value >= 0.9) return 1f
+        if (value >= 0.98f) return 1f
         return value - value % step
     }
 
@@ -146,9 +151,9 @@ object TempadClient {
         EntityRenderers.register(ModEntities.TIMEDOOR_ENTITY, ::TimedoorRenderer)
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
         ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
-        ItemProperties.register(ModItems.tempad, "charge".tempadId, chargeProperty)
-        ItemProperties.register(ModItems.capacitor, "charge".tempadId, chargeProperty)
-        ItemProperties.register(ModItems.chronometer, "charge".tempadId, chargeProperty)
+        ItemProperties.register(ModItems.tempad, "charge".tempadId, charge3Property)
+        ItemProperties.register(ModItems.capacitor, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge3Property)
         ItemProperties.register(ModItems.statusEmitter, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
         ItemProperties.register(ModItems.rudimentaryTempad, "has_card".tempadId, writtenProperty)
@@ -221,5 +226,11 @@ object TempadClient {
 
     fun openSpatialAnchorScreen(packet: OpenSpatialAnchor) {
         Minecraft.getInstance().setScreen(SpatialAnchorScreen(packet.blockPos, packet.name, packet.color, packet.access))
+    }
+
+    @SubscribeEvent
+    @JvmStatic
+    fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
+        event.registerItem(RudimentaryTempadClient, ModItems.rudimentaryTempad)
     }
 }
