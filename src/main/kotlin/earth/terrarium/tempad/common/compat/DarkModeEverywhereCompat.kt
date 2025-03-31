@@ -12,14 +12,13 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 object DarkModeEverywhereCompat {
     @JvmStatic @SubscribeEvent
     fun sendIMC(event: FMLClientSetupEvent) {
-        if (!ModList.get().isLoaded("dark-mode-everywhere")) return
         val blacklist = listOf(
             { "tempad" },
             { "olympus" }
         )
 
         for (screen in blacklist) {
-            InterModComms.sendTo("dark-mode-everywhere", "dme-shaderblacklist", screen)
+            InterModComms.sendTo("darkmodeeverywhere", "dme-shaderblacklist", screen)
         }
     }
 }
