@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
+import net.neoforged.neoforge.client.model.generators.ModelBuilder
 import net.neoforged.neoforge.client.model.generators.ModelFile
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 
@@ -34,12 +35,15 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
                             model(getBuilder(path).apply {
                                 parent(ModelFile.UncheckedModelFile("item/generated"))
 
+                                var layer = 0
                                 texture("layer0", "item/tempad/base${if (attached == 1f) "_with_twister" else ""}".tempadId)
+
                                 if (inUse == 1f) {
-                                    texture("layer1", "item/tempad/screen_on".tempadId)
+                                    texture("layer" + ++layer, "item/tempad/screen_on".tempadId)
                                 }
+
                                 if (charge > 0) {
-                                    texture("layer2", "item/tempad/charge_${index}")
+                                    texture("layer"+ ++layer, "item/tempad/charge_${index}")
                                 }
                             })
                         }
@@ -49,37 +53,54 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         }
 
         basicItem(ModItems.chronometer).apply {
-            for ((index, charge) in arrayOf(0.33f, 0.66f, 1f).withIndex()) {
+            for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
                 override().apply {
                     predicate("charge".tempadId, charge)
 
-                    model(getBuilder("tempad:chronometer_${index + 1}").apply {
+                    model(getBuilder("tempad:chronometer_${index}").apply {
                         parent(ModelFile.UncheckedModelFile("item/generated"))
 
                         texture("layer0", "tempad:item/chronometer")
-                        texture("layer1", "tempad:item/chronometer/charge_${index + 1}")
+                        if (index > 0) texture("layer1", "tempad:item/chronometer/charge_${index}")
                     })
                 }
             }
         }
 
-        enablableItem(ModItems.statusEmitter)
+        basicItem(ModItems.capacitor).apply {
+            for ((index, charge) in arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f).withIndex()) {
+                override().apply {
+                    predicate("charge".tempadId, charge)
+
+                    model(getBuilder("tempad:capacitor_${index}").apply {
+                        parent(ModelFile.UncheckedModelFile("item/generated"))
+
+                        texture("layer0", "tempad:item/capacitor/charge_${index}")
+                    })
+                }
+            }
+        }
+
+        basicItem(ModItems.statusEmitter).booleanProp("enabled")
+        basicItem(ModItems.locationCard).booleanProp("written")
+        withExistingParent("tempad:item/rudimentary_tempad", "tempad:block/rudimentary_tempad_off")
+            .override()
+            .predicate("has_card".tempadId, 1f)
+            .model(withExistingParent("tempad:item/rudimentary_tempad_with_card", "tempad:block/rudimentary_tempad_off_with_card"))
 
         basicItem(ModItems.timeTwister)
         basicItem(ModItems.newLocationUpgrade)
         basicItem(ModItems.playerTeleportUpgrade)
+        basicItem(ModItems.inexorableAlloy)
+        basicItem(ModItems.sacredChronometer)
     }
 
-    fun enablableItem(item: Item): ItemModelBuilder {
-        val itemId = BuiltInRegistries.ITEM.getKey(item)
-        return getBuilder(itemId.toString())
-            .parent(ModelFile.UncheckedModelFile("item/generated"))
-            .texture("layer0", ResourceLocation.fromNamespaceAndPath(itemId.namespace, "item/" + itemId.path))
-            .override()
-            .predicate("enabled".tempadId, 1f)
-            .model(getBuilder(itemId.toString() + "_on").apply {
+    fun ItemModelBuilder.booleanProp(propName: String): ItemModelBuilder {
+        return this.override()
+            .predicate(propName.tempadId, 1f)
+            .model(getBuilder(this.location.toString() + "_$propName").apply {
                 parent(ModelFile.UncheckedModelFile("item/generated"))
-                texture("layer0", ResourceLocation.fromNamespaceAndPath(itemId.namespace, "item/${itemId.path}_on"))
+                texture("layer0", ResourceLocation.fromNamespaceAndPath(this.location.namespace, this.location.path))
             })
             .end()
     }

@@ -1,0 +1,11 @@
+{
+    "variants": {
+        "up=true": {
+            "model": "tempad:block/spatial_anchor"
+        },
+        "up=false": {
+            "model": "tempad:block/spatial_anchor",
+            "x": 180
+        }
+    }
+}

@@ -1,0 +1,185 @@
+package earth.terrarium.tempad.common.block
+
+import com.mojang.serialization.MapCodec
+import com.teamresourceful.resourcefullib.common.color.ConstantColors
+import com.teamresourceful.resourcefullibkt.common.id
+import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
+import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
+import earth.terrarium.tempad.common.registries.*
+import earth.terrarium.tempad.common.utils.contains
+import earth.terrarium.tempad.common.utils.sendToClient
+import earth.terrarium.tempad.common.utils.stack
+import net.minecraft.ChatFormatting
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.core.component.DataComponents
+import net.minecraft.core.registries.Registries
+import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.ItemInteractionResult
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.context.BlockPlaceContext
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.StateDefinition
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.storage.loot.LootParams
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
+import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.neoforge.common.Tags
+
+class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
+    companion object {
+        val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.spatialAnchor }
+        val upShape = Shapes.or(
+            box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
+            box(3.0, 3.0, 3.0, 13.0, 4.0, 13.0)
+        )
+
+        val downShape = Shapes.or(
+            box(0.0, 14.0, 0.0, 16.0, 16.0, 16.0),
+            box(3.0, 12.0, 3.0, 13.0, 13.0, 13.0)
+        )
+    }
+
+    init {
+        this.registerDefaultState(
+            stateDefinition.any().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH).setValue(BlockStateProperties.UP, true)
+        )
+    }
+
+    override fun appendHoverText(
+        stack: ItemStack,
+        context: Item.TooltipContext,
+        tooltipComponents: MutableList<Component?>,
+        tooltipFlag: TooltipFlag,
+    ) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
+        stack.owner?.let {
+            tooltipComponents.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
+        }
+        stack.anchorId?.let {
+            tooltipComponents.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
+        }
+    }
+
+    override fun useItemOn(
+        stack: ItemStack,
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hand: InteractionHand,
+        hitResult: BlockHitResult,
+    ): ItemInteractionResult {
+        if (stack.item === ModItems.locationCard) {
+            if (level.isClientSide) return ItemInteractionResult.sidedSuccess(level.isClientSide)
+            val blockEntity = level.getBlockEntity(pos) as SpatialAnchorBE
+            stack.portalTarget = AnchorPointsHandler(player.gameProfile).getSerializable(blockEntity.id!!)
+            return ItemInteractionResult.sidedSuccess(level.isClientSide)
+        }
+
+        val color = when (stack) {
+            in Tags.Items.DYES_RED -> ConstantColors.red
+            in Tags.Items.DYES_GREEN -> ConstantColors.green
+            in Tags.Items.DYES_BLUE -> ConstantColors.blue
+            in Tags.Items.DYES_YELLOW -> ConstantColors.yellow
+            in Tags.Items.DYES_BLACK -> ConstantColors.black
+            in Tags.Items.DYES_BROWN -> ConstantColors.brown
+            in Tags.Items.DYES_CYAN -> ConstantColors.cyan
+            in Tags.Items.DYES_GRAY -> ConstantColors.gray
+            in Tags.Items.DYES_LIGHT_BLUE -> ConstantColors.powderblue
+            in Tags.Items.DYES_LIGHT_GRAY -> ConstantColors.lightgray
+            in Tags.Items.DYES_LIME -> ConstantColors.lime
+            in Tags.Items.DYES_MAGENTA -> ConstantColors.magenta
+            in Tags.Items.DYES_ORANGE -> Tempad.ORANGE
+            in Tags.Items.DYES_PINK -> ConstantColors.pink
+            in Tags.Items.DYES_PURPLE -> ConstantColors.purple
+            in Tags.Items.DYES_WHITE -> ConstantColors.white
+            else -> return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
+        }
+
+        (level as? ServerLevel)?.getBlockEntity(pos)?.let {
+            it as SpatialAnchorBE
+            it.color = color
+            level.setBlockAndUpdate(pos, state)
+        }
+        return ItemInteractionResult.sidedSuccess(level.isClientSide)
+    }
+
+    override fun useWithoutItem(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hitResult: BlockHitResult,
+    ): InteractionResult {
+        if (level.isClientSide) return InteractionResult.sidedSuccess(level.isClientSide)
+        (level.getBlockEntity(pos) as? SpatialAnchorBE)?.let {
+            OpenSpatialAnchor(pos, it.color, it.posName.string, it.accessId).sendToClient(player)
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide)
+    }
+
+    override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
+        return mutableListOf(
+            ModItems.spatialAnchor.stack {
+                (params.getParameter(LootContextParams.BLOCK_ENTITY) as? SpatialAnchorBE)?.let {
+                    color = it.color
+                    set(DataComponents.CUSTOM_NAME, it.posName)
+                    anchorId = it.id
+                    owner = it.owner
+                }
+            }
+        )
+    }
+
+    override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, moved: Boolean) {
+        super.onPlace(state, level, pos, oldState, moved)
+        if (!level.isClientSide) (level.getBlockEntity(pos) as? SpatialAnchorBE)?.let { anchorPoints += it }
+    }
+
+    override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, moved: Boolean) {
+        level.getBlockEntity(pos)?.let {
+            (it as? SpatialAnchorBE)?.id?.let { posId -> anchorPoints -= posId }
+        }
+        super.onRemove(state, level, pos, newState, moved)
+    }
+
+    override fun codec(): MapCodec<out BaseEntityBlock> {
+        return codec
+    }
+
+    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = SpatialAnchorBE(pos, state)
+
+    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
+        builder.add(BlockStateProperties.HORIZONTAL_FACING).add(BlockStateProperties.UP)
+    }
+
+    override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
+        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite).setValue(
+            BlockStateProperties.UP, context.nearestLookingVerticalDirection == Direction.DOWN)
+    }
+
+    override fun getShape(
+        state: BlockState,
+        level: BlockGetter,
+        pos: BlockPos,
+        context: CollisionContext,
+    ): VoxelShape {
+        return if(state.getValue(BlockStateProperties.UP)) upShape else downShape
+    }
+}

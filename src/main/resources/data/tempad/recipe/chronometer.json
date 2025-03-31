@@ -1,28 +1,25 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "#T#",
-        "OCG",
-        "#B#"
+        "IGI",
+        "CTC",
+        "IAI"
     ],
     "key": {
-        "#": {
-            "item": "tempad:inexorable_alloy"
+        "I": {
+            "item": "minecraft:iron_ingot"
         },
         "T": {
-            "item": "minecraft:tinted_glass"
-        },
-        "C": {
             "item": "minecraft:clock"
         },
+        "C": {
+            "item": "tempad:capacitor"
+        },
         "G": {
+            "item": "minecraft:glass"
+        },
+        "A": {
             "item": "minecraft:golden_apple"
-        },
-        "O": {
-            "item": "minecraft:ominous_bottle"
-        },
-        "B": {
-            "item": "minecraft:blaze_rod"
         }
     },
     "result": {

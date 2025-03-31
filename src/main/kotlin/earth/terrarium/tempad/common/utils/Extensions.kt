@@ -14,8 +14,11 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.context.InventoryContext
 import earth.terrarium.tempad.common.registries.ModNetworking
 import net.minecraft.client.gui.components.WidgetSprites
+import net.minecraft.core.BlockPos
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.Holder
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtOps
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
@@ -34,10 +37,13 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -46,9 +52,11 @@ import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.SimpleFluidContent
+import net.neoforged.neoforge.items.ItemStackHandler
 import org.joml.Vector3f
 import java.util.*
 import java.util.function.Function
+import kotlin.jvm.optionals.getOrNull
 
 operator fun TagKey<EntityType<*>>.contains(entity: EntityType<*>): Boolean = entity.`is`(this)
 
@@ -179,14 +187,16 @@ val String.vanillaId: ResourceLocation
 val <T> StreamCodec<RegistryFriendlyByteBuf, T>.byteCodec: ByteCodec<T> get() = StreamCodecByteCodec.ofRegistry(this)
 
 val GlobalPos.dimDisplay: Component get() = Component.translatable(this.dimension.location().toLanguageKey("dimension"))
-val GlobalPos.xDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.x", this.pos().x)
-val GlobalPos.yDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.y", this.pos().y)
-val GlobalPos.zDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.z", this.pos().z)
+val BlockPos.xDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.x", this.x)
+val BlockPos.yDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.y", this.y)
+val BlockPos.zDisplay: Component get() = Component.translatable("gui.${Tempad.MOD_ID}.z", this.z)
+
+val BlockPos.display: List<Component> get() = listOf(this.xDisplay, this.yDisplay, this.zDisplay)
 
 val Vec3.component: Component get() = Component.literal("XYZ: ${this.x.toInt()} / ${this.y.toInt()} / ${this.z.toInt()}")
 
 val GlobalPos.display: List<Component>
-    get() = listOf(this.dimDisplay, this.xDisplay, this.yDisplay, this.zDisplay)
+    get() = listOf(this.dimDisplay) + this.pos().display
 
 var Slot.contents
     get() = this.item
@@ -195,3 +205,39 @@ var Slot.contents
 val ResourceKey<Level>.component get() = Component.translatable(this.location().toLanguageKey("dimension"))
 
 val Color.vec3f: Vector3f get() = Vector3f(this.intRed.toFloat() / 255f, this.intGreen.toFloat() / 255f, this.intBlue.toFloat() / 255f)
+
+val UseOnContext.syncableCtx get() = this.player?.let { InventoryContext(it, this.hand.getSlot(it)) }
+
+inline fun <T1: Any, T2: Any, R: Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2)->R?): R? {
+    return if (p1 != null && p2 != null) block(p1, p2) else null
+}
+
+inline fun <T1: Any, T2: Any, T3: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, block: (T1, T2, T3)->R?): R? {
+    return if (p1 != null && p2 != null && p3 != null) block(p1, p2, p3) else null
+}
+
+inline fun <T1: Any, T2: Any, T3: Any, T4: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, p4: T4?, block: (T1, T2, T3, T4)->R?): R? {
+    return if (p1 != null && p2 != null && p3 != null && p4 != null) block(p1, p2, p3, p4) else null
+}
+
+inline fun <T1: Any, T2: Any, T3: Any, T4: Any, T5: Any, R: Any> safeLet(p1: T1?, p2: T2?, p3: T3?, p4: T4?, p5: T5?, block: (T1, T2, T3, T4, T5)->R?): R? {
+    return if (p1 != null && p2 != null && p3 != null && p4 != null && p5 != null) block(p1, p2, p3, p4, p5) else null
+}
+
+val BlockEntity.angle: Float get() = this.blockState.getValue(BlockStateProperties.FACING).toYRot()
+
+fun <T: Any> Codec<T>.parse(tag: CompoundTag): T? = this.parse(NbtOps.INSTANCE, tag).result().getOrNull()
+
+val String.translatable: Component get() = Component.translatable(this)
+
+operator fun ItemStackHandler.get(slot: Int): ItemStack = this.getStackInSlot(slot)
+
+operator fun ItemStackHandler.set(slot: Int, stack: ItemStack) = this.setStackInSlot(slot, stack)
+
+fun <T> CompoundTag.save(codec: Codec<T>, key: String, value: T) {
+    codec.encodeStart(NbtOps.INSTANCE, value).result().getOrNull()?.let { put(key, it) }
+}
+
+fun <T> CompoundTag.load(codec: Codec<T>, key: String): T? {
+    return codec.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull()?.first
+}

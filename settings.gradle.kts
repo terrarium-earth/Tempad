@@ -1,5 +1,9 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+dependencyResolutionManagement {
+    addVersionCatalog(this, "compactmods")
+}
+
 rootProject.name = "Tempad"
 
 pluginManagement {
@@ -13,4 +17,10 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
+fun addVersionCatalog(dependencyResolutionManagement: DependencyResolutionManagement, name: String) {
+    dependencyResolutionManagement.versionCatalogs.create(name) {
+        from(files("./gradle/$name.versions.toml"))
+    }
 }

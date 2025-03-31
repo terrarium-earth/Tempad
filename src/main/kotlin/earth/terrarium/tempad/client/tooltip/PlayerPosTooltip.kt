@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.client.tooltip
 
+import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.PlayerPos
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
@@ -10,11 +10,12 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
 import org.joml.Matrix4f
+import sun.java2d.cmm.Profile
 
-class PlayerPosTooltip(val pos: PlayerPos): ClientTooltipComponent {
-    val text = Component.literal(pos.playerProfile.name)
+class PlayerPosTooltip(val profile: GameProfile): ClientTooltipComponent {
+    val text = Component.literal(profile.name)
 
-    val playerTexture get() = Minecraft.getInstance().skinManager.getInsecureSkin(pos.playerProfile).texture()
+    val playerTexture get() = Minecraft.getInstance().skinManager.getInsecureSkin(profile).texture()
 
     override fun getHeight(): Int = 10
     override fun getWidth(font: Font): Int = font.width(text) + 13

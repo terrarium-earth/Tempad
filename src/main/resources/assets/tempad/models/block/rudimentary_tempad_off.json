@@ -1,0 +1,7 @@
+{
+    "parent": "tempad:block/rudimentary_tempad",
+    "textures": {
+        "tempad": "tempad:block/rudimentary_tempad_off"
+    },
+    "render_type": "minecraft:cutout"
+}

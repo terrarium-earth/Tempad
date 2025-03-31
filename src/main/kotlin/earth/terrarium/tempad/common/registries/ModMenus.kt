@@ -51,4 +51,13 @@ object ModMenus {
             RecordCodecMenuContentSerializer(TimelineData.codec)
         )
     }
+
+    class PortalSetupMenu(id: Int, inv: Inventory, data: Optional<PortalSetupData>): AbstractTempadMenu<PortalSetupData>(id, inv, PORTAL_SETUP_MENU, data)
+
+    val PORTAL_SETUP_MENU: MenuType<PortalSetupMenu> by registry.register("portal_setup") {
+        MenuContentHelper.create(
+            ::PortalSetupMenu,
+            RecordCodecMenuContentSerializer(PortalSetupData.codec)
+        )
+    }
 }

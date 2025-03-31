@@ -1,0 +1,31 @@
+package earth.terrarium.tempad.common.items
+
+import earth.terrarium.tempad.api.ActionType
+import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.api.tva_device.move
+import earth.terrarium.tempad.common.utils.contents
+import earth.terrarium.tempad.common.utils.safeLet
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.ClickAction
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
+
+open class CapacitorItem: ChrononItem() {
+    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
+        super.inventoryTick(stack, level, entity, slot, selected)
+        if (level.isClientSide || entity.tickCount % 10 != 0 || cannotDistribute(entity, stack)) return // 1 mb every 0.5 seconds
+        distribute(entity as Player, stack)
+    }
+
+    override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
+        if (action == ClickAction.SECONDARY && slot.hasItem() && slot.contents.chronons != null) {
+            safeLet(stack.chronons, slot.contents.chronons) { from, to ->
+                move(from, to, Int.MAX_VALUE)
+            }
+            return true
+        }
+        return super.overrideStackedOnOther(stack, slot, action, player)
+    }
+}

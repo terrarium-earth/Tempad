@@ -1,14 +1,15 @@
 import groovy.json.StringEscapeUtils
+import io.github.offz.githubPackage
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
     idea
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.20"
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("net.neoforged.gradle.userdev") version "7.0.153"
+    id("net.neoforged.gradle.userdev") version "7.0.182"
+    id("io.github.0ffz.github-packages") version "1.2.1"
 }
 
 val minecraftVersion: String by project
@@ -29,12 +30,20 @@ repositories {
     maven(url = "https://maven.octo-studios.com/releases")
     maven(url = "https://modmaven.dev/" )
     maven(url = "https://api.modrinth.com/maven")
+    maven(url = "https://maven.blamejared.com" )
+    maven(url = "https://cursemaven.com" )
     mavenLocal()
+
+    githubPackage("compactmods/gander") {
+        content {
+            includeGroup("dev.compactmods.gander")
+        }
+    }
 }
 
 dependencies {
     val neoforgeVersion: String by project
-    val minecraft_version: String by project
+    val minecraftVersion: String by project
 
     val resourcefulConfigVersion: String by project
     val resourcefulLibVersion: String by project
@@ -45,6 +54,8 @@ dependencies {
     val patchouliVersion: String by project
     val jadeVersion: String by project
     val jeiVersion: String by project
+    val arsNouveauVersion: String by project
+    val lambdaDynamicLights: String by project
 
     implementation("net.neoforged:neoforge:${neoforgeVersion}")
 
@@ -55,24 +66,28 @@ dependencies {
     runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
     runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 
-    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraft_version}:${resourcefulConfigVersion}")
-    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraft_version}:${resourcefulLibVersion}")
+    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraftVersion}:${resourcefulConfigVersion}")
+    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraftVersion}:${resourcefulLibVersion}")
     compileOnly("com.teamresourceful:bytecodecs:1.1.0")
     implementation("thedarkcolour:kotlinforforge-neoforge:${kotlinForForgeVersion}")
-    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraft_version}:${resourcefulLibKtVersion}") {
+    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraftVersion}:${resourcefulLibKtVersion}") {
         isTransitive = false
     }
 
-    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${minecraft_version}", version = resourcefulLibKtVersion).also {
+    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${minecraftVersion}", version = resourcefulLibKtVersion).also {
         jarJar.pin(it, "[${resourcefulLibKtVersion})")
     }
 
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "1.0.1") {
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${minecraftVersion}", version = "1.0.14") {
+        isTransitive = false
+    }.also { jarJar(it) }
+
+    implementation(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-${minecraftVersion}", version = "2.0.0-beta.3") {
         isTransitive = false
     }
 
-    jarJar(group = "earth.terrarium.olympus", name = "olympus-neoforge-$minecraftVersion", version = "1.0.1").also {
-        jarJar.pin(it, "[1.0.1)")
+    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${minecraftVersion}", version = "2.0.0-beta.4") {
+        isTransitive = false
     }
 
     implementation("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
@@ -81,12 +96,26 @@ dependencies {
     runtimeOnly("vazkii.patchouli:Patchouli:${patchouliVersion}")
 
     implementation("maven.modrinth:jade:$jadeVersion")
+    implementation("maven.modrinth:lambdynamiclights-unofficial-neoforge:$lambdaDynamicLights")
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jeiVersion}")
-    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jeiVersion}")
+    compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
     // at runtime, use the full JEI jar for NeoForge
-    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jeiVersion}")
+    runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
+
+    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}.0:${arsNouveauVersion}") {
+        exclude(group = "curse.maven")
+    }
+
+    compileOnly(group = "curse.maven", name = "ftb-teams-forge-404468", version = "5631446")
+
+    implementation(group = "earth.terrarium.common_storage_lib", name = "common-storage-lib-data-neoforge-$minecraftVersion", version = "0.0.1") {
+        isTransitive = false
+    }.let { jarJar(it) }
+
+    implementation(compactmods.bundles.gander)
+    accessTransformer(compactmods.ganderRendering)
+    jarJar(compactmods.bundles.gander)
 }
 
 java {
@@ -184,6 +213,12 @@ runs {
             "--client",
             "--server"
         )
+    }
+}
+
+sourceSets.main.configure {
+    resources {
+        srcDir("src/generated/resources")
     }
 }
 

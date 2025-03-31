@@ -7,4 +7,6 @@ import net.minecraft.world.entity.player.Player
 
 interface TempadApp<T: AppContent<T>>: ContentMenuProvider<T> {
     fun isEnabled(player: Player): Boolean = true
+
+    override fun resetMouseOnOpen(): Boolean = false
 }

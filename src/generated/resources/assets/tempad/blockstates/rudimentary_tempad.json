@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,has_card=false,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off",
+      "y": 270
+    },
+    "facing=east,has_card=false,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on",
+      "y": 270
+    },
+    "facing=east,has_card=true,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off_with_card",
+      "y": 270
+    },
+    "facing=east,has_card=true,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on_with_card",
+      "y": 270
+    },
+    "facing=north,has_card=false,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off",
+      "y": 180
+    },
+    "facing=north,has_card=false,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on",
+      "y": 180
+    },
+    "facing=north,has_card=true,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off_with_card",
+      "y": 180
+    },
+    "facing=north,has_card=true,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on_with_card",
+      "y": 180
+    },
+    "facing=south,has_card=false,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off"
+    },
+    "facing=south,has_card=false,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on"
+    },
+    "facing=south,has_card=true,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off_with_card"
+    },
+    "facing=south,has_card=true,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on_with_card"
+    },
+    "facing=west,has_card=false,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off",
+      "y": 90
+    },
+    "facing=west,has_card=false,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on",
+      "y": 90
+    },
+    "facing=west,has_card=true,triggered=false": {
+      "model": "tempad:block/rudimentary_tempad_off_with_card",
+      "y": 90
+    },
+    "facing=west,has_card=true,triggered=true": {
+      "model": "tempad:block/rudimentary_tempad_on_with_card",
+      "y": 90
+    }
+  }
+}

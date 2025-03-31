@@ -2,7 +2,7 @@
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "#G ",
-        "#TE",
+        "CET",
         "#G "
     ],
     "key": {
@@ -17,6 +17,9 @@
         },
         "G": {
             "item": "minecraft:gold_ingot"
+        },
+        "C": {
+            "item": "tempad:capacitor"
         }
     },
     "result": {

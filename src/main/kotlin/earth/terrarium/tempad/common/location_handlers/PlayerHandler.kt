@@ -1,33 +1,63 @@
 package earth.terrarium.tempad.common.location_handlers
 
+import com.mojang.authlib.GameProfile
+import com.mojang.serialization.Codec
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.context.ContextRegistry
-import earth.terrarium.tempad.api.context.SyncableContext
+import earth.terrarium.tempad.api.locations.IndirectLocation
+import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
-import earth.terrarium.tempad.api.locations.NamedGlobalPos
-import earth.terrarium.tempad.api.locations.PlayerPos
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.api.locations.namedGlobalVec3
+import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.enabled
-import earth.terrarium.tempad.common.registries.installedUpgrades
+import earth.terrarium.tempad.common.registries.playerPoints
 import earth.terrarium.tempad.tempadId
-import net.minecraft.world.entity.player.Player
+import net.minecraft.ChatFormatting
+import net.minecraft.core.GlobalPos
+import net.minecraft.core.UUIDUtil
+import net.minecraft.network.chat.Component
 import java.util.UUID
 
-class PlayerHandler(val player: Player, val ctx: SyncableContext<*>) : LocationHandler {
-    override val locations: Map<UUID, NamedGlobalPos>
+class PlayerPointsData(data: Map<UUID, Map<UUID, NamedGlobalVec3>>) {
+    val data = mutableMapOf<UUID, MutableMap<UUID, NamedGlobalVec3>>()
+
+    init {
+        for ((id, values) in data) {
+            this.data[id] = values.toMutableMap()
+        }
+    }
+
+    companion object {
+        val codec: Codec<PlayerPointsData> = Codec.unboundedMap<UUID, MutableMap<UUID, NamedGlobalVec3>>(UUIDUtil.STRING_CODEC, Codec.unboundedMap<UUID, NamedGlobalVec3>(UUIDUtil.STRING_CODEC, NamedGlobalVec3.CODEC.codec())).xmap(::PlayerPointsData, PlayerPointsData::data)
+    }
+
+    operator fun get(playerId: UUID): MutableMap<UUID, NamedGlobalVec3> {
+        return data.getOrPut(playerId) { mutableMapOf() }
+    }
+}
+
+class PlayerHandler(val player: GameProfile, val upgrades: UpgradeHandler) : LocationHandler {
+    override val locations: Map<UUID, NamedGlobalVec3>
         get() {
-            if (Tempad.playerUpgrade !in ctx.stack.installedUpgrades) return emptyMap()
+            if (Tempad.playerUpgrade !in upgrades) return emptyMap()
             return Tempad.server?.let {
                 it.playerList.players
-                    .filter { it.uuid != player.uuid }
+                    .filter { it.uuid != player.id }
                     .filter { ContextRegistry.locate(it) { it.item === ModItems.statusEmitter && it.enabled } != null }
-                    .map { it.uuid to PlayerPos(it.gameProfile) }
-                    .toMap()
+                    .associate { it.uuid to it.namedGlobalVec3 }
             } ?: emptyMap()
         }
 
     override fun minusAssign(locationId: UUID) {
         // NO-OP
+    }
+
+    override fun getSerializable(locationId: UUID): LocationGetter? {
+        val pos = Tempad.server?.playerList?.getPlayer(locationId)?.gameProfile ?: return null
+        return IndirectLocation(player, Component.translatable("locations.tempad.player", Component.literal(pos.name).withStyle(
+            ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY), ID, locationId)
     }
 
     companion object {

@@ -12,6 +12,7 @@ logoFile = "icon.png"
 authors = "CodexAdrian"
 credits = "MsRandom1, ThatGravyBoat, Kekie6, AlexNijjar, ShrimpPixels, Jooosh, abused_master"
 description = "Create a portal to anywhere from anywhere!"
+enumExtensions="META-INF/enumextensions.json"
 
 [[dependencies.tempad]]
 modId = "neoforge"
@@ -23,20 +24,27 @@ side = "BOTH"
 [[dependencies.tempad]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.20.4,)"
+versionRange = "[1.21,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "resourcefullib"
 type = "required"
-versionRange = "[2.4.2,)"
+versionRange = "[3.0.12,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.tempad]]
 modId = "resourcefulconfig"
 type = "required"
-versionRange = "[2.4.2,)"
+versionRange = "[3.0.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.tempad]]
+modId = "kotlinforforge"
+type = "required"
+versionRange = "[5.3.0,)"
 ordering = "NONE"
 side = "BOTH"

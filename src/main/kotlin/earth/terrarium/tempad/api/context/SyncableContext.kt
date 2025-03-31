@@ -78,6 +78,7 @@ object ContextRegistry {
         locatorRegistry[id] = locator
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(type: ContextType<T>, player: Player, context: T): SyncableContext<T> {
         val thing = registry[type] ?: error("No provider for $type")
         val finalThing = thing as ContextProvider<T>

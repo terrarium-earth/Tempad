@@ -1,21 +1,30 @@
 package earth.terrarium.tempad.common.location_handlers
 
-import earth.terrarium.tempad.api.context.SyncableContext
+import com.mojang.authlib.GameProfile
+import earth.terrarium.tempad.api.locations.DirectLocation
+import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
-import earth.terrarium.tempad.api.locations.NamedGlobalPos
-import earth.terrarium.tempad.common.registries.savedPositions
+import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.common.registries.playerPoints
 import earth.terrarium.tempad.tempadId
-import net.minecraft.world.entity.player.Player
 import java.util.*
 
-class DefaultLocationHandler(val player: Player, val ctx: SyncableContext<*>) : LocationHandler {
+class DefaultLocationHandler(val gameProfile: GameProfile) : LocationHandler {
     companion object {
         val ID = "default".tempadId
     }
 
-    override val locations: Map<UUID, NamedGlobalPos> by player.savedPositions::locations
+    override val locations: Map<UUID, NamedGlobalVec3> get() = playerPoints[gameProfile.id]
 
     override fun minusAssign(locationId: UUID) {
-        player.savedPositions -= locationId
+        playerPoints[gameProfile.id] -= locationId
+    }
+
+    operator fun plusAssign(location: NamedGlobalVec3) {
+        playerPoints[gameProfile.id] += UUID.randomUUID() to location
+    }
+
+    override fun getSerializable(locationId: UUID): LocationGetter? {
+        return get(locationId)?.let { DirectLocation(it) }
     }
 }

@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "###",
-    "EBL",
-    "###"
+    "#T#",
+    "EQL",
+    "#C#"
   ],
   "key": {
     "#": {
@@ -12,11 +12,17 @@
     "E": {
       "item": "minecraft:ender_pearl"
     },
-    "B": {
-      "item": "minecraft:tinted_glass"
+    "Q": {
+      "item": "minecraft:quartz"
     },
     "L": {
       "item": "minecraft:redstone_lamp"
+    },
+    "T": {
+      "item": "minecraft:tinted_glass"
+    },
+    "C": {
+      "item": "tempad:capacitor"
     }
   },
   "result": {

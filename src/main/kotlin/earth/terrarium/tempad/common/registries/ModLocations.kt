@@ -1,20 +1,25 @@
 package earth.terrarium.tempad.common.registries
 
-import earth.terrarium.tempad.api.locations.LocationTypeRegistry
-import earth.terrarium.tempad.api.locations.PlayerPos
-import earth.terrarium.tempad.api.locations.StaticNamedGlobalPos
-import earth.terrarium.tempad.api.locations.TempadLocations
+import earth.terrarium.tempad.api.locations.*
+import earth.terrarium.tempad.api.visibility.DefaultAccess
+import earth.terrarium.tempad.api.visibility.AnchorAccessApi
+import earth.terrarium.tempad.common.compat.initArgonautsAccess
+import earth.terrarium.tempad.common.compat.initFTBTeamsAccess
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.location_handlers.PlayerHandler
-import earth.terrarium.tempad.common.location_handlers.WarpsHandler
+import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
+import earth.terrarium.tempad.tempadId
+import net.neoforged.fml.ModList
 
 object ModLocations {
     fun init() {
-        TempadLocations[DefaultLocationHandler.ID] = ::DefaultLocationHandler
-        TempadLocations[WarpsHandler.ID] = ::WarpsHandler
-        TempadLocations[PlayerHandler.ID] = ::PlayerHandler
+        TempadLocations[DefaultLocationHandler.ID] = { player, _, _ -> DefaultLocationHandler(player) }
+        TempadLocations[AnchorPointsHandler.ID] = { player, _, _ -> AnchorPointsHandler(player) }
+        TempadLocations[PlayerHandler.ID] = { player, upgrades, _ -> PlayerHandler(player, upgrades) }
 
-        LocationTypeRegistry.register(StaticNamedGlobalPos.type)
-        LocationTypeRegistry.register(PlayerPos.type)
+        AnchorAccessApi["private".tempadId] = DefaultAccess.Private
+        AnchorAccessApi["public".tempadId] = DefaultAccess.Public
+        if(ModList.get().isLoaded("argonauts")) initArgonautsAccess()
+        if(ModList.get().isLoaded("ftbteams")) initFTBTeamsAccess()
     }
 }

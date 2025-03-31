@@ -9,6 +9,7 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.resources.ResourceLocation
@@ -26,7 +27,8 @@ data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: Resou
             ),
             NetworkHandle.handle { message, player ->
                 if ({ it.item === ModItems.tempad } !in player.inventory) return@handle
-                TempadLocations[player, message.ctx.getCtx(player), message.providerId]!! -= message.locationId
+                val ctx = message.ctx.getCtx(player)
+                TempadLocations[player, ctx, message.providerId]!! -= message.locationId
             }
         )
     }

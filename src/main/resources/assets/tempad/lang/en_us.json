@@ -1,4 +1,5 @@
 {
+  "config.jade.plugin_tempad.chronon": "Chronon",
   "gui.tempad.search_field": "Search...",
   "gui.tempad.name_field": "Name...",
   "gui.tempad.teleport_disabled": "You may not teleport to this location",
@@ -41,16 +42,23 @@
   "item.tempad.empty_tank": "Empty",
   "tempad_option.tempad.fluid": "%s: %s/%s §6\uD83E\uDEA3§r",
 
+  "locations.tempad.anchor_point": "Anchor Point Named: \"%s\"",
+  "locations.tempad.player": "Tracking Player: %s",
+
   "item.tempad.blank_card": "Blank Card",
   "item.tempad.location_card": "Location Card",
   "item.tempad.location_card.creator_toolip": "Created by %s",
   "item.tempad.location_card.shift_toolip": "Hold [%s] for more info",
-  "item.tempad.location_card.added_location": "Added location: %s",
   "item.tempad.location_card.add_location": "Right click to set location",
-  "item.tempad.location_card.set_name": "Rename in anvil to set location name",
+  "item.tempad.location_card.added_location": "Added location: %s",
+  "item.tempad.location_card.dynamic_error": "You may not add player, spatial anchor, or other dynamic locations to this device",
   "item.tempad.location_card.set_location": "Set location: %s",
+  "item.tempad.location_card.redeem": "%s: [%s] To Use",
+  "item.tempad.location_card.created_by": "Created by: %s",
+  "item.tempad.location_card.id": "ID: %s",
 
   "item.tempad.temporal_shielding": "Temporal Shielding",
+  "item.tempad.capacitor": "Capacitor",
   "item.tempad.chronometer": "Chronometer",
   "item.tempad.status_emitter": "Status Emitter",
   "item.tempad.time_twister": "Time Twister",
@@ -59,6 +67,12 @@
   "item.tempad.inexorable_alloy": "Inexorable Alloy",
   "item.tempad.sacred_chronometer": "Sacred Chronometer",
   "item.tempad.sacred_chronometer.infinite": "Infinite",
+  "block.tempad.rudimentary_tempad": "Rudimentary Tempad",
+  "block.tempad.spatial_anchor": "Spatial Anchor",
+  "block.tempad.workstation": "Workstation",
+  "block.tempad.workstation_child": "Workstation Terminal",
+
+  "block.tempad.spatial.anchor.owner_mismatch": "Error: User != Anchor Owner. Return to owner or Reset anchor",
 
   "fluid_type.tempad.chronon": "Chronon",
 
@@ -106,14 +120,34 @@
   "app.tempad.timeline.tracking": "Tracking",
   "app.tempad.timeline.teleport": "Teleport",
 
+  "app.tempad.teleport.pin": "Pin",
+  "app.tempad.teleport.unpin": "Unpin",
   "app.tempad.teleport.teleport": "Teleport",
-  "app.tempad.teleport.favorite": "Favorite",
-  "app.tempad.teleport.unfavorite": "Unfavorite",
   "app.tempad.teleport.delete": "Delete",
   "app.tempad.teleport.no_selection": "No location selected. Click on a location view details",
 
+  "screen.tempad.spatial_anchor": "Spatial Anchor Settings",
+  "screen.tempad.spatial_anchor.access_field" : "Access",
+
+  "access.tempad.public": "Public",
+  "access.tempad.private": "Private",
+  "access.tempad.guild": "Guild",
+  "access.tempad.party": "Party",
+  "access.tempad.guild_or_party": "Guild or Party",
+
   "app.tempad.tp_to.teleport": "Teleport",
   "app.tempad.tp_to.selected": "Selected",
+
+  "app.tempad.portal_setup": "Portal Setup",
+  "app.tempad.portal_setup.offset": "Offset: (-/+)",
+  "app.tempad.portal_setup.left_right": "L/R: ",
+  "app.tempad.portal_setup.left_right.desc": "Positive places portal to your left, negative to your right \n\nAccepts decimal (e.g 1.3)",
+  "app.tempad.portal_setup.up_down": "U/D: ",
+  "app.tempad.portal_setup.up_down.desc": "Positive places portal higher, negative lower \n\nAccepts decimal (e.g 1.3)",
+  "app.tempad.portal_setup.front_back": "F/B: ",
+  "app.tempad.portal_setup.front_back.desc": "Positive places portal in front of you, negative behind you \n\nAccepts decimal (e.g 1.3)",
+  "app.tempad.portal_setup.angle": "Angle: ",
+  "app.tempad.portal_setup.upright": "Is upright: ",
 
   "provider.tempad.default": "On Device",
   "provider.tempad.warps": "From Warps",
@@ -131,7 +165,8 @@
   "marker.tempad.dimension_exit": "Left dimension at",
   "marker.tempad.dimension_enter": "Entered dimension at",
 
-  "config.jade.plugin_tempad.timedoor": "Tempad",
+  "config.jade.plugin_tempad.timedoor": "Timedoor",
+  "config.jade.plugin_tempad.anchor": "Spatial Anchor",
   "jade.tempad.will_close": "Closing in %s seconds",
   "jade.tempad.closing": "Closing...",
   "jade.tempad.pos": "Teleporting to %s at %s",

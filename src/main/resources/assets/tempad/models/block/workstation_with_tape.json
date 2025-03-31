@@ -1,0 +1,6 @@
+{
+    "parent": "tempad:block/workstation",
+    "textures": {
+        "0": "tempad:block/workbench_with_tape"
+    }
+}

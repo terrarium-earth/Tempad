@@ -1,32 +1,32 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import com.teamresourceful.bytecodecs.base.ByteCodec
+import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.network.Packet
-import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
-import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
-import earth.terrarium.tempad.tempadId
-import earth.terrarium.tempad.api.app.AppHolder
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.api.context.ContextHolder
-import earth.terrarium.tempad.common.registries.*
+import earth.terrarium.tempad.api.context.ContextRegistry
+import earth.terrarium.tempad.api.macro.MacroRegistry
+import earth.terrarium.tempad.common.network.ServerPacketCompanion
+import earth.terrarium.tempad.common.registries.ModApps
+import earth.terrarium.tempad.common.registries.ModItems
+import earth.terrarium.tempad.common.registries.defaultApp
+import earth.terrarium.tempad.common.registries.defaultMacro
+import earth.terrarium.tempad.tempadId
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.player.Player
 
-data class OpenAppPacket(val appHolder: AppHolder) : Packet<OpenAppPacket> {
-    constructor(appID: ResourceLocation, data: ContextHolder<*>) : this(AppHolder(appID, data))
+data class OpenAppPacket(val id: ResourceLocation): Packet<OpenAppPacket> {
+    companion object: ServerPacketCompanion<OpenAppPacket> {
+        override val id = "open_app".tempadId
+        override val byteCodec: ByteCodec<OpenAppPacket> = ExtraByteCodecs.RESOURCE_LOCATION.map(::OpenAppPacket) {it.id}
 
-    companion object {
-        val type = CodecPacketType.Server.create(
-            "open_app".tempadId,
-            AppRegistry.BYTE_CODEC.map(::OpenAppPacket, OpenAppPacket::appHolder),
-            NetworkHandle.handle { message, player ->
-                val app = message.appHolder.getApp(player)
-                val stack = message.appHolder.getCtx(player).stack
-                if (!stack.`is`(ModItems.tempad) || (app != null && !app.isEnabled(player))) return@handle
-                app?.openMenu(player as ServerPlayer)
-            }
-        )
+        override fun onReceive(packet: OpenAppPacket, player: Player) {
+            val ctx = ContextRegistry.locate(player) { it.`is`(ModItems.tempad) } ?: return
+            AppRegistry[id, ctx, false]?.openMenu(player as ServerPlayer)
+        }
     }
 
-    override fun type(): PacketType<OpenAppPacket> = type
+    override fun type(): PacketType<OpenAppPacket> = Companion
 }
