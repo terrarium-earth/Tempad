@@ -93,12 +93,17 @@ fun <T : Any> AttachmentType<T>.syncedOptional(sync: DataSyncSerializer<T>) = Sy
 fun <T : Any> AttachmentType<T>.synced(sync: DataSyncSerializer<T>) = SyncedAttachmentDelegate(this, sync)
 
 val <T : Any> AttachmentType<T>.serverData get() = ServerDataDelegate(this)
-val <T : Any> AttachmentType<T>.optionalServerData get() = OptionalServerDataDelegate(this)
 
-class ServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWriteProperty<Any?, T> {
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>): T = Tempad.server?.overworld()?.getData(key)!!
-    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        Tempad.server?.overworld()?.setData(key, value)
+class ServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWriteProperty<Any?, T?> {
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+        return Tempad.server?.overworld()?.getData(key)
+    }
+    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+        if (value == null) {
+            Tempad.server?.overworld()?.removeData(key)
+        } else {
+            Tempad.server?.overworld()?.setData(key, value)
+        }
     }
 }
 

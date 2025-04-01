@@ -53,7 +53,7 @@ fun getBlockEntity(pos: GlobalPos): SpatialAnchorBE? {
 }
 
 class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
-    override val locations: Map<UUID, NamedGlobalVec3> get() = anchorPoints.getPostions(gameProfile)
+    override val locations: Map<UUID, NamedGlobalVec3> get() = anchorPoints?.getPostions(gameProfile) ?: mutableMapOf()
     override fun minusAssign(locationId: UUID) {}
 
     override fun getSerializable(locationId: UUID): LocationGetter? {

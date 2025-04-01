@@ -61,6 +61,7 @@ class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBloc
         safeLet(portalTarget, upgrades, chronons, owner) { pos, upgrades, chronons, player ->
             pos.get(upgrades, chronons)?.let {
                 TimedoorEntity.openTimedoor(player, this, it) {
+                    this.timedoorId = it.uuid
                     it.yRot += 180
                     it.glitching = true
                 }?.let { msg ->

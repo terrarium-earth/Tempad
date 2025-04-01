@@ -9,6 +9,13 @@ import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemStack
 
 class TempadChrononHandler(val stack: ItemStack, val tempadLimit: Int, timeTwisterLimit: Int): ChrononHandler {
+    companion object {
+        fun create(stack: ItemStack, tempadLimit: Int, timeTwisterLimit: Int): TempadChrononHandler? {
+            if (tempadLimit + timeTwisterLimit <= 0) return null
+            return TempadChrononHandler(stack, tempadLimit, timeTwisterLimit)
+        }
+    }
+
     override var power: Int
         get() = stack.chrononContentTempad + stack.chrononContentTimeTwister
         set(value) = run {

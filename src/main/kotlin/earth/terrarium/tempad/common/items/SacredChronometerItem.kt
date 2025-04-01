@@ -5,12 +5,15 @@ import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.hasRoom
+import earth.terrarium.tempad.api.tva_device.move
 import earth.terrarium.tempad.client.tooltip.ChrononData
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import java.util.*
 
@@ -29,5 +32,15 @@ class SacredChronometerItem : Item(Properties().stacksTo(1)) {
         }?.let {
             it.stack.chronons?.insert(Int.MAX_VALUE, ActionType.Execute)
         }
+    }
+
+    override fun useOn(context: UseOnContext): InteractionResult {
+        val to = context.level.getBlockEntity(context.clickedPos)?.chronons ?: return super.useOn(context)
+        if (!context.level.isClientSide) {
+            context.itemInHand.chronons?.let {
+                move(it, to, Int.MAX_VALUE)
+            }
+        }
+        return InteractionResult.SUCCESS
     }
 }

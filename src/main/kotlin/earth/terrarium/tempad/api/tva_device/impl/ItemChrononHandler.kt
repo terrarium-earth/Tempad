@@ -7,6 +7,13 @@ import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemStack
 
 class ItemChrononHandler(val stack: ItemStack, override val maxPower: Int): ChrononHandler {
+    companion object {
+        fun create(stack: ItemStack, maxPower: Int): ItemChrononHandler? {
+            if (maxPower <= 0) return null
+            return ItemChrononHandler(stack, maxPower)
+        }
+    }
+
     override var power: Int by stack::chrononContent
 
     override fun extract(amount: Int, action: ActionType): Int {

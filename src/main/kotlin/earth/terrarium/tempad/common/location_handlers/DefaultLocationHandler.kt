@@ -14,14 +14,14 @@ class DefaultLocationHandler(val gameProfile: GameProfile) : LocationHandler {
         val ID = "default".tempadId
     }
 
-    override val locations: Map<UUID, NamedGlobalVec3> get() = playerPoints[gameProfile.id]
+    override val locations: MutableMap<UUID, NamedGlobalVec3> get() = playerPoints?.get(gameProfile.id) ?: mutableMapOf()
 
     override fun minusAssign(locationId: UUID) {
-        playerPoints[gameProfile.id] -= locationId
+        locations -= locationId
     }
 
     operator fun plusAssign(location: NamedGlobalVec3) {
-        playerPoints[gameProfile.id] += UUID.randomUUID() to location
+        locations += UUID.randomUUID() to location
     }
 
     override fun getSerializable(locationId: UUID): LocationGetter? {

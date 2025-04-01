@@ -7,6 +7,13 @@ import net.minecraft.util.Mth
 import net.minecraft.world.level.block.Block
 
 class RudimentaryChrononContent(val block: RudimentaryTempadBE, override val maxPower: Int): ChrononHandler {
+    companion object {
+        fun create(block: RudimentaryTempadBE, maxPower: Int): RudimentaryChrononContent? {
+            if (maxPower <= 0) return null
+            return RudimentaryChrononContent(block, maxPower)
+        }
+    }
+
     override var power: Int by block::chrononContent
 
     override fun extract(amount: Int, action: ActionType): Int {

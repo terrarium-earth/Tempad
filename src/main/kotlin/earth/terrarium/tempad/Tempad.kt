@@ -96,7 +96,7 @@ class Tempad(bus: IEventBus) {
 
             chrononBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.let {
-                    RudimentaryChrononContent(it, CommonConfigCache.RudimentaryTempad.capacity)
+                    RudimentaryChrononContent.create(it, CommonConfigCache.RudimentaryTempad.capacity)
                 }
             }
 
@@ -107,27 +107,23 @@ class Tempad(bus: IEventBus) {
             }
 
             chrononItems[ModItems.rudimentaryTempad] = { it, _ ->
-                ItemChrononHandler(it, CommonConfigCache.RudimentaryTempad.capacity)
+                ItemChrononHandler.create(it, CommonConfigCache.RudimentaryTempad.capacity)
             }
 
             chrononItems[ModItems.timeTwister] = { it, _ ->
-                ItemChrononHandler(it, CommonConfigCache.TimeTwister.capacity)
+                ItemChrononHandler.create(it, CommonConfigCache.TimeTwister.capacity)
             }
 
             chrononItems[ModItems.tempad] = { it, _ ->
-                TempadChrononHandler(it, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
+                TempadChrononHandler.create(it, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
             }
 
             chrononItems[ModItems.capacitor] = { it, _ ->
-                ItemChrononHandler(it, CommonConfigCache.Capacitor.capacity)
+                ItemChrononHandler.create(it, CommonConfigCache.Capacitor.capacity)
             }
 
             chrononItems[ModItems.chronometer] = { stack, _ ->
-                CommonConfigCache.Chronometer.capacity.let {
-                    if (it > 0) {
-                        ItemChrononHandler(stack, it)
-                    } else null
-                }
+                ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)
             }
 
             chrononItems[ModItems.sacredChronometer] = { _, _ ->

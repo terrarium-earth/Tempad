@@ -8,6 +8,7 @@ import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
 import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contains
+import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.sendToClient
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.ChatFormatting
@@ -153,12 +154,19 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
 
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, moved: Boolean) {
         super.onPlace(state, level, pos, oldState, moved)
-        if (!level.isClientSide) (level.getBlockEntity(pos) as? SpatialAnchorBE)?.let { anchorPoints += it }
+
+        if (!level.isClientSide) {
+            safeLet(level.getBlockEntity(pos) as? SpatialAnchorBE, anchorPoints) { blockEntity, points ->
+                points += blockEntity
+            }
+        }
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, moved: Boolean) {
-        level.getBlockEntity(pos)?.let {
-            (it as? SpatialAnchorBE)?.id?.let { posId -> anchorPoints -= posId }
+        if (level is ServerLevel) {
+            safeLet((level.getBlockEntity(pos) as? SpatialAnchorBE)?.id, anchorPoints) { blockEntity, points ->
+                points -= blockEntity
+            }
         }
         super.onRemove(state, level, pos, newState, moved)
     }

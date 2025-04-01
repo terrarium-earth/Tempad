@@ -5,11 +5,13 @@ import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.move
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.safeLet
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ClickAction
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 
 open class CapacitorItem: ChrononItem() {
@@ -27,5 +29,15 @@ open class CapacitorItem: ChrononItem() {
             return true
         }
         return super.overrideStackedOnOther(stack, slot, action, player)
+    }
+
+    override fun useOn(context: UseOnContext): InteractionResult {
+        val to = context.level.getBlockEntity(context.clickedPos)?.chronons ?: return super.useOn(context)
+        if (!context.level.isClientSide) {
+            context.itemInHand.chronons?.let {
+                move(it, to, Int.MAX_VALUE)
+            }
+        }
+        return InteractionResult.SUCCESS
     }
 }
