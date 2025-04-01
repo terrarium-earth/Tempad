@@ -5,18 +5,21 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.impl.BlockChrononHandler
+import earth.terrarium.tempad.api.tva_device.impl.RudimentaryChrononContent
 import earth.terrarium.tempad.api.tva_device.impl.InfiniteChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemUpgradeHandler
 import earth.terrarium.tempad.api.tva_device.impl.RudimentaryUpgradeHandler
 import earth.terrarium.tempad.api.tva_device.impl.TempadChrononHandler
+import earth.terrarium.tempad.api.tva_device.impl.WorkstationChrononHandler
 import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.registries.*
+import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
@@ -92,11 +95,15 @@ class Tempad(bus: IEventBus) {
             val upgradeBlocks = event.register(UpgradeHandler.block)
 
             chrononBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
-                BlockChrononHandler(it, CommonConfigCache.RudimentaryTempad.capacity)
+                (it as? RudimentaryTempadBE)?.let {
+                    RudimentaryChrononContent(it, CommonConfigCache.RudimentaryTempad.capacity)
+                }
             }
 
             chrononBlocks[ModBlocks.workstationBE] = { it, _ ->
-                (it as? WorkstationBE)?.inventory?.getStackInSlot(0)?.chronons
+                if((it as? WorkstationBE)?.inventory[0]?.chronons != null) {
+                    WorkstationChrononHandler(it)
+                } else null
             }
 
             chrononItems[ModItems.rudimentaryTempad] = { it, _ ->

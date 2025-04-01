@@ -72,7 +72,8 @@
   "block.tempad.workstation": "Workstation",
   "block.tempad.workstation_child": "Workstation Terminal",
 
-  "block.tempad.spatial.anchor.owner_mismatch": "Error: User != Anchor Owner. Return to owner or Reset anchor",
+  "block.tempad.spatial.anchor.owner_mismatch.place": "Error: User != Anchor Owner. Return to owner or Reset anchor",
+  "block.tempad.spatial.anchor.owner_mismatch.use": "Error: User != Anchor Owner. Only owner may edit options",
 
   "fluid_type.tempad.chronon": "Chronon",
 
@@ -168,6 +169,7 @@
 
   "config.jade.plugin_tempad.timedoor": "Timedoor",
   "config.jade.plugin_tempad.anchor": "Spatial Anchor",
+  "config.jade.plugin_tempad.rudimentary": "Rudimentary Tempad",
   "jade.tempad.will_close": "Closing in %s seconds",
   "jade.tempad.closing": "Closing...",
   "jade.tempad.pos": "Teleporting to %s at %s",

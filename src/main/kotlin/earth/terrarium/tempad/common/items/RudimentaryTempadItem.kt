@@ -3,6 +3,7 @@ package earth.terrarium.tempad.common.items
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.client.tooltip.tooltip
+import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.*
@@ -75,6 +76,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
         state: BlockState,
     ): Boolean {
         level.getBlockEntity(pos)?.let { blockEntity ->
+            if (blockEntity !is RudimentaryTempadBE) return@let
             stack.portalTarget?.let { blockEntity.portalTarget = it }
             player?.let { blockEntity.owner = it.gameProfile }
             blockEntity.chrononContent = stack.chrononContent
@@ -102,5 +104,9 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
 
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
         return Optional.of(stack.chronons!!.tooltip)
+    }
+
+    override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean {
+        return false
     }
 }

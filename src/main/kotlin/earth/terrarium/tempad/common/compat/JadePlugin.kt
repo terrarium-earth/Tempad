@@ -4,15 +4,22 @@ import com.teamresourceful.resourcefullib.client.scissor.ScissorBox
 import com.teamresourceful.resourcefullib.client.utils.RenderUtils
 import com.teamresourceful.resourcefullibkt.common.holder
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.locations.DirectLocation
+import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.TempadUI
+import earth.terrarium.tempad.client.tooltip.DirectPosTooltip
+import earth.terrarium.tempad.client.tooltip.IndirectPosTooltip
+import earth.terrarium.tempad.common.block.RudimentaryTempadBE
+import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.SpatialAnchorBE
 import earth.terrarium.tempad.common.block.SpatialAnchorBlock
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.anchorId
 import earth.terrarium.tempad.common.registries.id
 import earth.terrarium.tempad.common.registries.owner
+import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
@@ -32,6 +39,7 @@ class JadePlugin: IWailaPlugin {
         registration.registerEntityComponent(TimedoorComponentProvider, TimedoorEntity::class.java)
         registration.registerBlockComponent(ChrononComponentProvider, Block::class.java)
         registration.registerBlockComponent(AnchorComponentProvider, SpatialAnchorBlock::class.java)
+        registration.registerBlockComponent(RudimentaryTempadComponentProvider, RudimentaryTempadBlock::class.java)
     }
 }
 
@@ -51,17 +59,6 @@ object TimedoorComponentProvider: IEntityComponentProvider {
     }
 }
 
-object ChrononComponentProvider: IBlockComponentProvider {
-    val id = "chronon".tempadId
-    override fun getUid(): ResourceLocation = id
-
-    override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
-        accessor.blockEntity?.chronons?.let {
-            tooltip.add(ChrononElement(it))
-        }
-    }
-}
-
 object AnchorComponentProvider: IBlockComponentProvider {
     val id = "anchor".tempadId
     override fun getUid(): ResourceLocation = id
@@ -74,6 +71,38 @@ object AnchorComponentProvider: IBlockComponentProvider {
             it.id?.let {
                 tooltip.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
             }
+        }
+    }
+}
+
+object RudimentaryTempadComponentProvider: IBlockComponentProvider {
+    val id = "rudimentary".tempadId
+
+    override fun getUid(): ResourceLocation = id
+
+    override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
+        (accessor.blockEntity as? RudimentaryTempadBE)?.let {
+            val pos = it.portalTarget
+            if(pos is DirectLocation) {
+                for (component in DirectPosTooltip(pos).text) {
+                    tooltip.add(component)
+                }
+            } else if (pos is IndirectLocation) {
+                for (component in IndirectPosTooltip(pos).text) {
+                    tooltip.add(component)
+                }
+            }
+        }
+    }
+}
+
+object ChrononComponentProvider: IBlockComponentProvider {
+    val id = "chronon".tempadId
+    override fun getUid(): ResourceLocation = id
+
+    override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
+        accessor.blockEntity?.chronons?.let {
+            tooltip.add(ChrononElement(it))
         }
     }
 }

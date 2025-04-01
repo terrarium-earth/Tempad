@@ -3,15 +3,14 @@ package earth.terrarium.tempad.common.block
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.visibility.AnchorAccessApi
-import earth.terrarium.tempad.common.registries.ModAttachments
-import earth.terrarium.tempad.common.registries.ModBlocks
-import earth.terrarium.tempad.common.registries.accessId
-import earth.terrarium.tempad.common.registries.color
-import earth.terrarium.tempad.common.registries.owner
+import earth.terrarium.tempad.common.registries.*
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.Nameable
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -34,6 +33,10 @@ class SpatialAnchorBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.s
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
         return CompoundTag().apply { saveAdditional(this, registries) }
+    }
+
+    override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
+        return ClientboundBlockEntityDataPacket.create(this)
     }
 
     override fun getCustomName(): Component? {

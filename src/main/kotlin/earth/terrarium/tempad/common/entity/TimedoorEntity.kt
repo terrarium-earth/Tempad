@@ -32,6 +32,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.portal.DimensionTransition
@@ -116,12 +117,17 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             )
 
             val event = TimedoorEvent.OpenWithBlock(timedoor, player, block).post()
+
             if (event.isCanceled) return event.errorMessage ?: fail
             else logTimedoorOpen(player.name, location, timedoor)
 
-            onOpen(timedoor)
-            block.level!!.addFreshEntity(timedoor)
             block.chronons?.extract(1000, ActionType.Execute)
+            block.setChanged()
+            block.level!!.sendBlockUpdated(block.blockPos, block.blockState, block.blockState, Block.UPDATE_ALL)
+
+            block.level!!.addFreshEntity(timedoor)
+            onOpen(timedoor)
+            timedoor.tryInitReceivingPortal()
             return null
         }
 

@@ -129,6 +129,10 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
     ): InteractionResult {
         if (level.isClientSide) return InteractionResult.sidedSuccess(level.isClientSide)
         (level.getBlockEntity(pos) as? SpatialAnchorBE)?.let {
+            if (it.owner?.id != player.gameProfile.id) {
+                player.displayClientMessage(Component.translatable("block.tempad.spatial_anchor.owner_mismatch.use").withColor(Tempad.ORANGE.value), true)
+                return InteractionResult.FAIL
+            }
             OpenSpatialAnchor(pos, it.color, it.posName.string, it.accessId).sendToClient(player)
         }
         return InteractionResult.sidedSuccess(level.isClientSide)

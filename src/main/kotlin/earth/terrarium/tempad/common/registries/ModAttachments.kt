@@ -57,12 +57,6 @@ object ModAttachments {
         }
     }
 
-    val chrononContent: AttachmentType<Int> by registry.register("chronon_content") {
-        attachmentType({0}) {
-            codec = Codec.INT
-        }
-    }
-
     val color: AttachmentType<Color> by registry.register("color") {
         attachmentType({ Tempad.ORANGE }) {
             codec = Color.CODEC
@@ -102,12 +96,6 @@ object ModAttachments {
             codec = PlayerPointsData.codec
         }
     }
-
-    val portalTarget: AttachmentType<LocationGetter> by registry.register("portal_target") {
-        attachmentType({ DirectLocation(NamedGlobalVec3.nowhere) }) {
-            codec = LocationGetter.codec
-        }
-    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
@@ -115,11 +103,9 @@ var AttachmentHolder.travelHistory by ModAttachments.travelHistory
 var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLastTimedoor.optional()
 
 var AttachmentHolder.owner by ModAttachments.owner.optional()
-var AttachmentHolder.chrononContent by ModAttachments.chrononContent
 var AttachmentHolder.color by ModAttachments.color.synced(ModAttachments.syncedColor)
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
-var AttachmentHolder.portalTarget by ModAttachments.portalTarget.optional()
 
 val anchorPoints by ModAttachments.anchorPoints.serverData
 val playerPoints by ModAttachments.playerPoints.serverData
