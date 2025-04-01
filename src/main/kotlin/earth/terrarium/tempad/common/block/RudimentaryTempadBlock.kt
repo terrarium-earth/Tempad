@@ -3,6 +3,7 @@ package earth.terrarium.tempad.common.block
 import com.mojang.serialization.MapCodec
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
+import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
@@ -37,7 +38,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
         val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.rudimentaryTempad }
         val hasCardProperty = BooleanProperty.create("has_card")
 
-        val shape = Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0)
+        val shape = box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0)
     }
 
     init {
@@ -57,6 +58,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
         return mutableListOf(
             ModItems.rudimentaryTempad.stack {
                 (params.getParameter(LootContextParams.BLOCK_ENTITY) as? RudimentaryTempadBE)?.let {
+                    chrononContent = it.chrononContent
                     portalTarget = it.portalTarget
                 }
             }

@@ -24,6 +24,14 @@ interface ChrononHandler {
 
 val ChrononHandler.hasRoom get() = insert(1, ActionType.Simulate) == 1
 
+fun ChrononHandler.drainAndExecute(amount: Int, action: () -> Unit) {
+    val extracted = this.extract(amount, ActionType.Simulate)
+    if (extracted == amount) {
+        this.extract(amount, ActionType.Execute)
+        action()
+    }
+}
+
 fun move(from: ChrononHandler, to: ChrononHandler, amount: Int) {
     val extracted = from.extract(amount, ActionType.Simulate)
     val inserted = to.insert(extracted, ActionType.Execute)

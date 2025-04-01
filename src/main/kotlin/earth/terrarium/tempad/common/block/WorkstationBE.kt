@@ -1,10 +1,13 @@
 package earth.terrarium.tempad.common.block
 
+import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.sizing.FloorPlacementSettings
 import earth.terrarium.tempad.api.sizing.TimedoorPlacementSettings
 import earth.terrarium.tempad.api.sizing.VerticalPlacementSettings
 import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.api.tva_device.drainAndExecute
 import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.owner
@@ -61,7 +64,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         super.loadAdditional(tag, registries)
         inventory.deserializeNBT(registries, tag.getCompound(inventoryKey))
         cookingTime = tag.getInt(downloadKey)
-        timedoorId = UUID.fromString(tag.getString(downloadKey))
+        timedoorId = tag.getString(downloadKey).let { if(!it.isEmpty()) UUID.fromString(tag.getString(downloadKey)) else null }
         recipe = ResourceLocation.tryParse(tag.getString("recipe"))
     }
 
@@ -78,13 +81,16 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         val nearby = level.getEntitiesOfClass(ServerPlayer::class.java, AABB(blockPos).inflate(5.0))
         val potentialDoor = timedoorId?.let { id -> level.entities.get(id) }
         if(potentialDoor as? TimedoorEntity != null) {
-            potentialDoor.closingTime += 20;
-            potentialDoor.linkedPortalEntity?.let { it.closingTime += 20 }
+            chronons?.drainAndExecute(CommonConfig.TimeDoor.costPerDoor / 10) {
+                potentialDoor.closingTime += 20;
+                potentialDoor.linkedPortalEntity?.let { it.closingTime += 20 }
+            }
             return
         }
         safeLet(inventory[0].selectedPos, upgrades, chronons, owner) { pos, upgrades, chronons, player ->
             pos.get(upgrades, chronons)?.let {
                 TimedoorEntity.openTimedoor(player, this, it, getSizing()) {
+                    this.timedoorId = it.uuid
                     it.yRot = inventory[0].portalOffset.angle.toFloat() + direction.toYRot()
                 }?.let { msg ->
                     nearby.error(msg)
