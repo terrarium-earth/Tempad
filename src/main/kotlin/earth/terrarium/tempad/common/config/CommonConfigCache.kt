@@ -6,22 +6,22 @@ object CommonConfigCache {
     val CACHE = ConfigCache("tempad", ModNetworking.channel)
 
     object Capacitor {
-        val capacity by CACHE.ofInt(CommonConfig.Capacitor::capacity)
+        val capacity by CACHE.ofInt(CommonConfig.Capacitor::capacityCapacitor)
     }
 
     object Chronometer {
-        val capacity by CACHE.ofInt(CommonConfig.Chronometer::capacity)
+        val capacity by CACHE.ofInt(CommonConfig.Chronometer::capacityChronometer)
     }
 
     object RudimentaryTempad {
-        val capacity by CACHE.ofInt(CommonConfig.RudimentaryTempad::capacity)
+        val capacity by CACHE.ofInt(CommonConfig.RudimentaryTempad::capacityRudi)
     }
 
     object Tempad {
-        val capacity by CACHE.ofInt(CommonConfig.Tempad::capacity)
+        val capacity by CACHE.ofInt(CommonConfig.Tempad::capacityTempad)
     }
 
     object TimeTwister {
-        val capacity by CACHE.ofInt(CommonConfig.TimeTwister::capacity)
+        val capacity by CACHE.ofInt(CommonConfig.TimeTwister::capacityTimeTwister)
     }
 }

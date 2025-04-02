@@ -2,7 +2,6 @@ package earth.terrarium.tempad.common.config;
 
 import com.teamresourceful.resourcefulconfig.api.annotations.*;
 import com.teamresourceful.resourcefulconfig.api.types.entries.Observable;
-import com.teamresourceful.resourcefulconfig.api.types.options.EntryType;
 
 @ConfigInfo(
         icon = "watch",
@@ -64,28 +63,28 @@ public final class CommonConfig {
     public static final class RudimentaryTempad {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Rudimentary Tempad can store.")
-        public static Observable<Integer> capacity = Observable.of(4000);
+        public static Observable<Integer> capacityRudi = Observable.of(4000);
     }
 
     @Category("tempad")
     public static final class Tempad {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Tempad can store (without the time twister being installed).")
-        public static Observable<Integer> capacity = Observable.of(8000);
+        public static Observable<Integer> capacityTempad = Observable.of(8000);
     }
 
     @Category("time_twister")
     public static final class TimeTwister {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Time Twister can store.")
-        public static Observable<Integer> capacity = Observable.of(4000);
+        public static Observable<Integer> capacityTimeTwister = Observable.of(4000);
     }
 
     @Category("chronometer")
     public static final class Chronometer {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Chronometer can store.")
-        public static Observable<Integer> capacity = Observable.of(0);
+        public static Observable<Integer> capacityChronometer = Observable.of(0);
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
@@ -96,6 +95,6 @@ public final class CommonConfig {
     public static final class Capacitor {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Capacitor can store.")
-        public static Observable<Integer> capacity = Observable.of(4000);
+        public static Observable<Integer> capacityCapacitor = Observable.of(4000);
     }
 }
