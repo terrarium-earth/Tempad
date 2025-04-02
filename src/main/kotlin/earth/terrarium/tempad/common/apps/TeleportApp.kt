@@ -8,8 +8,11 @@ import earth.terrarium.tempad.api.app.TempadApp
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.pinnedPosition
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -31,7 +34,10 @@ data class TeleportApp(val ctx: SyncableContext<*>): TempadApp<TeleportData> {
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.teleport")
 
-    override fun createContent(player: ServerPlayer): TeleportData = TeleportData(TempadLocations[player, ctx], player.pinnedPosition, ctx.holder)
+    override fun createContent(player: ServerPlayer): TeleportData {
+        val profile = ctx.stack.owner ?: player.gameProfile
+        return TeleportData(TempadLocations[profile, ctx.stack.upgrades!!, ctx.stack.chronons!!], player.pinnedPosition, ctx.holder)
+    }
 
     override fun isEnabled(player: Player): Boolean = true
 }

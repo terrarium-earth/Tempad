@@ -126,7 +126,7 @@ class Tempad(bus: IEventBus) {
                 ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)
             }
 
-            chrononItems[ModItems.sacredChronometer] = { _, _ ->
+            chrononItems[ModItems.creativeChronometer] = { _, _ ->
                 InfiniteChrononHandler
             }
 

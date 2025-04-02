@@ -10,6 +10,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.registries.travelHistory
 import earth.terrarium.tempad.common.utils.DATE_BYTE_CODEC
 import java.util.*
@@ -25,9 +26,9 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
             ),
             NetworkHandle.handle { packet, player ->
                 val ctx = packet.ctx.getCtx(player)
-                if (!player.isCreative && ctx.stack.chronons?.extract(1000, ActionType.Simulate) != 1000) return@handle
+                if (!player.isCreative && ctx.stack.chronons?.extract(CommonConfig.TimeTwister.costToBacktrack, ActionType.Simulate) != 1000) return@handle
                 ctx.modify {
-                    it.chronons?.extract(1000, ActionType.Execute)
+                    it.chronons?.extract(CommonConfig.TimeTwister.costToBacktrack, ActionType.Execute)
                 }
                 player.cooldowns.addCooldown(ctx.stack.item, 40)
                 player.travelHistory.backtrackTo(player, packet.time)

@@ -31,8 +31,8 @@ data class PortalPlacementComponent(val leftRight: Float, val upDown: Float, val
 
     fun calcOffset(dir: Direction): Vector3f {
         val x = when (dir) {
-            Direction.NORTH -> -leftRight
-            Direction.SOUTH -> leftRight
+            Direction.NORTH -> leftRight
+            Direction.SOUTH -> -leftRight
             Direction.WEST -> -forwardBack
             Direction.EAST -> forwardBack
             else -> error("Unsupported direction $dir")
@@ -40,8 +40,8 @@ data class PortalPlacementComponent(val leftRight: Float, val upDown: Float, val
         val z = when (dir) {
             Direction.NORTH -> -forwardBack
             Direction.SOUTH -> forwardBack
-            Direction.WEST -> leftRight
-            Direction.EAST -> -leftRight
+            Direction.WEST -> -leftRight
+            Direction.EAST -> leftRight
             else -> error("Unsupported direction $dir")
         }
         return Vector3f(x, upDown, z)

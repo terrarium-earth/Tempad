@@ -54,6 +54,10 @@ public final class CommonConfig {
         @Comment("The cost that any device requires to open a timedoor for 10 seconds")
         public static int costPerDoor = 1000;
 
+        @ConfigEntry(id= "cost_to_persist")
+        @Comment("The cost that any device requires to open add 1 second to a timedoor's life")
+        public static int costToPersist = 10;
+
         @ConfigEntry(id = "time_in_world")
         @Comment("The amount of time in ticks that a Time Door will remain open")
         public static int timeInWorld = 200;
@@ -78,6 +82,10 @@ public final class CommonConfig {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Time Twister can store.")
         public static Observable<Integer> capacityTimeTwister = Observable.of(4000);
+
+        @ConfigEntry(id= "cost_to_backtrack")
+        @Comment("The cost that the Time Twister consumes to backtrack to a location")
+        public static int costToBacktrack = 1000;
     }
 
     @Category("chronometer")
@@ -89,6 +97,10 @@ public final class CommonConfig {
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
         public static int generationRate = 24;
+
+        @ConfigEntry(id = "generation_amount")
+        @Comment("The amount of chronons generated everytime the Chronometer does a tick of work.")
+        public static int generationAmount = 1;
     }
 
     @Category("capacitor")

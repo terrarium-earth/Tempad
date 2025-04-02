@@ -69,7 +69,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
             val stack = ctx.stack
-            if (!player.isCreative && (stack.chronons?.extract(1000, ActionType.Simulate) ?: 0) < 1000) return noChrononsFail
+            if (!player.isCreative && (stack.chronons?.extract(CommonConfig.TimeDoor.costPerDoor, ActionType.Simulate) ?: 0) < CommonConfig.TimeDoor.costPerDoor) return noChrononsFail
 
             val result = getTimedoor(player.level(), location)
             result.right().getOrNull()?.let { return it }
@@ -85,7 +85,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             else logTimedoorOpen(player.name.string, location, timedoor)
 
             if (!player.isCreative) {
-                stack.chronons?.extract(1000, ActionType.Execute)
+                stack.chronons?.extract(CommonConfig.TimeDoor.costPerDoor, ActionType.Execute)
                 player.cooldowns.addCooldown(stack.item, 40)
             }
 
@@ -102,7 +102,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             sizing: TimedoorPlacementSettings = DynamicAngledPlacement(),
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
-            if ((block.chronons?.extract(1000, ActionType.Simulate) ?: 0) < 1000) return noChrononsFail
+            if ((block.chronons?.extract(CommonConfig.TimeDoor.costPerDoor, ActionType.Simulate) ?: 0) < CommonConfig.TimeDoor.costPerDoor) return noChrononsFail
             val result = getTimedoor(block.level!!, location)
             result.right().getOrNull()?.let { return it }
 
@@ -121,7 +121,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             if (event.isCanceled) return event.errorMessage ?: fail
             else logTimedoorOpen(player.name, location, timedoor)
 
-            block.chronons?.extract(1000, ActionType.Execute)
+            block.chronons?.extract(CommonConfig.TimeDoor.costPerDoor, ActionType.Execute)
             block.setChanged()
             block.level!!.sendBlockUpdated(block.blockPos, block.blockState, block.blockState, Block.UPDATE_ALL)
 

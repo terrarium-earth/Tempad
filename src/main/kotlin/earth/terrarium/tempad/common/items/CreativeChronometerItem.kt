@@ -2,7 +2,6 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.context.ContextRegistry
-import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.hasRoom
 import earth.terrarium.tempad.api.tva_device.move
@@ -17,7 +16,7 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import java.util.*
 
-class SacredChronometerItem : Item(Properties().stacksTo(1)) {
+class CreativeChronometerItem : Item(Properties().stacksTo(1)) {
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
         return Optional.of(ChrononData.infinite)
     }

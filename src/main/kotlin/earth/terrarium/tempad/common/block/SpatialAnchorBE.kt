@@ -28,7 +28,7 @@ class SpatialAnchorBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.s
     val namedGlobalVec3 get() = NamedGlobalVec3(posName, landingPosition, level!!.dimension(), blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot(), color)
 
     fun canAccess(player: GameProfile): Boolean {
-        return AnchorAccessApi[this.accessId].canAccess(level!!, owner!!, player)
+        return owner ?.let { AnchorAccessApi[this.accessId].canAccess(level!!, it, player) } ?: true
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {

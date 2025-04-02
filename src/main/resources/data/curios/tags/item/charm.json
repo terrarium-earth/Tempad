@@ -2,6 +2,8 @@
     "replace": false,
     "values": [
         "tempad:chronometer",
-        "tempad:temporal_beacon"
+        "tempad:status_emitter",
+        "tempad:creative_chronometer",
+        "tempad:capacitor"
     ]
 }

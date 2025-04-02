@@ -81,7 +81,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         val nearby = level.getEntitiesOfClass(ServerPlayer::class.java, AABB(blockPos).inflate(5.0))
         val potentialDoor = timedoorId?.let { id -> level.entities.get(id) }
         if(potentialDoor as? TimedoorEntity != null) {
-            chronons?.drainAndExecute(CommonConfig.TimeDoor.costPerDoor / 10) {
+            chronons?.drainAndExecute(CommonConfig.TimeDoor.costToPersist) {
                 potentialDoor.closingTime += 20;
                 potentialDoor.linkedPortalEntity?.let { it.closingTime += 20 }
             }

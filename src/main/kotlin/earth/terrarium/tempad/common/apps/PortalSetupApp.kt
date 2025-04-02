@@ -8,8 +8,11 @@ import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.locations.TempadLocations
+import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.ModMenus
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.pinnedPosition
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -32,7 +35,10 @@ data class PortalSetupApp(val ctx: SyncableContext<*>): TempadApp<PortalSetupDat
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.portal_setup")
 
-    override fun createContent(player: ServerPlayer): PortalSetupData = PortalSetupData(TempadLocations[player, ctx], player.pinnedPosition, ctx.holder)
+    override fun createContent(player: ServerPlayer): PortalSetupData {
+        val profile = ctx.stack.owner ?: player.gameProfile
+        return PortalSetupData(TempadLocations[profile, ctx.stack.upgrades!!, ctx.stack.chronons!!], player.pinnedPosition, ctx.holder)
+    }
 
     override fun isEnabled(player: Player): Boolean = true
 }

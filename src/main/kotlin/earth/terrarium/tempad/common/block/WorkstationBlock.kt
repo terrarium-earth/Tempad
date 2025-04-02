@@ -1,12 +1,12 @@
 package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
-import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.recipe.UpgradeRecipeInput
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.ModRecipes
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.set
@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
-import net.minecraft.world.level.block.state.properties.BedPart
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.storage.loot.LootParams
@@ -113,6 +112,7 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
             ?: return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
         if (blockEntity.inventory[0].isEmpty && stack.`is`(ModItems.tempad)) {
+            stack.owner = player.owner
             blockEntity.inventory[0] = stack
             blockEntity.setChanged()
             player.setItemInHand(hand, ItemStack.EMPTY)
@@ -153,7 +153,9 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
 
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
             ?: return InteractionResult.PASS
-        player.inventory.placeItemBackInInventory(blockEntity.inventory[0])
+        val stack = blockEntity.inventory[0]
+        stack.owner = null
+        player.inventory.placeItemBackInInventory(stack)
         blockEntity.inventory[0] = ItemStack.EMPTY
         level.sendBlockUpdated(pos, state, state, UPDATE_ALL)
         blockEntity.setChanged()

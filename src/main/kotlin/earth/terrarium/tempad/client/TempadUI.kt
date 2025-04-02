@@ -105,7 +105,7 @@ object TempadUI {
         val uWidth = ((power.toFloat() / maxPower) * 72).roundToInt()
         graphics.blitSprite(powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
 
-        val text = if(power == -1) Component.translatable("item.tempad.sacred_chronometer.infinite") else Component.literal("${power}/${maxPower}")
+        val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else Component.literal("${power}/${maxPower}")
         val xOffset = (74 - font.width(text)) / 2
 
         graphics.flush()
