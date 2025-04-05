@@ -7,6 +7,8 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.apps.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import earth.terrarium.tempad.common.menu.MetronomeMenu
+import earth.terrarium.tempad.common.menu.MetronomeMenuData
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.entity.player.Inventory
@@ -58,6 +60,13 @@ object ModMenus {
         MenuContentHelper.create(
             ::PortalSetupMenu,
             RecordCodecMenuContentSerializer(PortalSetupData.codec)
+        )
+    }
+
+    val METRONOME_MENU: MenuType<MetronomeMenu> by registry.register("metronome") {
+        MenuContentHelper.create(
+            ::MetronomeMenu,
+            RecordCodecMenuContentSerializer(MetronomeMenuData.byteCodec)
         )
     }
 }

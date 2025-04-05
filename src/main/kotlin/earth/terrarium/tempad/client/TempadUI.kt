@@ -102,7 +102,7 @@ object TempadUI {
 
     fun renderEnergyBar(graphics: GuiGraphics, font: Font, x: Int, y: Int, power: Int, maxPower: Int) {
         graphics.blitSprite(powerBg, x, y, 74, 13)
-        val uWidth = ((power.toFloat() / maxPower) * 72).roundToInt()
+        val uWidth = if(maxPower == 0) 0 else ((power.toFloat() / maxPower) * 72).roundToInt()
         graphics.blitSprite(powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
 
         val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else Component.literal("${power}/${maxPower}")

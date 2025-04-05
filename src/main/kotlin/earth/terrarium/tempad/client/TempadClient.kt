@@ -14,7 +14,8 @@ import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.block.SpatialAnchorRenderer
 import earth.terrarium.tempad.client.block.WorkstationRenderer
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
-import earth.terrarium.tempad.client.screen.anchor.SpatialAnchorScreen
+import earth.terrarium.tempad.client.screen.MetronomeScreen
+import earth.terrarium.tempad.client.screen.SpatialAnchorScreen
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
 import earth.terrarium.tempad.client.screen.tempad.PortalSetupScreen
 import earth.terrarium.tempad.client.screen.tempad.SettingsScreen
@@ -25,6 +26,7 @@ import earth.terrarium.tempad.common.compat.ArsCompat
 import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.safeLet
@@ -47,6 +49,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.ModList
@@ -173,6 +176,7 @@ object TempadClient {
         event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
         event.register(ModMenus.TIMELINE_MENU, ::TimelineScreen)
         event.register(ModMenus.PORTAL_SETUP_MENU, ::PortalSetupScreen)
+        event.register(ModMenus.METRONOME_MENU, ::MetronomeScreen)
     }
 
     @SubscribeEvent
@@ -234,3 +238,5 @@ object TempadClient {
         event.registerItem(RudimentaryTempadClient, ModItems.rudimentaryTempad)
     }
 }
+
+val clientLevel: Level? get() = Minecraft.getInstance().level

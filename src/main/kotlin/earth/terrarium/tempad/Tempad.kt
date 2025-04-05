@@ -9,10 +9,12 @@ import earth.terrarium.tempad.api.tva_device.impl.RudimentaryChrononContent
 import earth.terrarium.tempad.api.tva_device.impl.InfiniteChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemUpgradeHandler
+import earth.terrarium.tempad.api.tva_device.impl.MultiversalChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.RudimentaryUpgradeHandler
 import earth.terrarium.tempad.api.tva_device.impl.TempadChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.WorkstationChrononHandler
 import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.config.CommonConfig
@@ -37,6 +39,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
+import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.server.ServerLifecycleHooks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -106,24 +109,34 @@ class Tempad(bus: IEventBus) {
                 } else null
             }
 
-            chrononItems[ModItems.rudimentaryTempad] = { it, _ ->
-                ItemChrononHandler.create(it, CommonConfigCache.RudimentaryTempad.capacity)
+            chrononBlocks[ModBlocks.metronomeBe] = { it, _ ->
+                (it as? MetronomeBe)?.owner?.let {
+                    MultiversalChrononHandler(it.id)
+                }
             }
 
-            chrononItems[ModItems.timeTwister] = { it, _ ->
-                ItemChrononHandler.create(it, CommonConfigCache.TimeTwister.capacity)
+            chrononItems[ModItems.rudimentaryTempad] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.RudimentaryTempad.capacity)
             }
 
-            chrononItems[ModItems.tempad] = { it, _ ->
-                TempadChrononHandler.create(it, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
+            chrononItems[ModItems.timeTwister] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.TimeTwister.capacity)
             }
 
-            chrononItems[ModItems.capacitor] = { it, _ ->
-                ItemChrononHandler.create(it, CommonConfigCache.Capacitor.capacity)
+            chrononItems[ModItems.tempad] = { stack, _ ->
+                TempadChrononHandler.create(stack, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
+            }
+
+            chrononItems[ModItems.capacitor] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.Capacitor.capacity)
             }
 
             chrononItems[ModItems.chronometer] = { stack, _ ->
                 ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)
+            }
+
+            chrononItems[ModItems.metronome] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.Metronome.capacity)
             }
 
             chrononItems[ModItems.creativeChronometer] = { _, _ ->
@@ -182,6 +195,12 @@ class Tempad(bus: IEventBus) {
             event.entity.travelHistory.logLocation(event.entity, TravelHistoryAttachment.DIM_ENTER_MARKER)
         }
 
-
+        NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
+            if(event.server.tickCount % CommonConfig.Metronome.generationRate == 0) {
+                metronomeEnergy?.let {
+                    it.tick()
+                }
+            }
+        }
     }
 }

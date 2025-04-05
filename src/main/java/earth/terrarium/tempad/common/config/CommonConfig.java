@@ -22,6 +22,7 @@ import com.teamresourceful.resourcefulconfig.api.types.entries.Observable;
     CommonConfig.TimeTwister.class,
     CommonConfig.Chronometer.class,
     CommonConfig.Capacitor.class,
+    CommonConfig.Metronome.class,
 })
 public final class CommonConfig {
     @ConfigEntry(id = "allow_interdimensional_travel")
@@ -93,6 +94,21 @@ public final class CommonConfig {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Chronometer can store.")
         public static Observable<Integer> capacityChronometer = Observable.of(0);
+
+        @ConfigEntry(id = "generation_rate")
+        @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
+        public static int generationRate = 48;
+
+        @ConfigEntry(id = "generation_amount")
+        @Comment("The amount of chronons generated everytime the Chronometer does a tick of work.")
+        public static int generationAmount = 1;
+    }
+
+    @Category("metronome")
+    public static final class Metronome {
+        @ConfigEntry(id = "capacity")
+        @Comment("The amount of fuel that the Chronometer can store.")
+        public static Observable<Integer> capacityMetronome = Observable.of(8000);
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")

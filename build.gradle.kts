@@ -44,6 +44,7 @@ repositories {
 dependencies {
     val neoforgeVersion: String by project
     val minecraftVersion: String by project
+    val baseVersion = "1.21"
 
     val resourcefulConfigVersion: String by project
     val resourcefulLibVersion: String by project
@@ -66,27 +67,27 @@ dependencies {
     runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
     runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 
-    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${minecraftVersion}:${resourcefulConfigVersion}")
-    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${minecraftVersion}:${resourcefulLibVersion}")
+    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${baseVersion}:${resourcefulConfigVersion}")
+    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${baseVersion}:${resourcefulLibVersion}")
     compileOnly("com.teamresourceful:bytecodecs:1.1.0")
     implementation("thedarkcolour:kotlinforforge-neoforge:${kotlinForForgeVersion}")
-    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${minecraftVersion}:${resourcefulLibKtVersion}") {
+    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${baseVersion}:${resourcefulLibKtVersion}") {
         isTransitive = false
     }
 
-    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${minecraftVersion}", version = resourcefulLibKtVersion).also {
+    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${baseVersion}", version = resourcefulLibKtVersion).also {
         jarJar.pin(it, "[${resourcefulLibKtVersion})")
     }
 
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${minecraftVersion}", version = "1.0.14") {
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${baseVersion}", version = "1.0.14") {
         isTransitive = false
     }.also { jarJar(it) }
 
-    implementation(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-${minecraftVersion}", version = "2.0.0-beta.3") {
+    implementation(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-${baseVersion}", version = "2.0.0-beta.3") {
         isTransitive = false
     }
 
-    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${minecraftVersion}", version = "2.0.0-beta.4") {
+    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${baseVersion}", version = "2.0.0-beta.4") {
         isTransitive = false
     }
 
@@ -99,21 +100,20 @@ dependencies {
     implementation("maven.modrinth:lambdynamiclights-unofficial-neoforge:$lambdaDynamicLights")
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
+    compileOnly("mezz.jei:jei-${baseVersion}-neoforge-api:${jeiVersion}")
     // at runtime, use the full JEI jar for NeoForge
-    runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
+    runtimeOnly("mezz.jei:jei-${baseVersion}-neoforge:${jeiVersion}")
 
-    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${minecraftVersion}.0:${arsNouveauVersion}") {
+    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${baseVersion}.0:${arsNouveauVersion}") {
         exclude(group = "curse.maven")
     }
 
     compileOnly(group = "curse.maven", name = "ftb-teams-forge-404468", version = "5631446")
     implementation(group = "curse.maven", name = "dark-mode-everywhere-574123", version = "5922655")
 
-    implementation(group = "earth.terrarium.common_storage_lib", name = "common-storage-lib-data-neoforge-$minecraftVersion", version = "0.0.1") {
+    implementation(group = "earth.terrarium.common_storage_lib", name = "common-storage-lib-data-neoforge-$minecraftVersion", version = "0.0.7") {
         isTransitive = false
     }.let { jarJar(it) }
-
 }
 
 java {

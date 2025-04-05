@@ -5,7 +5,6 @@ import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.WorkstationBlock
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.tempadId
-import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -43,5 +42,15 @@ class ModBlockStateData(output: PackOutput, helper: ExistingFileHelper) : BlockS
                     .rotationY((dir.toYRot().toInt()) % 360)
                     .build()
             }
+
+        getVariantBuilder(ModBlocks.metronome).forAllStates { state: BlockState ->
+            ConfiguredModel.builder()
+                .modelFile(models().cubeColumn(
+                    "metronome",
+                    "block/metronome_side".tempadId,
+                    "block/metronome_end".tempadId,
+                ))
+                .build()
+        }
     }
 }

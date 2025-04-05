@@ -3,6 +3,8 @@ package earth.terrarium.tempad.common.registries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.block.MetronomeBe
+import earth.terrarium.tempad.common.block.MetronomeBlock
 import earth.terrarium.tempad.common.block.SpatialAnchorBE
 import earth.terrarium.tempad.common.block.SpatialAnchorBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
@@ -36,4 +38,10 @@ object ModBlocks {
     }
 
     val workstationChild by blocks.register("workstation_child", ::WorkstationChildBlock)
+
+    val metronome by blocks.register("metronome", ::MetronomeBlock)
+
+    val metronomeBe by blockEntities.register("metronome") {
+        BlockEntityType.Builder.of(::MetronomeBe, metronome).build(null)
+    }
 }

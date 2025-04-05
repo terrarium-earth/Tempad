@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.client.screen.time_twister
+package earth.terrarium.tempad.client.screen
 
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.systems.RenderSystem

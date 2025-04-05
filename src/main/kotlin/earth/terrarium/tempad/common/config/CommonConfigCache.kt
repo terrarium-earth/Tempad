@@ -13,6 +13,10 @@ object CommonConfigCache {
         val capacity by CACHE.ofInt(CommonConfig.Chronometer::capacityChronometer)
     }
 
+    object Metronome {
+        val capacity by CACHE.ofInt(CommonConfig.Metronome::capacityMetronome)
+    }
+
     object RudimentaryTempad {
         val capacity by CACHE.ofInt(CommonConfig.RudimentaryTempad::capacityRudi)
     }

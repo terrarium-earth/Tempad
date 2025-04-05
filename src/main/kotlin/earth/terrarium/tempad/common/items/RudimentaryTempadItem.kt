@@ -103,7 +103,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties(
     }
 
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
-        return Optional.of(stack.chronons!!.tooltip)
+        return Optional.ofNullable(stack.chronons?.tooltip)
     }
 
     override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean {

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "tempad:block/metronome_end",
+    "side": "tempad:block/metronome_side"
+  }
+}

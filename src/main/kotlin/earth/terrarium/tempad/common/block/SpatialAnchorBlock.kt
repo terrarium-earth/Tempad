@@ -155,13 +155,13 @@ class SpatialAnchorBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f))
     }
 
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, moved: Boolean) {
-        super.onPlace(state, level, pos, oldState, moved)
-
         if (!level.isClientSide) {
             safeLet(level.getBlockEntity(pos) as? SpatialAnchorBE, anchorPoints) { blockEntity, points ->
                 points += blockEntity
             }
         }
+
+        super.onPlace(state, level, pos, oldState, moved)
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, moved: Boolean) {

@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.client.screen.anchor
+package earth.terrarium.tempad.client.screen
 
 import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen
 import com.teamresourceful.resourcefullib.common.color.Color
@@ -23,15 +23,16 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-class SpatialAnchorScreen(val pos: BlockPos, name: String, color: Color, access: ResourceLocation): BaseCursorScreen(Component.translatable("screen.tempad.spatial_anchor")) {
+class SpatialAnchorScreen(val pos: BlockPos, name: String, color: Color, access: ResourceLocation): BaseCursorScreen(
+    Component.translatable("screen.tempad.spatial_anchor")) {
     companion object {
         private const val bgWidth = 200
 
         private val accessField = Component.translatable("screen.tempad.spatial_anchor.access_field")
     }
 
-    val name: MutableState<String> = MutableState.of(name)
-    val color: MutableState<Color> = MutableState.of(color)
+    val name: MutableState<String> = MutableState.Companion.of(name)
+    val color: MutableState<Color> = MutableState.Companion.of(color)
     val access: DropdownState<ResourceLocation> = DropdownState.of(access)
 
     var bgHeight = 0
@@ -43,11 +44,11 @@ class SpatialAnchorScreen(val pos: BlockPos, name: String, color: Color, access:
         val fields = Layouts.column().withGap(4)
 
         fields.withChild(FrameLayout(190, 10).apply {
-            addChild(Widgets.text(title).withColor(MinecraftColors.WHITE).withShadow()) {
+            FrameLayout.addChild(Widgets.text(title).withColor(MinecraftColors.WHITE).withShadow()) {
                 it.align(0f, 0f)
             }
 
-            addChild(Widgets.button {
+            FrameLayout.addChild(Widgets.button {
                 it.withSize(7)
                 it.withTexture(null)
                 it.withRenderer(
@@ -68,12 +69,12 @@ class SpatialAnchorScreen(val pos: BlockPos, name: String, color: Color, access:
 
         fields.withChild(SpacerElement(0, 0))
 
-        fields.withChild(Widgets.text(NewLocationScreen.NAME_FIELD).configure())
+        fields.withChild(Widgets.text(NewLocationScreen.Companion.NAME_FIELD).configure())
         fields.withChild(Widgets.textInput(name) {
             it.withSize(180, 20)
         })
 
-        fields.withChild(Widgets.text(NewLocationScreen.COLOR_FIELD).configure())
+        fields.withChild(Widgets.text(NewLocationScreen.Companion.COLOR_FIELD).configure())
         fields.withChild(Layouts.row().apply {
             withChild(Widgets.colorPicker(color, false, {
                 it.withSize(20, 20)
@@ -85,7 +86,8 @@ class SpatialAnchorScreen(val pos: BlockPos, name: String, color: Color, access:
         })
 
         fields.withChild(Widgets.text(accessField).configure())
-        fields.withChild(Widgets.dropdown(access, AnchorAccessApi.visbility.keys.toList(), { Component.translatable(it.toLanguageKey("access")) },
+        fields.withChild(
+            Widgets.dropdown(access, AnchorAccessApi.visbility.keys.toList(), { Component.translatable(it.toLanguageKey("access")) },
             { it.withSize(100, 20) },
             {}
         ))

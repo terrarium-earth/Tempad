@@ -71,6 +71,7 @@
   "block.tempad.spatial_anchor": "Spatial Anchor",
   "block.tempad.workstation": "Workstation",
   "block.tempad.workstation_child": "Workstation Terminal",
+  "block.tempad.metronome": "Metronome",
 
   "block.tempad.spatial_anchor.owner_mismatch.place": "Error: User != Anchor Owner. Return to owner or Reset anchor",
   "block.tempad.spatial_anchor.owner_mismatch.use": "Error: User != Anchor Owner. Only owner may edit options",

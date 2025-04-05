@@ -1,7 +1,6 @@
 package earth.terrarium.tempad.common.registries
 
 import com.mojang.authlib.GameProfile
-import com.mojang.serialization.Codec
 import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
@@ -10,14 +9,12 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.common_storage_lib.data.NeoDataLib
 import earth.terrarium.common_storage_lib.data.sync.DataSyncSerializer
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.DirectLocation
-import earth.terrarium.tempad.api.locations.LocationGetter
-import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
-import earth.terrarium.tempad.common.data.NamedGlobalPosAttachment
+import earth.terrarium.tempad.common.data.MetronomeData
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.location_handlers.AnchorPointsData
 import earth.terrarium.tempad.common.location_handlers.PlayerPointsData
+import earth.terrarium.tempad.common.registries.ModAttachments.syncedEnergy
 import earth.terrarium.tempad.common.utils.*
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.UUIDUtil
@@ -64,7 +61,7 @@ object ModAttachments {
     }
 
     val syncedColor: DataSyncSerializer<Color> by syncer.register("color") {
-        DataSyncSerializer.create( { color}, StreamCodecByteCodec.to(Color.BYTE_CODEC))
+        DataSyncSerializer.create( { color }, StreamCodecByteCodec.to(Color.BYTE_CODEC))
     }
 
     val access: AttachmentType<ResourceLocation> by registry.register("access") {
@@ -96,6 +93,17 @@ object ModAttachments {
             codec = PlayerPointsData.codec
         }
     }
+
+    val metronomeEnergy: AttachmentType<MetronomeData> by registry.register("metronome_energy") {
+        attachmentType({ MetronomeData(mapOf(), mapOf()) }) {
+            codec = MetronomeData.codec
+            syncer
+        }
+    }
+
+    val syncedEnergy: DataSyncSerializer<MetronomeData> by syncer.register("metronome_energy") {
+        DataSyncSerializer.create( { this@ModAttachments.metronomeEnergy }, StreamCodecByteCodec.to(MetronomeData.byteCodec))
+    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
@@ -109,3 +117,4 @@ var AttachmentHolder.accessId by ModAttachments.access
 
 val anchorPoints by ModAttachments.anchorPoints.serverData
 val playerPoints by ModAttachments.playerPoints.serverData
+val metronomeEnergy by SyncedServerDataDelegate(ModAttachments.metronomeEnergy, syncedEnergy)

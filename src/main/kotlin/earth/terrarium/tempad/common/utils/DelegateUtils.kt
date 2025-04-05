@@ -2,8 +2,10 @@ package earth.terrarium.tempad.common.utils
 
 import earth.terrarium.common_storage_lib.data.network.BlockEntitySyncPacket
 import earth.terrarium.common_storage_lib.data.network.EntitySyncPacket
+import earth.terrarium.common_storage_lib.data.network.LevelSyncPacket
 import earth.terrarium.common_storage_lib.data.sync.DataSyncSerializer
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.client.clientLevel
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializer
@@ -13,6 +15,7 @@ import net.minecraft.world.Container
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ChunkPos
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
@@ -75,16 +78,16 @@ class SyncedAttachmentDelegate<T : Any>(private val key: AttachmentType<T>, priv
 
 
 
-private fun <T : Any> syncData(thisRef: AttachmentHolder, sync: DataSyncSerializer<T>, value: T?) {
+fun <T : Any> syncData(thisRef: AttachmentHolder, sync: DataSyncSerializer<T>, value: T?) {
     if (thisRef is Entity && !thisRef.level().isClientSide) {
         PacketDistributor.sendToPlayersTrackingEntity(thisRef, EntitySyncPacket.of(thisRef, sync, value))
-    }
-
-    if (thisRef is BlockEntity && !thisRef.level!!.isClientSide) {
+    } else if (thisRef is BlockEntity && !thisRef.level!!.isClientSide) {
         PacketDistributor.sendToPlayersTrackingChunk(
             thisRef.level as ServerLevel, ChunkPos(thisRef.blockPos),
             BlockEntitySyncPacket.of(thisRef, sync, value)
         )
+    } else if (thisRef is Level && !thisRef.isClientSide) {
+        PacketDistributor.sendToAllPlayers(LevelSyncPacket.of(sync, value))
     }
 }
 
@@ -107,16 +110,18 @@ class ServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWrit
     }
 }
 
-class OptionalServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWriteProperty<Any?, T?> {
+class SyncedServerDataDelegate<T : Any>(private val key: AttachmentType<T>, private val sync: DataSyncSerializer<T>) : ReadWriteProperty<Any?, T?> {
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): T? =
-        Tempad.server?.overworld()?.getExistingData(key)?.orElse(null)
+        (Tempad.server?.overworld() ?: clientLevel)?.getData(key)
 
     override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+        val level = Tempad.server?.overworld() ?: clientLevel ?: return
         if (value == null) {
-            Tempad.server?.overworld()?.removeData(key)
+            level.removeData(key)
         } else {
-            Tempad.server?.overworld()?.setData(key, value)
+            level.setData(key, value)
         }
+        syncData(level, sync, value)
     }
 }
 
