@@ -12,9 +12,12 @@ import net.neoforged.neoforge.capabilities.ItemCapability
 interface ChrononHandler {
     val power: Int
     val maxPower: Int
+    val canInsert: Boolean get() = true
+    val canExtract: Boolean get() = true
 
     fun extract(amount: Int, action: ActionType): Int
     fun insert(amount: Int, action: ActionType): Int
+
 
     companion object Capabilities {
         val block = BlockCapability.createSided("chronon".tempadId, ChrononHandler::class.java)

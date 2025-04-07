@@ -64,7 +64,7 @@ public final class CommonConfig {
         public static int timeInWorld = 200;
     }
 
-    @Category("rudimentary_tempad")
+    @Category("timedoor_projector")
     public static final class RudimentaryTempad {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Rudimentary Tempad can store.")
@@ -87,6 +87,21 @@ public final class CommonConfig {
         @ConfigEntry(id= "cost_to_backtrack")
         @Comment("The cost that the Time Twister consumes to backtrack to a location")
         public static int costToBacktrack = 1000;
+    }
+
+    @Category("chronon_generator")
+    public static final class ChrononGenerator {
+        @ConfigEntry(id = "capacity")
+        @Comment("The amount of fuel that the Chronometer can store.")
+        public static Observable<Integer> capacitorGenerator = Observable.of(0);
+
+        @ConfigEntry(id = "generation_rate")
+        @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
+        public static int generationRate = 48;
+
+        @ConfigEntry(id = "generation_amount")
+        @Comment("The amount of chronons generated everytime the Chronometer does a tick of work.")
+        public static int generationAmount = 1;
     }
 
     @Category("chronometer")
@@ -115,8 +130,20 @@ public final class CommonConfig {
         public static int generationRate = 24;
 
         @ConfigEntry(id = "generation_amount")
-        @Comment("The amount of chronons generated everytime the Chronometer does a tick of work.")
+        @Comment("The number of chronons generated everytime the Chronometer does a tick of work.")
         public static int generationAmount = 1;
+
+        @ConfigEntry(id = "should_scale_generation")
+        @Comment("Whether or not the number of chronons generated per cycle is scaled to the number of metronomes placed")
+        public static boolean scaleGeneration = true;
+
+        @ConfigEntry(id = "generation_rate")
+        @Comment("The number of chronons thats transferred to each internal slot or to a neighboring block per tick.")
+        public static int transferRate = 20;
+
+        @ConfigEntry(id = "should_scale_generation")
+        @Comment("Whether or not the number of chronons generated per cycle is scaled to the number of metronomes placed")
+        public static int jumpStartAmount = 2000;
     }
 
     @Category("capacitor")
@@ -124,5 +151,12 @@ public final class CommonConfig {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Capacitor can store.")
         public static Observable<Integer> capacityCapacitor = Observable.of(4000);
+    }
+
+    @Category("battery")
+    public static final class Battery {
+        @ConfigEntry(id = "capacity")
+        @Comment("The amount of fuel that the Battery can store.")
+        public static Observable<Integer> capacityBattery = Observable.of(4000);
     }
 }

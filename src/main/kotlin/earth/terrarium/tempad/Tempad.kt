@@ -97,7 +97,7 @@ class Tempad(bus: IEventBus) {
             val upgradeItems = event.register(UpgradeHandler.item)
             val upgradeBlocks = event.register(UpgradeHandler.block)
 
-            chrononBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
+            chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.let {
                     RudimentaryChrononContent.create(it, CommonConfigCache.RudimentaryTempad.capacity)
                 }
@@ -115,24 +115,32 @@ class Tempad(bus: IEventBus) {
                 }
             }
 
-            chrononItems[ModItems.rudimentaryTempad] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.RudimentaryTempad.capacity)
+            chrononItems[ModItems.timedoorProjector] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.RudimentaryTempad.capacity)?.apply { canExtract = false }
             }
 
             chrononItems[ModItems.timeTwister] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.TimeTwister.capacity)
+                ItemChrononHandler.create(stack, CommonConfigCache.TimeTwister.capacity)?.apply { canExtract = false }
             }
 
             chrononItems[ModItems.tempad] = { stack, _ ->
                 TempadChrononHandler.create(stack, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
             }
 
-            chrononItems[ModItems.capacitor] = { stack, _ ->
+            chrononItems[ModItems.chrononCell] = { stack, _ ->
                 ItemChrononHandler.create(stack, CommonConfigCache.Capacitor.capacity)
             }
 
+            chrononItems[ModItems.chrononBattery] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.Battery.capacity)
+            }
+
             chrononItems[ModItems.chronometer] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)
+                ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)?.apply { canInsert = false }
+            }
+
+            chrononItems[ModItems.chrononGenerator] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.ChrononGenerator.capacity)?.apply { canInsert = false }
             }
 
             chrononItems[ModItems.metronome] = { stack, _ ->
@@ -147,7 +155,7 @@ class Tempad(bus: IEventBus) {
                 ItemUpgradeHandler(it)
             }
 
-            upgradeItems[ModItems.rudimentaryTempad] = { it, _ ->
+            upgradeItems[ModItems.timedoorProjector] = { it, _ ->
                 RudimentaryUpgradeHandler
             }
 
@@ -155,7 +163,7 @@ class Tempad(bus: IEventBus) {
                 (it as? WorkstationBE)?.inventory?.getStackInSlot(0)?.upgrades
             }
 
-            upgradeBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
+            upgradeBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 RudimentaryUpgradeHandler
             }
         }

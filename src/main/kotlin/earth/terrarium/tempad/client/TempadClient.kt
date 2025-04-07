@@ -26,7 +26,6 @@ import earth.terrarium.tempad.common.compat.ArsCompat
 import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
-import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.safeLet
@@ -155,12 +154,15 @@ object TempadClient {
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
         ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
         ItemProperties.register(ModItems.tempad, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.capacitor, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chrononCell, "charge".tempadId, charge3Property)
+        ItemProperties.register(ModItems.chrononBattery, "charge".tempadId, charge3Property)
         ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.statusEmitter, "enabled".tempadId, enabledProperty)
+        ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge3Property)
+        ItemProperties.register(ModItems.locationBroadcaster, "enabled".tempadId, enabledProperty)
+        ItemProperties.register(ModItems.screeningDevice, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
-        ItemProperties.register(ModItems.rudimentaryTempad, "has_card".tempadId, writtenProperty)
-        BlockEntityRenderers.register(ModBlocks.spatialAnchorBE) { SpatialAnchorRenderer(it.blockRenderDispatcher) }
+        ItemProperties.register(ModItems.timedoorProjector, "has_card".tempadId, writtenProperty)
+        BlockEntityRenderers.register(ModBlocks.timedoorMarkerBE) { SpatialAnchorRenderer(it.blockRenderDispatcher) }
         BlockEntityRenderers.register(ModBlocks.workstationBE) { WorkstationRenderer(it.itemRenderer) }
 
         if (ModList.get().isLoaded("ars_nouveau")) {
@@ -206,13 +208,14 @@ object TempadClient {
     @SubscribeEvent
     @JvmStatic
     fun registerBlockColors(event: RegisterColorHandlersEvent.Block) {
-        event.register(blockColor, ModBlocks.spatialAnchor)
+        event.register(blockColor, ModBlocks.timedoorMarker)
     }
 
     @SubscribeEvent
     @JvmStatic
     fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
-        event.register(itemColor, ModItems.spatialAnchor)
+        event.register(itemColor, ModItems.timedoorMarker)
+        event.register(itemColor, ModItems.chronomark)
     }
 
     fun appendTooltip(event: RenderTooltipEvent.GatherComponents) {
@@ -221,7 +224,7 @@ object TempadClient {
             event.tooltipElements.add(2, Either.right(stack.installedUpgrades))
         }
 
-        if (stack.item === ModItems.rudimentaryTempad && stack.portalTarget != null) {
+        if (stack.item === ModItems.timedoorProjector && stack.portalTarget != null) {
             (stack.portalTarget as? TooltipComponent)?.let {
                 event.tooltipElements.add(2, Either.right(it))
             }
@@ -235,7 +238,7 @@ object TempadClient {
     @SubscribeEvent
     @JvmStatic
     fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
-        event.registerItem(RudimentaryTempadClient, ModItems.rudimentaryTempad)
+        event.registerItem(RudimentaryTempadClient, ModItems.timedoorProjector)
     }
 }
 

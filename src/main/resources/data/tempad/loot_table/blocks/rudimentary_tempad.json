@@ -6,7 +6,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "tempad:rudimentary_tempad"
+                    "name": "tempad:timedoor_projector"
                 }
             ],
             "conditions": [

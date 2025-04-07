@@ -35,6 +35,8 @@ object TempadUI {
 
     val powerBg = "power/background".tempadId
     val powerBar = "power/overlay".tempadId
+    val powerVert = "power/overlay_vertical".tempadId
+
 
     fun <T: AbstractWidget, W> W.colored(): WidgetRenderer<T> where W: WidgetRenderer<T>, W: ColorableWidget  {
         return WidgetRenderers.withColors(this, Tempad.DARK_ORANGE, Tempad.ORANGE, Tempad.HIGHLIGHTED_ORANGE)

@@ -64,7 +64,7 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
 
     fun tick() {
         for ((player, amount) in stored) {
-            stored[player] = (CommonConfig.Metronome.generationAmount + amount).coerceAtMost(getCapacity(player))
+            stored[player] = (CommonConfig.Metronome.generationAmount * (if(CommonConfig.Metronome.scaleGeneration) positions[player].size else 1) + amount).coerceAtMost(getCapacity(player))
         }
         sync()
     }

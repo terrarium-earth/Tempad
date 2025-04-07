@@ -35,7 +35,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 
 class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
     companion object {
-        val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.rudimentaryTempad }
+        val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.timedoorProjector }
         val hasCardProperty = BooleanProperty.create("has_card")
 
         val shape = box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0)
@@ -56,7 +56,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
 
     override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
         return mutableListOf(
-            ModItems.rudimentaryTempad.stack {
+            ModItems.timedoorProjector.stack {
                 (params.getParameter(LootContextParams.BLOCK_ENTITY) as? RudimentaryTempadBE)?.let {
                     chrononContent = it.chrononContent
                     portalTarget = it.portalTarget

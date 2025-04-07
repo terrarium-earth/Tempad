@@ -137,7 +137,7 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above()) || level.hasNeighborSignal(ogBlock)
         val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
         if (neighborPowered && !currentlyPowered) {
-            level.scheduleTick(pos, this, 4)
+            level.scheduleTick(pos, this, 10)
             level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, true), 2)
         } else if (!neighborPowered && currentlyPowered) {
             level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, false), 2)

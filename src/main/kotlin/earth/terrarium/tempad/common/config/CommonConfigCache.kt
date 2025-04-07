@@ -9,6 +9,14 @@ object CommonConfigCache {
         val capacity by CACHE.ofInt(CommonConfig.Capacitor::capacityCapacitor)
     }
 
+    object Battery {
+        val capacity by CACHE.ofInt(CommonConfig.Battery::capacityBattery)
+    }
+
+    object ChrononGenerator {
+        val capacity by CACHE.ofInt(CommonConfig.ChrononGenerator::capacitorGenerator)
+    }
+
     object Chronometer {
         val capacity by CACHE.ofInt(CommonConfig.Chronometer::capacityChronometer)
     }

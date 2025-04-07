@@ -18,13 +18,12 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.UseAnim
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import java.util.*
 
-class RudimentaryTempadItem : BlockItem(ModBlocks.rudimentaryTempad, Properties().stacksTo(1)) {
+class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties().stacksTo(1)) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (level.isClientSide) return InteractionResultHolder.success(player.getItemInHand(usedHand))
         val ctx = player.ctx(usedHand.getSlot(player))

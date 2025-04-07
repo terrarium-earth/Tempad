@@ -44,11 +44,11 @@ class SpatialAnchorScreen(val pos: BlockPos, name: String, color: Color, access:
         val fields = Layouts.column().withGap(4)
 
         fields.withChild(FrameLayout(190, 10).apply {
-            FrameLayout.addChild(Widgets.text(title).withColor(MinecraftColors.WHITE).withShadow()) {
+            addChild(Widgets.text(title).withColor(MinecraftColors.WHITE).withShadow()) {
                 it.align(0f, 0f)
             }
 
-            FrameLayout.addChild(Widgets.button {
+            addChild(Widgets.button {
                 it.withSize(7)
                 it.withTexture(null)
                 it.withRenderer(

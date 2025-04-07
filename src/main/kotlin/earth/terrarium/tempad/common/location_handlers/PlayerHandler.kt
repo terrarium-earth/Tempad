@@ -12,10 +12,8 @@ import earth.terrarium.tempad.api.locations.namedGlobalVec3
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.enabled
-import earth.terrarium.tempad.common.registries.playerPoints
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
-import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import java.util.UUID
@@ -45,7 +43,7 @@ class PlayerHandler(val player: GameProfile, val upgrades: UpgradeHandler) : Loc
             return Tempad.server?.let {
                 it.playerList.players
                     .filter { it.uuid != player.id }
-                    .filter { ContextRegistry.locate(it) { it.item === ModItems.statusEmitter && it.enabled } != null }
+                    .filter { ContextRegistry.locate(it) { it.item === ModItems.locationBroadcaster && it.enabled } != null }
                     .associate { it.uuid to it.namedGlobalVec3 }
             } ?: emptyMap()
         }

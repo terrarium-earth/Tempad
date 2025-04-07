@@ -7,6 +7,8 @@ object InfiniteChrononHandler: ChrononHandler {
     override val power: Int = -1
     override val maxPower: Int = -1
 
+    override val canInsert: Boolean = false
+
     override fun extract(amount: Int, action: ActionType): Int {
         return amount
     }

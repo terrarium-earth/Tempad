@@ -6,7 +6,7 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
-import earth.terrarium.tempad.common.block.SpatialAnchorBE
+import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
 import earth.terrarium.tempad.common.network.ServerPacketCompanion
 import earth.terrarium.tempad.common.registries.accessId
 import earth.terrarium.tempad.common.registries.color
@@ -30,7 +30,7 @@ data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name
         )
 
         override fun onReceive(packet: UpdateAnchorPacket, player: Player) {
-            (player.level().getBlockEntity(packet.blockPos) as? SpatialAnchorBE)?.let {
+            (player.level().getBlockEntity(packet.blockPos) as? AbstractMarkerBe)?.let {
                 it.color = packet.color
                 it.posName = Component.literal(packet.name)
                 it.accessId = packet.access

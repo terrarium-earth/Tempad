@@ -49,46 +49,25 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             }
         }
 
-        basicItem(ModItems.chronometer).apply {
-            for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
-                override().apply {
-                    predicate("charge".tempadId, charge)
+        basicItem(ModItems.chronometer).chargedLayered("chronometer")
+        basicItem(ModItems.chrononGenerator).chargedLayered("chronon_generator")
 
-                    model(getBuilder("tempad:chronometer_${index}").apply {
-                        parent(ModelFile.UncheckedModelFile("item/generated"))
+        basicItem(ModItems.chrononCell).charged("chronon_cell")
+        basicItem(ModItems.chrononBattery).charged("chronon_battery")
 
-                        texture("layer0", "tempad:item/chronometer")
-                        if (index > 0) texture("layer1", "tempad:item/chronometer/charge_${index}")
-                    })
-                }
-            }
-        }
+        basicItem(ModItems.locationBroadcaster).booleanProp("enabled")
+        basicItem(ModItems.screeningDevice).booleanProp("enabled")
 
-        basicItem(ModItems.capacitor).apply {
-            for ((index, charge) in arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f).withIndex()) {
-                override().apply {
-                    predicate("charge".tempadId, charge)
-
-                    model(getBuilder("tempad:capacitor_${index}").apply {
-                        parent(ModelFile.UncheckedModelFile("item/generated"))
-
-                        texture("layer0", "tempad:item/capacitor/charge_${index}")
-                    })
-                }
-            }
-        }
-
-        basicItem(ModItems.statusEmitter).booleanProp("enabled")
         basicItem(ModItems.locationCard).booleanProp("written")
-        withExistingParent("tempad:item/rudimentary_tempad", "tempad:block/rudimentary_tempad_off")
+        withExistingParent("tempad:item/timedoor_projector", "tempad:block/timedoor_projector_off")
             .override()
             .predicate("has_card".tempadId, 1f)
-            .model(withExistingParent("tempad:item/rudimentary_tempad_with_card", "tempad:block/rudimentary_tempad_off_with_card"))
+            .model(withExistingParent("tempad:item/timedoor_projector_with_card", "tempad:block/timedoor_projector_off_with_card"))
 
         basicItem(ModItems.timeTwister)
         basicItem(ModItems.newLocationUpgrade)
         basicItem(ModItems.playerTeleportUpgrade)
-        basicItem(ModItems.inexorableAlloy)
+        basicItem(ModItems.timeSteel)
         basicItem(ModItems.creativeChronometer)
     }
 
@@ -100,5 +79,34 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
                 texture("layer0", ResourceLocation.fromNamespaceAndPath(this.location.namespace, this.location.path))
             })
             .end()
+    }
+
+    fun ItemModelBuilder.charged(name: String) {
+        for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
+            override().apply {
+                predicate("charge".tempadId, charge)
+
+                model(getBuilder("tempad:${name}_${index}").apply {
+                    parent(ModelFile.UncheckedModelFile("item/generated"))
+
+                    texture("layer0", "tempad:item/$name/charge_${index}")
+                })
+            }
+        }
+    }
+
+    fun ItemModelBuilder.chargedLayered(name: String) {
+        for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
+            override().apply {
+                predicate("charge".tempadId, charge)
+
+                model(getBuilder("tempad:${name}_${index}").apply {
+                    parent(ModelFile.UncheckedModelFile("item/generated"))
+
+                    texture("layer0", "tempad:item/$name")
+                    if (index > 0) texture("layer1", "tempad:item/$name/charge_${index}")
+                })
+            }
+        }
     }
 }

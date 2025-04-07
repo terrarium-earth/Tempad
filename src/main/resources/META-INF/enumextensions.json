@@ -2,7 +2,7 @@
     "entries": [
         {
             "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
-            "name": "TEMPAD_RUDIMENTARY_TEMPAD",
+            "name": "TEMPAD_timedoor_projector",
             "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
             "parameters": {
                 "class": "earth/terrarium/tempad/client/ModEnums",

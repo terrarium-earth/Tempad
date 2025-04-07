@@ -15,13 +15,13 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper
 
 class ModBlockStateData(output: PackOutput, helper: ExistingFileHelper) : BlockStateProvider(output, Tempad.MOD_ID, helper) {
     override fun registerStatesAndModels() {
-        getVariantBuilder(ModBlocks.rudimentaryTempad)
+        getVariantBuilder(ModBlocks.timedoorProjector)
             .forAllStates { state: BlockState ->
                 val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
                 val triggered = state.getValue(BlockStateProperties.TRIGGERED)
                 val hasCard = state.getValue(RudimentaryTempadBlock.hasCardProperty)
 
-                var model = "block/rudimentary_tempad"
+                var model = "block/timedoor_projector"
                 model += "_${if (triggered) "on" else "off"}"
                 if (hasCard) {
                     model += "_with_card"

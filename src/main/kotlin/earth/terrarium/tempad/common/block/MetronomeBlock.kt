@@ -3,6 +3,7 @@ package earth.terrarium.tempad.common.block
 import com.mojang.serialization.MapCodec
 import com.teamresourceful.resourcefullib.common.menu.ContentMenuProvider
 import earth.terrarium.tempad.common.menu.MetronomeMenuData
+import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.metronomeEnergy
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.core.BlockPos
@@ -18,13 +19,17 @@ import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 
 class MetronomeBlock() : BaseEntityBlock(Properties.of()) {
-    companion object: BlockEntityTicker<MetronomeBe> {
-        override fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: MetronomeBe) {
-        }
+    override fun <T : BlockEntity?> getTicker(
+        level: Level,
+        state: BlockState,
+        blockEntityType: BlockEntityType<T>,
+    ): BlockEntityTicker<T>? {
+        return createTickerHelper(blockEntityType, ModBlocks.metronomeBe) { _, _, _, block -> block.tick() }
     }
 
     override fun onRemove(

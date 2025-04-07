@@ -1,0 +1,6 @@
+{
+    "parent": "tempad:block/timedoor_projector",
+    "textures": {
+        "tempad": "tempad:block/timedoor_projector_on_with_card"
+    }
+}
