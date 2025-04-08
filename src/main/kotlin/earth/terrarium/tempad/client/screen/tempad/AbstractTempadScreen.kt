@@ -6,7 +6,6 @@ import com.teamresourceful.resourcefullib.client.screens.AbstractContainerCursor
 import com.teamresourceful.resourcefullib.client.utils.ScreenUtils
 import earth.terrarium.olympus.client.components.textbox.TextBox
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.TempadUI
@@ -14,13 +13,23 @@ import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.c2s.RedirectAppPacket
 import earth.terrarium.tempad.common.utils.sendToServer
+import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import org.lwjgl.glfw.GLFW
 
-abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: ResourceLocation?, menu: T, val inv: Inventory, title: Component): AbstractContainerCursorScreen<T>(menu, inv, title) {
+abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
+    val appSprite: ResourceLocation?,
+    menu: T,
+    val inv: Inventory,
+    title: Component,
+) : AbstractContainerCursorScreen<T>(menu, inv, title) {
+    companion object {
+        val background = "screen/tempad".tempadId
+    }
+
     init {
         this.imageWidth = 256
         this.imageHeight = 256
@@ -31,9 +40,6 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
     var localLeft: Int = 0
     var localTop: Int = 0
 
-    companion object {
-        val background = "screen/tempad".tempadId
-    }
 
     override fun init() {
         super.init()
@@ -44,7 +50,10 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
             RedirectAppPacket(button!!.appId, menu.ctxHolder, menu.appContent.isStationary).sendToServer()
         }
 
-        for ((id, app) in AppRegistry.getAll(menu.ctxHolder.getCtx(minecraft!!.player!!), menu.appContent.isStationary)) {
+        for ((id, app) in AppRegistry.getAll(
+            menu.ctxHolder.getCtx(minecraft!!.player!!),
+            menu.appContent.isStationary
+        )) {
             appList.addEntry(AppButton(app, id))
         }
 
@@ -59,7 +68,17 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         }
         menu.ctx.stack.chronons?.let {
             val height = ((it.power.toFloat() / it.maxPower) * 54).toInt()
-            graphics.blitSprite(TempadUI.powerVert, 6, 54, 0, 54 - height, localLeft + 207, localTop + 32 + 54 - height, 6, height)
+            graphics.blitSprite(
+                TempadUI.powerVert,
+                6,
+                54,
+                0,
+                54 - height,
+                localLeft + 207,
+                localTop + 32 + 54 - height,
+                6,
+                height
+            )
 
             if (mouseX >= localLeft + 207 && mouseX <= localLeft + 211 && mouseY >= localTop + 32 && mouseY <= localTop + 86) {
                 ScreenUtils.setTooltip(Component.literal("${it.power}/${it.maxPower}"))
@@ -72,7 +91,12 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
             if (pKeyCode == GLFW.GLFW_KEY_ESCAPE) {
                 focused = null
                 return true
-            } else if ((!it.keyPressed(pKeyCode, pScanCode, pModifiers) && !it.isFocused && !it.isActive && !it.isVisible) || pKeyCode == GLFW.GLFW_KEY_TAB) {
+            } else if ((!it.keyPressed(
+                    pKeyCode,
+                    pScanCode,
+                    pModifiers
+                ) && !it.isFocused && !it.isActive && !it.isVisible) || pKeyCode == GLFW.GLFW_KEY_TAB
+            ) {
                 return super.keyPressed(pKeyCode, pScanCode, pModifiers)
             } else {
                 return true
@@ -81,8 +105,23 @@ abstract class AbstractTempadScreen<T: AbstractTempadMenu<*>>(val appSprite: Res
         return super.keyPressed(pKeyCode, pScanCode, pModifiers)
     }
 
-    override fun renderLabels(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {
-        pGuiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, Tempad.ORANGE.value, true)
+    override fun renderLabels(graphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {
+        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, Tempad.ORANGE.value, true)
+        minecraft?.level?.dayTime?.let {
+            val time = it % 24000
+            val minutes = ((time % 1000) * 0.06).toInt()
+            val hours = ((time / 1000) + 6) % 24
+            val text = "${(hours).toString().padStart(2, '0')}:${(minutes).toString().padStart(2, '0')}"
+
+            graphics.drawString(
+                font,
+                text,
+                30 + 194 - font.width(text),
+                this.titleLabelY,
+                Tempad.ORANGE.value,
+                true
+            )
+        }
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {

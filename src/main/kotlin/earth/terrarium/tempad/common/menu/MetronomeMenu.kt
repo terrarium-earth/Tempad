@@ -17,7 +17,7 @@ import net.neoforged.neoforge.items.SlotItemHandler
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val data: MetronomeMenuData?) : AbstractContainerMenu(ModMenus.METRONOME_MENU, id) {
+class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val data: MetronomeMenuData?) : AbstractContainerMenu(ModMenus.metronome, id) {
     constructor(id: Int, inv: Inventory, data: Optional<MetronomeMenuData>) : this(id, inv, ItemStackHandler(8), data.getOrNull())
 
     init {

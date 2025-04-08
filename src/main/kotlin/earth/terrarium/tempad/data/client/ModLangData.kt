@@ -35,6 +35,11 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
             addSub("id", "ID: %s")
         }
 
+        ModItems.cardWallet.apply {
+            addSub("prefix", "Contains:")
+            addSub("empty", "No cards")
+        }
+
         ModBlocks.timedoorMarker.apply {
             addSub("owner_mismatch.place", "Error: User != Anchor Owner. Return to owner or Reset anchor")
             addSub("owner_mismatch.use", "Error: User != Anchor Owner. Only owner may edit options")
@@ -91,7 +96,7 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
     }
 
     fun String.addSub(key: String, value: String) {
-        add("$this.$key", value.toLowerCase())
+        add("$this.$key", value)
     }
 
     fun addRoot(key: String, value: String, entries: (String) -> Unit = {}): String {

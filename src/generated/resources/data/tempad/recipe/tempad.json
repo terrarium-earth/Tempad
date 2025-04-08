@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "tempad:chronon_battery"
+    },
+    "E": {
+      "tag": "c:ender_pearls"
+    },
+    "G": {
+      "tag": "c:glass_blocks/tinted"
+    },
+    "Q": {
+      "tag": "c:gems/quartz"
+    },
+    "R": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "T": {
+      "item": "tempad:time_steel"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "QER",
+    "TBT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:tempad"
+  }
+}

@@ -2,7 +2,7 @@
     "parent": "tempad:block/timedoor_marker",
     "textures": {
         "0": "tempad:block/chronomark",
-        "1": "tempad:block/spatial_anchor_gray",
+        "1": "tempad:block/timedoor_marker_gray",
         "particle": "tempad:item/time_steel"
     }
 }

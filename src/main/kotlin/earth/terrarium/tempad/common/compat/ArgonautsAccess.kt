@@ -21,16 +21,10 @@ enum class ArgonautsAccess: AnchorAccess {
         override fun canAccess(level: Level, owner: GameProfile, accessor: GameProfile): Boolean {
             return PartyApi.API.getPlayerParty(owner.id).getOrNull()?.isMember(accessor.id) == true
         }
-    },
-    GuildOrParty {
-        override fun canAccess(level: Level, owner: GameProfile, accessor: GameProfile): Boolean {
-            return Guild.canAccess(level, owner, accessor) || Party.canAccess(level, owner, accessor)
-        }
     }
 }
 
 fun initArgonautsAccess() {
     AnchorAccessApi["guild".tempadId] = ArgonautsAccess.Guild
     AnchorAccessApi["party".tempadId] = ArgonautsAccess.Party
-    AnchorAccessApi["guild_or_party".tempadId] = ArgonautsAccess.GuildOrParty
 }

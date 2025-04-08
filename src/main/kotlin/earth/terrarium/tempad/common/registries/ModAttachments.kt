@@ -1,6 +1,8 @@
 package earth.terrarium.tempad.common.registries
 
 import com.mojang.authlib.GameProfile
+import com.mojang.serialization.Codec
+import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
@@ -55,7 +57,7 @@ object ModAttachments {
     }
 
     val color: AttachmentType<Color> by registry.register("color") {
-        attachmentType({ Tempad.ORANGE }) {
+        attachmentType({ Tempad.ORANGE.withAlpha(0) }) {
             codec = Color.CODEC
         }
     }
@@ -97,12 +99,17 @@ object ModAttachments {
     val metronomeEnergy: AttachmentType<MetronomeData> by registry.register("metronome_energy") {
         attachmentType({ MetronomeData(mapOf(), mapOf()) }) {
             codec = MetronomeData.codec
-            syncer
         }
     }
 
     val syncedEnergy: DataSyncSerializer<MetronomeData> by syncer.register("metronome_energy") {
         DataSyncSerializer.create( { this@ModAttachments.metronomeEnergy }, StreamCodecByteCodec.to(MetronomeData.byteCodec))
+    }
+
+    val locked: AttachmentType<Boolean> by registry.register("locked") {
+        attachmentType({ false }) {
+            codec = Codec.BOOL
+        }
     }
 }
 
@@ -114,6 +121,7 @@ var AttachmentHolder.owner by ModAttachments.owner.optional()
 var AttachmentHolder.color by ModAttachments.color.synced(ModAttachments.syncedColor)
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
+var AttachmentHolder.locked by ModAttachments.locked
 
 val anchorPoints by ModAttachments.anchorPoints.serverData
 val playerPoints by ModAttachments.playerPoints.serverData

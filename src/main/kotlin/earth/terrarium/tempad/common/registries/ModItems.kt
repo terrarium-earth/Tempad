@@ -30,6 +30,7 @@ object ModItems {
 
     // Base
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
+    val cardWallet: Item by registry.register("card_wallet") { WalletItem() }
     val timeSteel: Item by registry.register("time_steel") { Item(Item.Properties()) }
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties()) }
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }

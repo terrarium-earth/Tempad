@@ -13,10 +13,5 @@ class ChronomarkBlock: AbstractMarkerBlock() {
 
     override fun codec(): MapCodec<out BaseEntityBlock> = codec
 
-    override fun newBlockEntity(
-        pos: BlockPos,
-        state: BlockState,
-    ): BlockEntity? {
-        TODO("Not yet implemented")
-    }
+    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity? = ChronomarkBE(pos, state)
 }

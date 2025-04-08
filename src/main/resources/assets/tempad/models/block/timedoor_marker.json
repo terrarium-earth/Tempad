@@ -2,6 +2,11 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"render_type": "cutout",
+	"textures": {
+		"0": "tempad:block/timedoor_marker",
+		"1": "tempad:block/timedoor_marker_gray",
+		"particle": "minecraft:block/iron_block"
+	},
 	"elements": [
 		{
 			"from": [-3, 0, 5],

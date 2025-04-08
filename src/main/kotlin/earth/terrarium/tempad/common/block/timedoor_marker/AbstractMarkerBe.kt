@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3
 import kotlin.jvm.optionals.getOrNull
 
 abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state: BlockState): BlockEntity(block, pos, state), Nameable {
-    var posName: Component get() = getExistingData(ModAttachments.name).getOrNull() ?: ModBlocks.timedoorMarker.name
+    var posName: Component get() = getExistingData(ModAttachments.name).getOrNull() ?: blockState.block.name
         set(value) {
             setData(ModAttachments.name, value)
         }

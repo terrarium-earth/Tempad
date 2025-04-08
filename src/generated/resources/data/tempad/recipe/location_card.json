@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "d": {
+      "tag": "c:dyes/black"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "idi"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:location_card"
+  }
+}

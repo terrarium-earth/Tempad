@@ -9,64 +9,73 @@ import earth.terrarium.tempad.common.apps.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.menu.MetronomeMenuData
+import earth.terrarium.tempad.common.menu.WalletMenu
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.inventory.MenuType
-import java.util.Optional
+import java.util.*
 
 object ModMenus {
     val registry: ResourcefulRegistry<MenuType<*>> = ResourcefulRegistries.create(BuiltInRegistries.MENU, Tempad.MOD_ID)
 
-    class TeleportMenu(id: Int, inv: Inventory, data: Optional<TeleportData>): AbstractTempadMenu<TeleportData>(id, inv, TELEPORT_MENU, data)
+    class TeleportMenu(id: Int, inv: Inventory, data: Optional<TeleportData>): AbstractTempadMenu<TeleportData>(id, inv, teleport, data)
 
-    val TELEPORT_MENU: MenuType<TeleportMenu> by registry.register("teleport") {
+    val teleport: MenuType<TeleportMenu> by registry.register("teleport") {
         MenuContentHelper.create(
             ::TeleportMenu,
             RecordCodecMenuContentSerializer(TeleportData.codec)
         )
     }
 
-    class SettingsMenu(id: Int, inv: Inventory, data: Optional<SettingsData>): AbstractTempadMenu<SettingsData>(id, inv, SETTINGS_MENU, data)
+    class SettingsMenu(id: Int, inv: Inventory, data: Optional<SettingsData>): AbstractTempadMenu<SettingsData>(id, inv, settings, data)
 
-    val SETTINGS_MENU: MenuType<SettingsMenu> by registry.register("settings") {
+    val settings: MenuType<SettingsMenu> by registry.register("settings") {
         MenuContentHelper.create(
             ::SettingsMenu,
             RecordCodecMenuContentSerializer(SettingsData.codec)
         )
     }
 
-    class NewLocationMenu(id: Int, inv: Inventory, data: Optional<NewStaticNamedGlobalPos>): AbstractTempadMenu<NewStaticNamedGlobalPos>(id, inv, NEW_LOCATION_MENU, data)
+    class NewLocationMenu(id: Int, inv: Inventory, data: Optional<NewStaticNamedGlobalPos>): AbstractTempadMenu<NewStaticNamedGlobalPos>(id, inv, newLocation, data)
 
-    val NEW_LOCATION_MENU: MenuType<NewLocationMenu> by registry.register("new_location") {
+    val newLocation: MenuType<NewLocationMenu> by registry.register("new_location") {
         MenuContentHelper.create(
             ::NewLocationMenu,
             RecordCodecMenuContentSerializer(NewStaticNamedGlobalPos.codec)
         )
     }
 
-    class TimelineMenu(id: Int, inv: Inventory, data: Optional<TimelineData>): AbstractTempadMenu<TimelineData>(id, inv, TIMELINE_MENU, data)
+    class TimelineMenu(id: Int, inv: Inventory, data: Optional<TimelineData>): AbstractTempadMenu<TimelineData>(id, inv, timeline, data)
 
-    val TIMELINE_MENU: MenuType<TimelineMenu> by registry.register("timeline") {
+    val timeline: MenuType<TimelineMenu> by registry.register("timeline") {
         MenuContentHelper.create(
             ::TimelineMenu,
             RecordCodecMenuContentSerializer(TimelineData.codec)
         )
     }
 
-    class PortalSetupMenu(id: Int, inv: Inventory, data: Optional<PortalSetupData>): AbstractTempadMenu<PortalSetupData>(id, inv, PORTAL_SETUP_MENU, data)
+    class PortalSetupMenu(id: Int, inv: Inventory, data: Optional<PortalSetupData>): AbstractTempadMenu<PortalSetupData>(id, inv, portalSetup, data)
 
-    val PORTAL_SETUP_MENU: MenuType<PortalSetupMenu> by registry.register("portal_setup") {
+    val portalSetup: MenuType<PortalSetupMenu> by registry.register("portal_setup") {
         MenuContentHelper.create(
             ::PortalSetupMenu,
             RecordCodecMenuContentSerializer(PortalSetupData.codec)
         )
     }
 
-    val METRONOME_MENU: MenuType<MetronomeMenu> by registry.register("metronome") {
+    val metronome: MenuType<MetronomeMenu> by registry.register("metronome") {
         MenuContentHelper.create(
             ::MetronomeMenu,
             RecordCodecMenuContentSerializer(MetronomeMenuData.byteCodec)
+        )
+    }
+
+    val wallet: MenuType<WalletMenu> by registry.register("wallet") {
+        MenuType(
+            ::WalletMenu,
+            FeatureFlags.VANILLA_SET
         )
     }
 }

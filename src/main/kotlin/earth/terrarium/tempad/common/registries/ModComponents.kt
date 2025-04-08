@@ -14,11 +14,14 @@ import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.data.PortalPlacementComponent
 import earth.terrarium.tempad.common.utils.*
+import net.minecraft.core.NonNullList
 import net.minecraft.core.UUIDUtil
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.component.ItemContainerContents
 import net.neoforged.neoforge.common.MutableDataComponentHolder
 import java.util.UUID
 import javax.sound.sampled.Port
@@ -131,6 +134,13 @@ object ModComponents {
             networkSerialize = IndirectLocation.byteCodec
         }
     }
+
+    val walletContents: DataComponentType<ItemContainerContents> by registry.register("wallet_contents") {
+        componentType {
+            serialize = ItemContainerContents.CODEC
+            networkSynchronized(ItemContainerContents.STREAM_CODEC)
+        }
+    }
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
@@ -162,3 +172,6 @@ var MutableDataComponentHolder.portalOffset by ModComponents.portalOffset.withDe
 var MutableDataComponentHolder.portalTarget by ModComponents.portalTarget
 
 var MutableDataComponentHolder.selectedPos by ModComponents.selectedPos
+
+var MutableDataComponentHolder.walletContents by ModComponents.walletContents.withDefault(ItemContainerContents.fromItems(
+    NonNullList.withSize(18, ItemStack.EMPTY)))

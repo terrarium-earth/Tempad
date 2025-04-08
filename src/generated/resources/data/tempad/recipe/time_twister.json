@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "tempad:chronon_battery"
+    },
+    "E": {
+      "tag": "c:ender_pearls"
+    },
+    "G": {
+      "tag": "c:glass_blocks/tinted"
+    },
+    "T": {
+      "item": "tempad:time_steel"
+    }
+  },
+  "pattern": [
+    "TG ",
+    "BEG",
+    "TG "
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:time_twister"
+  }
+}

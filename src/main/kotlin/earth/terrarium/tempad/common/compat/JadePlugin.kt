@@ -1,12 +1,11 @@
 package earth.terrarium.tempad.common.compat
 
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.DirectLocation
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.TempadUI
-import earth.terrarium.tempad.client.tooltip.DirectPosTooltip
-import earth.terrarium.tempad.client.tooltip.IndirectPosTooltip
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
@@ -19,6 +18,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.Vec2
@@ -63,7 +63,12 @@ object AnchorComponentProvider: IBlockComponentProvider {
                 tooltip.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
             }
             it.id?.let {
-                tooltip.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
+                if (accessor.player.isShiftKeyDown) {
+                    tooltip.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
+                } else {
+                    tooltip.add(Component.translatable("misc.tempad.shift_key_info", Component.keybind(Minecraft.getInstance().options.keyShift.name).withStyle(
+                        ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY))
+                }
             }
         }
     }
@@ -78,12 +83,21 @@ object RudimentaryTempadComponentProvider: IBlockComponentProvider {
         (accessor.blockEntity as? RudimentaryTempadBE)?.let {
             val pos = it.portalTarget
             if(pos is DirectLocation) {
-                for (component in DirectPosTooltip(pos).text) {
-                    tooltip.add(component)
-                }
+                tooltip.add(MutableComponent.create(pos.location.name.contents).withColor(Tempad.ORANGE.value))
+                tooltip.add(pos.location.dimensionText.withStyle(ChatFormatting.GRAY))
+                tooltip.add(Component.literal("X: ${pos.location.x}").withStyle(ChatFormatting.DARK_GRAY))
+                tooltip.add(Component.literal("Y: ${pos.location.y}").withStyle(ChatFormatting.DARK_GRAY))
+                tooltip.add(Component.literal("Z: ${pos.location.z}").withStyle(ChatFormatting.DARK_GRAY))
             } else if (pos is IndirectLocation) {
-                for (component in IndirectPosTooltip(pos).text) {
-                    tooltip.add(component)
+                val (player, info, _, id) = pos
+                tooltip.add(info)
+                tooltip.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(player.name).withStyle(
+                    ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
+                if (!accessor.player.isShiftKeyDown){
+                    tooltip.add(Component.translatable("misc.tempad.shift_key_info", Component.keybind(Minecraft.getInstance().options.keyShift.name).withStyle(
+                        ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY))
+                } else{
+                    tooltip.add(Component.translatable("item.tempad.location_card.id", id.toString()).withStyle(ChatFormatting.DARK_GRAY))
                 }
             }
         }

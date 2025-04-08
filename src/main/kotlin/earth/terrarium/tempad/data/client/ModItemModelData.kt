@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.data.client
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.data.PackOutput
@@ -69,6 +70,11 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         basicItem(ModItems.playerTeleportUpgrade)
         basicItem(ModItems.timeSteel)
         basicItem(ModItems.creativeChronometer)
+        basicItem(ModItems.cardWallet).booleanProp("full")
+        simpleBlockItem(ModBlocks.timedoorMarker)
+        simpleBlockItem(ModBlocks.chronomark)
+        simpleBlockItem(ModBlocks.workstation)
+        simpleBlockItem(ModBlocks.metronome)
     }
 
     fun ItemModelBuilder.booleanProp(propName: String): ItemModelBuilder {
