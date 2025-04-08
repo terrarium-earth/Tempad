@@ -51,7 +51,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         }
 
         basicItem(ModItems.chronometer).chargedLayered("chronometer")
-        basicItem(ModItems.chrononGenerator).chargedLayered("chronon_generator")
+        basicItem(ModItems.chrononGenerator).chargedLayered("chronon_generator", arrayOf(0f, 0.2f, 0.4f, 0.6f, 0.8f, 1f))
 
         basicItem(ModItems.chrononCell).charged("chronon_cell")
         basicItem(ModItems.chrononBattery).charged("chronon_battery")
@@ -87,8 +87,8 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             .end()
     }
 
-    fun ItemModelBuilder.charged(name: String) {
-        for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
+    fun ItemModelBuilder.charged(name: String, values: Array<Float> = arrayOf(0f, 0.33f, 0.66f, 1f)) {
+        for ((index, charge) in values.withIndex()) {
             override().apply {
                 predicate("charge".tempadId, charge)
 
@@ -101,8 +101,8 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         }
     }
 
-    fun ItemModelBuilder.chargedLayered(name: String) {
-        for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
+    fun ItemModelBuilder.chargedLayered(name: String, values: Array<Float> = arrayOf(0f, 0.33f, 0.66f, 1f)) {
+        for ((index, charge) in values.withIndex()) {
             override().apply {
                 predicate("charge".tempadId, charge)
 

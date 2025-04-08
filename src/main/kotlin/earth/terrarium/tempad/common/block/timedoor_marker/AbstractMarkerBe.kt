@@ -2,8 +2,9 @@ package earth.terrarium.tempad.common.block.timedoor_marker
 
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
-import earth.terrarium.tempad.api.visibility.AnchorAccessApi
+import earth.terrarium.tempad.api.player_access.PlayerAccessApi
 import earth.terrarium.tempad.common.registries.*
+import earth.terrarium.tempad.common.utils.facingAngle
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
@@ -24,13 +25,18 @@ abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state:
             setData(ModAttachments.name, value)
         }
 
-    val landingPosition: Vec3 get() = if(blockState.getValue(BlockStateProperties.UP)) Vec3.atCenterOf(worldPosition) else Vec3.atBottomCenterOf(worldPosition.below(2))
-    val namedGlobalVec3 get() = NamedGlobalVec3(posName, landingPosition, level!!.dimension(), blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot(), color)
+    open val landingPosition: Vec3 get() {
+        val relative = worldPosition.bottomCenter.relative(blockState.getValue(BlockStateProperties.HORIZONTAL_FACING), 1.0)
+        return if(blockState.getValue(BlockStateProperties.UP)) relative.add(0.0, 0.5, 0.0) else relative.add(0.0, -2.0, 0.0)
+    }
+
+    open val landingAngle get() = facingAngle
+    val namedGlobalVec3 get() = NamedGlobalVec3(posName, landingPosition, level!!.dimension(), landingAngle, color)
 
     abstract fun openScreen(player: Player)
 
     fun canAccess(player: GameProfile): Boolean {
-        return owner ?.let { AnchorAccessApi[this.accessId].canAccess(level!!, it, player) } ?: true
+        return owner ?.let { PlayerAccessApi[this.accessId]?.canAccess(level!!, it, player) } == true
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {

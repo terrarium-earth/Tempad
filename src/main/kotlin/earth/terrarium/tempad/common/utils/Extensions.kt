@@ -224,7 +224,7 @@ inline fun <T1: Any, T2: Any, T3: Any, T4: Any, T5: Any, R: Any> safeLet(p1: T1?
     return if (p1 != null && p2 != null && p3 != null && p4 != null && p5 != null) block(p1, p2, p3, p4, p5) else null
 }
 
-val BlockEntity.angle: Float get() = this.blockState.getValue(BlockStateProperties.FACING).toYRot()
+val BlockEntity.facingAngle: Float get() = this.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()
 
 fun <T: Any> Codec<T>.parse(tag: CompoundTag): T? = this.parse(NbtOps.INSTANCE, tag).result().getOrNull()
 

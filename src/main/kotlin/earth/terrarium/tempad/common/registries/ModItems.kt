@@ -40,7 +40,7 @@ object ModItems {
     val timedoorMarker: Item by registry.register("timedoor_marker") { SpatialAnchorItem(ModBlocks.timedoorMarker) }
     val chrononCell: CapacitorItem by registry.register("chronon_cell") { CapacitorItem() }
     val chrononGenerator: ChronometerItem by registry.register("chronon_generator") { ChronometerItem(CommonConfig.ChrononGenerator::generationRate, CommonConfig.ChrononGenerator::generationAmount) }
-    val locationBroadcaster: Item by registry.register("location_broadcaster") { StatusEmitterItem() }
+    val locationBroadcaster: Item by registry.register("location_broadcaster") { LocationBroadcasterItem() }
 
     // TVA Tier
     val tempad: TempadItem by registry.register("tempad") { TempadItem() }
@@ -50,7 +50,7 @@ object ModItems {
     val timeTwister: Item by registry.register("time_twister") { TimeTwisterItem() }
     val workstation: Item by registry.register("workstation") { WorkstationItem() }
     val metronome: Item by registry.register("metronome") { MetronomeItem() }
-    val screeningDevice: Item by registry.register("screening_device") { StatusEmitterItem() }
+    val screeningDevice: Item by registry.register("screening_device") { ScreeningDeviceItem() }
 
     // Creative
     val creativeChronometer: Item by registry.register("creative_chronometer") { CreativeChronometerItem() }

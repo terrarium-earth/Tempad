@@ -2,6 +2,8 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
+import earth.terrarium.tempad.api.player_access.DefaultAccess
+import earth.terrarium.tempad.api.player_access.PlayerAccess
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.api.tva_device.chronons
@@ -20,6 +22,7 @@ import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
+import earth.terrarium.tempad.common.items.ScreeningDeviceAccess
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
@@ -96,6 +99,7 @@ class Tempad(bus: IEventBus) {
             val chrononItems = event.register(ChrononHandler.item)
             val upgradeItems = event.register(UpgradeHandler.item)
             val upgradeBlocks = event.register(UpgradeHandler.block)
+            val accessItems = event.register(PlayerAccess.item)
 
             chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.let {
@@ -157,6 +161,14 @@ class Tempad(bus: IEventBus) {
 
             upgradeItems[ModItems.timedoorProjector] = { it, _ ->
                 RudimentaryUpgradeHandler
+            }
+
+            accessItems[ModItems.locationBroadcaster] = { it, _ ->
+                if(it.enabled == true) DefaultAccess.Public else null
+            }
+
+            accessItems[ModItems.screeningDevice] = { it, _ ->
+                ScreeningDeviceAccess.create(it)
             }
 
             upgradeBlocks[ModBlocks.workstationBE] = { it, _ ->

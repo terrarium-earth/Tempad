@@ -45,10 +45,13 @@
   "key.tempad.favorite": "Open Favorited location",
   "key.tempad.shortcut": "Open Tempad screen",
 
+  "screen.tempad.marker": "Marker",
   "screen.tempad.marker.access_field" : "Who can access?",
+  "screen.tempad.marker.yoffset": "Portal Y Offset:",
+  "screen.tempad.marker.angle": "Angle:",
 
-  "access.tempad.public": "Everyone",
   "access.tempad.private": "Just you",
+  "access.tempad.public": "Everyone",
   "access.tempad.guild": "Guildmates",
   "access.tempad.party": "Party members",
   "access.tempad.ftb": "Team",

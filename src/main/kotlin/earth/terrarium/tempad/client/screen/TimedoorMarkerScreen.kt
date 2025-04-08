@@ -11,7 +11,7 @@ import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.layouts.Layouts
 import earth.terrarium.olympus.client.ui.OverlayAlignment
 import earth.terrarium.olympus.client.ui.UIConstants
-import earth.terrarium.tempad.api.visibility.AnchorAccessApi
+import earth.terrarium.tempad.api.player_access.PlayerAccessApi
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.network.c2s.UpdateAnchorPacket
@@ -25,10 +25,8 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
 open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, access: ResourceLocation, locked: Boolean): BaseCursorScreen(
-    Component.translatable("block.tempad.timedoor_marker")) {
+    Component.translatable("screen.tempad.marker")) {
     companion object {
-        private const val bgWidth = 200
-
         private val accessField = Component.translatable("screen.tempad.marker.access_field")
     }
 
@@ -38,6 +36,7 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
     val locked: MutableState<Boolean> = MutableState.of(locked)
 
     var bgHeight = 0
+    var bgWidth = 110
 
     override fun init() {
         super.init()
@@ -45,7 +44,7 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
         fun TextWidget.configure(): TextWidget = this.withColor(MinecraftColors.GRAY).withShadow()
         val fields = Layouts.column().withGap(4)
 
-        fields.withChild(FrameLayout(190, 10).apply {
+        fields.withChild(FrameLayout(bgWidth - 10, 10).apply {
             addChild(Widgets.text(title).withColor(MinecraftColors.WHITE).withShadow()) {
                 it.align(0f, 0f)
             }
@@ -94,7 +93,7 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
 
         fields.withChild(Widgets.text(NewLocationScreen.Companion.NAME_FIELD).configure())
         fields.withChild(Widgets.textInput(name) {
-            it.withSize(180, 20)
+            it.withSize(100, 20)
         })
 
         fields.withChild(Widgets.text(NewLocationScreen.Companion.COLOR_FIELD).configure())
@@ -110,10 +109,10 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
 
         fields.withChild(Widgets.text(accessField).configure())
         fields.withChild(
-            Widgets.dropdown(access, AnchorAccessApi.visbility.keys.toList(), { Component.translatable(it.toLanguageKey("access")) },
+            Widgets.dropdown(access, PlayerAccessApi.visbility.keys.toList(), { Component.translatable(it.toLanguageKey("access")) },
             { it.withSize(100, 20) },
             {
-                it.withAlignment(OverlayAlignment.RIGHT_BOTTOM)
+                it.withAlignment(OverlayAlignment.TOP_RIGHT)
             }
         ))
 
@@ -130,6 +129,10 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
 
     override fun onClose() {
         super.onClose()
+        sync()
+    }
+
+    open fun sync() {
         UpdateAnchorPacket(pos, color.value, name.value, access.get(), locked.get()).sendToServer()
     }
 

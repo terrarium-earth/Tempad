@@ -10,17 +10,29 @@
     {
       "model": "tempad:item/chronon_generator_1",
       "predicate": {
-        "tempad:charge": 0.33
+        "tempad:charge": 0.2
       }
     },
     {
       "model": "tempad:item/chronon_generator_2",
       "predicate": {
-        "tempad:charge": 0.66
+        "tempad:charge": 0.4
       }
     },
     {
       "model": "tempad:item/chronon_generator_3",
+      "predicate": {
+        "tempad:charge": 0.6
+      }
+    },
+    {
+      "model": "tempad:item/chronon_generator_4",
+      "predicate": {
+        "tempad:charge": 0.8
+      }
+    },
+    {
+      "model": "tempad:item/chronon_generator_5",
       "predicate": {
         "tempad:charge": 1.0
       }

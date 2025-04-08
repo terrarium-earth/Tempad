@@ -19,12 +19,14 @@ object ModNetworking {
         channel.register(SaveSettingsPacket.type)
         channel.register(SetFavoritePacket.type)
         channel.register(UpdateAnchorPacket)
+        channel.register(UpdateChronomarkPacket)
         channel.register(UseMacroPacket)
         channel.register(WriteToCardPacket.type)
 
         channel.register(RotatePlayerMomentumPacket.type)
         channel.register(OpenTimeTwister.type)
         channel.register(OpenTimedoorMarker)
+        channel.register(OpenChronomark)
         channel.register(SyncPortalSettingsPacket)
     }
 }

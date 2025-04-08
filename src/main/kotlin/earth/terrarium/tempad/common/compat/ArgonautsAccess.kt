@@ -3,13 +3,13 @@ package earth.terrarium.tempad.common.compat
 import com.mojang.authlib.GameProfile
 import earth.terrarium.argonauts.api.teams.guild.GuildApi
 import earth.terrarium.argonauts.api.teams.party.PartyApi
-import earth.terrarium.tempad.api.visibility.AnchorAccess
-import earth.terrarium.tempad.api.visibility.AnchorAccessApi
+import earth.terrarium.tempad.api.player_access.PlayerAccess
+import earth.terrarium.tempad.api.player_access.PlayerAccessApi
 import earth.terrarium.tempad.tempadId
 import net.minecraft.world.level.Level
 import kotlin.jvm.optionals.getOrNull
 
-enum class ArgonautsAccess: AnchorAccess {
+enum class ArgonautsAccess: PlayerAccess {
     Guild {
         override fun canAccess(level: Level, owner: GameProfile, accessor: GameProfile): Boolean {
             return GuildApi.API.getPlayerGuild(level, owner.id).getOrNull()?.let {
@@ -25,6 +25,6 @@ enum class ArgonautsAccess: AnchorAccess {
 }
 
 fun initArgonautsAccess() {
-    AnchorAccessApi["guild".tempadId] = ArgonautsAccess.Guild
-    AnchorAccessApi["party".tempadId] = ArgonautsAccess.Party
+    PlayerAccessApi["guild".tempadId] = ArgonautsAccess.Guild
+    PlayerAccessApi["party".tempadId] = ArgonautsAccess.Party
 }

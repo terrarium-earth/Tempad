@@ -2,7 +2,6 @@ package earth.terrarium.tempad.common.registries
 
 import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
-import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
@@ -11,6 +10,7 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.common_storage_lib.data.NeoDataLib
 import earth.terrarium.common_storage_lib.data.sync.DataSyncSerializer
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.player_access.PlayerAccessApi
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.MetronomeData
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
@@ -18,7 +18,6 @@ import earth.terrarium.tempad.common.location_handlers.AnchorPointsData
 import earth.terrarium.tempad.common.location_handlers.PlayerPointsData
 import earth.terrarium.tempad.common.registries.ModAttachments.syncedEnergy
 import earth.terrarium.tempad.common.utils.*
-import earth.terrarium.tempad.tempadId
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
@@ -67,7 +66,7 @@ object ModAttachments {
     }
 
     val access: AttachmentType<ResourceLocation> by registry.register("access") {
-        attachmentType({ "private".tempadId }) {
+        attachmentType({ PlayerAccessApi.noAccess }) {
             codec = ResourceLocation.CODEC
         }
     }
@@ -111,6 +110,18 @@ object ModAttachments {
             codec = Codec.BOOL
         }
     }
+
+    val yOffset: AttachmentType<Float> by registry.register("yoffset") {
+        attachmentType({ 0f }) {
+            codec = Codec.FLOAT
+        }
+    }
+
+    val angle: AttachmentType<Int> by registry.register("angle") {
+        attachmentType({ 0 }) {
+            codec = Codec.INT
+        }
+    }
 }
 
 var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
@@ -122,6 +133,9 @@ var AttachmentHolder.color by ModAttachments.color.synced(ModAttachments.syncedC
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
 var AttachmentHolder.locked by ModAttachments.locked
+var AttachmentHolder.yOffset by ModAttachments.yOffset
+// var AttachmentHolder.name by ModAttachments.name.optional()
+var AttachmentHolder.angle by ModAttachments.angle
 
 val anchorPoints by ModAttachments.anchorPoints.serverData
 val playerPoints by ModAttachments.playerPoints.serverData

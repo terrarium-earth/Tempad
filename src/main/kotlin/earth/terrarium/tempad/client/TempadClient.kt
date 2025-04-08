@@ -12,6 +12,7 @@ import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.block.SpatialAnchorRenderer
 import earth.terrarium.tempad.client.block.WorkstationRenderer
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
+import earth.terrarium.tempad.client.screen.ChronomarkScreen
 import earth.terrarium.tempad.client.screen.MetronomeScreen
 import earth.terrarium.tempad.client.screen.TimedoorMarkerScreen
 import earth.terrarium.tempad.client.screen.WalletScreen
@@ -109,6 +110,11 @@ object TempadClient {
         return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.33f)
     }
 
+    val charge5Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
+        val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
+        return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.2f)
+    }
+
     val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.portalTarget != null }
 
     val hasCardsProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
@@ -163,7 +169,7 @@ object TempadClient {
         ItemProperties.register(ModItems.chrononCell, "charge".tempadId, charge3Property)
         ItemProperties.register(ModItems.chrononBattery, "charge".tempadId, charge3Property)
         ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge3Property)
+        ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge5Property)
         ItemProperties.register(ModItems.locationBroadcaster, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.screeningDevice, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
@@ -241,7 +247,7 @@ object TempadClient {
     }
 
     fun openChronomark(packet: OpenChronomark) {
-        Minecraft.getInstance().setScreen(TimedoorMarkerScreen(packet.blockPos, packet.name, packet.color, packet.access, packet.locked))
+        Minecraft.getInstance().setScreen(ChronomarkScreen(packet.blockPos, packet.name, packet.color, packet.access, packet.locked, packet.yOffset, packet.angle))
     }
 
     @SubscribeEvent

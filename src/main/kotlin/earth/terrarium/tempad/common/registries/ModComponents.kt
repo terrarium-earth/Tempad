@@ -141,6 +141,13 @@ object ModComponents {
             networkSynchronized(ItemContainerContents.STREAM_CODEC)
         }
     }
+
+    val accessId: DataComponentType<ResourceLocation> by registry.register("access_id") {
+        componentType {
+            serialize = ResourceLocation.CODEC
+            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
+        }
+    }
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
@@ -175,3 +182,5 @@ var MutableDataComponentHolder.selectedPos by ModComponents.selectedPos
 
 var MutableDataComponentHolder.walletContents by ModComponents.walletContents.withDefault(ItemContainerContents.fromItems(
     NonNullList.withSize(18, ItemStack.EMPTY)))
+
+var MutableDataComponentHolder.accessId by ModComponents.accessId
