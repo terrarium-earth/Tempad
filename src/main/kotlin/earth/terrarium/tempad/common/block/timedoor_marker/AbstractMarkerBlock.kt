@@ -125,8 +125,8 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         (level.getBlockEntity(pos) as? AbstractMarkerBe)?.let {
             if (it.owner == null) {
                 it.owner = player.gameProfile
-            } else if (it.owner?.id != player.gameProfile.id) {
-                player.displayClientMessage(Component.translatable("block.tempad.spatial_anchor.owner_mismatch.use").withColor(Tempad.ORANGE.value), true)
+            } else if (it.locked && it.owner?.id != player.gameProfile.id) {
+                player.displayClientMessage(Component.translatable("block.tempad.marker.owner_mismatch.use").withColor(Tempad.ORANGE.value), true)
                 return InteractionResult.FAIL
             }
             it.openScreen(player)

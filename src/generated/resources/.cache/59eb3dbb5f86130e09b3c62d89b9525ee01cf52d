@@ -1,0 +1,6 @@
+// 1.21.1	2025-04-08T23:19:34.925181	Loot Tables
+89b5da4ed40a790ed26b5532efc5d7e05611a15b data/tempad/loot_table/blocks/chronomark.json
+c710c706d96e207d1727eba0387ab017d70cba20 data/tempad/loot_table/blocks/metronome.json
+9f6d6a913e362d42b9079414ab3d92b7aa14067c data/tempad/loot_table/blocks/timedoor_marker.json
+4187c4446212abdd7de0f287cbeeb6a0da26a572 data/tempad/loot_table/blocks/timedoor_projector.json
+638fce4226448c7175f10cf392fe4447d1087cc5 data/tempad/loot_table/blocks/workstation.json

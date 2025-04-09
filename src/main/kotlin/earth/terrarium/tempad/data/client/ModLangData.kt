@@ -46,8 +46,13 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
         }
 
         ModBlocks.timedoorMarker.apply {
-            addSub("owner_mismatch.place", "Error: User != Anchor Owner. Return to owner or Reset anchor")
-            addSub("owner_mismatch.use", "Error: User != Anchor Owner. Only owner may edit options")
+            addSub("owner_mismatch.place", "Error: User != Marker Owner. Return to owner or Reset Marker")
+            addSub("owner_mismatch.use", "Error: User != Marker Owner. Only owner may edit options")
+        }
+
+        ModBlocks.chronomark.apply {
+            addSub("owner_mismatch.place", "Error: User != Chronomark Owner. Return to owner or Reset Chronomark")
+            addSub("owner_mismatch.use", "Error: User != Chronomark Owner. Only owner may edit options")
         }
 
         ModBlocks.metronome.apply {

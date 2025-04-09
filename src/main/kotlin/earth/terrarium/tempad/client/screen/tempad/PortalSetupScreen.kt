@@ -7,6 +7,7 @@ import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
 import earth.terrarium.olympus.client.components.buttons.Button
 import earth.terrarium.olympus.client.components.compound.LayoutWidget
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
+import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.layouts.Layouts
 import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.olympus.client.utils.ListenableState
@@ -19,6 +20,7 @@ import earth.terrarium.tempad.client.screen.tempad.TeleportScreen.Companion.sort
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.network.c2s.SyncPortalSettingsPacket
 import earth.terrarium.tempad.common.registries.ModMenus
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.portalOffset
 import earth.terrarium.tempad.common.registries.selectedPos
 import earth.terrarium.tempad.common.utils.sendToServer
@@ -37,6 +39,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
     val zOffset = MutableState.of(menu.ctx.stack.portalOffset.forwardBack)
     val angle = MutableState.of(menu.ctx.stack.portalOffset.angle)
     val isUpright = MutableState.of(menu.ctx.stack.portalOffset.isUpright)
+    val locked = MutableState.of(menu.ctx.stack.locked)
     private var selected: Pair<ResourceLocation, UUID>? = menu.ctx.stack.selectedPos?.let { it.provider to it.id }
 
     val search = ListenableState.of("").apply {
@@ -54,6 +57,23 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
 
     override fun init() {
         super.init()
+
+        addRenderableWidget(Widgets.button {
+            it.withPosition(localLeft + 158, localTop + 7)
+            it.withSize(7)
+            it.withTexture(null)
+            it.withRenderer(locked.withRenderer {
+                WidgetRenderers.withColors(
+                    WidgetRenderers.icon<Button>("icons/mini/${if (it) "lock" else "unlock"}".tempadId).withShadow(),
+                    Tempad.DARK_ORANGE,
+                    Tempad.ORANGE,
+                    Tempad.HIGHLIGHTED_ORANGE
+                ).withCentered(7, 7)
+            })
+            it.withCallback {
+                locked.set(!locked.value)
+            }
+        })
 
         val offsetOptions = Layouts.column().withGap(2).withPosition(localLeft + 4, localTop + 20)
 
@@ -227,6 +247,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
             isUpright.get(),
             selected?.first,
             selected?.second,
+            locked.get(),
             menu.ctx.holder
         ).sendToServer()
     }

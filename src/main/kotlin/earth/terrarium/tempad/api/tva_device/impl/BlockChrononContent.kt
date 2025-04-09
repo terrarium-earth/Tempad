@@ -17,7 +17,7 @@ class BlockChrononContent(val block: BlockEntity, val setter: (Int) -> Unit, val
 
         fun metronome(block: MetronomeBe, maxPower: Int): BlockChrononContent? {
             if (maxPower <= 0) return null
-            return BlockChrononContent(block, { block.initialChronons = it }, { block.initialChronons }, maxPower)
+            return BlockChrononContent(block, { block.bootChronons = it }, { block.bootChronons }, maxPower)
         }
     }
 

@@ -15,15 +15,18 @@ import earth.terrarium.tempad.common.utils.load
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.save
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.items.ItemStackHandler
@@ -32,23 +35,33 @@ import java.util.Optional
 class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metronomeBe, pos, state), ContentMenuProvider<MetronomeMenuData> {
     var owner: GameProfile? = null
     var initialChronons = 0
+    var bootChronons = 0
     var bootTime = 100
     val inventory = ItemStackHandler(8)
 
     fun tick() {
-        if (initialChronons >= CommonConfig.Metronome.jumpStartAmount && bootTime > 0) {
-            bootTime--
+        if(level !is ServerLevel) return
+        if(bootTime > 0) {
+            if (bootChronons >= CommonConfig.Metronome.jumpStartAmount) {
+                bootTime--
 
-            if (bootTime <= 0) {
-                initialChronons -= CommonConfig.Metronome.jumpStartAmount
-                safeLet(metronomeEnergy, owner?.id, level) { energy, owner, lvl ->
-                    energy.add(owner, GlobalPos(lvl.dimension(), blockPos), initialChronons)
-                    this.initialChronons = 0
+                if (bootTime <= 0) {
+                    bootChronons = 0
+                    safeLet(metronomeEnergy, owner?.id, level) { energy, owner, lvl ->
+                        energy.add(owner, GlobalPos(lvl.dimension(), blockPos), initialChronons)
+                        this.initialChronons = 0
+                    }
+                    level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
+                    this.setChanged()
+                } else {
+                    level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
+                    this.setChanged()
+                    return
                 }
-                this.setChanged()
             } else {
+                bootTime = 100
+                level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
                 this.setChanged()
-                return
             }
         }
 
@@ -65,12 +78,10 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
                 }
             }
 
-            level?.getBlockEntity(blockPos.above())?.chronons?.let { target ->
-                move(metronome, target, CommonConfig.Metronome.transferRate)
-            }
-
-            level?.getBlockEntity(blockPos.below())?.chronons?.let { target ->
-                move(metronome, target, CommonConfig.Metronome.transferRate)
+            for (direction in Direction.entries) {
+                level?.getBlockEntity(blockPos.relative(direction))?.chronons?.let { target ->
+                    move(metronome, target, CommonConfig.Metronome.transferRate)
+                }
             }
         }
     }
@@ -83,6 +94,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         owner?.let { tag.save(GAME_PROFILE_CODEC.codec(), "Owner", it) }
         tag.put("Inventory", inventory.serializeNBT(registries))
         tag.putInt("BootTime", bootTime)
+        tag.putInt("BootChronons", bootChronons)
         tag.putInt("InitialChronons", initialChronons)
     }
 

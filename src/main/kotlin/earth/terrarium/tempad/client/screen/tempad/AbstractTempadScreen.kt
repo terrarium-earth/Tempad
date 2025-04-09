@@ -40,6 +40,8 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
     var localLeft: Int = 0
     var localTop: Int = 0
 
+    var timeText = ""
+
 
     override fun init() {
         super.init()
@@ -111,12 +113,12 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
             val time = it % 24000
             val minutes = ((time % 1000) * 0.06).toInt()
             val hours = ((time / 1000) + 6) % 24
-            val text = "${(hours).toString().padStart(2, '0')}:${(minutes).toString().padStart(2, '0')}"
+            timeText = "${(hours).toString().padStart(2, '0')}:${(minutes).toString().padStart(2, '0')}"
 
             graphics.drawString(
                 font,
-                text,
-                30 + 194 - font.width(text),
+                timeText,
+                30 + 194 - font.width(timeText),
                 this.titleLabelY,
                 Tempad.ORANGE.value,
                 true

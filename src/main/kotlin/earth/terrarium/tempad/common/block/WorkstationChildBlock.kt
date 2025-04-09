@@ -5,6 +5,8 @@ import earth.terrarium.tempad.api.context.WorkstationContext
 import earth.terrarium.tempad.common.registries.ModApps
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.defaultApp
+import earth.terrarium.tempad.common.registries.locked
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -74,9 +76,10 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         val storageBE = level.getBlockEntity(storagePos) as? WorkstationBE ?: return InteractionResult.PASS
         val ctx = WorkstationContext(player, storagePos)
 
-        if (storageBE.inventory[0].isEmpty) return InteractionResult.PASS
+        val stack = storageBE.inventory[0]
+        if (stack.isEmpty || (stack.locked && player.gameProfile.id != stack.owner?.id)) return InteractionResult.PASS
 
-        (AppRegistry[storageBE.inventory[0].defaultApp, ctx, true]
+        (AppRegistry[stack.defaultApp, ctx, true]
             ?: AppRegistry[ModApps.portalSetup, ctx, true])!!.openMenu(player as ServerPlayer)
         return InteractionResult.SUCCESS
     }

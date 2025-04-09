@@ -117,7 +117,7 @@ class Tempad(bus: IEventBus) {
             chrononBlocks[ModBlocks.metronomeBe] = { it, _ ->
                 safeLet(it as? MetronomeBe, (it as? MetronomeBe)?.owner) { block, owner ->
                     if (block.bootTime > 0) {
-                        BlockChrononContent.metronome(block, CommonConfigCache.Metronome.capacity)
+                        BlockChrononContent.metronome(block, CommonConfig.Metronome.jumpStartAmount)
                     } else {
                         MultiversalChrononHandler(owner.id)
                     }

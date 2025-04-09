@@ -12,6 +12,7 @@ import earth.terrarium.tempad.common.registries.accessId
 import earth.terrarium.tempad.common.registries.angle
 import earth.terrarium.tempad.common.registries.color
 import earth.terrarium.tempad.common.registries.locked
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.yOffset
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
@@ -37,12 +38,12 @@ data class UpdateChronomarkPacket(val blockPos: BlockPos, val color: Color, val 
 
         override fun onReceive(packet: UpdateChronomarkPacket, player: Player) {
             (player.level().getBlockEntity(packet.blockPos) as? ChronomarkBE)?.let {
-                if(player.mayInteract(player.level(), packet.blockPos))
+                if(!player.mayInteract(player.level(), packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
 
                 it.color = packet.color
                 it.posName = Component.literal(packet.name)
                 it.accessId = packet.access
-                it.locked = packet.locked
+                it.locked = packet.locked && it.owner?.id == player.gameProfile.id
                 it.yOffset = packet.yOffset.coerceIn(-5f, 5f)
                 it.angle = packet.angle
                 it.setChanged()

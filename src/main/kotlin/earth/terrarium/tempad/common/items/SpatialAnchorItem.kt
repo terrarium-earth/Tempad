@@ -40,7 +40,7 @@ class SpatialAnchorItem(block: Block): BlockItem(block, Properties()) {
     override fun place(context: BlockPlaceContext): InteractionResult {
         context.itemInHand.owner?.let { owner ->
             if (owner.id != context.player?.gameProfile?.id) {
-                context.player?.displayClientMessage(Component.translatable("block.tempad.spatial_anchor.owner_mismatch.place").withColor(Tempad.ORANGE.value), true)
+                context.player?.displayClientMessage(Component.translatable("block.tempad.marker.owner_mismatch.place").withColor(Tempad.ORANGE.value), true)
                 return InteractionResult.FAIL
             }
         }

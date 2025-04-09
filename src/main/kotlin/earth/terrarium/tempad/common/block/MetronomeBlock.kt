@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 
-class MetronomeBlock() : BaseEntityBlock(Properties.of()) {
+class MetronomeBlock() : BaseEntityBlock(Properties.of().strength(3.0f, 1200f)) {
     override fun <T : BlockEntity?> getTicker(
         level: Level,
         state: BlockState,

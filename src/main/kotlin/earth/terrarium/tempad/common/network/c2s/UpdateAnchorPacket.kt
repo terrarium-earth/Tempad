@@ -11,6 +11,7 @@ import earth.terrarium.tempad.common.network.ServerPacketCompanion
 import earth.terrarium.tempad.common.registries.accessId
 import earth.terrarium.tempad.common.registries.color
 import earth.terrarium.tempad.common.registries.locked
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
@@ -33,12 +34,12 @@ data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name
 
         override fun onReceive(packet: UpdateAnchorPacket, player: Player) {
             (player.level().getBlockEntity(packet.blockPos) as? AbstractMarkerBe)?.let {
-                if(player.mayInteract(player.level(), packet.blockPos))
+                if(!player.mayInteract(player.level(), packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
 
                 it.color = packet.color
                 it.posName = Component.literal(packet.name)
                 it.accessId = packet.access
-                it.locked = packet.locked
+                it.locked = packet.locked && it.owner?.id == player.gameProfile.id
                 it.setChanged()
             }
         }

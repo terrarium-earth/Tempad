@@ -4,6 +4,8 @@
         "tempad:workstation",
         "tempad:workstation_child",
         "tempad:timedoor_projector",
-        "tempad:spatial_anchor"
+        "tempad:timedoor_marker",
+        "tempad:chronomark",
+        "tempad:metronome"
     ]
 }

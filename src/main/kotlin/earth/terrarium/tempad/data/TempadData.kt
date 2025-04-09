@@ -4,6 +4,7 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.data.client.ModBlockStateData
 import earth.terrarium.tempad.data.client.ModItemModelData
 import earth.terrarium.tempad.data.client.ModLangData
+import earth.terrarium.tempad.data.server.ModLootTables
 import earth.terrarium.tempad.data.server.ModRecipeData
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.bus.api.SubscribeEvent
@@ -27,5 +28,6 @@ class TempadData(bus: IEventBus) {
         generator.addProvider(event.includeClient(), ModItemModelData(output, existingFileHelper))
         generator.addProvider(event.includeClient(), ModLangData(output))
         generator.addProvider(event.includeServer(), ModRecipeData(output, lookupProvider))
+        generator.addProvider(event.includeServer(), ModLootTables(output, lookupProvider))
     }
 }

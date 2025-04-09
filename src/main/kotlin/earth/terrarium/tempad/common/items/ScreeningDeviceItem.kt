@@ -21,7 +21,7 @@ class ScreeningDeviceItem : Item(Properties().stacksTo(1)) {
             val ids = PlayerAccessApi.ids
             val currentIndex = ids.indexOf(stack.accessId)
             if (currentIndex == -1 || currentIndex != ids.size - 1) {
-                stack.accessId = ids[currentIndex + 1 % ids.size]
+                stack.accessId = if(currentIndex == -1) ids[0] else ids[currentIndex + 1 % ids.size]
             } else {
                 stack.accessId = null
             }

@@ -148,6 +148,13 @@ object ModComponents {
             networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
         }
     }
+
+    val locked: DataComponentType<Boolean> by registry.register("locked") {
+        componentType {
+            serialize = Codec.BOOL
+            networkSerialize = ByteCodec.BOOLEAN
+        }
+    }
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
@@ -184,3 +191,5 @@ var MutableDataComponentHolder.walletContents by ModComponents.walletContents.wi
     NonNullList.withSize(18, ItemStack.EMPTY)))
 
 var MutableDataComponentHolder.accessId by ModComponents.accessId
+
+var MutableDataComponentHolder.locked by ModComponents.locked.withDefault(true)

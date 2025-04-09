@@ -112,7 +112,7 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
             ?: return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
         if (blockEntity.inventory[0].isEmpty && stack.`is`(ModItems.tempad)) {
-            stack.owner = player.owner
+            stack.owner = player.gameProfile
             blockEntity.inventory[0] = stack
             blockEntity.setChanged()
             player.setItemInHand(hand, ItemStack.EMPTY)

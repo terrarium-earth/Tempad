@@ -11,6 +11,7 @@ import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.common.data.PortalPlacementComponent
 import earth.terrarium.tempad.common.network.ServerPacketCompanion
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.portalOffset
 import earth.terrarium.tempad.common.registries.selectedPos
@@ -31,6 +32,7 @@ data class SyncPortalSettingsPacket(
     val isVertical: Boolean,
     val providerId: ResourceLocation?,
     val id: UUID?,
+    val locked: Boolean,
     val ctx: ContextHolder<*>,
 ) : Packet<SyncPortalSettingsPacket> {
     constructor(
@@ -41,6 +43,7 @@ data class SyncPortalSettingsPacket(
         isVertical: Boolean,
         providerId: Optional<ResourceLocation>,
         id: Optional<UUID>,
+        locked: Boolean,
         ctx: ContextHolder<*>,
     ) : this(
         xOffset,
@@ -50,6 +53,7 @@ data class SyncPortalSettingsPacket(
         isVertical,
         providerId.getOrNull(),
         id.getOrNull(),
+        locked,
         ctx
     )
 
@@ -63,6 +67,7 @@ data class SyncPortalSettingsPacket(
             ByteCodec.BOOLEAN.fieldOf { it.isVertical },
             ExtraByteCodecs.RESOURCE_LOCATION.nullableFieldOf { it.providerId },
             ByteCodec.UUID.nullableFieldOf { it.id },
+            ByteCodec.BOOLEAN.fieldOf { it.locked },
             ContextHolder.codec.fieldOf { it.ctx },
             ::SyncPortalSettingsPacket
         )
@@ -76,6 +81,7 @@ data class SyncPortalSettingsPacket(
                     message.angle,
                     message.isVertical,
                 )
+                it.locked = message.locked && player.gameProfile.id == it.owner?.id
                 safeLet(message.providerId, message.id) { provider, id ->
                     val ctx = message.ctx.getCtx(player) as? WorkstationContext ?: return@safeLet
                     it.selectedPos = IndirectLocation(ctx.workstation!!.owner!!, Component.empty(), provider, id)
