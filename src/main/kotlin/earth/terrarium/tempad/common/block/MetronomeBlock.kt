@@ -42,7 +42,7 @@ class MetronomeBlock() : BaseEntityBlock(Properties.of()) {
         val blockEntity = level.getBlockEntity(pos)
         if (blockEntity is MetronomeBe && !level.isClientSide) {
             safeLet(metronomeEnergy, blockEntity.owner?.id) { energy, owner ->
-                blockEntity.initialChronons = energy.remove(owner, GlobalPos(level.dimension(), pos))
+                energy.remove(owner, GlobalPos(level.dimension(), pos))
             }
         }
     }
@@ -55,7 +55,7 @@ class MetronomeBlock() : BaseEntityBlock(Properties.of()) {
         movedByPiston: Boolean,
     ) {
         val blockEntity = level.getBlockEntity(pos)
-        if (blockEntity is MetronomeBe && !level.isClientSide) {
+        if (blockEntity is MetronomeBe && blockEntity.bootTime == 0 && !level.isClientSide) {
             safeLet(metronomeEnergy, blockEntity.owner?.id) { energy, owner ->
                 energy.add(owner, GlobalPos(level.dimension(), pos), blockEntity.initialChronons)
                 blockEntity.initialChronons = 0

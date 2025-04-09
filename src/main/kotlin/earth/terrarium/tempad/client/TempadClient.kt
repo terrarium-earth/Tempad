@@ -96,6 +96,8 @@ object TempadClient {
 
     val enabledProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.enabled }
 
+    val screeningEnabled = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.accessId != null }
+
     val twisterAttachedProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.twisterEquipped }
 
     val inUseProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
@@ -171,7 +173,7 @@ object TempadClient {
         ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge3Property)
         ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge5Property)
         ItemProperties.register(ModItems.locationBroadcaster, "enabled".tempadId, enabledProperty)
-        ItemProperties.register(ModItems.screeningDevice, "enabled".tempadId, enabledProperty)
+        ItemProperties.register(ModItems.screeningDevice, "enabled".tempadId, screeningEnabled)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
         ItemProperties.register(ModItems.timedoorProjector, "has_card".tempadId, writtenProperty)
         ItemProperties.register(ModItems.cardWallet, "full".tempadId, hasCardsProperty)

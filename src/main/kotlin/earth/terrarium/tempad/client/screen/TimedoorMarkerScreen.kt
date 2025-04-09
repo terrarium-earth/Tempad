@@ -36,7 +36,7 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
     val locked: MutableState<Boolean> = MutableState.of(locked)
 
     var bgHeight = 0
-    var bgWidth = 110
+    var bgWidth = 150
 
     override fun init() {
         super.init()
@@ -109,7 +109,7 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
 
         fields.withChild(Widgets.text(accessField).configure())
         fields.withChild(
-            Widgets.dropdown(access, PlayerAccessApi.visbility.keys.toList(), { Component.translatable(it.toLanguageKey("access")) },
+            Widgets.dropdown(access, PlayerAccessApi.visbility.keys.toList() + PlayerAccessApi.noAccess, { Component.translatable(it.toLanguageKey("access")) },
             { it.withSize(100, 20) },
             {
                 it.withAlignment(OverlayAlignment.TOP_RIGHT)

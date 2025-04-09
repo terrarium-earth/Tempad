@@ -8,11 +8,14 @@ import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.menu.MetronomeMenuData
 import earth.terrarium.tempad.common.registries.ModBlocks
+import earth.terrarium.tempad.common.registries.metronomeEnergy
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_CODEC
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.load
+import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.save
 import net.minecraft.core.BlockPos
+import net.minecraft.core.GlobalPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -29,9 +32,24 @@ import java.util.Optional
 class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metronomeBe, pos, state), ContentMenuProvider<MetronomeMenuData> {
     var owner: GameProfile? = null
     var initialChronons = 0
+    var bootTime = 100
     val inventory = ItemStackHandler(8)
 
     fun tick() {
+        if (initialChronons >= CommonConfig.Metronome.jumpStartAmount && bootTime > 0) {
+            bootTime--
+
+            if (bootTime <= 0) {
+                initialChronons -= CommonConfig.Metronome.jumpStartAmount
+                safeLet(metronomeEnergy, owner?.id, level) { energy, owner, lvl ->
+                    energy.add(owner, GlobalPos(lvl.dimension(), blockPos), initialChronons)
+                    this.initialChronons = 0
+                }
+            } else {
+                return
+            }
+        }
+
         chronons?.let { metronome ->
             for (i in 0 .. 7) {
                 if (i < 4) {
@@ -62,6 +80,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         super.saveAdditional(tag, registries)
         owner?.let { tag.save(GAME_PROFILE_CODEC.codec(), "Owner", it) }
         tag.put("Inventory", inventory.serializeNBT(registries))
+        tag.putInt("BootTime", bootTime)
     }
 
     override fun loadAdditional(
@@ -70,6 +89,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
     ) {
         super.loadAdditional(tag, registries)
         owner = tag.load(GAME_PROFILE_CODEC.codec(), "Owner")
+        bootTime = if("BootTime" in tag) tag.getInt("BootTime") else 100
         inventory.deserializeNBT(registries, tag.getCompound("Inventory"))
     }
 

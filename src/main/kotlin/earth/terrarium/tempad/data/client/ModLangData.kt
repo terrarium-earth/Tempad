@@ -23,6 +23,11 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
             } catch (_: Exception) {}
         }
 
+        ModItems.screeningDevice.apply {
+            addSub("off", "Off")
+            addSub("screening", "Screening: %s")
+        }
+
         ModItems.locationCard.apply {
             addSub("creator_toolip", "Created by %s")
             addSub("shift_toolip", "Hold [%s] for more info")
@@ -43,6 +48,10 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
         ModBlocks.timedoorMarker.apply {
             addSub("owner_mismatch.place", "Error: User != Anchor Owner. Return to owner or Reset anchor")
             addSub("owner_mismatch.use", "Error: User != Anchor Owner. Only owner may edit options")
+        }
+
+        ModBlocks.metronome.apply {
+            addSub("booting", "Booting: %s")
         }
 
         addRoot("app.tempad.teleport", "Teleport") {

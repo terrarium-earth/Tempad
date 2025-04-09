@@ -1,11 +1,15 @@
 package earth.terrarium.tempad.common.compat
 
+import com.ibm.icu.text.NumberFormat
+import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.DirectLocation
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.TempadUI
+import earth.terrarium.tempad.common.block.MetronomeBe
+import earth.terrarium.tempad.common.block.MetronomeBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
@@ -24,7 +28,12 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.Vec2
 import snownee.jade.api.*
 import snownee.jade.api.config.IPluginConfig
+import snownee.jade.api.ui.BoxStyle.GradientBorder
+import snownee.jade.api.ui.ColorPalette
 import snownee.jade.api.ui.Element
+import snownee.jade.impl.ui.ProgressElement
+import snownee.jade.impl.ui.SimpleProgressStyle
+import java.util.Optional
 import kotlin.math.roundToInt
 
 @WailaPlugin
@@ -34,6 +43,7 @@ class JadePlugin: IWailaPlugin {
         registration.registerBlockComponent(ChrononComponentProvider, Block::class.java)
         registration.registerBlockComponent(AnchorComponentProvider, AbstractMarkerBlock::class.java)
         registration.registerBlockComponent(RudimentaryTempadComponentProvider, RudimentaryTempadBlock::class.java)
+        registration.registerBlockComponent(MetronomeComponentProvider, MetronomeBlock::class.java)
     }
 }
 
@@ -103,6 +113,27 @@ object RudimentaryTempadComponentProvider: IBlockComponentProvider {
         }
     }
 }
+
+object MetronomeComponentProvider: IBlockComponentProvider {
+    val id = "metronome".tempadId
+
+    override fun getUid(): ResourceLocation = id
+
+    override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
+        (accessor.blockEntity as? MetronomeBe)?.let { blockEntity ->
+            if (blockEntity.bootTime == 0) return
+            val progress = 1 - (blockEntity.bootTime / 100f)
+            tooltip.add(ProgressElement(
+                progress,
+                Component.translatable("block.tempad.metronome.booting", NumberFormat.getInstance().format(progress * 100)).append("%"),
+                SimpleProgressStyle().textColor(Tempad.ORANGE.value),
+                GradientBorder.DEFAULT_NESTED_BOX,
+                true
+            ))
+        }
+    }
+}
+
 
 object ChrononComponentProvider: IBlockComponentProvider {
     val id = "chronon".tempadId

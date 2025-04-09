@@ -3,6 +3,7 @@ package earth.terrarium.tempad.api.player_access
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.tempadId
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.capabilities.ItemCapability
 
@@ -13,6 +14,8 @@ interface PlayerAccess {
         val item = ItemCapability.createVoid("player_access".tempadId, PlayerAccess::class.java)
     }
 }
+
+val ItemStack.playerAccess: PlayerAccess? get() = getCapability(PlayerAccess.item)
 
 object PlayerAccessApi {
     val noAccess: ResourceLocation = "private".tempadId

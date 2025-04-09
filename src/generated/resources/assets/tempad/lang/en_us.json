@@ -30,6 +30,7 @@
   "app.tempad.timeline.tracking": "Tracking",
   "block.tempad.chronomark": "Chronomark",
   "block.tempad.metronome": "Metronome",
+  "block.tempad.metronome.booting": "Booting: %s",
   "block.tempad.timedoor_marker": "Timedoor Marker",
   "block.tempad.timedoor_marker.owner_mismatch.place": "Error: User != Anchor Owner. Return to owner or Reset anchor",
   "block.tempad.timedoor_marker.owner_mismatch.use": "Error: User != Anchor Owner. Only owner may edit options",
@@ -58,6 +59,8 @@
   "item.tempad.new_location_upgrade": "New Location Upgrade",
   "item.tempad.player_teleport_upgrade": "Player Teleport Upgrade",
   "item.tempad.screening_device": "Screening Device",
+  "item.tempad.screening_device.off": "Off",
+  "item.tempad.screening_device.screening": "Screening: %s",
   "item.tempad.tempad": "Tempad",
   "item.tempad.time_steel": "Time Steel",
   "item.tempad.time_twister": "Time Twister"

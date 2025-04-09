@@ -24,7 +24,7 @@ open class CapacitorItem: ChrononItem() {
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
         if (action == ClickAction.SECONDARY && slot.hasItem() && slot.contents.chronons != null) {
             safeLet(stack.chronons, slot.contents.chronons) { from, to ->
-                move(from, to, Int.MAX_VALUE)
+                move(from, to, 1000)
             }
             return true
         }
@@ -35,7 +35,7 @@ open class CapacitorItem: ChrononItem() {
         val to = context.level.getBlockEntity(context.clickedPos)?.chronons ?: return super.useOn(context)
         if (!context.level.isClientSide) {
             context.itemInHand.chronons?.let {
-                move(it, to, Int.MAX_VALUE)
+                move(it, to, 1000)
             }
         }
         return InteractionResult.SUCCESS

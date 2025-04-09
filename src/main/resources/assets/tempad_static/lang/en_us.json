@@ -78,6 +78,7 @@
   "config.jade.plugin_tempad.timedoor": "Timedoor",
   "config.jade.plugin_tempad.anchor": "Spatial Anchor",
   "config.jade.plugin_tempad.rudimentary": "Rudimentary Tempad",
+  "config.jade.plugin_tempad.metronome": "Metronome",
 
   "jade.tempad.will_close": "Closing in %s seconds",
   "jade.tempad.closing": "Closing...",
