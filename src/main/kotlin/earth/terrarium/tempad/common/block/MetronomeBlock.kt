@@ -45,6 +45,7 @@ class MetronomeBlock() : BaseEntityBlock(Properties.of()) {
                 energy.remove(owner, GlobalPos(level.dimension(), pos))
             }
         }
+        super.onRemove(state, level, pos, newState, movedByPiston)
     }
 
     override fun onPlace(
@@ -72,7 +73,9 @@ class MetronomeBlock() : BaseEntityBlock(Properties.of()) {
         hitResult: BlockHitResult,
     ): InteractionResult {
         safeLet(level.getBlockEntity(pos) as? MetronomeBe, player as? ServerPlayer) { blockEntity, opener ->
-            blockEntity.openMenu(opener)
+            if (blockEntity.bootTime == 0) {
+                blockEntity.openMenu(opener)
+            }
         }
         return InteractionResult.SUCCESS
     }

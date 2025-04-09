@@ -2,19 +2,28 @@ package earth.terrarium.tempad.api.tva_device.impl
 
 import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
+import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import net.minecraft.util.Mth
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
 
-class RudimentaryChrononContent(val block: RudimentaryTempadBE, override val maxPower: Int): ChrononHandler {
+class BlockChrononContent(val block: BlockEntity, val setter: (Int) -> Unit, val getter: () -> Int, override val maxPower: Int): ChrononHandler {
     companion object {
-        fun create(block: RudimentaryTempadBE, maxPower: Int): RudimentaryChrononContent? {
+        fun projector(block: RudimentaryTempadBE, maxPower: Int): BlockChrononContent? {
             if (maxPower <= 0) return null
-            return RudimentaryChrononContent(block, maxPower)
+            return BlockChrononContent(block, { block.chrononContent = it }, { block.chrononContent }, maxPower)
+        }
+
+        fun metronome(block: MetronomeBe, maxPower: Int): BlockChrononContent? {
+            if (maxPower <= 0) return null
+            return BlockChrononContent(block, { block.initialChronons = it }, { block.initialChronons }, maxPower)
         }
     }
 
-    override var power: Int by block::chrononContent
+    override var power: Int
+        get() = getter()
+        set(value) = setter(value)
 
     override fun extract(amount: Int, action: ActionType): Int {
         val extracted = Mth.clamp(power, 0, amount)

@@ -16,28 +16,28 @@ import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
 import java.util.UUID
 
-class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, Set<GlobalPos>>) {
+class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>>) {
     companion object {
         val codec: Codec<MetronomeData> = RecordCodecBuilder.create {
             it.group(
                 Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.INT).fieldOf("stored").forGetter { it.stored },
-                Codec.unboundedMap(UUIDUtil.STRING_CODEC, GlobalPos.CODEC.listOf().xmap({it -> it.toSet() }) { it.toList() }).fieldOf("positions").forGetter { it.positions }
+                Codec.unboundedMap(UUIDUtil.STRING_CODEC, GlobalPos.CODEC.listOf()).fieldOf("positions").forGetter { it.positions }
             ).apply(it, ::MetronomeData)
         }
 
         val byteCodec: ByteCodec<MetronomeData> = ObjectByteCodec.create(
             ByteCodec.mapOf(ByteCodec.UUID, ByteCodec.INT).fieldOf { it.stored },
-            ByteCodec.mapOf(ByteCodec.UUID, ExtraByteCodecs.GLOBAL_POS.setOf()).fieldOf { it.positions },
+            ByteCodec.mapOf(ByteCodec.UUID, ExtraByteCodecs.GLOBAL_POS.listOf()).fieldOf { it.positions },
             ::MetronomeData
         )
     }
 
-    val positions: MutableMap<UUID, MutableSet<GlobalPos>> = mutableMapOf()
+    val positions: MutableMap<UUID, MutableList<GlobalPos>> = mutableMapOf()
     val stored: Object2IntMap<UUID> = Object2IntOpenHashMap()
 
     init {
         for ((player, blocks) in positions) {
-            this.positions.put(player, blocks.toMutableSet())
+            this.positions.put(player, blocks.toMutableList())
         }
 
         this.stored.putAll(stored)
@@ -45,7 +45,7 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, Set<GlobalPos>>
 
     fun add(player: UUID, pos: GlobalPos, contents: Int) {
         if (positions[player] != null && pos in positions[player]!!) return
-        positions.getOrPut(player) { mutableSetOf() } += pos
+        positions.getOrPut(player) { mutableListOf() } += pos
         stored[player] = contents + (stored[player] ?: 0)
         Tempad.server?.overworld()?.let { syncData(it, ModAttachments.syncedEnergy, this) }
     }
@@ -78,7 +78,7 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, Set<GlobalPos>>
         return stored[player]?.let {
             val amount = it / getCount(player)
             stored[player] = it - amount
-            positions.getOrPut(player) { mutableSetOf() } -= pos
+            positions.getOrPut(player) { mutableListOf() } -= pos
             return amount
         } ?: 0
     }

@@ -45,7 +45,9 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
                     energy.add(owner, GlobalPos(lvl.dimension(), blockPos), initialChronons)
                     this.initialChronons = 0
                 }
+                this.setChanged()
             } else {
+                this.setChanged()
                 return
             }
         }
@@ -81,6 +83,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         owner?.let { tag.save(GAME_PROFILE_CODEC.codec(), "Owner", it) }
         tag.put("Inventory", inventory.serializeNBT(registries))
         tag.putInt("BootTime", bootTime)
+        tag.putInt("InitialChronons", initialChronons)
     }
 
     override fun loadAdditional(
@@ -90,6 +93,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         super.loadAdditional(tag, registries)
         owner = tag.load(GAME_PROFILE_CODEC.codec(), "Owner")
         bootTime = if("BootTime" in tag) tag.getInt("BootTime") else 100
+        initialChronons = tag.getInt("InitialChronons")
         inventory.deserializeNBT(registries, tag.getCompound("Inventory"))
     }
 

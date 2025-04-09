@@ -8,6 +8,7 @@ import earth.terrarium.tempad.common.compat.initFTBTeamsAccess
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.location_handlers.PlayerHandler
 import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
+import earth.terrarium.tempad.common.location_handlers.WalletLocationHandler
 import earth.terrarium.tempad.tempadId
 import net.neoforged.fml.ModList
 
@@ -16,6 +17,7 @@ object ModLocations {
         TempadLocations[DefaultLocationHandler.ID] = { player, _, _ -> DefaultLocationHandler(player) }
         TempadLocations[AnchorPointsHandler.ID] = { player, _, _ -> AnchorPointsHandler(player) }
         TempadLocations[PlayerHandler.ID] = { player, upgrades, _ -> PlayerHandler(player, upgrades) }
+        TempadLocations[WalletLocationHandler.id] = ::WalletLocationHandler
 
         PlayerAccessApi["public".tempadId] = DefaultAccess.Public
         if(ModList.get().isLoaded("argonauts")) initArgonautsAccess()

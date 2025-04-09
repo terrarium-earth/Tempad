@@ -36,7 +36,7 @@ abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state:
     abstract fun openScreen(player: Player)
 
     fun canAccess(player: GameProfile): Boolean {
-        return owner ?.let { PlayerAccessApi[this.accessId]?.canAccess(level!!, it, player) } == true
+        return owner?.let { PlayerAccessApi[this.accessId]?.canAccess(level!!, it, player) } ?: (player.id == owner?.id)
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {

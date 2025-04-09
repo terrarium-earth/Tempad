@@ -63,6 +63,6 @@ class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
     }
 
     companion object {
-        val ID = "spatial_anchors".tempadId
+        val ID = "markers".tempadId
     }
 }

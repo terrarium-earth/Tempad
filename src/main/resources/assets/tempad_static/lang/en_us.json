@@ -60,8 +60,9 @@
   "app.tempad.tp_to.selected": "Selected",
 
   "provider.tempad.default": "On Device",
-  "provider.tempad.spatial_anchors": "Spatial Anchors",
+  "provider.tempad.markers": "Markers",
   "provider.tempad.player": "Players",
+  "provider.tempad.wallet": "Card Wallet",
 
   "macro.tempad.default": "Open Fav",
   "macro.tempad.default.description": "Teleport to the favorite location",

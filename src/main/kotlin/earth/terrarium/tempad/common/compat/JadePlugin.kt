@@ -12,6 +12,7 @@ import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.MetronomeBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
+import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBlock
 import earth.terrarium.tempad.common.entity.TimedoorEntity
@@ -130,6 +131,17 @@ object MetronomeComponentProvider: IBlockComponentProvider {
                 GradientBorder.DEFAULT_NESTED_BOX,
                 true
             ))
+        }
+    }
+}
+
+object WorkstationComponentProvider: IBlockComponentProvider {
+    val id = "workstation".tempadId
+    override fun getUid(): ResourceLocation = id
+
+    override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
+        (accessor.blockEntity as? WorkstationBE)?.let { blockEntity ->
+
         }
     }
 }

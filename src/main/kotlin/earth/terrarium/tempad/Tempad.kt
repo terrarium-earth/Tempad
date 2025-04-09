@@ -7,7 +7,7 @@ import earth.terrarium.tempad.api.player_access.PlayerAccess
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.impl.RudimentaryChrononContent
+import earth.terrarium.tempad.api.tva_device.impl.BlockChrononContent
 import earth.terrarium.tempad.api.tva_device.impl.InfiniteChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemUpgradeHandler
@@ -26,6 +26,7 @@ import earth.terrarium.tempad.common.items.ScreeningDeviceAccess
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
+import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import net.minecraft.world.entity.player.Player
@@ -103,7 +104,7 @@ class Tempad(bus: IEventBus) {
 
             chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.let {
-                    RudimentaryChrononContent.create(it, CommonConfigCache.RudimentaryTempad.capacity)
+                    BlockChrononContent.projector(it, CommonConfigCache.RudimentaryTempad.capacity)
                 }
             }
 
@@ -114,8 +115,12 @@ class Tempad(bus: IEventBus) {
             }
 
             chrononBlocks[ModBlocks.metronomeBe] = { it, _ ->
-                (it as? MetronomeBe)?.owner?.let {
-                    MultiversalChrononHandler(it.id)
+                safeLet(it as? MetronomeBe, (it as? MetronomeBe)?.owner) { block, owner ->
+                    if (block.bootTime > 0) {
+                        BlockChrononContent.metronome(block, CommonConfigCache.Metronome.capacity)
+                    } else {
+                        MultiversalChrononHandler(owner.id)
+                    }
                 }
             }
 
