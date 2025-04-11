@@ -1,6 +1,5 @@
 package earth.terrarium.tempad.common.items
 
-import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.move
 import earth.terrarium.tempad.common.utils.contents

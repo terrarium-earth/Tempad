@@ -56,13 +56,13 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
                 } else {
                     level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
                     this.setChanged()
-                    return
                 }
             } else {
                 bootTime = 100
                 level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
                 this.setChanged()
             }
+            return
         }
 
         chronons?.let { metronome ->
@@ -106,6 +106,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         owner = tag.load(GAME_PROFILE_CODEC.codec(), "Owner")
         bootTime = if("BootTime" in tag) tag.getInt("BootTime") else 100
         initialChronons = tag.getInt("InitialChronons")
+        bootChronons = tag.getInt("BootChronons")
         inventory.deserializeNBT(registries, tag.getCompound("Inventory"))
     }
 

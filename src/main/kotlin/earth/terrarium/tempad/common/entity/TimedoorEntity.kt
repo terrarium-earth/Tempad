@@ -152,7 +152,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 }
             }
 
-            return Either.left(TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, level).apply {
+            return Either.left(TimedoorEntity(ModEntities.timedoor, level).apply {
                 setLocation(location)
             })
         }
@@ -325,7 +325,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         if (closingTime <= 0 && closingTime != -1) return
         val targetLevel = targetLevel ?: return
         linkedPortalEntity?.let { return }
-        val targetPortal = TimedoorEntity(ModEntities.TIMEDOOR_ENTITY, targetLevel)
+        val targetPortal = TimedoorEntity(ModEntities.timedoor, targetLevel)
         Tempad.ticketController.forceChunk(level() as ServerLevel, targetPortal, chunkPosition().x, chunkPosition().z, true, false)
         targetPortal.linkedPortalEntity = this
         targetPortal.closingTime = this.closingTime

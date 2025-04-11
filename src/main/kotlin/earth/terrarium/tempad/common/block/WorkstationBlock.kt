@@ -69,9 +69,10 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
 
         override fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: WorkstationBE) {
             if (level !is ServerLevel) return
-            if (blockEntity.cookingTime > 0) {
-                blockEntity.cookingTime--
-                if (blockEntity.cookingTime == 0) {
+            if (blockEntity.downloadTime > 0) {
+                blockEntity.downloadTime--
+                if (blockEntity.downloadTime == 0) {
+                    blockEntity.maxDownloadTime = 0
                     popResource(level, pos, Items.DRIED_KELP.stack(level.random.nextInt(3)))
                     level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.x + 0.5, pos.y + 0.25, pos.z + 0.5, 10, 0.2, 0.2, 0.2, 0.0)
                     safeLet(blockEntity.inventory[0].upgrades, blockEntity.recipe) { upgrades, recipe ->
@@ -79,8 +80,9 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
                         blockEntity.setChanged()
                     }
                     level.setBlock(pos, state.setValue(HAS_TAPE, false), UPDATE_ALL)
-
                 } else {
+                    blockEntity.setChanged()
+                    level.sendBlockUpdated(pos, state, state, UPDATE_ALL)
                     level.sendParticles(ParticleTypes.SMOKE, pos.x + 0.5, pos.y + 0.25, pos.z + 0.5, 2, 0.2, 0.2, 0.2, 0.0)
                 }
             }
@@ -118,10 +120,11 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
             player.setItemInHand(hand, ItemStack.EMPTY)
             level.sendBlockUpdated(pos, state, state, UPDATE_ALL)
             return ItemInteractionResult.SUCCESS
-        } else if (!blockEntity.inventory[0].isEmpty && blockEntity.cookingTime == 0) {
+        } else if (!blockEntity.inventory[0].isEmpty && blockEntity.downloadTime == 0) {
             val recipe = level.recipeManager.getRecipeFor(ModRecipes.upgradeRecipe, UpgradeRecipeInput(blockEntity.inventory[0], stack), level).getOrNull()?.value
             if (recipe == null || recipe.output in blockEntity.upgrades!!) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
-            blockEntity.cookingTime = recipe.downloadTime
+            blockEntity.downloadTime = recipe.downloadTime
+            blockEntity.maxDownloadTime = recipe.downloadTime
             blockEntity.recipe = recipe.output
             stack.shrink(1)
             blockEntity.setChanged()
@@ -153,6 +156,8 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
 
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
             ?: return InteractionResult.PASS
+
+        if (blockEntity.maxDownloadTime > 0) return InteractionResult.PASS
         val stack = blockEntity.inventory[0]
         stack.owner = null
         player.inventory.placeItemBackInInventory(stack)

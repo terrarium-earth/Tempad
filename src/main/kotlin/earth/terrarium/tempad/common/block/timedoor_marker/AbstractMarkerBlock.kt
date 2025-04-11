@@ -6,8 +6,8 @@ import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.safeLet
-import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.ChatFormatting
+import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.component.DataComponents
@@ -58,15 +58,20 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
     override fun appendHoverText(
         stack: ItemStack,
         context: Item.TooltipContext,
-        tooltipComponents: MutableList<Component?>,
+        tooltips: MutableList<Component?>,
         tooltipFlag: TooltipFlag,
     ) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
+        super.appendHoverText(stack, context, tooltips, tooltipFlag)
         stack.owner?.let {
-            tooltipComponents.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
+            tooltips.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
         }
         stack.anchorId?.let {
-            tooltipComponents.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
+            if (tooltipFlag.hasShiftDown()) {
+                tooltips.add(Component.translatable("item.tempad.location_card.id", it.toString()).withStyle(ChatFormatting.DARK_GRAY))
+            } else {
+                tooltips.add(Component.translatable("misc.tempad.shift_key_info", Component.keybind("key.keyboard.left.shift").withStyle(
+                    ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY))
+            }
         }
     }
 
@@ -135,16 +140,16 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
     }
 
     override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
-        return mutableListOf(
-            ModItems.timedoorMarker.stack {
-                (params.getParameter(LootContextParams.BLOCK_ENTITY) as? AbstractMarkerBe)?.let {
-                    color = it.color
-                    set(DataComponents.CUSTOM_NAME, it.posName)
-                    anchorId = it.id
-                    owner = it.owner
-                }
+        val result = super.getDrops(state, params)
+        for (item in result) {
+            (params.getParameter(LootContextParams.BLOCK_ENTITY) as? AbstractMarkerBe)?.let {
+                item.color = it.color
+                item.set(DataComponents.CUSTOM_NAME, it.posName)
+                item.anchorId = it.id
+                item.owner = it.owner
             }
-        )
+        }
+        return result
     }
 
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, moved: Boolean) {

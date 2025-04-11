@@ -1,6 +1,5 @@
 package earth.terrarium.tempad.common.compat
 
-import com.ibm.icu.text.NumberFormat
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.DirectLocation
@@ -13,6 +12,7 @@ import earth.terrarium.tempad.common.block.MetronomeBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.WorkstationBE
+import earth.terrarium.tempad.common.block.WorkstationBlock
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBlock
 import earth.terrarium.tempad.common.entity.TimedoorEntity
@@ -30,11 +30,9 @@ import net.minecraft.world.phys.Vec2
 import snownee.jade.api.*
 import snownee.jade.api.config.IPluginConfig
 import snownee.jade.api.ui.BoxStyle.GradientBorder
-import snownee.jade.api.ui.ColorPalette
 import snownee.jade.api.ui.Element
 import snownee.jade.impl.ui.ProgressElement
 import snownee.jade.impl.ui.SimpleProgressStyle
-import java.util.Optional
 import kotlin.math.roundToInt
 
 @WailaPlugin
@@ -45,6 +43,7 @@ class JadePlugin: IWailaPlugin {
         registration.registerBlockComponent(AnchorComponentProvider, AbstractMarkerBlock::class.java)
         registration.registerBlockComponent(RudimentaryTempadComponentProvider, RudimentaryTempadBlock::class.java)
         registration.registerBlockComponent(MetronomeComponentProvider, MetronomeBlock::class.java)
+        registration.registerBlockComponent(WorkstationComponentProvider, WorkstationBlock::class.java)
     }
 }
 
@@ -126,7 +125,7 @@ object MetronomeComponentProvider: IBlockComponentProvider {
             val progress = 1 - (blockEntity.bootTime / 100f)
             tooltip.add(ProgressElement(
                 progress,
-                Component.translatable("block.tempad.metronome.booting", NumberFormat.getInstance().format(progress * 100)).append("%"),
+                Component.translatable("block.tempad.metronome.booting", (progress * 100).toInt()).append("%"),
                 SimpleProgressStyle().textColor(Tempad.ORANGE.value),
                 GradientBorder.DEFAULT_NESTED_BOX,
                 true
@@ -141,7 +140,15 @@ object WorkstationComponentProvider: IBlockComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         (accessor.blockEntity as? WorkstationBE)?.let { blockEntity ->
-
+            if (blockEntity.maxDownloadTime == 0) return
+            val progress = 1f - (blockEntity.downloadTime / blockEntity.maxDownloadTime.toFloat())
+            tooltip.add(ProgressElement(
+                progress,
+                Component.translatable("block.tempad.workstation.installing", (progress * 100).toInt()).append("%"),
+                SimpleProgressStyle().textColor(MinecraftColors.DARK_GRAY.value),
+                GradientBorder.DEFAULT_NESTED_BOX,
+                true
+            ))
         }
     }
 }

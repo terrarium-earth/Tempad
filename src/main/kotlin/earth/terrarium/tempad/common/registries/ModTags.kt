@@ -9,7 +9,8 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.Fluid
 
 object ModTags {
-    val chrononAcceptor: TagKey<Item> = TagKey.create(Registries.ITEM, "chronon_acceptor".tempadId)
+    val inventoryChargeBlacklist: TagKey<Item> = TagKey.create(Registries.ITEM, "inventory_charge_blacklist".tempadId)
+    val chrononGens: TagKey<Item> = TagKey.create(Registries.ITEM, "chronon_generators".tempadId)
 
     val enteringNotSupported: TagKey<Level> = TagKey.create(Registries.DIMENSION, "entering_not_supported".tempadId)
     val leavingNotSupported: TagKey<Level> = TagKey.create(Registries.DIMENSION, "leaving_not_supported".tempadId)

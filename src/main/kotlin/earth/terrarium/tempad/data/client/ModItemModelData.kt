@@ -73,8 +73,9 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         basicItem(ModItems.cardWallet).booleanProp("full")
         simpleBlockItem(ModBlocks.timedoorMarker)
         simpleBlockItem(ModBlocks.chronomark)
-        simpleBlockItem(ModBlocks.workstation)
         simpleBlockItem(ModBlocks.metronome)
+
+        withExistingParent("tempad:item/workstation", "tempad:block/workstation_full")
     }
 
     fun ItemModelBuilder.booleanProp(propName: String): ItemModelBuilder {

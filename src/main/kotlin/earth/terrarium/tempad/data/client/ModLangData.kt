@@ -59,6 +59,10 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
             addSub("booting", "Booting: %s")
         }
 
+        ModBlocks.workstation.apply {
+            addSub("installing", "Installing: %s")
+        }
+
         addRoot("app.tempad.teleport", "Teleport") {
             it.addSub("pin", "Pin")
             it.addSub("unpin", "Unpin")

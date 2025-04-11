@@ -43,6 +43,15 @@ class ModBlockStateData(output: PackOutput, helper: ExistingFileHelper) : BlockS
                     .build()
             }
 
+        getVariantBuilder(ModBlocks.workstationChild)
+            .forAllStatesExcept({ state: BlockState ->
+                val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
+                ConfiguredModel.builder()
+                    .modelFile(ModelFile.UncheckedModelFile("block/workstation_terminal".tempadId))
+                    .rotationY((dir.toYRot().toInt()) % 360)
+                    .build()
+            }, BlockStateProperties.TRIGGERED)
+
         getVariantBuilder(ModBlocks.metronome).forAllStates { state: BlockState ->
             ConfiguredModel.builder()
                 .modelFile(models().cubeColumn(

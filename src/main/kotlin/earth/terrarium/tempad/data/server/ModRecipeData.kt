@@ -112,14 +112,14 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
     }
 
 
-    fun RecipeOutput.shaped(item: Item, contents: ShapedRecipeBuilder.() -> Unit) {
-        val recipe = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item)
+    fun RecipeOutput.shaped(item: Item, count: Int = 1,contents: ShapedRecipeBuilder.() -> Unit) {
+        val recipe = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item, count)
         contents(recipe)
         recipe.save(this)
     }
 
-    fun RecipeOutput.shapeless(item: Item, contents: ShapelessRecipeBuilder.() -> Unit) {
-        val recipe = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, item)
+    fun RecipeOutput.shapeless(item: Item, count: Int = 1, contents: ShapelessRecipeBuilder.() -> Unit) {
+        val recipe = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, item, count)
         contents(recipe)
         recipe.save(this)
     }
@@ -202,7 +202,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
             pattern(timeSteel, quartz, timeSteel)
         }
 
-        recipes.shaped(ModItems.locationCard) {
+        recipes.shaped(ModItems.locationCard, 4) {
             blackDye()
             paper()
             iron()
@@ -313,7 +313,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
         recipes.clean(ModItems.timedoorMarker)
         recipes.clean(ModItems.chronomark)
 
-        recipes.shapeless(ModItems.timeSteel) {
+        recipes.shapeless(ModItems.timeSteel, 2) {
             requires(Items.IRON_INGOT)
             requires(Items.NETHERITE_SCRAP)
             requires(Items.IRON_INGOT)

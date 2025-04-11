@@ -164,7 +164,7 @@ object TempadClient {
     @SubscribeEvent
     @JvmStatic
     fun init(event: FMLClientSetupEvent) {
-        EntityRenderers.register(ModEntities.TIMEDOOR_ENTITY, ::TimedoorRenderer)
+        EntityRenderers.register(ModEntities.timedoor, ::TimedoorRenderer)
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
         ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
         ItemProperties.register(ModItems.tempad, "charge".tempadId, charge3Property)

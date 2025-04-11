@@ -1,4 +1,4 @@
-// 1.21.1	2025-04-07T21:40:18.555045	Recipes
+// 1.21.1	2025-04-10T19:31:11.439595	Recipes
 8c0198ac6d9e1acaa5dedb8940cd871bf7d90abc data/tempad/advancement/recipes/misc/card_wallet.json
 5e42cd9c8b469b0531788d971b49f2fa689981f8 data/tempad/advancement/recipes/misc/chronomark.json
 fccce561e9adedc939b36c3cb3f5d7fdceb19332 data/tempad/advancement/recipes/misc/chronomark_clean.json
@@ -27,13 +27,13 @@ a4ef454a7f5b6a5c43115fe7ce09b8b6e278030a data/tempad/recipe/chronomark.json
 051d725c32a4669470dcabc50581d27dcdc727bb data/tempad/recipe/chronon_cell.json
 b5525058179e201d966c30da8edb0f621073ec63 data/tempad/recipe/chronon_generator.json
 b543c9c513dfe68706b7e53be609aecf648f4d84 data/tempad/recipe/location_broadcaster.json
-187c6617a562c2acfb0d14d6efd33a0515d99499 data/tempad/recipe/location_card.json
+e08885dfc72261c5d188e70637a5d81f6517ada5 data/tempad/recipe/location_card.json
 31186277bcd63a3876c2d48b333b1d3bbca8b0ef data/tempad/recipe/location_card_clean.json
 acfeb01946fe8feca0b9c68b52651ff5f14164f0 data/tempad/recipe/metronome.json
 a68f49738f5f9470a32c2c74268c0988a7b34519 data/tempad/recipe/player_teleport_upgrade.json
 93685035a3c6be55feb366e09f4d93e3d1574efd data/tempad/recipe/screening_device.json
 7403d472f28df034d440de3d4e4f2a41811446ee data/tempad/recipe/tempad.json
-1bb1d3acedf85a8ef7339683fb4b0f115a831107 data/tempad/recipe/time_steel.json
+dcf9b7b817924ffbf2108655373ef9c65cab6ffe data/tempad/recipe/time_steel.json
 efb4655fd6bb230c1076aee4746763094b18c276 data/tempad/recipe/time_twister.json
 2c28464727da3b30c2e8517f3b14a26460e863f1 data/tempad/recipe/timedoor_marker.json
 6bd7cea9d3443609f22d1aeb16029a2f02733c38 data/tempad/recipe/timedoor_marker_clean.json

@@ -77,9 +77,10 @@
   "marker.tempad.dimension_enter": "Entered dimension at",
 
   "config.jade.plugin_tempad.timedoor": "Timedoor",
-  "config.jade.plugin_tempad.anchor": "Spatial Anchor",
-  "config.jade.plugin_tempad.rudimentary": "Rudimentary Tempad",
+  "config.jade.plugin_tempad.anchor": "Marker",
+  "config.jade.plugin_tempad.rudimentary": "Timedoor Projector",
   "config.jade.plugin_tempad.metronome": "Metronome",
+  "config.jade.plugin_tempad.workstation": "Workstation",
 
   "jade.tempad.will_close": "Closing in %s seconds",
   "jade.tempad.closing": "Closing...",

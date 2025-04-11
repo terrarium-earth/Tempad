@@ -27,13 +27,20 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
 
         val byteCodec: ByteCodec<MetronomeData> = ObjectByteCodec.create(
             ByteCodec.mapOf(ByteCodec.UUID, ByteCodec.INT).fieldOf { it.stored },
-            ByteCodec.mapOf(ByteCodec.UUID, ExtraByteCodecs.GLOBAL_POS.listOf()).fieldOf { it.positions },
-            ::MetronomeData
+            ByteCodec.mapOf(ByteCodec.UUID, ByteCodec.INT).fieldOf { it.positions.mapValues { it.value.size } },
+            MetronomeData::forClient
         )
+
+        fun forClient(stored: Map<UUID, Int>, capacities: Map<UUID, Int>): MetronomeData {
+            val metronomeData = MetronomeData(stored, emptyMap<UUID, List<GlobalPos>>())
+            metronomeData.capacities = capacities
+            return metronomeData
+        }
     }
 
     val positions: MutableMap<UUID, MutableList<GlobalPos>> = mutableMapOf()
     val stored: Object2IntMap<UUID> = Object2IntOpenHashMap()
+    var capacities: Map<UUID, Int>? = null
 
     init {
         for ((player, blocks) in positions) {
@@ -55,7 +62,7 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
     }
 
     fun getCapacity(player: UUID): Int {
-        return positions[player]?.let { it.size * CommonConfigCache.Metronome.capacity } ?: 0
+        return (capacities?.get(player) ?: positions[player]?.size ?: 0) * CommonConfigCache.Metronome.capacity
     }
 
     fun getStored(player: UUID): Int {

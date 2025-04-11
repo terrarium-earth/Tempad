@@ -103,7 +103,7 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         }
     }
 
-    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
+    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun getShape(
         state: BlockState,

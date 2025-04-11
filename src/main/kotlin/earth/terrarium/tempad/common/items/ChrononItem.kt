@@ -6,6 +6,8 @@ import earth.terrarium.tempad.api.tva_device.hasRoom
 import earth.terrarium.tempad.api.tva_device.move
 import earth.terrarium.tempad.client.tooltip.ChrononData
 import earth.terrarium.tempad.client.tooltip.tooltip
+import earth.terrarium.tempad.common.registries.ModTags
+import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
@@ -20,20 +22,21 @@ abstract class ChrononItem: Item(Properties().stacksTo(1)) {
     }
 
     fun cannotDistribute(entity: Entity, stack: ItemStack): Boolean {
-        return entity !is Player || ContextRegistry.locate(entity) { it.chronons?.hasRoom == true && it !== stack } == null
+        return entity !is Player || ContextRegistry.locate(entity) { it.isChargable(stack) } == null
     }
 
     fun distribute(player: Player, stack: ItemStack) {
-        ContextRegistry.locate(player) {
-            it.chronons?.hasRoom == true && it !== stack
-        }?.let {
+        ContextRegistry.locate(player) { it.isChargable(stack) }?.let {
             safeLet(stack.chronons, it.stack.chronons) { from, to ->
                 move(from, to, Int.MAX_VALUE)
             }
         }
     }
 
+
     override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean {
         return false
     }
 }
+
+fun ItemStack.isChargable(source: ItemStack) = chronons?.hasRoom == true && this !== source && this !in ModTags.inventoryChargeBlacklist
