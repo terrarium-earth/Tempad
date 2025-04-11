@@ -13,6 +13,8 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.neoforged.neoforge.common.Tags
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition
+import net.neoforged.neoforge.common.conditions.NotCondition
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLookup.Provider>) :
@@ -46,6 +48,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
     val enderChest = 'h'
     val driedKelp = 'k'
     val clock = 'K'
+    val netheriteScrap = 's'
 
     val air = ' '
 
@@ -101,6 +104,8 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
 
     fun ShapedRecipeBuilder.clock() = define(clock, Items.CLOCK)
 
+    fun ShapedRecipeBuilder.netheriteScrap() = define(netheriteScrap, Items.NETHERITE_SCRAP)
+
     fun ShapedRecipeBuilder.pattern(vararg char: Char): ShapedRecipeBuilder {
         pattern(char.joinToString(""))
         return this
@@ -112,16 +117,16 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
     }
 
 
-    fun RecipeOutput.shaped(item: Item, count: Int = 1,contents: ShapedRecipeBuilder.() -> Unit) {
+    fun RecipeOutput.shaped(item: Item, count: Int = 1, name: String? = null, contents: ShapedRecipeBuilder.() -> Unit) {
         val recipe = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item, count)
         contents(recipe)
-        recipe.save(this)
+        if(name == null) recipe.save(this) else recipe.save(this, name)
     }
 
-    fun RecipeOutput.shapeless(item: Item, count: Int = 1, contents: ShapelessRecipeBuilder.() -> Unit) {
+    fun RecipeOutput.shapeless(item: Item, count: Int = 1, name: String? = null, contents: ShapelessRecipeBuilder.() -> Unit) {
         val recipe = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, item, count)
         contents(recipe)
-        recipe.save(this)
+        if(name == null) recipe.save(this) else recipe.save(this, name)
     }
 
     fun RecipeOutput.clean(item: Item) {
@@ -200,15 +205,6 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
             pattern(tintedGlass, tintedGlass, air)
             pattern(copper, copper, copper)
             pattern(timeSteel, quartz, timeSteel)
-        }
-
-        recipes.shaped(ModItems.locationCard, 4) {
-            blackDye()
-            paper()
-            iron()
-            unlockedBy(Items.IRON_INGOT)
-            pattern(paper, paper, paper)
-            pattern(iron, blackDye, iron)
         }
 
         recipes.shaped(ModItems.chronomark) {
@@ -313,12 +309,32 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
         recipes.clean(ModItems.timedoorMarker)
         recipes.clean(ModItems.chronomark)
 
-        recipes.shapeless(ModItems.timeSteel, 2) {
+        recipes.shapeless(ModItems.locationCard, 4, "tempad:card_cheap") {
+            requires(Tags.Items.INGOTS_IRON)
+            requires(Tags.Items.DYES)
+            unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT))
+        }
+
+        recipes.shapeless(ModItems.locationCard, 16, "tempad:card_expensive") {
+            requires(ModItems.timeSteel)
+            requires(Tags.Items.DYES)
+            unlockedBy(getHasName(ModItems.timeSteel), has(ModItems.timeSteel))
+        }
+
+        recipes.withConditions(NotCondition(ModLoadedCondition("create"))).shapeless(ModItems.timeSteel, 2, "tempad:time_steel_shapeless") {
             requires(Items.IRON_INGOT)
             requires(Items.NETHERITE_SCRAP)
-            requires(Items.IRON_INGOT)
             requires(Items.NETHERITE_SCRAP)
+            requires(Items.IRON_INGOT)
             unlockedBy(getHasName(Items.NETHERITE_SCRAP), has(Items.NETHERITE_SCRAP))
+        }
+
+        recipes.withConditions(ModLoadedCondition("create")).shaped(ModItems.timeSteel, 2, "tempad:time_steel_shaped") {
+            iron()
+            netheriteScrap()
+            unlockedBy(getHasName(Items.NETHERITE_SCRAP), has(Items.NETHERITE_SCRAP))
+            pattern(netheriteScrap, iron)
+            pattern(iron, netheriteScrap)
         }
     }
 }

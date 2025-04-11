@@ -1,4 +1,13 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "create"
+      }
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_netherite_scrap": {
@@ -13,7 +22,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "tempad:time_steel"
+        "recipe": "tempad:time_steel_shapeless"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +35,7 @@
   ],
   "rewards": {
     "recipes": [
-      "tempad:time_steel"
+      "tempad:time_steel_shapeless"
     ]
   }
 }
