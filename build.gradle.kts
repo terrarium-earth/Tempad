@@ -97,7 +97,7 @@ dependencies {
     runtimeOnly("vazkii.patchouli:Patchouli:${patchouliVersion}")
 
     implementation("maven.modrinth:jade:$jadeVersion")
-    implementation("maven.modrinth:lambdynamiclights-unofficial-neoforge:$lambdaDynamicLights")
+    compileOnly("maven.modrinth:lambdynamiclights-unofficial-neoforge:$lambdaDynamicLights")
 
     // compile against the JEI API but do not include it at runtime
     compileOnly("mezz.jei:jei-${baseVersion}-neoforge-api:${jeiVersion}")

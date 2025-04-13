@@ -14,6 +14,7 @@ object CommonConfigCache {
         RudimentaryTempad
         Tempad
         TimeTwister
+        ModNetworking.channel.register(CACHE.syncType)
     }
 
     object Capacitor {
