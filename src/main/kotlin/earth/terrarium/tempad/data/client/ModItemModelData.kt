@@ -18,7 +18,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             texture("layer0", "tempad:item/tempad/base")
             for (attached in arrayOf(0f, 1f)) {
                 for (inUse in arrayOf(0f, 1f)) {
-                    for ((index, charge) in arrayOf(0f, 0.33f, 0.66f, 1f).withIndex()) {
+                    for ((index, charge) in arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f).withIndex()) {
                         var path = "tempad:item/tempad/"
                         path += (if (attached == 1f) "attached" else "base")
                         path += "_"
@@ -40,9 +40,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
                                     texture("layer" + ++layer, "item/tempad/screen_on".tempadId)
                                 }
 
-                                if (charge > 0) {
-                                    texture("layer"+ ++layer, "item/tempad/charge_${index}")
-                                }
+                                texture("layer"+ ++layer, "item/tempad/charge_${index}")
                             })
                         }
                     }
@@ -51,9 +49,9 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         }
 
         basicItem(ModItems.chronometer).chargedLayered("chronometer")
-        basicItem(ModItems.chrononGenerator).chargedLayered("chronon_generator", arrayOf(0f, 0.2f, 0.4f, 0.6f, 0.8f, 1f))
+        basicItem(ModItems.chrononGenerator).chargedLayered("chronon_generator")
 
-        basicItem(ModItems.chrononCell).charged("chronon_cell", arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f))
+        basicItem(ModItems.chrononCell).charged("chronon_cell")
         basicItem(ModItems.chrononBattery).charged("chronon_battery")
 
         basicItem(ModItems.locationBroadcaster).booleanProp("enabled")
@@ -88,7 +86,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             .end()
     }
 
-    fun ItemModelBuilder.charged(name: String, values: Array<Float> = arrayOf(0f, 0.33f, 0.66f, 1f)) {
+    fun ItemModelBuilder.charged(name: String, values: Array<Float> = arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f)) {
         for ((index, charge) in values.withIndex()) {
             override().apply {
                 predicate("charge".tempadId, charge)
@@ -102,7 +100,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         }
     }
 
-    fun ItemModelBuilder.chargedLayered(name: String, values: Array<Float> = arrayOf(0f, 0.33f, 0.66f, 1f)) {
+    fun ItemModelBuilder.chargedLayered(name: String, values: Array<Float> = arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f)) {
         for ((index, charge) in values.withIndex()) {
             override().apply {
                 predicate("charge".tempadId, charge)

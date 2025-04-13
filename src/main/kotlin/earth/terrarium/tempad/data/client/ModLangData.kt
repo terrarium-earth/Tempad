@@ -27,6 +27,9 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
         add(ModItems.newLocationKey.toLanguageKey("upgrade"), "Create Saved Locations")
         add(ModItems.playerKey.toLanguageKey("upgrade"), "Teleport to Players")
 
+        add("error.tempad.owner_mismatch", "This isn't yours. Return to owner or Reset item")
+        add("error.tempad.block_locked", "%s is Locked")
+
         ModItems.screeningDevice.apply {
             addSub("off", "Off")
             addSub("screening", "Screening: %s")
@@ -47,16 +50,6 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
         ModItems.cardWallet.apply {
             addSub("prefix", "Contains:")
             addSub("empty", "No cards")
-        }
-
-        ModBlocks.timedoorMarker.apply {
-            addSub("owner_mismatch.place", "Error: User != Marker Owner. Return to owner or Reset Marker")
-            addSub("owner_mismatch.use", "Error: User != Marker Owner. Only owner may edit options")
-        }
-
-        ModBlocks.chronomark.apply {
-            addSub("owner_mismatch.place", "Error: User != Chronomark Owner. Return to owner or Reset Chronomark")
-            addSub("owner_mismatch.use", "Error: User != Chronomark Owner. Only owner may edit options")
         }
 
         ModBlocks.metronome.apply {

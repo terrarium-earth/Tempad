@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.recipe.UpgradeRecipeInput
 import earth.terrarium.tempad.common.registries.ModBlocks
@@ -12,6 +13,7 @@ import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.set
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
@@ -134,7 +136,10 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
 
         if (blockEntity.maxDownloadTime > 0) return InteractionResult.PASS
         val stack = blockEntity.inventory[0]
-        if (blockEntity.locked && stack.owner?.id != player.gameProfile.id) return InteractionResult.PASS
+        if (stack.locked && stack.owner?.id != player.gameProfile.id) {
+            player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+            return InteractionResult.FAIL
+        }
         stack.owner = null
         if(player.mainHandItem.isEmpty) {
             player.setItemInHand(InteractionHand.MAIN_HAND, stack.copy())

@@ -21,6 +21,7 @@ import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.WidgetSprites
+import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import java.util.function.Consumer
 import kotlin.math.roundToInt
@@ -112,6 +113,7 @@ object TempadUI {
     val c = arrayOf("kC", "mC", "bC", "tC")
 
     private fun coolFormat(n: Double, iteration: Int): String {
+        if (iteration == 0 && n < 1000) return n.toInt().toString() + "C"
         val d = (n.toLong() / 100) / 10.0
         val isRound = (d * 10) % 10 == 0.0 //true if the decimal part is equal to 0 (then it's trimmed anyway)
         return (if (d < 1000)  //this determines the class, i.e. 'k', 'm' etc
@@ -124,10 +126,16 @@ object TempadUI {
 
     fun renderEnergyBar(graphics: GuiGraphics, font: Font, x: Int, y: Int, power: Int, maxPower: Int) {
         graphics.blitSprite(powerBg, x, y, 74, 13)
-        val uWidth = if(maxPower == 0) 0 else ((power.toFloat() / maxPower) * 72).roundToInt()
+        val uWidth = if(maxPower == 0) 0 else ((power.toFloat() / maxPower).coerceIn(0f, 1f) * 72).roundToInt()
         graphics.blitSprite(powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
 
-        val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else Component.literal(coolFormat(power.toDouble(), 0) + "/" + coolFormat(maxPower.toDouble(), 0))
+        val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else {
+            if (Screen.hasShiftDown() || Minecraft.getInstance().player?.isShiftKeyDown == true) {
+                Component.literal(NumberFormat.getInstance().format(power) + "C")
+            } else {
+                Component.literal(coolFormat(power.toDouble(), 0) + "/" + coolFormat(maxPower.toDouble(), 0))
+            }
+        }
         val xOffset = (74 - font.width(text)) / 2
 
         graphics.flush()

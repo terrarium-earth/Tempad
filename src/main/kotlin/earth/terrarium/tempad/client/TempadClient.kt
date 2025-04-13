@@ -107,19 +107,9 @@ object TempadClient {
         return@BooleanItemPropertyFunction menu.ctx.stack === stack
     }
 
-    val charge3Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
-        val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
-        return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.33f)
-    }
-
     val charge4Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
         val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
         return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.25f)
-    }
-
-    val charge5Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
-        val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
-        return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.2f)
     }
 
     val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.portalTarget != null }
@@ -177,11 +167,11 @@ object TempadClient {
         EntityRenderers.register(ModEntities.timedoor, ::TimedoorRenderer)
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
         ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
-        ItemProperties.register(ModItems.tempad, "charge".tempadId, charge3Property)
+        ItemProperties.register(ModItems.tempad, "charge".tempadId, charge4Property)
         ItemProperties.register(ModItems.chrononCell, "charge".tempadId, charge4Property)
-        ItemProperties.register(ModItems.chrononBattery, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge5Property)
+        ItemProperties.register(ModItems.chrononBattery, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge4Property)
         ItemProperties.register(ModItems.locationBroadcaster, "enabled".tempadId, enabledProperty)
         ItemProperties.register(ModItems.screeningDevice, "enabled".tempadId, screeningEnabled)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)

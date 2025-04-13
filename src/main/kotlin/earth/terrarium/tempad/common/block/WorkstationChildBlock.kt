@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.block
 
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.context.WorkstationContext
 import earth.terrarium.tempad.common.registries.ModApps
@@ -10,6 +11,7 @@ import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.RandomSource
@@ -77,7 +79,14 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         val ctx = WorkstationContext(player, storagePos)
 
         val stack = storageBE.inventory[0]
-        if (stack.isEmpty || (stack.locked && player.gameProfile.id != stack.owner?.id)) return InteractionResult.PASS
+        if (stack.isEmpty) return InteractionResult.PASS
+
+        if (storageBE.owner == null) {
+            storageBE.owner = player.gameProfile
+        } else if (stack.locked && storageBE.owner?.id != player.gameProfile.id) {
+            player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+            return InteractionResult.FAIL
+        }
 
         (AppRegistry[stack.defaultApp, ctx, true]
             ?: AppRegistry[ModApps.portalSetup, ctx, true])!!.openMenu(player as ServerPlayer)

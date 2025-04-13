@@ -2,6 +2,7 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.locations.DirectLocation
 import earth.terrarium.tempad.api.locations.IndirectLocation
+import earth.terrarium.tempad.common.menu.WalletMenu
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.registries.walletContents
@@ -52,7 +53,7 @@ class WalletItem() : Item(Properties().stacksTo(1)) {
         access: SlotAccess,
     ): Boolean {
         val items = stack.items
-        if (!items.isFull && other.item === ModItems.locationCard && other.portalTarget != null) {
+        if (!items.isFull && other.item === ModItems.locationCard && other.portalTarget != null && player.containerMenu !is WalletMenu) {
             access.set(items.insertItem(other, false))
             return true
         }

@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level
 class ChronometerItem(val rate: () -> Int, val amount: () -> Int) : CapacitorItem() {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         super.inventoryTick(stack, level, entity, slot, selected)
-        if (level.isClientSide || entity !is Player || entity.tickCount % rate() != 0 || (stack.chronons == null && cannotDistribute(entity, stack)) || isClashing(entity, stack)) return // 1 mb every 1.2 seconds, 1 bucket per day
+        if (level.isClientSide || entity !is Player || entity.tickCount % rate() != 0 || isClashing(entity, stack)) return // 1 mb every 1.2 seconds, 1 bucket per day
         stack.chronons?.insert(amount(), ActionType.Execute)
         if (stack.chronons != null) {
             distribute(entity, stack)
@@ -29,6 +29,10 @@ class ChronometerItem(val rate: () -> Int, val amount: () -> Int) : CapacitorIte
                 it.stack.chronons?.insert(amount(), ActionType.Execute)
             }
         }
+    }
+
+    override fun isChargable(source: ItemStack, target: ItemStack): Boolean {
+        return target.chronons?.hasRoom == true && target !== source && target !in ModTags.chargeBlacklist
     }
 
     fun isClashing(player: Player, stack: ItemStack): Boolean {

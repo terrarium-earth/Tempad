@@ -9,8 +9,10 @@ import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.menu.MetronomeMenu
+import earth.terrarium.tempad.common.network.c2s.UpdateMetronomePacket
 import earth.terrarium.tempad.common.registries.metronomeEnergy
 import earth.terrarium.tempad.common.utils.safeLet
+import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.WidgetSprites
@@ -65,7 +67,7 @@ class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Co
         safeLet(metronomeEnergy, menu.data?.uuid) { energy, id ->
             val power = energy.getStored(id)
             val capacity = energy.getCapacity(id)
-            val height = ((power.toFloat() / capacity) * 54).toInt()
+            val height = ((power.toFloat() / capacity).coerceIn(0f, 1f) * 54).toInt()
             graphics.blitSprite(TempadUI.powerVert, 6, 54, 0, 54 - height, leftPos + 102, topPos + 20 + 54 - height, 6, height)
 
             if (mouseX >= leftPos + 102 && mouseX <= leftPos + 106 && mouseY >= topPos + 20 && mouseY <= topPos + 74) {
@@ -85,5 +87,10 @@ class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Co
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
         this.renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+    }
+
+    override fun onClose() {
+        super.onClose()
+        UpdateMetronomePacket(menu.data!!.pos.pos, locked.value).sendToServer()
     }
 }

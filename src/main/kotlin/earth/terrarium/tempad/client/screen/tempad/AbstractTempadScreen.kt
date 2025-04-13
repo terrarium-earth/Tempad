@@ -9,14 +9,16 @@ import earth.terrarium.olympus.client.components.buttons.Button
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.components.textbox.TextBox
 import earth.terrarium.olympus.client.constants.MinecraftColors
-import earth.terrarium.olympus.client.ui.UIIcons
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.TempadUI
+import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.client.widgets.buttons.AppButton
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
 import earth.terrarium.tempad.common.network.c2s.RedirectAppPacket
+import earth.terrarium.tempad.common.network.c2s.UpdateTempadLockPacket
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
@@ -46,7 +48,7 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
     var localTop: Int = 0
 
     var timeText = ""
-
+    var locked = MutableState.of(menu.ctx.stack.locked)
 
     override fun init() {
         super.init()
@@ -70,9 +72,27 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
             it.withSize(11)
             it.withPosition(leftPos + 233, topPos + 13)
             it.withTexture(TempadUI.steelButton)
-            it.withRenderer(WidgetRenderers.icon<Button>(TempadUI.xIcon).withColor(MinecraftColors.BLACK).withCentered(7, 7))
+            it.withRenderer(
+                WidgetRenderers.icon<Button>(TempadUI.xIcon).withColor(MinecraftColors.BLACK).withCentered(7, 7)
+            )
             it.withCallback(::onClose)
         })
+        if (menu.appContent.isStationary) {
+            addRenderableWidget(Widgets.button {
+                it.withSize(11)
+                it.withPosition(leftPos + 233, topPos + 25)
+                it.withTexture(TempadUI.steelButton)
+                it.withRenderer(
+                    locked.withRenderer {
+                        WidgetRenderers.icon<Button>(if(it) TempadUI.lockIcon else TempadUI.unlockIcon).withColor(MinecraftColors.BLACK).withCentered(7, 7)
+                    }
+                )
+                it.withCallback {
+                    locked.value = !locked.value
+                    UpdateTempadLockPacket(locked.value, menu.ctxHolder).sendToServer()
+                }
+            })
+        }
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
@@ -82,7 +102,7 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
             graphics.blitSprite(it, this.leftPos + 30, this.topPos + 20, 198, 118)
         }
         menu.ctx.stack.chronons?.let {
-            val height = ((it.power.toFloat() / it.maxPower) * 54).toInt()
+            val height = ((it.power.toFloat() / it.maxPower).coerceIn(0f, 1f) * 54).toInt()
             graphics.blitSprite(
                 TempadUI.powerVert,
                 6,

@@ -39,7 +39,6 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
     val zOffset = MutableState.of(menu.ctx.stack.portalOffset.forwardBack)
     val angle = MutableState.of(menu.ctx.stack.portalOffset.angle)
     val isUpright = MutableState.of(menu.ctx.stack.portalOffset.isUpright)
-    val locked = MutableState.of(menu.ctx.stack.locked)
     private var selected: Pair<ResourceLocation, UUID>? = menu.ctx.stack.selectedPos?.let { it.provider to it.id }
 
     val search = ListenableState.of("").apply {
@@ -58,25 +57,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
     override fun init() {
         super.init()
 
-        addRenderableWidget(Widgets.button {
-            it.withPosition(localLeft + 158, localTop + 7)
-            it.withSize(7)
-            it.withTexture(null)
-            it.withRenderer(locked.withRenderer {
-                WidgetRenderers.withColors(
-                    WidgetRenderers.icon<Button>(if (it) TempadUI.lockIcon else TempadUI.unlockIcon).withShadow(),
-                    Tempad.DARK_ORANGE,
-                    Tempad.ORANGE,
-                    Tempad.HIGHLIGHTED_ORANGE
-                ).withCentered(7, 7)
-            })
-            it.withCallback {
-                locked.set(!locked.value)
-            }
-        })
-
         val offsetOptions = Layouts.column().withGap(2).withPosition(localLeft + 4, localTop + 20)
-
         offsetOptions.withChildren(
             Widgets.text(Component.translatable("app.tempad.portal_setup.offset"))
                 .withColor(Tempad.ORANGE)
@@ -247,7 +228,6 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
             isUpright.get(),
             selected?.first,
             selected?.second,
-            locked.get(),
             menu.ctx.holder
         ).sendToServer()
     }

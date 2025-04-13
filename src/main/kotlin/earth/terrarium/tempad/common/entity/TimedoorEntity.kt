@@ -44,13 +44,14 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
         internal const val IDLE_BEFORE_START = 26
         internal const val ANIMATION_LENGTH = 5
-        private val CLOSING_TIME = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
-        private val COLOR = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
-        private val TARGET_POS = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
-        private val TARGET_DIMENSION =
+        private val closingTimeAccessor = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
+        private val colorAccessor = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
+        private val targetPosAccessor = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
+        private val targetDimAccessor =
             createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
-        private val SIZING = createDataKey<TimedoorEntity, TimedoorPlacementSettings>(ModEntities.sizingSerializer)
-        private val GLITCHING = createDataKey<TimedoorEntity, Boolean>(EntityDataSerializers.BOOLEAN)
+        private val sizingAccessor = createDataKey<TimedoorEntity, TimedoorPlacementSettings>(ModEntities.sizingSerializer)
+        private val glitchingAccessor = createDataKey<TimedoorEntity, Boolean>(EntityDataSerializers.BOOLEAN)
+        private val offsetAccessor = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
 
         //feedback
         val fail = Component.translatable("entity.tempad.timedoor.fail")
@@ -173,19 +174,20 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     var beganClosing = 0;
     var targetAngle = 0f
-    var targetPos by DataDelegate(TARGET_POS)
-    var targetDimension by DataDelegate(TARGET_DIMENSION)
-    var color by DataDelegate(COLOR)
-    var closingTime by DataDelegate(CLOSING_TIME)
+    var targetPos by DataDelegate(targetPosAccessor)
+    var targetDimension by DataDelegate(targetDimAccessor)
+    var color by DataDelegate(colorAccessor)
+    var closingTime by DataDelegate(closingTimeAccessor)
     var owner: UUID? = null
-    var glitching: Boolean by DataDelegate(GLITCHING)
+    var glitching: Boolean by DataDelegate(glitchingAccessor)
+    var animationOffset: Int by DataDelegate(offsetAccessor)
     var linkedPortalId: UUID? = null
     var original: Boolean = true
 
     var sizing: TimedoorPlacementSettings
-        get() = entityData.get(SIZING)
+        get() = entityData.get(sizingAccessor)
         set(value) {
-            entityData.set(SIZING, value)
+            entityData.set(sizingAccessor, value)
             this.fixupDimensions()
         }
 
@@ -217,16 +219,18 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData(builder: SynchedEntityData.Builder) {
-        builder.define(CLOSING_TIME, CommonConfig.TimeDoor.timeInWorld)
-        builder.define(COLOR, Tempad.ORANGE)
-        builder.define(TARGET_POS, Vec3.ZERO)
-        builder.define(TARGET_DIMENSION, Level.OVERWORLD)
-        builder.define(SIZING, DynamicAngledPlacement())
-        builder.define(GLITCHING, false)
+        builder.define(closingTimeAccessor, CommonConfig.TimeDoor.timeInWorld)
+        builder.define(colorAccessor, Tempad.ORANGE)
+        builder.define(targetPosAccessor, Vec3.ZERO)
+        builder.define(targetDimAccessor, Level.OVERWORLD)
+        builder.define(sizingAccessor, DynamicAngledPlacement())
+        builder.define(glitchingAccessor, false)
+        builder.define(offsetAccessor, 0)
     }
 
     override fun saveWithoutId(compound: CompoundTag): CompoundTag {
         val tag = super.saveWithoutId(compound)
+        tag.putInt("Age", tickCount)
         tag.putInt("ClosingTime", closingTime)
         tag.putFloat("TargetAngle", targetAngle)
         tag.putBoolean("IsGlitching", glitching)
@@ -241,6 +245,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     override fun load(compound: CompoundTag) {
         super.load(compound)
+        tickCount = compound.getInt("Age")
         closingTime = compound.getInt("ClosingTime")
         targetAngle = compound.getFloat("TargetAngle")
         glitching = compound.getBoolean("IsGlitching")

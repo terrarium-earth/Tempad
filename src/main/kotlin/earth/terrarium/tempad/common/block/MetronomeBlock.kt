@@ -2,9 +2,12 @@ package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
 import com.teamresourceful.resourcefullib.common.menu.ContentMenuProvider
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.menu.MetronomeMenuData
 import earth.terrarium.tempad.common.registries.ModBlocks
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.metronomeEnergy
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.core.BlockPos
 import net.minecraft.core.GlobalPos
@@ -74,6 +77,12 @@ class MetronomeBlock() : BaseEntityBlock(Properties.of().strength(3.0f, 1200f)) 
     ): InteractionResult {
         safeLet(level.getBlockEntity(pos) as? MetronomeBe, player as? ServerPlayer) { blockEntity, opener ->
             if (blockEntity.bootTime == 0) {
+                if (blockEntity.owner == null) {
+                    blockEntity.owner = player.gameProfile
+                } else if (blockEntity.locked && blockEntity.owner?.id != player.gameProfile.id) {
+                    player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+                    return InteractionResult.FAIL
+                }
                 blockEntity.openMenu(opener)
             }
         }

@@ -131,7 +131,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
             if (it.owner == null) {
                 it.owner = player.gameProfile
             } else if (it.locked && it.owner?.id != player.gameProfile.id) {
-                player.displayClientMessage(Component.translatable("block.tempad.marker.owner_mismatch.use").withColor(Tempad.ORANGE.value), true)
+                player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
                 return InteractionResult.FAIL
             }
             it.openScreen(player)

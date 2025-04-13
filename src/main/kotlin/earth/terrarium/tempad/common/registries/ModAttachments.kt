@@ -105,12 +105,6 @@ object ModAttachments {
         DataSyncSerializer.create( { this@ModAttachments.metronomeEnergy }, StreamCodecByteCodec.to(MetronomeData.byteCodec))
     }
 
-    val locked: AttachmentType<Boolean> by registry.register("locked") {
-        attachmentType({ false }) {
-            codec = Codec.BOOL
-        }
-    }
-
     val yOffset: AttachmentType<Float> by registry.register("yoffset") {
         attachmentType({ 0f }) {
             codec = Codec.FLOAT
@@ -132,7 +126,6 @@ var AttachmentHolder.owner by ModAttachments.owner.optional()
 var AttachmentHolder.color by ModAttachments.color.synced(ModAttachments.syncedColor)
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
-var AttachmentHolder.locked by ModAttachments.locked
 var AttachmentHolder.yOffset by ModAttachments.yOffset
 // var AttachmentHolder.name by ModAttachments.name.optional()
 var AttachmentHolder.angle by ModAttachments.angle

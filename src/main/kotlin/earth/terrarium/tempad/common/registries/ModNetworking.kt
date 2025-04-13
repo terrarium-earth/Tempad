@@ -20,6 +20,8 @@ object ModNetworking {
         channel.register(SetFavoritePacket.type)
         channel.register(UpdateAnchorPacket)
         channel.register(UpdateChronomarkPacket)
+        channel.register(UpdateMetronomePacket)
+        channel.register(UpdateTempadLockPacket)
         channel.register(UseMacroPacket)
         channel.register(WriteToCardPacket.type)
 

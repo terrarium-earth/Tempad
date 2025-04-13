@@ -35,6 +35,7 @@ import java.util.Optional
 
 class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metronomeBe, pos, state), ContentMenuProvider<MetronomeMenuData> {
     var owner: GameProfile? = null
+    var locked = true
     var initialChronons = 0
     var bootChronons = 0
     var bootTime = 100
@@ -97,6 +98,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         tag.putInt("BootTime", bootTime)
         tag.putInt("BootChronons", bootChronons)
         tag.putInt("InitialChronons", initialChronons)
+        tag.putBoolean("Locked", locked)
     }
 
     override fun loadAdditional(
@@ -106,6 +108,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         super.loadAdditional(tag, registries)
         owner = tag.load(GAME_PROFILE_CODEC.codec(), "Owner")
         bootTime = if("BootTime" in tag) tag.getInt("BootTime") else 100
+        locked = tag.getBoolean("Locked")
         initialChronons = tag.getInt("InitialChronons")
         bootChronons = tag.getInt("BootChronons")
         inventory.deserializeNBT(registries, tag.getCompound("Inventory"))

@@ -47,6 +47,8 @@ class ModItemTags(output: PackOutput,
 
         tag(ModTags.chargeBlacklist)
             .add(ModItems.metronome)
+            .add(ModItems.chronometer)
+            .add(ModItems.chrononGenerator)
 
         tag(ModTags.batteries)
             .add(ModItems.chronometer)

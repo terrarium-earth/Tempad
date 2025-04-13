@@ -18,6 +18,7 @@ import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBlock
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.id
 import earth.terrarium.tempad.common.registries.owner
+import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
@@ -147,15 +148,23 @@ object WorkstationComponentProvider: IBlockComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         (accessor.blockEntity as? WorkstationBE)?.let { blockEntity ->
-            if (blockEntity.maxDownloadTime == 0) return
-            val progress = 1f - (blockEntity.downloadTime / blockEntity.maxDownloadTime.toFloat())
-            tooltip.add(ProgressElement(
-                progress,
-                Component.translatable("block.tempad.workstation.installing", (progress * 100).toInt()).append("%"),
-                SimpleProgressStyle().textColor(MinecraftColors.DARK_GRAY.value),
-                GradientBorder.DEFAULT_NESTED_BOX,
-                true
-            ))
+            if (blockEntity.maxDownloadTime > 0) {
+                val progress = 1f - (blockEntity.downloadTime / blockEntity.maxDownloadTime.toFloat())
+                tooltip.add(
+                    ProgressElement(
+                        progress,
+                        Component.translatable("block.tempad.workstation.installing", (progress * 100).toInt())
+                            .append("%"),
+                        SimpleProgressStyle().textColor(MinecraftColors.DARK_GRAY.value),
+                        GradientBorder.DEFAULT_NESTED_BOX,
+                        true
+                    )
+                )
+            }
+            blockEntity.inventory[0].owner?.let {
+                tooltip.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(
+                    ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
+            }
         }
     }
 }

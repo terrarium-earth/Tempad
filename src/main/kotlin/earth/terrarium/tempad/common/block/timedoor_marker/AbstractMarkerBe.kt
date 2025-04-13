@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3
 import kotlin.jvm.optionals.getOrNull
 
 abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state: BlockState): BlockEntity(block, pos, state), Nameable {
+    var locked = true
     var posName: Component get() = getExistingData(ModAttachments.name).getOrNull() ?: blockState.block.name
         set(value) {
             setData(ModAttachments.name, value)
@@ -37,6 +38,22 @@ abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state:
 
     fun canAccess(player: GameProfile): Boolean {
         return owner?.let { PlayerAccessApi[this.accessId]?.canAccess(level!!, it, player) } ?: (player.id == owner?.id)
+    }
+
+    override fun loadAdditional(
+        tag: CompoundTag,
+        registries: HolderLookup.Provider,
+    ) {
+        super.loadAdditional(tag, registries)
+        locked = tag.getBoolean("Locked")
+    }
+
+    override fun saveAdditional(
+        tag: CompoundTag,
+        registries: HolderLookup.Provider,
+    ) {
+        super.saveAdditional(tag, registries)
+        tag.putBoolean("Locked", locked)
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {

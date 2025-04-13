@@ -36,13 +36,14 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         buffer: MultiBufferSource,
         packedLight: Int,
     ) {
-        if (entity.tickCount < TimedoorEntity.IDLE_BEFORE_START) return
+        val tickCount = entity.tickCount + entity.animationOffset
+        if (tickCount < TimedoorEntity.IDLE_BEFORE_START) return
         val tickLength = TimedoorEntity.ANIMATION_LENGTH
         val animation: Float
-        val ticks = entity.tickCount + partialTick
+        val ticks = tickCount + partialTick
 
         if (entity.closingTime < TimedoorEntity.ANIMATION_LENGTH) {
-            if (entity.beganClosing == 0) entity.beganClosing = entity.tickCount
+            if (entity.beganClosing == 0) entity.beganClosing = tickCount
             animation = Mth.clamp(1 - (ticks - entity.beganClosing) / tickLength.toFloat(), 0f, 1f)
         } else {
             animation = Mth.clamp((ticks - TimedoorEntity.IDLE_BEFORE_START) / tickLength.toFloat(), 0f, 1f)
@@ -71,7 +72,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
             height,
             depth,
             entity.color.value,
-            entity.tickCount,
+            tickCount,
             entity.sizing.showLineAnimation
         )
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
