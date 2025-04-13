@@ -121,15 +121,22 @@ object MetronomeComponentProvider: IBlockComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         (accessor.blockEntity as? MetronomeBe)?.let { blockEntity ->
-            if (blockEntity.bootTime == 0) return
-            val progress = 1 - (blockEntity.bootTime / 100f)
-            tooltip.add(ProgressElement(
-                progress,
-                Component.translatable("block.tempad.metronome.booting", (progress * 100).toInt()).append("%"),
-                SimpleProgressStyle().textColor(Tempad.ORANGE.value),
-                GradientBorder.DEFAULT_NESTED_BOX,
-                true
-            ))
+            if (blockEntity.bootTime > 0) {
+                val progress = 1 - (blockEntity.bootTime / 100f)
+                tooltip.add(
+                    ProgressElement(
+                        progress,
+                        Component.translatable("block.tempad.metronome.booting", (progress * 100).toInt()).append("%"),
+                        SimpleProgressStyle().textColor(Tempad.ORANGE.value),
+                        GradientBorder.DEFAULT_NESTED_BOX,
+                        true
+                    )
+                )
+            }
+            blockEntity.owner?.let {
+                tooltip.add(Component.translatable("item.tempad.location_card.created_by", Component.literal(it.name).withStyle(
+                    ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY))
+            }
         }
     }
 }

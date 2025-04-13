@@ -23,6 +23,10 @@ class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, 
             } catch (_: Exception) {}
         }
 
+        add("datapack.tempad.required_location_upgrade", "Require Upgrade for Location Saving")
+        add(ModItems.newLocationKey.toLanguageKey("upgrade"), "Create Saved Locations")
+        add(ModItems.playerKey.toLanguageKey("upgrade"), "Teleport to Players")
+
         ModItems.screeningDevice.apply {
             addSub("off", "Off")
             addSub("screening", "Screening: %s")

@@ -75,14 +75,14 @@ public final class CommonConfig {
     public static final class Tempad {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Tempad can store (without the time twister being installed).")
-        public static Observable<Integer> capacityTempad = Observable.of(8000);
+        public static Observable<Integer> capacityTempad = Observable.of(6000);
     }
 
     @Category("time_twister")
     public static final class TimeTwister {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Time Twister can store.")
-        public static Observable<Integer> capacityTimeTwister = Observable.of(4000);
+        public static Observable<Integer> capacityTimeTwister = Observable.of(3000);
 
         @ConfigEntry(id= "cost_to_backtrack")
         @Comment("The cost that the Time Twister consumes to backtrack to a location")
@@ -123,7 +123,7 @@ public final class CommonConfig {
     public static final class Metronome {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Chronometer can store.")
-        public static Observable<Integer> capacityMetronome = Observable.of(8000);
+        public static Observable<Integer> capacityMetronome = Observable.of(6000);
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
@@ -150,7 +150,7 @@ public final class CommonConfig {
     public static final class Capacitor {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Capacitor can store.")
-        public static Observable<Integer> capacityCapacitor = Observable.of(4000);
+        public static Observable<Integer> capacityCapacitor = Observable.of(2000);
     }
 
     @Category("battery")

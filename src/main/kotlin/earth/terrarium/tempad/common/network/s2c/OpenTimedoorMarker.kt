@@ -12,7 +12,7 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
 
-data class OpenTimedoorMarker(val blockPos: BlockPos, val color: Color, val name: String, val access: ResourceLocation, val locked: Boolean): Packet<OpenTimedoorMarker> {
+data class OpenTimedoorMarker(val blockPos: BlockPos, val color: Color, val name: String, val accessOptions: List<ResourceLocation>, val access: ResourceLocation, val locked: Boolean): Packet<OpenTimedoorMarker> {
     override fun type(): ClientboundPacketType<OpenTimedoorMarker> = Companion
 
     companion object: ClientPacketCompanion<OpenTimedoorMarker> {
@@ -22,6 +22,7 @@ data class OpenTimedoorMarker(val blockPos: BlockPos, val color: Color, val name
             ExtraByteCodecs.BLOCK_POS.fieldOf(OpenTimedoorMarker::blockPos),
             Color.BYTE_CODEC.fieldOf(OpenTimedoorMarker::color),
             ByteCodec.STRING.fieldOf(OpenTimedoorMarker::name),
+            ExtraByteCodecs.RESOURCE_LOCATION.listOf().fieldOf(OpenTimedoorMarker::accessOptions),
             ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(OpenTimedoorMarker::access),
             ByteCodec.BOOLEAN.fieldOf(OpenTimedoorMarker::locked),
             ::OpenTimedoorMarker

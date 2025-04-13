@@ -177,6 +177,11 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var targetDimension by DataDelegate(TARGET_DIMENSION)
     var color by DataDelegate(COLOR)
     var closingTime by DataDelegate(CLOSING_TIME)
+    var owner: UUID? = null
+    var glitching: Boolean by DataDelegate(GLITCHING)
+    var linkedPortalId: UUID? = null
+    var original: Boolean = true
+
     var sizing: TimedoorPlacementSettings
         get() = entityData.get(SIZING)
         set(value) {
@@ -184,11 +189,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             this.fixupDimensions()
         }
 
-    var owner: UUID? = null
-    var glitching: Boolean by DataDelegate(GLITCHING)
-
-    var linkedPortalEntity: TimedoorEntity? = null
-        private set
+    val linkedPortalEntity: TimedoorEntity?
+        get() = linkedPortalId?.let { targetLevel?.entities?.get(it) } as? TimedoorEntity
 
     private val targetLevel: ServerLevel?
         get() = targetDimension.let { level().server[it] }
@@ -228,6 +230,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         tag.putInt("ClosingTime", closingTime)
         tag.putFloat("TargetAngle", targetAngle)
         tag.putBoolean("IsGlitching", glitching)
+        tag.putBoolean("IsOriginal", original)
+        tag.putString("LinkedPortalId", linkedPortalId.toString())
         tag.save(Color.CODEC, "Color", color)
         tag.save(Vec3.CODEC, "TargetPos", targetPos)
         tag.save(ResourceKey.codec(Registries.DIMENSION), "TargetDimension", targetDimension)
@@ -240,6 +244,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         closingTime = compound.getInt("ClosingTime")
         targetAngle = compound.getFloat("TargetAngle")
         glitching = compound.getBoolean("IsGlitching")
+        original = compound.getBoolean("IsOriginal")
+        linkedPortalId = compound.getString("LinkedPortalId").takeUnless { it.isBlank() }?.let { UUID.fromString(it) }
         compound.load(Color.CODEC, "Color")?.let { color = it }
         compound.load(Vec3.CODEC, "TargetPos")?.let { targetPos = it }
         compound.load(ResourceKey.codec(Registries.DIMENSION), "TargetDimension")?.let { targetDimension = it }
@@ -279,9 +285,9 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         if (tickCount < IDLE_BEFORE_START + ANIMATION_LENGTH || closingTime < ANIMATION_LENGTH) {
             return
         }
-        tryInitReceivingPortal()
         val targetLevel = targetLevel ?: return
         val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
+        if (entities.isNotEmpty()) tryInitReceivingPortal()
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()
             if (event.isCanceled) continue
@@ -322,33 +328,33 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     private fun tryInitReceivingPortal() {
-        if (closingTime <= 0 && closingTime != -1) return
+        if ((closingTime <= 0 && closingTime != -1) || !original) return
         val targetLevel = targetLevel ?: return
         linkedPortalEntity?.let { return }
         val targetPortal = TimedoorEntity(ModEntities.timedoor, targetLevel)
         Tempad.ticketController.forceChunk(level() as ServerLevel, targetPortal, chunkPosition().x, chunkPosition().z, true, false)
-        targetPortal.linkedPortalEntity = this
+        targetPortal.linkedPortalId = this.uuid
         targetPortal.closingTime = this.closingTime
         targetPortal.setLocation(selfLocation)
         targetPortal.sizing = this.sizing
         targetPortal.glitching = this.glitching
+        targetPortal.original = false
         sizing.placeTimedoor(DoorType.EXIT, targetPos, targetAngle + 180f, targetPortal)
-        linkedPortalEntity = targetPortal
+        linkedPortalId = targetPortal.uuid
         targetLevel.addFreshEntity(targetPortal)
     }
 
     private fun tryClose() {
         if (closingTime <= 0 && closingTime != -1) {
             TimedoorEvent.Close(this).post()
-            this.linkedPortalEntity?.linkedPortalEntity = null
+            this.linkedPortalEntity?.linkedPortalId = null
             this.discard()
         }
     }
 
     override fun remove(reason: RemovalReason) {
         super.remove(reason)
-        if (this.linkedPortalEntity != null) this.linkedPortalEntity!!.linkedPortalEntity = null
-        this.linkedPortalEntity = null
+        if(original) this.linkedPortalEntity?.remove(reason)
         Tempad.ticketController.forceChunk(level() as ServerLevel, this, chunkPosition().x, chunkPosition().z, false, false)
     }
 

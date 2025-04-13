@@ -8,6 +8,7 @@ import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.menu.MetronomeMenuData
 import earth.terrarium.tempad.common.registries.ModBlocks
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.metronomeEnergy
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_CODEC
 import earth.terrarium.tempad.common.utils.get
@@ -119,7 +120,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
     }
 
     override fun createContent(player: ServerPlayer?): MetronomeMenuData? {
-        return owner?.let { MetronomeMenuData(it.id) }
+        return owner?.let { MetronomeMenuData(it.id, GlobalPos(level?.dimension()!!, blockPos), locked) }
     }
 
     override fun getDisplayName(): Component {
@@ -131,6 +132,6 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         playerInventory: Inventory,
         player: Player,
     ): AbstractContainerMenu? {
-        return MetronomeMenu(containerId, playerInventory, inventory, owner?.let { MetronomeMenuData(it.id) })
+        return MetronomeMenu(containerId, playerInventory, inventory, safeLet(level, owner) { lvl, own -> MetronomeMenuData(own.id, GlobalPos(lvl.dimension(), blockPos), locked) })
     }
 }

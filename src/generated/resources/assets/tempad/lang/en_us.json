@@ -40,6 +40,7 @@
   "block.tempad.workstation": "Workstation",
   "block.tempad.workstation.installing": "Installing: %s",
   "block.tempad.workstation_child": "Workstation Child",
+  "datapack.tempad.required_location_upgrade": "Require Upgrade for Location Saving",
   "item.tempad.card_wallet": "Card Wallet",
   "item.tempad.card_wallet.empty": "No cards",
   "item.tempad.card_wallet.prefix": "Contains:",
@@ -66,5 +67,7 @@
   "item.tempad.screening_device.screening": "Screening: %s",
   "item.tempad.tempad": "Tempad",
   "item.tempad.time_steel": "Time Steel",
-  "item.tempad.time_twister": "Time Twister"
+  "item.tempad.time_twister": "Time Twister",
+  "upgrade.tempad.new_location": "Create Saved Locations",
+  "upgrade.tempad.player_teleport": "Teleport to Players"
 }

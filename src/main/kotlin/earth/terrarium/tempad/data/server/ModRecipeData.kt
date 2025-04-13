@@ -1,17 +1,20 @@
 package earth.terrarium.tempad.data.server
 
+import earth.terrarium.tempad.common.recipe.TempadUpgradeRecipe
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.tempadId
+import net.minecraft.advancements.Advancement
+import net.minecraft.advancements.AdvancementRequirements
+import net.minecraft.advancements.AdvancementRewards
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.PackOutput
-import net.minecraft.data.recipes.RecipeCategory
-import net.minecraft.data.recipes.RecipeOutput
-import net.minecraft.data.recipes.RecipeProvider
-import net.minecraft.data.recipes.ShapedRecipeBuilder
-import net.minecraft.data.recipes.ShapelessRecipeBuilder
+import net.minecraft.data.recipes.*
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
+import net.minecraft.world.item.crafting.Ingredient
 import net.neoforged.neoforge.common.Tags
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition
 import net.neoforged.neoforge.common.conditions.NotCondition
@@ -136,7 +139,25 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
             .save(this, (BuiltInRegistries.ITEM.getKey(item).path + "_clean").tempadId)
     }
 
+    fun RecipeOutput.upgrade(item: Item, resourceLocation: ResourceLocation, downloadTime: Int = 40) {
+        val upgrade = TempadUpgradeRecipe(
+            Ingredient.of(item),
+            downloadTime,
+            resourceLocation,
+        )
+        val id = "upgrades/${resourceLocation.path}".tempadId
+        val builder: Advancement.Builder = advancement()
+            .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
+            .rewards(AdvancementRewards.Builder.recipe(id))
+            .requirements(AdvancementRequirements.Strategy.OR)
+        accept(id, upgrade, builder.build(id.withPrefix("recipes/" + RecipeCategory.MISC.folderName + "/")))
+    }
+
     override fun buildRecipes(recipes: RecipeOutput) {
+
+        recipes.upgrade(ModItems.playerTeleportUpgrade, ModItems.playerKey)
+        recipes.upgrade(ModItems.newLocationUpgrade, ModItems.newLocationKey)
+
         recipes.shaped(ModItems.tempad) {
             timeSteel()
             tintedGlass()

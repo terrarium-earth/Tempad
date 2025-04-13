@@ -61,6 +61,7 @@ class TravelHistoryAttachment(val history: MutableMap<Date, HistoricalLocation>)
     }
 
     fun logLocation(entity: LivingEntity, marker: ResourceLocation? = null) {
+        if (entity.isSpectator) return
         if (history.isEmpty() || marker != null) {
             this += HistoricalLocation(marker, entity.level().dimension(), entity.pos)
             if (history.size > CommonConfig.maxHistorySize) history.remove(history.keys.first())

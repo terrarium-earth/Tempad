@@ -138,22 +138,12 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
     ) {
         val ogBlock = getPos(state, pos)
         val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above()) || level.hasNeighborSignal(ogBlock)
-        val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
-        if (neighborPowered && !currentlyPowered) {
-            level.scheduleTick(pos, this, 10)
-            level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, true), 2)
-        } else if (!neighborPowered && currentlyPowered) {
-            level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, false), 2)
-        }
-    }
-
-    override fun tick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
-        super.tick(state, level, pos, random)
         val controllerPos = getPos(state, pos)
         val blockEntity = level.getBlockEntity(controllerPos) as? WorkstationBE ?: return
-        if (state.getValue(BlockStateProperties.TRIGGERED)) {
-            blockEntity.openTimedoor()
-            level.scheduleTick(pos, this, 20)
+        if (neighborPowered && !blockEntity.active) {
+            blockEntity.activateLeft()
+        } else if (!neighborPowered && blockEntity.active) {
+            blockEntity.deactivateLeft()
         }
     }
 

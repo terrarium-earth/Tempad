@@ -1,4 +1,4 @@
-// 1.21.1	2025-04-11T00:14:27.95176	Recipes
+// 1.21.1	2025-04-12T17:48:49.739416	Recipes
 51947fe2c883b06e3d0cc3dfe557601775199704 data/tempad/advancement/recipes/misc/card_cheap.json
 2198f4d85b85fd3e0e45554bcf3fb5049c274aeb data/tempad/advancement/recipes/misc/card_expensive.json
 8c0198ac6d9e1acaa5dedb8940cd871bf7d90abc data/tempad/advancement/recipes/misc/card_wallet.json
@@ -20,6 +20,8 @@ df34996bb3f12f74c5e8b1df0d9117c9d8422f7c data/tempad/advancement/recipes/misc/ti
 dbe5334013e2f3cb4081408a7160ba005e7fea86 data/tempad/advancement/recipes/misc/timedoor_marker.json
 bcb055f4d872f99a5a3f0055b85d021fd55d8fd9 data/tempad/advancement/recipes/misc/timedoor_marker_clean.json
 4d98eef5b99f04ddc8e2050f5c18257f6cc79a99 data/tempad/advancement/recipes/misc/timedoor_projector.json
+c208764aa69fd9ea63b8b7477d9019f85f260171 data/tempad/advancement/recipes/misc/upgrades/new_location.json
+07216d17b1c8e54b48ec9ca17630303996ff0cdc data/tempad/advancement/recipes/misc/upgrades/player_teleport.json
 c2390aebb704b05a24b62eb382f4cef83b755af6 data/tempad/advancement/recipes/misc/workstation.json
 13bad5812045e658b3b7f0c6f200c2e6517b5f9e data/tempad/recipe/card_cheap.json
 434289afb4807c8a6ec6fa324bc52abe1b03d942 data/tempad/recipe/card_expensive.json
@@ -42,4 +44,6 @@ efb4655fd6bb230c1076aee4746763094b18c276 data/tempad/recipe/time_twister.json
 2c28464727da3b30c2e8517f3b14a26460e863f1 data/tempad/recipe/timedoor_marker.json
 6bd7cea9d3443609f22d1aeb16029a2f02733c38 data/tempad/recipe/timedoor_marker_clean.json
 42bb80a921d2d82aecf9e85780bbd8c8413e2b45 data/tempad/recipe/timedoor_projector.json
+07b7b77867111dd124e6d16209fc20cd0b1849dd data/tempad/recipe/upgrades/new_location.json
+6bcb5d9e27a7dc240afea3da0a15de21e8185d87 data/tempad/recipe/upgrades/player_teleport.json
 e4dedfe7c7ba51c87d6855c68323540ee3e3cfa3 data/tempad/recipe/workstation.json

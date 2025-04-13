@@ -31,6 +31,7 @@ import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
 class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
@@ -38,7 +39,27 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
         val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.timedoorProjector }
         val hasCardProperty = BooleanProperty.create("has_card")
 
-        val shape = box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0)
+        val base = box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0)
+
+        val west = Shapes.or(
+            base,
+            box(0.0, 2.0, 0.0, 8.0, 4.0, 8.0),
+        )
+
+        val east = Shapes.or(
+            base,
+            box(8.0, 2.0, 8.0, 16.0, 4.0, 16.0),
+        )
+
+        val south = Shapes.or(
+            base,
+            box(0.0, 2.0, 8.0, 8.0, 4.0, 16.0),
+        )
+
+        val north = Shapes.or(
+            base,
+            box(8.0, 2.0, 0.0, 16.0, 4.0, 8.0),
+        )
     }
 
     init {
@@ -159,6 +180,12 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
     }
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
-        return shape
+        return when(state.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            Direction.NORTH -> north
+            Direction.SOUTH -> south
+            Direction.EAST -> east
+            Direction.WEST -> west
+            else -> base
+        }
     }
 }

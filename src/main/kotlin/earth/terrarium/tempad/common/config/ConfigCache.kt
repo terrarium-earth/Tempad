@@ -23,6 +23,10 @@ class ConfigCache(val modId: String, val network: Network) {
     private val syncId = ResourceLocation.fromNamespaceAndPath(modId, "config_sync")
     private val syncType = ConfigSyncType()
 
+    init {
+        network.register(syncType)
+    }
+
     fun syncAll(player: Player) {
         val syncData = entries.map { it.createPacket() }
         network.sendToPlayer(ConfigSync(syncData), player)

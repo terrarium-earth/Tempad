@@ -112,6 +112,11 @@ object TempadClient {
         return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.33f)
     }
 
+    val charge4Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
+        val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
+        return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.25f)
+    }
+
     val charge5Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
         val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
         return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.2f)
@@ -150,8 +155,13 @@ object TempadClient {
     }
 
     fun step(value: Float, step: Float): Float {
-        if (value >= 0.98f) return 1f
-        return value - value % step
+        if (value == 0f) return 0f
+        if (value == 1f) return 1f
+        var current = step
+        while (value > current && current + step <= 1f) {
+            current += step
+        }
+        return current
     }
 
     init {
@@ -168,7 +178,7 @@ object TempadClient {
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
         ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
         ItemProperties.register(ModItems.tempad, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.chrononCell, "charge".tempadId, charge3Property)
+        ItemProperties.register(ModItems.chrononCell, "charge".tempadId, charge4Property)
         ItemProperties.register(ModItems.chrononBattery, "charge".tempadId, charge3Property)
         ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge3Property)
         ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge5Property)
@@ -245,11 +255,11 @@ object TempadClient {
     }
 
     fun openTimedoorMarker(packet: OpenTimedoorMarker) {
-        Minecraft.getInstance().setScreen(TimedoorMarkerScreen(packet.blockPos, packet.name, packet.color, packet.access, packet.locked))
+        Minecraft.getInstance().setScreen(TimedoorMarkerScreen(packet.blockPos, packet.name, packet.color, packet.accessOptions, packet.access, packet.locked))
     }
 
     fun openChronomark(packet: OpenChronomark) {
-        Minecraft.getInstance().setScreen(ChronomarkScreen(packet.blockPos, packet.name, packet.color, packet.access, packet.locked, packet.yOffset, packet.angle))
+        Minecraft.getInstance().setScreen(ChronomarkScreen(packet.blockPos, packet.name, packet.color, packet.accessOptions, packet.access, packet.locked, packet.yOffset, packet.angle))
     }
 
     @SubscribeEvent

@@ -1,11 +1,15 @@
 package earth.terrarium.tempad.common.menu
 
 import com.teamresourceful.bytecodecs.base.ByteCodec
+import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
+import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.menu.MenuContent
 import com.teamresourceful.resourcefullib.common.menu.MenuContentSerializer
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
+import net.minecraft.core.GlobalPos
+import net.minecraft.core.UUIDUtil
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -84,11 +88,16 @@ class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val data: 
     }
 }
 
-data class MetronomeMenuData(val uuid: UUID): MenuContent<MetronomeMenuData> {
+data class MetronomeMenuData(val uuid: UUID, val pos: GlobalPos, val locked: Boolean): MenuContent<MetronomeMenuData> {
     override fun serializer(): MenuContentSerializer<MetronomeMenuData> = serializer
 
     companion object {
-        val byteCodec = ByteCodec.UUID.map(::MetronomeMenuData) { it.uuid }
+        val byteCodec = ObjectByteCodec.create(
+            ByteCodec.UUID.fieldOf(MetronomeMenuData::uuid),
+            ExtraByteCodecs.GLOBAL_POS.fieldOf(MetronomeMenuData::pos),
+            ByteCodec.BOOLEAN.fieldOf(MetronomeMenuData::locked),
+            ::MetronomeMenuData
+        )
         val serializer = RecordCodecMenuContentSerializer(byteCodec)
     }
 }

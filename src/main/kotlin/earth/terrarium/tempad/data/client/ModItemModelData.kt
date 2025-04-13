@@ -53,7 +53,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         basicItem(ModItems.chronometer).chargedLayered("chronometer")
         basicItem(ModItems.chrononGenerator).chargedLayered("chronon_generator", arrayOf(0f, 0.2f, 0.4f, 0.6f, 0.8f, 1f))
 
-        basicItem(ModItems.chrononCell).charged("chronon_cell")
+        basicItem(ModItems.chrononCell).charged("chronon_cell", arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f))
         basicItem(ModItems.chrononBattery).charged("chronon_battery")
 
         basicItem(ModItems.locationBroadcaster).booleanProp("enabled")

@@ -64,7 +64,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
             it.withTexture(null)
             it.withRenderer(locked.withRenderer {
                 WidgetRenderers.withColors(
-                    WidgetRenderers.icon<Button>("icons/mini/${if (it) "lock" else "unlock"}".tempadId).withShadow(),
+                    WidgetRenderers.icon<Button>(if (it) TempadUI.lockIcon else TempadUI.unlockIcon).withShadow(),
                     Tempad.DARK_ORANGE,
                     Tempad.ORANGE,
                     Tempad.HIGHLIGHTED_ORANGE

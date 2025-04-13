@@ -2,12 +2,18 @@ package earth.terrarium.tempad.client.screen
 
 import com.teamresourceful.resourcefullib.client.screens.AbstractContainerCursorScreen
 import com.teamresourceful.resourcefullib.client.utils.ScreenUtils
+import earth.terrarium.olympus.client.components.Widgets
+import earth.terrarium.olympus.client.components.buttons.Button
+import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
+import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.client.TempadUI
+import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.registries.metronomeEnergy
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 
@@ -17,6 +23,8 @@ class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Co
     companion object {
         val sprite = "screen/metronome".tempadId
     }
+
+    val locked = MutableState.of(menu.data?.locked == true)
 
     init {
         this.imageWidth = 211
@@ -29,6 +37,26 @@ class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Co
         this.titleLabelX = 25
         this.titleLabelY = 22
         this.inventoryLabelX = 25
+
+        addRenderableWidget(Widgets.button {
+            it.withSize(11)
+            it.withPosition(leftPos + 161, topPos + 19)
+            it.withTexture(TempadUI.steelButton)
+            it.withRenderer(locked.withRenderer {
+                WidgetRenderers.icon<Button>(if (it) TempadUI.lockIcon else TempadUI.unlockIcon).withColor(MinecraftColors.BLACK).withCentered(7, 7)
+            })
+            it.withCallback {
+                locked.value = !locked.value
+            }
+        })
+
+        addRenderableWidget(Widgets.button {
+            it.withSize(11)
+            it.withPosition(leftPos + 174, topPos + 19)
+            it.withTexture(TempadUI.steelButton)
+            it.withRenderer(WidgetRenderers.icon<Button>(TempadUI.xIcon).withColor(MinecraftColors.BLACK).withCentered(7, 7))
+            it.withCallback(::onClose)
+        })
     }
 
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {

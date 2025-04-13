@@ -12,7 +12,6 @@ import earth.terrarium.tempad.api.locations.namedGlobalVec3
 import earth.terrarium.tempad.api.player_access.playerAccess
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.common.registries.ModItems
-import earth.terrarium.tempad.common.registries.enabled
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
 import net.minecraft.core.UUIDUtil
@@ -40,10 +39,10 @@ class PlayerPointsData(data: Map<UUID, Map<UUID, NamedGlobalVec3>>) {
 class PlayerHandler(val player: GameProfile, val upgrades: UpgradeHandler) : LocationHandler {
     override val locations: Map<UUID, NamedGlobalVec3>
         get() {
-            if (Tempad.playerUpgrade !in upgrades) return emptyMap()
+            if (ModItems.playerKey !in upgrades) return emptyMap()
             return Tempad.server?.let { server ->
                 server.playerList.players
-                    .filter { it.uuid != player.id }
+                    .filter { it.uuid != player.id && !it.isSpectator }
                     .filter { ContextRegistry.locate(it) { stack ->  stack.playerAccess?.canAccess(server.overworld(), it.gameProfile, player) == true } != null }
                     .associate { it.uuid to it.namedGlobalVec3 }
             } ?: emptyMap()

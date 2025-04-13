@@ -5,6 +5,17 @@ import earth.terrarium.tempad.common.registries.ModNetworking
 object CommonConfigCache {
     val CACHE = ConfigCache("tempad", ModNetworking.channel)
 
+    fun init() {
+        Capacitor
+        Battery
+        ChrononGenerator
+        Chronometer
+        Metronome
+        RudimentaryTempad
+        Tempad
+        TimeTwister
+    }
+
     object Capacitor {
         val capacity by CACHE.ofInt(CommonConfig.Capacitor::capacityCapacitor)
     }

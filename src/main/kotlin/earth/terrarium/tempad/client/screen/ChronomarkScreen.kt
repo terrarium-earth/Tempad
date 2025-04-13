@@ -12,8 +12,8 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-class ChronomarkScreen(pos: BlockPos, name: String, color: Color, access: ResourceLocation, locked: Boolean, yOffset: Float, angle: Int) :
-    TimedoorMarkerScreen(pos, name, color, access, locked) {
+class ChronomarkScreen(pos: BlockPos, name: String, color: Color, accessOptions: List<ResourceLocation>, access: ResourceLocation, locked: Boolean, yOffset: Float, angle: Int) :
+    TimedoorMarkerScreen(pos, name, color, accessOptions, access, locked) {
     val yOffset = MutableState.of(yOffset.toDouble())
     val angle = MutableState.of(angle)
 

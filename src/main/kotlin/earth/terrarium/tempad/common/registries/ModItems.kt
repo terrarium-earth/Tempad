@@ -8,6 +8,7 @@ import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.items.*
 import earth.terrarium.tempad.common.utils.creativeModeTab
 import earth.terrarium.tempad.common.utils.stack
+import earth.terrarium.tempad.tempadId
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTab
@@ -32,8 +33,12 @@ object ModItems {
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val cardWallet: Item by registry.register("card_wallet") { WalletItem() }
     val timeSteel: Item by registry.register("time_steel") { Item(Item.Properties()) }
-    val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties()) }
+
+    val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties().requiredFeatures(Tempad.flag)) }
+    val newLocationKey = "new_location".tempadId
+
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }
+    val playerKey = "player_teleport".tempadId
 
     // Rudi Tier
     val timedoorProjector: Item by registry.register("timedoor_projector") { RudimentaryTempadItem() }

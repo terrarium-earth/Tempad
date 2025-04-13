@@ -12,7 +12,7 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
 
-data class OpenChronomark(val blockPos: BlockPos, val color: Color, val name: String, val access: ResourceLocation, val locked: Boolean, val yOffset: Float, val angle: Int): Packet<OpenChronomark> {
+data class OpenChronomark(val blockPos: BlockPos, val color: Color, val name: String, val accessOptions: List<ResourceLocation>, val access: ResourceLocation, val locked: Boolean, val yOffset: Float, val angle: Int): Packet<OpenChronomark> {
     override fun type(): ClientboundPacketType<OpenChronomark> = Companion
 
     companion object: ClientPacketCompanion<OpenChronomark> {
@@ -22,6 +22,7 @@ data class OpenChronomark(val blockPos: BlockPos, val color: Color, val name: St
             ExtraByteCodecs.BLOCK_POS.fieldOf(OpenChronomark::blockPos),
             Color.BYTE_CODEC.fieldOf(OpenChronomark::color),
             ByteCodec.STRING.fieldOf(OpenChronomark::name),
+            ExtraByteCodecs.RESOURCE_LOCATION.listOf().fieldOf(OpenChronomark::accessOptions),
             ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(OpenChronomark::access),
             ByteCodec.BOOLEAN.fieldOf(OpenChronomark::locked),
             ByteCodec.FLOAT.fieldOf(OpenChronomark::yOffset),

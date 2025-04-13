@@ -42,7 +42,7 @@ class UpgradesTooltip(val upgrades: InstalledUpgradesComponent): ClientTooltipCo
         for ((index, line) in text.withIndex()) {
             font.drawInBatch(
                 line,
-                mouseX.toFloat() + 13,
+                mouseX.toFloat() + 11,
                 mouseY.toFloat() + 1 + (index + 1) * 12f,
                 ChatFormatting.GRAY.color ?: -1,
                 true,
@@ -58,7 +58,7 @@ class UpgradesTooltip(val upgrades: InstalledUpgradesComponent): ClientTooltipCo
     override fun renderImage(font: Font, x: Int, y: Int, guiGraphics: GuiGraphics) {
         super.renderImage(font, x, y, guiGraphics)
         for ((index, image) in images.withIndex()) {
-            guiGraphics.blitSprite(image, x, y + (index + 1) * 12, 9, 9)
+            guiGraphics.blitSprite(image, x, y + 1 + (index + 1) * 12, 8, 7)
         }
     }
 }

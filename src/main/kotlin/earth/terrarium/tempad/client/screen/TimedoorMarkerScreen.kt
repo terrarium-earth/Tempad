@@ -24,7 +24,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, access: ResourceLocation, locked: Boolean): BaseCursorScreen(
+open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, val accessOptions: List<ResourceLocation>, access: ResourceLocation, locked: Boolean): BaseCursorScreen(
     Component.translatable("screen.tempad.marker")) {
     companion object {
         private val accessField = Component.translatable("screen.tempad.marker.access_field")
@@ -109,7 +109,7 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
 
         fields.withChild(Widgets.text(accessField).configure())
         fields.withChild(
-            Widgets.dropdown(access, PlayerAccessApi.visbility.keys.toList() + PlayerAccessApi.noAccess, { Component.translatable(it.toLanguageKey("access")) },
+            Widgets.dropdown(access, accessOptions + PlayerAccessApi.noAccess, { Component.translatable(it.toLanguageKey("access")) },
             { it.withSize(100, 20) },
             {
                 it.withAlignment(OverlayAlignment.TOP_RIGHT)

@@ -2,6 +2,8 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.move
+import earth.terrarium.tempad.common.registries.ModTags
+import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.world.InteractionResult
@@ -18,6 +20,10 @@ open class CapacitorItem: ChrononItem() {
         super.inventoryTick(stack, level, entity, slot, selected)
         if (level.isClientSide || entity.tickCount % 10 != 0 || cannotDistribute(entity, stack)) return // 1 mb every 0.5 seconds
         distribute(entity as Player, stack)
+    }
+
+    override fun isChargable(source: ItemStack, target: ItemStack): Boolean {
+        return super.isChargable(source, target) && target !in ModTags.batteries
     }
 
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {

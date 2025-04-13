@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.client
 
+import com.ibm.icu.text.NumberFormat
 import com.teamresourceful.resourcefullib.client.utils.RenderUtils
-import com.teamresourceful.resourcefullibkt.client.scissor
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRendererContext
@@ -27,6 +27,8 @@ import kotlin.math.roundToInt
 
 object TempadUI {
     val button = WidgetSprites("button/normal".tempadId, "button/disabled".tempadId, "button/hover".tempadId)
+    val steelButton = WidgetSprites("button/steel/normal".tempadId, "button/steel/hover".tempadId)
+
     val element = WidgetSprites("element/normal".tempadId, "element/disabled".tempadId, "element/hover".tempadId)
     val modal = "list/modal".tempadId
 
@@ -36,6 +38,10 @@ object TempadUI {
     val powerBg = "power/background".tempadId
     val powerBar = "power/overlay".tempadId
     val powerVert = "power/overlay_vertical".tempadId
+
+    val lockIcon = "icons/mini/lock".tempadId
+    val unlockIcon = "icons/mini/unlock".tempadId
+    val xIcon = "icons/mini/x".tempadId
 
 
     fun <T: AbstractWidget, W> W.colored(): WidgetRenderer<T> where W: WidgetRenderer<T>, W: ColorableWidget  {
@@ -102,12 +108,26 @@ object TempadUI {
         }
     }
 
+    // borrowed from stack overflow cuz im tired https://stackoverflow.com/questions/4753251/how-to-go-about-formatting-1200-to-1-2k-in-java
+    val c = arrayOf("kC", "mC", "bC", "tC")
+
+    private fun coolFormat(n: Double, iteration: Int): String {
+        val d = (n.toLong() / 100) / 10.0
+        val isRound = (d * 10) % 10 == 0.0 //true if the decimal part is equal to 0 (then it's trimmed anyway)
+        return (if (d < 1000)  //this determines the class, i.e. 'k', 'm' etc
+            ((if (d > 99.9 || isRound || (d > 9.99))  //this decides whether to trim the decimals
+                d.toInt() * 10 / 10 else d.toString() + "" // (int) d * 10 / 10 drops the decimal
+                    ).toString() + "" + c[iteration])
+        else
+            coolFormat(d, iteration + 1))
+    }
+
     fun renderEnergyBar(graphics: GuiGraphics, font: Font, x: Int, y: Int, power: Int, maxPower: Int) {
         graphics.blitSprite(powerBg, x, y, 74, 13)
         val uWidth = if(maxPower == 0) 0 else ((power.toFloat() / maxPower) * 72).roundToInt()
         graphics.blitSprite(powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
 
-        val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else Component.literal("${power}/${maxPower}")
+        val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else Component.literal(coolFormat(power.toDouble(), 0) + "/" + coolFormat(maxPower.toDouble(), 0))
         val xOffset = (74 - font.width(text)) / 2
 
         graphics.flush()

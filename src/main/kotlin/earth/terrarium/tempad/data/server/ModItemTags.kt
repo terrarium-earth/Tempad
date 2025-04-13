@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
+import net.neoforged.neoforge.common.Tags
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
 
@@ -27,6 +28,7 @@ class ModItemTags(output: PackOutput,
             .add(ModItems.tempad)
             .add(ModItems.chrononGenerator)
             .add(ModItems.chronometer)
+            .add(ModItems.creativeChronometer)
 
         tag("belt".curios)
             .add(ModItems.tempad)
@@ -41,9 +43,16 @@ class ModItemTags(output: PackOutput,
             .add(ModItems.locationBroadcaster)
             .add(ModItems.screeningDevice)
             .add(ModItems.cardWallet)
+            .add(ModItems.creativeChronometer)
 
-        tag(ModTags.inventoryChargeBlacklist)
+        tag(ModTags.chargeBlacklist)
             .add(ModItems.metronome)
+
+        tag(ModTags.batteries)
+            .add(ModItems.chronometer)
+            .add(ModItems.chrononGenerator)
+            .add(ModItems.chrononCell)
+            .add(ModItems.chrononBattery)
 
         tag(ModTags.chrononGens)
             .add(ModItems.chronometer)

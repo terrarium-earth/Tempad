@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.block.timedoor_marker
 
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.api.player_access.PlayerAccessApi
 import earth.terrarium.tempad.common.network.s2c.OpenChronomark
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.accessId
@@ -28,6 +29,6 @@ class ChronomarkBE(pos: BlockPos, state: BlockState) : AbstractMarkerBe(ModBlock
     override val landingAngle: Float get() = angle.toFloat()
 
     override fun openScreen(player: Player) {
-        OpenChronomark(blockPos, color, posName.string, accessId, locked, yOffset, angle).sendToClient(player)
+        OpenChronomark(blockPos, color, posName.string, PlayerAccessApi.ids, accessId, locked, yOffset, angle).sendToClient(player)
     }
 }

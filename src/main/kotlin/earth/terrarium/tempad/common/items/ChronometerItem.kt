@@ -25,7 +25,7 @@ class ChronometerItem(val rate: () -> Int, val amount: () -> Int) : CapacitorIte
         if (stack.chronons != null) {
             distribute(entity, stack)
         } else {
-            ContextRegistry.locate(entity) { it.isChargable(stack) }?.let {
+            ContextRegistry.locate(entity) { isChargable(stack, it) }?.let {
                 it.stack.chronons?.insert(amount(), ActionType.Execute)
             }
         }

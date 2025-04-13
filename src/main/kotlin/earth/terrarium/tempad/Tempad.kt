@@ -27,9 +27,15 @@ import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
 import earth.terrarium.tempad.common.utils.safeLet
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.repository.Pack
+import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.flag.FeatureFlag
+import net.minecraft.world.flag.FeatureFlags
 import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
@@ -37,10 +43,12 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent
 import net.neoforged.neoforge.common.world.chunk.TicketController
+import net.neoforged.neoforge.event.AddPackFindersEvent
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
@@ -54,7 +62,6 @@ val String.tempadId: ResourceLocation
 @Mod(Tempad.MOD_ID)
 class Tempad(bus: IEventBus) {
     companion object {
-
         const val MOD_ID = "tempad"
         val DARK_ORANGE: Color = Color(0x91, 0x45, 0x0d, 255)
         val ORANGE: Color = Color(0xFF, 0x6f, 0, 255)
@@ -66,11 +73,11 @@ class Tempad(bus: IEventBus) {
         val server: MinecraftServer?
             get() = ServerLifecycleHooks.getCurrentServer();
 
-        val playerUpgrade: ResourceLocation = "player".tempadId
-
         val logger: Logger = LogManager.getLogger(MOD_ID)
 
         val ticketController = TicketController("timedoor".tempadId, null)
+
+        val flag: FeatureFlag = FeatureFlags.REGISTRY.getFlag("required_location_upgrade".tempadId)
     }
 
     init {
@@ -94,6 +101,7 @@ class Tempad(bus: IEventBus) {
         ModRecipes.init()
         ModSounds.registry.init()
         ModLocations.init()
+        CommonConfigCache.init()
 
         bus.addListener { event: RegisterCapabilitiesEvent ->
             val chrononBlocks = event.register(ChrononHandler.block)
@@ -196,6 +204,17 @@ class Tempad(bus: IEventBus) {
             event.register(ticketController)
         }
 
+        bus.addListener { event: AddPackFindersEvent ->
+            event.addPackFinders(
+                "required_location_upgrade".tempadId,
+                PackType.SERVER_DATA,
+                Component.translatable("datapack.tempad.required_location_upgrade"),
+                PackSource.FEATURE,
+                false,
+                Pack.Position.TOP
+            )
+        }
+
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->
             if (event.entity.tickCount % 1200 != 0) return@addListener
             event.entity.travelHistory.logLocation(event.entity)
@@ -226,6 +245,10 @@ class Tempad(bus: IEventBus) {
                     it.tick()
                 }
             }
+        }
+
+        NeoForge.EVENT_BUS.addListener { event: PlayerLoggedInEvent ->
+            CommonConfigCache.CACHE.syncAll(event.entity)
         }
     }
 }
