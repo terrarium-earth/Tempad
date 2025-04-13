@@ -11,6 +11,7 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.block.SpatialAnchorRenderer
 import earth.terrarium.tempad.client.block.WorkstationRenderer
+import earth.terrarium.tempad.client.compat.initCuriosCompat
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
 import earth.terrarium.tempad.client.screen.ChronomarkScreen
 import earth.terrarium.tempad.client.screen.MetronomeScreen
@@ -183,6 +184,10 @@ object TempadClient {
 
         if (ModList.get().isLoaded("ars_nouveau")) {
             ArsCompat.init()
+        }
+
+        if (ModList.get().isLoaded("curios")) {
+            initCuriosCompat()
         }
     }
 
