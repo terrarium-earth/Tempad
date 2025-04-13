@@ -1,8 +1,9 @@
 package earth.terrarium.tempad.common.items
 
-import earth.terrarium.tempad.api.ActionType
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.move
+import earth.terrarium.tempad.common.registries.ModTags
+import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.world.InteractionResult
@@ -21,10 +22,14 @@ open class CapacitorItem: ChrononItem() {
         distribute(entity as Player, stack)
     }
 
+    override fun isChargable(source: ItemStack, target: ItemStack): Boolean {
+        return super.isChargable(source, target) && target !in ModTags.batteries
+    }
+
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
         if (action == ClickAction.SECONDARY && slot.hasItem() && slot.contents.chronons != null) {
             safeLet(stack.chronons, slot.contents.chronons) { from, to ->
-                move(from, to, Int.MAX_VALUE)
+                move(from, to, 1000)
             }
             return true
         }
@@ -35,7 +40,7 @@ open class CapacitorItem: ChrononItem() {
         val to = context.level.getBlockEntity(context.clickedPos)?.chronons ?: return super.useOn(context)
         if (!context.level.isClientSide) {
             context.itemInHand.chronons?.let {
-                move(it, to, Int.MAX_VALUE)
+                move(it, to, 1000)
             }
         }
         return InteractionResult.SUCCESS

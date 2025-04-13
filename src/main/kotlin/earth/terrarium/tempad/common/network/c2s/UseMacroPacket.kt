@@ -18,6 +18,7 @@ class UseMacroPacket(): Packet<UseMacroPacket> {
 
         override fun onReceive(packet: UseMacroPacket, player: Player) {
             val ctx = ContextRegistry.locate(player) { it.`is`(ModItems.tempad) } ?: return
+            if (player.cooldowns.isOnCooldown(ctx.stack.item)) return
             MacroRegistry[ctx.stack.defaultMacro]?.run(player, ctx)
         }
     }

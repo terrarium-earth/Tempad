@@ -14,6 +14,9 @@ class ItemChrononHandler(val stack: ItemStack, override val maxPower: Int): Chro
         }
     }
 
+    override var canInsert: Boolean = true
+    override var canExtract: Boolean = true
+
     override var power: Int by stack::chrononContent
 
     override fun extract(amount: Int, action: ActionType): Int {

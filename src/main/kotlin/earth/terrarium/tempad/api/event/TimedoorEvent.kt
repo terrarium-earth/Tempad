@@ -40,6 +40,7 @@ open class TimedoorEvent(timedoor: TimedoorEntity): EntityEvent(timedoor) {
             errorMessage = message
         }
     }
+
     class Close(timedoor: TimedoorEntity): TimedoorEvent(timedoor)
     class Enter(timedoor: TimedoorEntity, val teleportee: Entity): TimedoorEvent(timedoor), ICancellableEvent
     class Exit(timedoor: TimedoorEntity, val teleportee: Entity): TimedoorEvent(timedoor)

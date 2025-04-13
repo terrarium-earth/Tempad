@@ -1,27 +1,25 @@
 package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.recipe.UpgradeRecipeInput
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.ModRecipes
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
-import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.set
-import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.particles.ParticleTypes
-import net.minecraft.server.level.ServerLevel
+import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -44,7 +42,7 @@ import kotlin.jvm.optionals.getOrNull
 
 class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(3.0f, 1200f)) {
     val codec: MapCodec<out BaseEntityBlock?> = simpleCodec { ModBlocks.workstation }
-    companion object: BlockEntityTicker<WorkstationBE> {
+    companion object {
         val HAS_TAPE: BooleanProperty = BooleanProperty.create("has_tape")
 
         val NORTH_SHAPE: VoxelShape = Shapes.or(
@@ -66,25 +64,6 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
             box(1.0, 0.0, 0.0, 15.0, 2.0, 14.0),
             box(11.0, 2.0, 0.0, 15.0, 4.0, 14.0),
         )
-
-        override fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: WorkstationBE) {
-            if (level !is ServerLevel) return
-            if (blockEntity.cookingTime > 0) {
-                blockEntity.cookingTime--
-                if (blockEntity.cookingTime == 0) {
-                    popResource(level, pos, Items.DRIED_KELP.stack(level.random.nextInt(3)))
-                    level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.x + 0.5, pos.y + 0.25, pos.z + 0.5, 10, 0.2, 0.2, 0.2, 0.0)
-                    safeLet(blockEntity.inventory[0].upgrades, blockEntity.recipe) { upgrades, recipe ->
-                        upgrades.install(recipe)
-                        blockEntity.setChanged()
-                    }
-                    level.setBlock(pos, state.setValue(HAS_TAPE, false), UPDATE_ALL)
-
-                } else {
-                    level.sendParticles(ParticleTypes.SMOKE, pos.x + 0.5, pos.y + 0.25, pos.z + 0.5, 2, 0.2, 0.2, 0.2, 0.0)
-                }
-            }
-        }
     }
 
     init {
@@ -112,16 +91,17 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
             ?: return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
         if (blockEntity.inventory[0].isEmpty && stack.`is`(ModItems.tempad)) {
-            stack.owner = player.owner
+            stack.owner = player.gameProfile
             blockEntity.inventory[0] = stack
             blockEntity.setChanged()
             player.setItemInHand(hand, ItemStack.EMPTY)
             level.sendBlockUpdated(pos, state, state, UPDATE_ALL)
             return ItemInteractionResult.SUCCESS
-        } else if (!blockEntity.inventory[0].isEmpty && blockEntity.cookingTime == 0) {
+        } else if (!blockEntity.inventory[0].isEmpty && blockEntity.downloadTime == 0) {
             val recipe = level.recipeManager.getRecipeFor(ModRecipes.upgradeRecipe, UpgradeRecipeInput(blockEntity.inventory[0], stack), level).getOrNull()?.value
             if (recipe == null || recipe.output in blockEntity.upgrades!!) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
-            blockEntity.cookingTime = recipe.downloadTime
+            blockEntity.downloadTime = recipe.downloadTime
+            blockEntity.maxDownloadTime = recipe.downloadTime
             blockEntity.recipe = recipe.output
             stack.shrink(1)
             blockEntity.setChanged()
@@ -137,7 +117,7 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         state: BlockState,
         type: BlockEntityType<T?>,
     ): BlockEntityTicker<T?>? {
-        return if (level.isClientSide) null else createTickerHelper(type, ModBlocks.workstationBE, WorkstationBlock)
+        return if (level.isClientSide) null else createTickerHelper(type, ModBlocks.workstationBE) { _, _, _, it -> it.tick() }
     }
 
     override fun useWithoutItem(
@@ -153,9 +133,19 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
 
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
             ?: return InteractionResult.PASS
+
+        if (blockEntity.maxDownloadTime > 0) return InteractionResult.PASS
         val stack = blockEntity.inventory[0]
+        if (stack.locked && stack.owner?.id != player.gameProfile.id) {
+            player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+            return InteractionResult.FAIL
+        }
         stack.owner = null
-        player.inventory.placeItemBackInInventory(stack)
+        if(player.mainHandItem.isEmpty) {
+            player.setItemInHand(InteractionHand.MAIN_HAND, stack.copy())
+        } else {
+            player.inventory.placeItemBackInInventory(stack.copy())
+        }
         blockEntity.inventory[0] = ItemStack.EMPTY
         level.sendBlockUpdated(pos, state, state, UPDATE_ALL)
         blockEntity.setChanged()
@@ -252,10 +242,25 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         val drops = super.getDrops(state, params).toMutableList()
         val blockE = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (blockE is WorkstationBE && !blockE.inventory[0].isEmpty) {
-            drops.add(blockE.inventory[0]);
+            drops.add(blockE.inventory[0])
         }
         return drops.toList()
     }
-}
 
-private inline val Number.px: Double get() = this.toDouble() / 16.0
+    override fun neighborChanged(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        block: Block,
+        fromPos: BlockPos,
+        isMoving: Boolean,
+    ) {
+        val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above())
+        val blockEntity = level.getBlockEntity(pos) as? WorkstationBE ?: return
+        if (neighborPowered && !blockEntity.active) {
+            blockEntity.activateRight()
+        } else if (!neighborPowered && blockEntity.active) {
+            blockEntity.deactivateRight()
+        }
+    }
+}

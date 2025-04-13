@@ -5,7 +5,6 @@ import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.WorkstationBlock
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.tempadId
-import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -16,13 +15,13 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper
 
 class ModBlockStateData(output: PackOutput, helper: ExistingFileHelper) : BlockStateProvider(output, Tempad.MOD_ID, helper) {
     override fun registerStatesAndModels() {
-        getVariantBuilder(ModBlocks.rudimentaryTempad)
+        getVariantBuilder(ModBlocks.timedoorProjector)
             .forAllStates { state: BlockState ->
                 val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
                 val triggered = state.getValue(BlockStateProperties.TRIGGERED)
                 val hasCard = state.getValue(RudimentaryTempadBlock.hasCardProperty)
 
-                var model = "block/rudimentary_tempad"
+                var model = "block/timedoor_projector"
                 model += "_${if (triggered) "on" else "off"}"
                 if (hasCard) {
                     model += "_with_card"
@@ -43,5 +42,24 @@ class ModBlockStateData(output: PackOutput, helper: ExistingFileHelper) : BlockS
                     .rotationY((dir.toYRot().toInt()) % 360)
                     .build()
             }
+
+        getVariantBuilder(ModBlocks.workstationChild)
+            .forAllStatesExcept({ state: BlockState ->
+                val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
+                ConfiguredModel.builder()
+                    .modelFile(ModelFile.UncheckedModelFile("block/workstation_terminal".tempadId))
+                    .rotationY((dir.toYRot().toInt()) % 360)
+                    .build()
+            }, BlockStateProperties.TRIGGERED)
+
+        getVariantBuilder(ModBlocks.metronome).forAllStates { state: BlockState ->
+            ConfiguredModel.builder()
+                .modelFile(models().cubeColumn(
+                    "metronome",
+                    "block/metronome_side".tempadId,
+                    "block/metronome_end".tempadId,
+                ))
+                .build()
+        }
     }
 }

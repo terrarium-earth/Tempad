@@ -8,13 +8,15 @@ import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
 import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.locations.DirectLocation
-import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.client.block.SpatialAnchorRenderer
 import earth.terrarium.tempad.client.block.WorkstationRenderer
+import earth.terrarium.tempad.client.compat.initCuriosCompat
 import earth.terrarium.tempad.client.entity.TimedoorRenderer
-import earth.terrarium.tempad.client.screen.anchor.SpatialAnchorScreen
+import earth.terrarium.tempad.client.screen.ChronomarkScreen
+import earth.terrarium.tempad.client.screen.MetronomeScreen
+import earth.terrarium.tempad.client.screen.TimedoorMarkerScreen
+import earth.terrarium.tempad.client.screen.WalletScreen
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
 import earth.terrarium.tempad.client.screen.tempad.PortalSetupScreen
 import earth.terrarium.tempad.client.screen.tempad.SettingsScreen
@@ -25,7 +27,8 @@ import earth.terrarium.tempad.common.compat.ArsCompat
 import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
-import earth.terrarium.tempad.common.network.s2c.OpenSpatialAnchor
+import earth.terrarium.tempad.common.network.s2c.OpenChronomark
+import earth.terrarium.tempad.common.network.s2c.OpenTimedoorMarker
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.vanillaId
@@ -45,8 +48,9 @@ import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.inventory.tooltip.TooltipComponent
+import net.minecraft.world.item.component.TooltipProvider
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.ModList
@@ -59,6 +63,7 @@ import net.neoforged.neoforge.client.event.RegisterShadersEvent
 import net.neoforged.neoforge.client.event.RenderTooltipEvent
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
 import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent
 import java.io.IOException
 
 @EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
@@ -92,6 +97,8 @@ object TempadClient {
 
     val enabledProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.enabled }
 
+    val screeningEnabled = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.accessId != null }
+
     val twisterAttachedProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.twisterEquipped }
 
     val inUseProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
@@ -101,17 +108,21 @@ object TempadClient {
         return@BooleanItemPropertyFunction menu.ctx.stack === stack
     }
 
-    val charge3Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
-        val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
-        return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.33f)
-    }
-
     val charge4Property = ClampedItemPropertyFunction { stack, level, entity, seed ->
         val tank = stack.chronons ?: return@ClampedItemPropertyFunction 0f
         return@ClampedItemPropertyFunction step(tank.power.toFloat() / tank.maxPower, 0.25f)
     }
 
     val writtenProperty = BooleanItemPropertyFunction { stack, level, entity, seed -> stack.portalTarget != null }
+
+    val hasCardsProperty = BooleanItemPropertyFunction { stack, level, entity, seed ->
+        if(stack.`is`(ModItems.cardWallet)) {
+            for (stack in stack.walletContents.nonEmptyItems()) {
+                if (!stack.isEmpty) return@BooleanItemPropertyFunction true
+            }
+        }
+        return@BooleanItemPropertyFunction false
+    }
 
     val clientFluidRegistry = ResourcefulClientFluidRegistry(Tempad.MOD_ID)
 
@@ -135,44 +146,61 @@ object TempadClient {
     }
 
     fun step(value: Float, step: Float): Float {
-        if (value >= 0.98f) return 1f
-        return value - value % step
+        if (value == 0f) return 0f
+        if (value == 1f) return 1f
+        var current = step
+        while (value > current && current + step <= 1f) {
+            current += step
+        }
+        return current
     }
 
     init {
         clientFluidRegistry.register("chronon", chrononRenderer)
         NeoForge.EVENT_BUS.addListener(::appendTooltip)
+        NeoForge.EVENT_BUS.addListener(::onTooltipAdded)
         Tempad.CONFIGURATOR.register(ClientConfig::class.java)
     }
 
     @SubscribeEvent
     @JvmStatic
     fun init(event: FMLClientSetupEvent) {
-        EntityRenderers.register(ModEntities.TIMEDOOR_ENTITY, ::TimedoorRenderer)
+        EntityRenderers.register(ModEntities.timedoor, ::TimedoorRenderer)
         ItemProperties.register(ModItems.tempad, "in_use".tempadId, inUseProperty)
         ItemProperties.register(ModItems.tempad, "attached".tempadId, twisterAttachedProperty)
-        ItemProperties.register(ModItems.tempad, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.capacitor, "charge".tempadId, charge4Property)
-        ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge3Property)
-        ItemProperties.register(ModItems.statusEmitter, "enabled".tempadId, enabledProperty)
+        ItemProperties.register(ModItems.tempad, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chrononCell, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chrononBattery, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chronometer, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.chrononGenerator, "charge".tempadId, charge4Property)
+        ItemProperties.register(ModItems.locationBroadcaster, "enabled".tempadId, enabledProperty)
+        ItemProperties.register(ModItems.screeningDevice, "enabled".tempadId, screeningEnabled)
         ItemProperties.register(ModItems.locationCard, "written".tempadId, writtenProperty)
-        ItemProperties.register(ModItems.rudimentaryTempad, "has_card".tempadId, writtenProperty)
-        BlockEntityRenderers.register(ModBlocks.spatialAnchorBE) { SpatialAnchorRenderer(it.blockRenderDispatcher) }
+        ItemProperties.register(ModItems.timedoorProjector, "has_card".tempadId, writtenProperty)
+        ItemProperties.register(ModItems.cardWallet, "full".tempadId, hasCardsProperty)
+        BlockEntityRenderers.register(ModBlocks.timedoorMarkerBE) { SpatialAnchorRenderer(it.blockRenderDispatcher) }
+        BlockEntityRenderers.register(ModBlocks.chronomarkBE) { SpatialAnchorRenderer(it.blockRenderDispatcher) }
         BlockEntityRenderers.register(ModBlocks.workstationBE) { WorkstationRenderer(it.itemRenderer) }
 
         if (ModList.get().isLoaded("ars_nouveau")) {
             ArsCompat.init()
+        }
+
+        if (ModList.get().isLoaded("curios")) {
+            initCuriosCompat()
         }
     }
 
     @SubscribeEvent
     @JvmStatic
     fun registerScreens(event: RegisterMenuScreensEvent) {
-        event.register(ModMenus.TELEPORT_MENU, ::TeleportScreen)
-        event.register(ModMenus.NEW_LOCATION_MENU, ::NewLocationScreen)
-        event.register(ModMenus.SETTINGS_MENU, ::SettingsScreen)
-        event.register(ModMenus.TIMELINE_MENU, ::TimelineScreen)
-        event.register(ModMenus.PORTAL_SETUP_MENU, ::PortalSetupScreen)
+        event.register(ModMenus.teleport, ::TeleportScreen)
+        event.register(ModMenus.newLocation, ::NewLocationScreen)
+        event.register(ModMenus.settings, ::SettingsScreen)
+        event.register(ModMenus.timeline, ::TimelineScreen)
+        event.register(ModMenus.portalSetup, ::PortalSetupScreen)
+        event.register(ModMenus.metronome, ::MetronomeScreen)
+        event.register(ModMenus.wallet, ::WalletScreen)
     }
 
     @SubscribeEvent
@@ -195,20 +223,19 @@ object TempadClient {
     fun registerTooltip(event: RegisterClientTooltipComponentFactoriesEvent) {
         event.register(ChrononData::class.java, ::ChrononTooltip)
         event.register(InstalledUpgradesComponent::class.java, ::UpgradesTooltip)
-        event.register(DirectLocation::class.java, ::DirectPosTooltip)
-        event.register(IndirectLocation::class.java, ::IndirectPosTooltip)
     }
 
     @SubscribeEvent
     @JvmStatic
     fun registerBlockColors(event: RegisterColorHandlersEvent.Block) {
-        event.register(blockColor, ModBlocks.spatialAnchor)
+        event.register(blockColor, ModBlocks.timedoorMarker)
     }
 
     @SubscribeEvent
     @JvmStatic
     fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
-        event.register(itemColor, ModItems.spatialAnchor)
+        event.register(itemColor, ModItems.timedoorMarker)
+        event.register(itemColor, ModItems.chronomark)
     }
 
     fun appendTooltip(event: RenderTooltipEvent.GatherComponents) {
@@ -216,21 +243,25 @@ object TempadClient {
         if (stack.item === ModItems.tempad && stack.installedUpgrades.upgrades.isNotEmpty()) {
             event.tooltipElements.add(2, Either.right(stack.installedUpgrades))
         }
-
-        if (stack.item === ModItems.rudimentaryTempad && stack.portalTarget != null) {
-            (stack.portalTarget as? TooltipComponent)?.let {
-                event.tooltipElements.add(2, Either.right(it))
-            }
-        }
     }
 
-    fun openSpatialAnchorScreen(packet: OpenSpatialAnchor) {
-        Minecraft.getInstance().setScreen(SpatialAnchorScreen(packet.blockPos, packet.name, packet.color, packet.access))
+    fun onTooltipAdded(event: ItemTooltipEvent) {
+        (event.itemStack.portalTarget as? TooltipProvider)?.addToTooltip(event.context, event.toolTip::add, event.flags)
+    }
+
+    fun openTimedoorMarker(packet: OpenTimedoorMarker) {
+        Minecraft.getInstance().setScreen(TimedoorMarkerScreen(packet.blockPos, packet.name, packet.color, packet.accessOptions, packet.access, packet.locked))
+    }
+
+    fun openChronomark(packet: OpenChronomark) {
+        Minecraft.getInstance().setScreen(ChronomarkScreen(packet.blockPos, packet.name, packet.color, packet.accessOptions, packet.access, packet.locked, packet.yOffset, packet.angle))
     }
 
     @SubscribeEvent
     @JvmStatic
     fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
-        event.registerItem(RudimentaryTempadClient, ModItems.rudimentaryTempad)
+        event.registerItem(RudimentaryTempadClient, ModItems.timedoorProjector)
     }
 }
+
+val clientLevel: Level? get() = Minecraft.getInstance().level

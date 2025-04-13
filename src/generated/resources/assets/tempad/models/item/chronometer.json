@@ -10,17 +10,23 @@
     {
       "model": "tempad:item/chronometer_1",
       "predicate": {
-        "tempad:charge": 0.33
+        "tempad:charge": 0.25
       }
     },
     {
       "model": "tempad:item/chronometer_2",
       "predicate": {
-        "tempad:charge": 0.66
+        "tempad:charge": 0.5
       }
     },
     {
       "model": "tempad:item/chronometer_3",
+      "predicate": {
+        "tempad:charge": 0.75
+      }
+    },
+    {
+      "model": "tempad:item/chronometer_4",
       "predicate": {
         "tempad:charge": 1.0
       }

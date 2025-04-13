@@ -1,9 +1,0 @@
-{
-    "replace": false,
-    "values": [
-        "tempad:workstation",
-        "tempad:workstation_child",
-        "tempad:rudimentary_tempad",
-        "tempad:spatial_anchor"
-    ]
-}

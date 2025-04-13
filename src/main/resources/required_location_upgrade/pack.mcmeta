@@ -1,0 +1,11 @@
+{
+    "features": {
+        "enabled": [
+            "tempad:required_location_upgrade"
+        ]
+    },
+    "pack": {
+        "description": "Enables the New Location Upgrade item, needed for saving locations on the Tempad",
+        "pack_format": 48
+    }
+}

@@ -6,7 +6,6 @@ import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.owner
-import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.utils.load
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.save
@@ -22,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
 import java.util.UUID
 
-class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.rudimentaryTempadBE, pos, state) {
+class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.timedoorProjectorBE, pos, state) {
     var timedoorId: UUID? = null
     var chrononContent: Int = 0
     var portalTarget: LocationGetter? = null

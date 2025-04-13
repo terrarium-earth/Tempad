@@ -7,6 +7,7 @@ import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
 import earth.terrarium.olympus.client.components.buttons.Button
 import earth.terrarium.olympus.client.components.compound.LayoutWidget
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
+import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.layouts.Layouts
 import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.olympus.client.utils.ListenableState
@@ -19,6 +20,7 @@ import earth.terrarium.tempad.client.screen.tempad.TeleportScreen.Companion.sort
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.network.c2s.SyncPortalSettingsPacket
 import earth.terrarium.tempad.common.registries.ModMenus
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.portalOffset
 import earth.terrarium.tempad.common.registries.selectedPos
 import earth.terrarium.tempad.common.utils.sendToServer
@@ -56,7 +58,6 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
         super.init()
 
         val offsetOptions = Layouts.column().withGap(2).withPosition(localLeft + 4, localTop + 20)
-
         offsetOptions.withChildren(
             Widgets.text(Component.translatable("app.tempad.portal_setup.offset"))
                 .withColor(Tempad.ORANGE)

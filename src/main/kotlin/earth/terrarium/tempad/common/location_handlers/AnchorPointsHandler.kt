@@ -7,7 +7,7 @@ import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
-import earth.terrarium.tempad.common.block.SpatialAnchorBE
+import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
 import earth.terrarium.tempad.common.registries.anchorPoints
 import earth.terrarium.tempad.common.registries.id
 import earth.terrarium.tempad.common.utils.get
@@ -35,7 +35,7 @@ class AnchorPointsData(anchors: Map<UUID, GlobalPos>) {
         return anchors.mapValues { getBlockEntity(it.value) }.filterValues { it != null && it.canAccess(accessor) }.mapValues { it.value!!.namedGlobalVec3 }
     }
 
-    operator fun plusAssign(block: SpatialAnchorBE) {
+    operator fun plusAssign(block: AbstractMarkerBe) {
         if (block.id == null) block.id = UUID.randomUUID()
         safeLet(block.id, block.level) { id, level ->
             anchors[id] = GlobalPos.of(level.dimension(), block.blockPos)
@@ -47,9 +47,9 @@ class AnchorPointsData(anchors: Map<UUID, GlobalPos>) {
     }
 }
 
-fun getBlockEntity(pos: GlobalPos): SpatialAnchorBE? {
+fun getBlockEntity(pos: GlobalPos): AbstractMarkerBe? {
     val level = Tempad.server?.get(pos.dimension())
-    return level?.getBlockEntity(pos.pos)?.let { it as? SpatialAnchorBE }
+    return level?.getBlockEntity(pos.pos)?.let { it as? AbstractMarkerBe }
 }
 
 class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
@@ -63,6 +63,6 @@ class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
     }
 
     companion object {
-        val ID = "spatial_anchors".tempadId
+        val ID = "markers".tempadId
     }
 }

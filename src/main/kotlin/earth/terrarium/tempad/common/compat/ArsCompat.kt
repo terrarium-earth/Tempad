@@ -7,7 +7,7 @@ import net.minecraft.util.Mth
 
 object ArsCompat {
     fun init() {
-        LightManager.register(ModEntities.TIMEDOOR_ENTITY) {
+        LightManager.register(ModEntities.timedoor) {
             if (it.tickCount < TimedoorEntity.IDLE_BEFORE_START) {
                 return@register Mth.lerpInt(it.tickCount / TimedoorEntity.IDLE_BEFORE_START.toFloat(), 0, 5)
             }

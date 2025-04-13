@@ -1,0 +1,7 @@
+{
+    "parent": "tempad:block/timedoor_projector",
+    "textures": {
+        "tempad": "tempad:block/timedoor_projector_on"
+    },
+    "render_type": "minecraft:cutout"
+}

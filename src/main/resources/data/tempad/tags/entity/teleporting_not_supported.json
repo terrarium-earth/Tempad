@@ -1,9 +1,0 @@
-{
-    "replace": false,
-    "values": [
-        "#c:teleporting_not_supported",
-        "minecraft:wither",
-        "minecraft:ender_dragon",
-        "minecraft:end_crystal"
-    ]
-}

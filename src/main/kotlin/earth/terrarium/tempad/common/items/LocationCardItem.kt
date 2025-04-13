@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import java.util.*
 
-class LocationCardItem: Item(Properties()) {
+class LocationCardItem: Item(Properties().stacksTo(16)) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (!level.isClientSide) {
             player.getItemInHand(usedHand).portalTarget?.let { pos ->

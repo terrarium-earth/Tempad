@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.client.block
 
 import com.mojang.blaze3d.vertex.PoseStack
-import earth.terrarium.tempad.common.block.SpatialAnchorBE
+import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
 import earth.terrarium.tempad.common.registries.color
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.block.BlockRenderDispatcher
@@ -10,9 +10,9 @@ import net.minecraft.util.RandomSource
 import net.neoforged.neoforge.client.RenderTypeHelper
 import net.neoforged.neoforge.client.model.data.ModelData
 
-class SpatialAnchorRenderer(val blockRenderer: BlockRenderDispatcher): BlockEntityRenderer<SpatialAnchorBE> {
+class SpatialAnchorRenderer(val blockRenderer: BlockRenderDispatcher): BlockEntityRenderer<AbstractMarkerBe> {
     override fun render(
-        blockEntity: SpatialAnchorBE,
+        blockEntity: AbstractMarkerBe,
         partialTick: Float,
         poseStack: PoseStack,
         bufferSource: MultiBufferSource,

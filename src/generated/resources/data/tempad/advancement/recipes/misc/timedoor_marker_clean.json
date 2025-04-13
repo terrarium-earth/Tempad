@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tempad:timedoor_marker_clean"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_timedoor_marker": {
+      "conditions": {
+        "items": [
+          {
+            "items": "tempad:timedoor_marker"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_timedoor_marker"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tempad:timedoor_marker_clean"
+    ]
+  }
+}

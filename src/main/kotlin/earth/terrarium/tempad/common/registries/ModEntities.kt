@@ -32,7 +32,7 @@ object ModEntities {
         return EntityDataSerializer.forValueType(StreamCodecByteCodec.to(codec))
     }
 
-    val TIMEDOOR_ENTITY by entities.register("timedoor",
+    val timedoor by entities.register("timedoor",
         entityType(::TimedoorEntity, MobCategory.MISC) {}
     )
 }

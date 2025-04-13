@@ -1,0 +1,11 @@
+{
+    "variants": {
+        "up=true": {
+            "model": "tempad:block/chronomark"
+        },
+        "up=false": {
+            "model": "tempad:block/chronomark",
+            "x": 180
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "minecraft:compass"
+    },
+    "G": {
+      "tag": "c:glass_blocks/tinted"
+    },
+    "T": {
+      "item": "tempad:time_steel"
+    },
+    "e": {
+      "tag": "c:gems/emerald"
+    },
+    "r": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    " G ",
+    "eDr",
+    " T "
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:screening_device"
+  }
+}

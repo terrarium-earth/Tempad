@@ -1,13 +1,17 @@
 package earth.terrarium.tempad.common.block
 
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.context.WorkstationContext
 import earth.terrarium.tempad.common.registries.ModApps
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.defaultApp
+import earth.terrarium.tempad.common.registries.locked
+import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.RandomSource
@@ -74,9 +78,17 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         val storageBE = level.getBlockEntity(storagePos) as? WorkstationBE ?: return InteractionResult.PASS
         val ctx = WorkstationContext(player, storagePos)
 
-        if (storageBE.inventory[0].isEmpty) return InteractionResult.PASS
+        val stack = storageBE.inventory[0]
+        if (stack.isEmpty) return InteractionResult.PASS
 
-        (AppRegistry[storageBE.inventory[0].defaultApp, ctx, true]
+        if (storageBE.owner == null) {
+            storageBE.owner = player.gameProfile
+        } else if (stack.locked && storageBE.owner?.id != player.gameProfile.id) {
+            player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+            return InteractionResult.FAIL
+        }
+
+        (AppRegistry[stack.defaultApp, ctx, true]
             ?: AppRegistry[ModApps.portalSetup, ctx, true])!!.openMenu(player as ServerPlayer)
         return InteractionResult.SUCCESS
     }
@@ -100,7 +112,7 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         }
     }
 
-    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
+    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun getShape(
         state: BlockState,
@@ -135,22 +147,12 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
     ) {
         val ogBlock = getPos(state, pos)
         val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above()) || level.hasNeighborSignal(ogBlock)
-        val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
-        if (neighborPowered && !currentlyPowered) {
-            level.scheduleTick(pos, this, 4)
-            level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, true), 2)
-        } else if (!neighborPowered && currentlyPowered) {
-            level.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, false), 2)
-        }
-    }
-
-    override fun tick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
-        super.tick(state, level, pos, random)
         val controllerPos = getPos(state, pos)
         val blockEntity = level.getBlockEntity(controllerPos) as? WorkstationBE ?: return
-        if (state.getValue(BlockStateProperties.TRIGGERED)) {
-            blockEntity.openTimedoor()
-            level.scheduleTick(pos, this, 20)
+        if (neighborPowered && !blockEntity.active) {
+            blockEntity.activateLeft()
+        } else if (!neighborPowered && blockEntity.active) {
+            blockEntity.deactivateLeft()
         }
     }
 

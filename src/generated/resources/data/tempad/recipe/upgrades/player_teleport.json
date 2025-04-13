@@ -1,0 +1,8 @@
+{
+  "type": "tempad:upgrade",
+  "download_time": 40,
+  "item": {
+    "item": "tempad:player_teleport_upgrade"
+  },
+  "upgrade": "tempad:player_teleport"
+}

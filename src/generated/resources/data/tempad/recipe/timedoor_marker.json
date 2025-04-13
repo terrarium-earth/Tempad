@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "tag": "c:ender_pearls"
+    },
+    "I": {
+      "tag": "c:storage_blocks/iron"
+    },
+    "g": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "igi",
+    "iEi",
+    "iIi"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:timedoor_marker"
+  }
+}

@@ -1,9 +1,0 @@
-{
-    "replace": false,
-    "values": [
-        "tempad:chronometer",
-        "tempad:status_emitter",
-        "tempad:creative_chronometer",
-        "tempad:capacitor"
-    ]
-}

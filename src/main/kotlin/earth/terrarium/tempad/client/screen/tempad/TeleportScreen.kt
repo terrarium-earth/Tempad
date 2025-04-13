@@ -365,8 +365,13 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         return true
     }
 
-    override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        super.renderBg(graphics, partialTick, mouseX, mouseY)
+    override fun render(
+        graphics: GuiGraphics,
+        mouseX: Int,
+        mouseY: Int,
+        pPartialTick: Float,
+    ) {
+        super.render(graphics, mouseX, mouseY, pPartialTick)
         if (mouseX >= localLeft + 118 && mouseX <= localLeft + 193 && mouseY >= localTop + 20 && mouseY <= localTop + 95 && !menu.carried.isEmpty && selected != null) {
             graphics.renderOutline(localLeft + 118, localTop + 20, 76, 76, Tempad.HIGHLIGHTED_ORANGE.value)
         }

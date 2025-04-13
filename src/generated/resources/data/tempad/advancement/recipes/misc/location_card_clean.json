@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_location_card": {
+      "conditions": {
+        "items": [
+          {
+            "items": "tempad:location_card"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tempad:location_card_clean"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_location_card"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tempad:location_card_clean"
+    ]
+  }
+}

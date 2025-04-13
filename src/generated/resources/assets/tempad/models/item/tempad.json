@@ -13,7 +13,7 @@
       "model": "tempad:item/tempad/base_idle_1",
       "predicate": {
         "tempad:attached": 0.0,
-        "tempad:charge": 0.33,
+        "tempad:charge": 0.25,
         "tempad:in_use": 0.0
       }
     },
@@ -21,12 +21,20 @@
       "model": "tempad:item/tempad/base_idle_2",
       "predicate": {
         "tempad:attached": 0.0,
-        "tempad:charge": 0.66,
+        "tempad:charge": 0.5,
         "tempad:in_use": 0.0
       }
     },
     {
       "model": "tempad:item/tempad/base_idle_3",
+      "predicate": {
+        "tempad:attached": 0.0,
+        "tempad:charge": 0.75,
+        "tempad:in_use": 0.0
+      }
+    },
+    {
+      "model": "tempad:item/tempad/base_idle_4",
       "predicate": {
         "tempad:attached": 0.0,
         "tempad:charge": 1.0,
@@ -45,7 +53,7 @@
       "model": "tempad:item/tempad/base_in_use_1",
       "predicate": {
         "tempad:attached": 0.0,
-        "tempad:charge": 0.33,
+        "tempad:charge": 0.25,
         "tempad:in_use": 1.0
       }
     },
@@ -53,12 +61,20 @@
       "model": "tempad:item/tempad/base_in_use_2",
       "predicate": {
         "tempad:attached": 0.0,
-        "tempad:charge": 0.66,
+        "tempad:charge": 0.5,
         "tempad:in_use": 1.0
       }
     },
     {
       "model": "tempad:item/tempad/base_in_use_3",
+      "predicate": {
+        "tempad:attached": 0.0,
+        "tempad:charge": 0.75,
+        "tempad:in_use": 1.0
+      }
+    },
+    {
+      "model": "tempad:item/tempad/base_in_use_4",
       "predicate": {
         "tempad:attached": 0.0,
         "tempad:charge": 1.0,
@@ -77,7 +93,7 @@
       "model": "tempad:item/tempad/attached_idle_1",
       "predicate": {
         "tempad:attached": 1.0,
-        "tempad:charge": 0.33,
+        "tempad:charge": 0.25,
         "tempad:in_use": 0.0
       }
     },
@@ -85,12 +101,20 @@
       "model": "tempad:item/tempad/attached_idle_2",
       "predicate": {
         "tempad:attached": 1.0,
-        "tempad:charge": 0.66,
+        "tempad:charge": 0.5,
         "tempad:in_use": 0.0
       }
     },
     {
       "model": "tempad:item/tempad/attached_idle_3",
+      "predicate": {
+        "tempad:attached": 1.0,
+        "tempad:charge": 0.75,
+        "tempad:in_use": 0.0
+      }
+    },
+    {
+      "model": "tempad:item/tempad/attached_idle_4",
       "predicate": {
         "tempad:attached": 1.0,
         "tempad:charge": 1.0,
@@ -109,7 +133,7 @@
       "model": "tempad:item/tempad/attached_in_use_1",
       "predicate": {
         "tempad:attached": 1.0,
-        "tempad:charge": 0.33,
+        "tempad:charge": 0.25,
         "tempad:in_use": 1.0
       }
     },
@@ -117,12 +141,20 @@
       "model": "tempad:item/tempad/attached_in_use_2",
       "predicate": {
         "tempad:attached": 1.0,
-        "tempad:charge": 0.66,
+        "tempad:charge": 0.5,
         "tempad:in_use": 1.0
       }
     },
     {
       "model": "tempad:item/tempad/attached_in_use_3",
+      "predicate": {
+        "tempad:attached": 1.0,
+        "tempad:charge": 0.75,
+        "tempad:in_use": 1.0
+      }
+    },
+    {
+      "model": "tempad:item/tempad/attached_in_use_4",
       "predicate": {
         "tempad:attached": 1.0,
         "tempad:charge": 1.0,

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:gems/amethyst"
+    },
+    "C": {
+      "item": "tempad:chronon_cell"
+    },
+    "T": {
+      "item": "tempad:time_steel"
+    },
+    "i": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "iTi",
+    "CAC",
+    "iTi"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:chronon_battery"
+  }
+}

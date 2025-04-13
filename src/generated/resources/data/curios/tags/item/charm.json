@@ -1,0 +1,13 @@
+{
+  "values": [
+    "tempad:chronon_battery",
+    "tempad:chronon_cell",
+    "tempad:chronon_generator",
+    "tempad:chronometer",
+    "tempad:creative_chronometer",
+    "tempad:location_broadcaster",
+    "tempad:screening_device",
+    "tempad:card_wallet",
+    "tempad:creative_chronometer"
+  ]
+}

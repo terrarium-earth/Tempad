@@ -11,6 +11,7 @@ import earth.terrarium.tempad.api.context.modify
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.common.data.PortalPlacementComponent
 import earth.terrarium.tempad.common.network.ServerPacketCompanion
+import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.portalOffset
 import earth.terrarium.tempad.common.registries.selectedPos

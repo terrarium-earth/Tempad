@@ -26,8 +26,8 @@ data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: Resou
                 ::DeleteLocationPacket
             ),
             NetworkHandle.handle { message, player ->
-                if ({ it.item === ModItems.tempad } !in player.inventory) return@handle
                 val ctx = message.ctx.getCtx(player)
+                if (ctx.stack.item !== ModItems.tempad) return@handle
                 TempadLocations[player, ctx, message.providerId]!! -= message.locationId
             }
         )

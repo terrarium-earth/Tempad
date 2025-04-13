@@ -2,28 +2,41 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
+import earth.terrarium.tempad.api.player_access.DefaultAccess
+import earth.terrarium.tempad.api.player_access.PlayerAccess
 import earth.terrarium.tempad.api.tva_device.ChrononHandler
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
 import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.impl.RudimentaryChrononContent
+import earth.terrarium.tempad.api.tva_device.impl.BlockChrononContent
 import earth.terrarium.tempad.api.tva_device.impl.InfiniteChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.ItemUpgradeHandler
+import earth.terrarium.tempad.api.tva_device.impl.MultiversalChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.RudimentaryUpgradeHandler
 import earth.terrarium.tempad.api.tva_device.impl.TempadChrononHandler
 import earth.terrarium.tempad.api.tva_device.impl.WorkstationChrononHandler
 import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
+import earth.terrarium.tempad.common.entity.TimedoorEntity
+import earth.terrarium.tempad.common.items.ScreeningDeviceAccess
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
+import earth.terrarium.tempad.common.utils.safeLet
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.repository.Pack
+import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.flag.FeatureFlag
+import net.minecraft.world.flag.FeatureFlags
 import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
@@ -31,12 +44,16 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent
 import net.neoforged.neoforge.common.world.chunk.TicketController
+import net.neoforged.neoforge.event.AddPackFindersEvent
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.StartTracking
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
+import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.server.ServerLifecycleHooks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -47,7 +64,6 @@ val String.tempadId: ResourceLocation
 @Mod(Tempad.MOD_ID)
 class Tempad(bus: IEventBus) {
     companion object {
-
         const val MOD_ID = "tempad"
         val DARK_ORANGE: Color = Color(0x91, 0x45, 0x0d, 255)
         val ORANGE: Color = Color(0xFF, 0x6f, 0, 255)
@@ -59,11 +75,11 @@ class Tempad(bus: IEventBus) {
         val server: MinecraftServer?
             get() = ServerLifecycleHooks.getCurrentServer();
 
-        val playerUpgrade: ResourceLocation = "player".tempadId
-
         val logger: Logger = LogManager.getLogger(MOD_ID)
 
         val ticketController = TicketController("timedoor".tempadId, null)
+
+        val flag: FeatureFlag = FeatureFlags.REGISTRY.getFlag("required_location_upgrade".tempadId)
     }
 
     init {
@@ -87,16 +103,18 @@ class Tempad(bus: IEventBus) {
         ModRecipes.init()
         ModSounds.registry.init()
         ModLocations.init()
+        CommonConfigCache.init()
 
         bus.addListener { event: RegisterCapabilitiesEvent ->
             val chrononBlocks = event.register(ChrononHandler.block)
             val chrononItems = event.register(ChrononHandler.item)
             val upgradeItems = event.register(UpgradeHandler.item)
             val upgradeBlocks = event.register(UpgradeHandler.block)
+            val accessItems = event.register(PlayerAccess.item)
 
-            chrononBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
+            chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.let {
-                    RudimentaryChrononContent.create(it, CommonConfigCache.RudimentaryTempad.capacity)
+                    BlockChrononContent.projector(it, CommonConfigCache.RudimentaryTempad.capacity)
                 }
             }
 
@@ -106,24 +124,46 @@ class Tempad(bus: IEventBus) {
                 } else null
             }
 
-            chrononItems[ModItems.rudimentaryTempad] = { it, _ ->
-                ItemChrononHandler.create(it, CommonConfigCache.RudimentaryTempad.capacity)
+            chrononBlocks[ModBlocks.metronomeBe] = { it, _ ->
+                safeLet(it as? MetronomeBe, (it as? MetronomeBe)?.owner) { block, owner ->
+                    if (block.bootTime > 0) {
+                        BlockChrononContent.metronome(block, CommonConfig.Metronome.jumpStartAmount)
+                    } else {
+                        MultiversalChrononHandler(owner.id)
+                    }
+                }
             }
 
-            chrononItems[ModItems.timeTwister] = { it, _ ->
-                ItemChrononHandler.create(it, CommonConfigCache.TimeTwister.capacity)
+            chrononItems[ModItems.timedoorProjector] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.RudimentaryTempad.capacity)?.apply { canExtract = false }
             }
 
-            chrononItems[ModItems.tempad] = { it, _ ->
-                TempadChrononHandler.create(it, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
+            chrononItems[ModItems.timeTwister] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.TimeTwister.capacity)?.apply { canExtract = false }
             }
 
-            chrononItems[ModItems.capacitor] = { it, _ ->
-                ItemChrononHandler.create(it, CommonConfigCache.Capacitor.capacity)
+            chrononItems[ModItems.tempad] = { stack, _ ->
+                TempadChrononHandler.create(stack, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
+            }
+
+            chrononItems[ModItems.chrononCell] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.Capacitor.capacity)
+            }
+
+            chrononItems[ModItems.chrononBattery] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.Battery.capacity)
             }
 
             chrononItems[ModItems.chronometer] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)
+                ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)?.apply { canInsert = false }
+            }
+
+            chrononItems[ModItems.chrononGenerator] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.ChrononGenerator.capacity)?.apply { canInsert = false }
+            }
+
+            chrononItems[ModItems.metronome] = { stack, _ ->
+                ItemChrononHandler.create(stack, CommonConfigCache.Metronome.capacity)
             }
 
             chrononItems[ModItems.creativeChronometer] = { _, _ ->
@@ -134,15 +174,23 @@ class Tempad(bus: IEventBus) {
                 ItemUpgradeHandler(it)
             }
 
-            upgradeItems[ModItems.rudimentaryTempad] = { it, _ ->
+            upgradeItems[ModItems.timedoorProjector] = { it, _ ->
                 RudimentaryUpgradeHandler
+            }
+
+            accessItems[ModItems.locationBroadcaster] = { it, _ ->
+                if(it.enabled == true) DefaultAccess.Public else null
+            }
+
+            accessItems[ModItems.screeningDevice] = { it, _ ->
+                ScreeningDeviceAccess.create(it)
             }
 
             upgradeBlocks[ModBlocks.workstationBE] = { it, _ ->
                 (it as? WorkstationBE)?.inventory?.getStackInSlot(0)?.upgrades
             }
 
-            upgradeBlocks[ModBlocks.rudimentaryTempadBE] = { it, _ ->
+            upgradeBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 RudimentaryUpgradeHandler
             }
         }
@@ -156,6 +204,17 @@ class Tempad(bus: IEventBus) {
 
         bus.addListener { event: RegisterTicketControllersEvent ->
             event.register(ticketController)
+        }
+
+        bus.addListener { event: AddPackFindersEvent ->
+            event.addPackFinders(
+                "required_location_upgrade".tempadId,
+                PackType.SERVER_DATA,
+                Component.translatable("datapack.tempad.required_location_upgrade"),
+                PackSource.FEATURE,
+                false,
+                Pack.Position.TOP
+            )
         }
 
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->
@@ -182,6 +241,23 @@ class Tempad(bus: IEventBus) {
             event.entity.travelHistory.logLocation(event.entity, TravelHistoryAttachment.DIM_ENTER_MARKER)
         }
 
+        NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
+            if(event.server.tickCount % CommonConfig.Metronome.generationRate == 0) {
+                metronomeEnergy?.let {
+                    it.tick()
+                }
+            }
+        }
 
+        NeoForge.EVENT_BUS.addListener { event: PlayerLoggedInEvent ->
+            CommonConfigCache.CACHE.syncAll(event.entity)
+        }
+
+        NeoForge.EVENT_BUS.addListener { event: StartTracking ->
+            if (event.entity.level().isClientSide) return@addListener
+            (event.target as? TimedoorEntity)?.let {
+                it.animationOffset = it.tickCount
+            }
+        }
     }
 }

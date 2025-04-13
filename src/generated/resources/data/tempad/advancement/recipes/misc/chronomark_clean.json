@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_chronomark": {
+      "conditions": {
+        "items": [
+          {
+            "items": "tempad:chronomark"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tempad:chronomark_clean"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_chronomark"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tempad:chronomark_clean"
+    ]
+  }
+}

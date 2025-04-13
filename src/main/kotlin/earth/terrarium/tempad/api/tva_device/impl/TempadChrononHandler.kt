@@ -16,6 +16,8 @@ class TempadChrononHandler(val stack: ItemStack, val tempadLimit: Int, timeTwist
         }
     }
 
+    override val canExtract: Boolean = false
+
     override var power: Int
         get() = stack.chrononContentTempad + stack.chrononContentTimeTwister
         set(value) = run {

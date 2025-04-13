@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "tag": "c:ender_pearls"
+    },
+    "L": {
+      "item": "tempad:location_broadcaster"
+    },
+    "k": {
+      "item": "minecraft:dried_kelp"
+    }
+  },
+  "pattern": [
+    "kkk",
+    "ELE",
+    "kkk"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:player_teleport_upgrade"
+  }
+}

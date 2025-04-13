@@ -11,6 +11,7 @@ import earth.terrarium.tempad.common.utils.*
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.portal.DimensionTransition
 import net.minecraft.world.phys.Vec3
@@ -61,6 +62,7 @@ class TravelHistoryAttachment(val history: MutableMap<Date, HistoricalLocation>)
     }
 
     fun logLocation(entity: LivingEntity, marker: ResourceLocation? = null) {
+        if (entity.isSpectator || (entity as? Player)?.abilities?.instabuild == true) return
         if (history.isEmpty() || marker != null) {
             this += HistoricalLocation(marker, entity.level().dimension(), entity.pos)
             if (history.size > CommonConfig.maxHistorySize) history.remove(history.keys.first())
