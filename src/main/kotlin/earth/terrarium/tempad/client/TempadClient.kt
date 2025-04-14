@@ -17,6 +17,7 @@ import earth.terrarium.tempad.client.screen.ChronomarkScreen
 import earth.terrarium.tempad.client.screen.MetronomeScreen
 import earth.terrarium.tempad.client.screen.TimedoorMarkerScreen
 import earth.terrarium.tempad.client.screen.WalletScreen
+import earth.terrarium.tempad.client.screen.guide.MainPage
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
 import earth.terrarium.tempad.client.screen.tempad.PortalSetupScreen
 import earth.terrarium.tempad.client.screen.tempad.SettingsScreen
@@ -255,6 +256,10 @@ object TempadClient {
 
     fun openChronomark(packet: OpenChronomark) {
         Minecraft.getInstance().setScreen(ChronomarkScreen(packet.blockPos, packet.name, packet.color, packet.accessOptions, packet.access, packet.locked, packet.yOffset, packet.angle))
+    }
+
+    fun openGuide() {
+        Minecraft.getInstance().setScreen(MainPage())
     }
 
     @SubscribeEvent

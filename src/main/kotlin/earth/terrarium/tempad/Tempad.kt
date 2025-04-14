@@ -66,7 +66,7 @@ class Tempad(bus: IEventBus) {
     companion object {
         const val MOD_ID = "tempad"
         val DARK_ORANGE: Color = Color(0x91, 0x45, 0x0d, 255)
-        val ORANGE: Color = Color(0xFF, 0x6f, 0, 255)
+        val ORANGE: Color = Color(0xFF, 0x6a, 0, 255)
         val HIGHLIGHTED_ORANGE: Color = Color(0xFF, 0xcc, 0x54, 255)
         val GREEN = Color(0xFF65fb01.toInt())
 

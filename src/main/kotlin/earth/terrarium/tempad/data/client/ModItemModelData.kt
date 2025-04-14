@@ -68,6 +68,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
         basicItem(ModItems.playerTeleportUpgrade)
         basicItem(ModItems.timeSteel)
         basicItem(ModItems.creativeChronometer)
+        basicItem(ModItems.handbook)
         basicItem(ModItems.cardWallet).booleanProp("full")
         simpleBlockItem(ModBlocks.timedoorMarker)
         simpleBlockItem(ModBlocks.chronomark)

@@ -1,5 +1,7 @@
 {
   "values": [
-    "tempad:metronome"
+    "tempad:metronome",
+    "tempad:chronometer",
+    "tempad:chronon_generator"
   ]
 }

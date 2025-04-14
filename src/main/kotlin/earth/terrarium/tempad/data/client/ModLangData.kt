@@ -4,13 +4,35 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.data.PackOutput
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.data.LanguageProvider
 
 class ModLangData(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_us") {
+    companion object {
+        private val entries = mutableMapOf<String, String>()
+
+        val title = bookLang("title", "OFFICIAL HANDBOOK")
+        val credits = bookLang("credits", "By CodexAdrian")
+
+        fun bookLang(key: String, value: String): Component {
+            val finalKey = ModItems.handbook.descriptionId + "." + key
+            val shouldBeNull = entries.put(finalKey, value)
+            if (shouldBeNull != null) {
+                throw IllegalStateException("Duplicate translation key $finalKey")
+            }
+            return Component.translatable(finalKey)
+        }
+    }
+
     override fun addTranslations() {
+        for ((key, value) in entries) {
+            add(key, value)
+        }
+
         for (entry in ModItems.registry.entries) {
             try {
                 add(entry.get(), entry.id.formatted)

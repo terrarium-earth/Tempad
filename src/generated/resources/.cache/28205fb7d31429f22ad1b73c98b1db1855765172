@@ -1,4 +1,4 @@
-// 1.21.1	2025-04-12T23:17:20.253036	Item Models: tempad
+// 1.21.1	2025-04-13T17:30:55.450376	Item Models: tempad
 b4f2e8b03bb645a71f8cafa94ebc261970e4db02 assets/tempad/models/item/card_wallet.json
 3bfc524cd3d38f094c70c5f1932b78b3d4bde26e assets/tempad/models/item/card_wallet_full.json
 3d9868b360b9d63c3c353ec965480a977d44ac23 assets/tempad/models/item/chronomark.json
@@ -27,6 +27,7 @@ cfd8d5ad10e6fef4451144d3e8498c3082d95e4f assets/tempad/models/item/chronon_gener
 dbcaa12278503891be96d4ed97f70076883bc549 assets/tempad/models/item/chronon_generator_3.json
 985d1d1354393befae90090b05e53975cc6229e2 assets/tempad/models/item/chronon_generator_4.json
 526a461245c727a7b7004b37d02e64c616b72fec assets/tempad/models/item/creative_chronometer.json
+af4e4b13d79af99ef85eb7647c5f583da9ec429f assets/tempad/models/item/handbook.json
 ababf5693661084edc96ef9218f242009430418b assets/tempad/models/item/location_broadcaster.json
 6e0c134e6142957d2517bc3dab20d5197ea43bc9 assets/tempad/models/item/location_broadcaster_enabled.json
 21a5891fa66ad3899b659d67b15ee53c7ec4577b assets/tempad/models/item/location_card.json

@@ -86,13 +86,14 @@ object CuriosRenderer: ICurioRenderer {
                                 matrixStack.mulPose(Axis.XP.rotationDegrees(90f))
                                 matrixStack.mulPose(Axis.YP.rotationDegrees(90f))
                                 matrixStack.scale(0.4f, 0.4f, 0.4f)
-                                matrixStack.translate(1.0, 0.0, 0.4)
+                                matrixStack.translate(1.0, 0.0, 0.35)
                             } else {
                                 model.rightArm.translateAndRotate(matrixStack)
+                                model.rightArm.yScale
                                 matrixStack.mulPose(Axis.XP.rotationDegrees(-90f))
                                 matrixStack.mulPose(Axis.YP.rotationDegrees(-90f))
                                 matrixStack.scale(0.4f, 0.4f, 0.4f)
-                                matrixStack.translate(1.0, 0.0, 0.4)
+                                matrixStack.translate(1.0, 0.0, 0.35 )
                             }
                         }
                     }
