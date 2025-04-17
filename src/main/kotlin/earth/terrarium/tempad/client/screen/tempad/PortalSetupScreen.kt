@@ -134,7 +134,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
             withSize(109, 77)
             withContentFillWidth()
             withScrollableY(TriState.UNDEFINED)
-            withScrollbarYRenderer(TeleportScreen.Companion.scrollbarYRenderer)
+            withScrollbarYRenderer(TempadUI.scrollbarYRenderer)
             withTexture("element/normal".tempadId)
             withOverscrollY(2)
             withContentMargin(1)

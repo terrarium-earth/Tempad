@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.entity.RenderLayerParent
 import net.minecraft.client.renderer.entity.player.PlayerRenderer
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.HumanoidArm
 import net.minecraft.world.entity.LivingEntity
@@ -22,11 +23,14 @@ import top.theillusivec4.curios.api.client.ICurioRenderer
 fun initCuriosCompat() {
     CuriosRendererRegistry.register(ModItems.tempad) { CuriosRenderer }
     CuriosRendererRegistry.register(ModItems.cardWallet) { CuriosRenderer }
-    CuriosRendererRegistry.register(ModItems.chronometer) { CuriosRenderer }
-    CuriosRendererRegistry.register(ModItems.chrononGenerator) { CuriosRenderer }
+
     CuriosRendererRegistry.register(ModItems.chrononBattery) { CuriosRenderer }
     CuriosRendererRegistry.register(ModItems.chrononCell) { CuriosRenderer }
+
+    CuriosRendererRegistry.register(ModItems.chronometer) { CuriosRenderer }
+    CuriosRendererRegistry.register(ModItems.chrononGenerator) { CuriosRenderer }
     CuriosRendererRegistry.register(ModItems.creativeChronometer) { CuriosRenderer }
+
     CuriosRendererRegistry.register(ModItems.screeningDevice) { CuriosRenderer }
     CuriosRendererRegistry.register(ModItems.locationBroadcaster) { CuriosRenderer }
 }
@@ -100,7 +104,7 @@ object CuriosRenderer: ICurioRenderer {
                 }
             }
 
-            Minecraft.getInstance().itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, light, 0, matrixStack, renderTypeBuffer, slotContext.entity.level(), 0)
+            Minecraft.getInstance().itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, slotContext.entity.level(), 0)
             matrixStack.popPose()
         }
     }

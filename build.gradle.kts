@@ -79,7 +79,7 @@ dependencies {
         jarJar.pin(it, "[${resourcefulLibKtVersion})")
     }
 
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${baseVersion}", version = "1.0.14") {
+    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${baseVersion}", version = "1.0.18") {
         isTransitive = false
     }.also { jarJar(it) }
 

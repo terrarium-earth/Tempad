@@ -17,7 +17,7 @@ import earth.terrarium.tempad.client.screen.ChronomarkScreen
 import earth.terrarium.tempad.client.screen.MetronomeScreen
 import earth.terrarium.tempad.client.screen.TimedoorMarkerScreen
 import earth.terrarium.tempad.client.screen.WalletScreen
-import earth.terrarium.tempad.client.screen.guide.MainPage
+import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
 import earth.terrarium.tempad.client.screen.tempad.PortalSetupScreen
 import earth.terrarium.tempad.client.screen.tempad.SettingsScreen
@@ -259,7 +259,7 @@ object TempadClient {
     }
 
     fun openGuide() {
-        Minecraft.getInstance().setScreen(MainPage())
+        Minecraft.getInstance().setScreen(KnowledgeScreen())
     }
 
     @SubscribeEvent

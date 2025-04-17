@@ -86,7 +86,7 @@ public final class CommonConfig {
 
         @ConfigEntry(id= "cost_to_backtrack")
         @Comment("The cost that the Time Twister consumes to backtrack to a location")
-        public static int costToBacktrack = 1000;
+        public static int costToBacktrack = 500;
     }
 
     @Category("chronon_generator")

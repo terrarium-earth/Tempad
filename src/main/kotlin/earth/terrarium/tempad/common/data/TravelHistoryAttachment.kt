@@ -79,15 +79,14 @@ class TravelHistoryAttachment(val history: MutableMap<Date, HistoricalLocation>)
      * Backtrack to a specific location in the history, and removes all locations after it.
      */
     fun backtrackTo(entity: LivingEntity, time: Date) {
-        val index = history.keys.indexOf(time)
         val historicalLocation = history[time]
-        if (index == -1 || historicalLocation == null) return
+        if (historicalLocation == null) return
         val ids = mutableListOf<Date>()
-        for ((idIndex, entryId) in history.keys.withIndex()) {
-            if (idIndex >= index) ids.add(entryId)
+        for (historicalTime in history.keys) {
+            if (historicalTime >= time) ids.add(historicalTime)
         }
         for (id in ids) history.remove(id)
-        entity.changeDimension(DimensionTransition(entity.server.get(historicalLocation.dimension)!!, historicalLocation.pos, Vec3.ZERO, 0.0F, 0.0F, false, DimensionTransition.DO_NOTHING))
+        entity.changeDimension(DimensionTransition(entity.server[historicalLocation.dimension]!!, historicalLocation.pos, Vec3.ZERO, 0.0F, 0.0F, false, DimensionTransition.DO_NOTHING))
     }
 
     val relevantHistory get() = history.filter { it.value.marker != null }

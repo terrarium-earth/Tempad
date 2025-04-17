@@ -33,7 +33,7 @@ object ModItems {
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val cardWallet: Item by registry.register("card_wallet") { WalletItem() }
     val timeSteel: Item by registry.register("time_steel") { Item(Item.Properties()) }
-    val handbook: Item by registry.register("handbook") { HandbookItem() }
+    val handbook: Item by registry.register("knowledge_projector") { HandbookItem() }
 
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties().requiredFeatures(Tempad.flag)) }
     val newLocationKey = "new_location".tempadId

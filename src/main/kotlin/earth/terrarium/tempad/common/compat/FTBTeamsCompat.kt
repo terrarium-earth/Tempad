@@ -10,7 +10,7 @@ import kotlin.jvm.optionals.getOrNull
 
 object FTBTeamsCompat : PlayerAccess {
     override fun canAccess(level: Level, owner: GameProfile, accessor: GameProfile): Boolean {
-        return FTBTeamsAPIImpl.INSTANCE.manager.getTeamForPlayerID(owner.id).getOrNull()?.members?.contains(accessor.id) == false
+        return FTBTeamsAPIImpl.INSTANCE.manager.getTeamForPlayerID(owner.id).getOrNull()?.members?.contains(accessor.id) == true
     }
 }
 
