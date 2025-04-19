@@ -147,7 +147,7 @@ class Tempad(bus: IEventBus) {
             }
 
             chrononItems[ModItems.chrononCell] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.Capacitor.capacity)
+                ItemChrononHandler.create(stack, CommonConfigCache.ChrononCell.capacity)
             }
 
             chrononItems[ModItems.chrononBattery] = { stack, _ ->

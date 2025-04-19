@@ -21,6 +21,7 @@ import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.client.widgets.UnclickableWidget
 import earth.terrarium.tempad.client.widgets.recipe
 import earth.terrarium.tempad.common.config.CommonConfigCache
+import earth.terrarium.tempad.common.registries.ModEntities
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.utils.translatable
 import earth.terrarium.tempad.data.client.ModLang
@@ -28,6 +29,7 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.layouts.SpacerElement
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.ClickEvent
@@ -37,11 +39,26 @@ import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import java.text.NumberFormat
 
-class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
+class KnowledgeScreen() : BaseCursorScreen(ModLang.title) {
     companion object {
         val collapsed = mutableSetOf<Component>()
+
+        val defaultDescription: (ClearableGridLayout) -> Unit = { layout ->
+            val list = layout.rows(0, 1)
+            list.addChild(UnclickableWidget().apply {
+                renderer = WidgetRenderers.icon<AbstractWidget>("guide/images/tva".tempadId).withColor(MinecraftColors.WHITE).withCentered(64, 32)
+                height = 32
+            })
+            list.addChild(Widgets.textarea(ModLang.credits, 98).setColor(Tempad.ORANGE.value).alignCenter().textAlignCenter())
+            list.addChild(SpacerElement(1, 4))
+            list.addChild(Widgets.textarea(ModLang.travelAdvisory, 98) {
+                it.setColor(Tempad.ORANGE.value)
+                it.alignCenter()
+                it.textAlignCenter()
+                it.scale(0.25f)
+            })
+        }
     }
 
     fun paragraph(key: String, vararg item: Any): MultilineTextWidget {
@@ -77,7 +94,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
         }
     }
 
-    fun subTitle(text: Component): MultilineTextWidget {
+    fun subtitle(text: Component): MultilineTextWidget {
         return Widgets.textarea(text, 98) {
             it.scale(0.8f)
             it.alignLeft()
@@ -93,182 +110,216 @@ class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
     var imageHeight = 118
     var age = 0
 
+    var titleWidget: StringWidget? = null
+    var currentTitle: Component = ModItems.handbook.descriptionId.translatable
+        set(value) {
+            field = value
+            titleWidget?.message = value
+        }
+
+    var descriptionWidget: LayoutWidget<ClearableGridLayout>? = null
+    var description: (ClearableGridLayout) -> Unit = defaultDescription
+        set(value) {
+            field = value
+            descriptionWidget?.withContents {
+                it.clear()
+                value.invoke(it)
+            }
+        }
+
     val selected = MutableState.of<ItemStack?>(null)
-    val currentTitle = MutableState.of<Component>(ModLang.overview.translatable)
-    val description = MutableState.of<(ClearableGridLayout) -> Unit>({ layout: ClearableGridLayout ->
-        val list = layout.rows(0, 1)
-        list.addChild(UnclickableWidget().apply {
-            renderer = WidgetRenderers.icon<AbstractWidget>("guide/images/tva".tempadId).withColor(MinecraftColors.WHITE).withCentered(64, 32)
-            height = 32
-        })
-        list.addChild(Widgets.textarea(ModLang.credits.translatable, 98).setColor(Tempad.ORANGE.value).alignCenter().textAlignCenter())
-        list.addChild(SpacerElement(1, 4))
-        list.addChild(Widgets.textarea(ModLang.travelAdvisory.translatable, 98) {
-            it.setColor(Tempad.ORANGE.value)
-            it.alignCenter()
-            it.textAlignCenter()
-            it.scale(0.25f)
-        })
-    })
 
     val chapters = mutableMapOf<Component, MutableMap<ResourceLocation, (ClearableGridLayout) -> Unit>>().apply {
-        put(ModLang.iron.translatable, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
+        put(ModLang.iron, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
             put(ModItems.chrononCell.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.chrononHeader.translatable))
-                list.addChild(paragraph(ModLang.chronons))
-                list.addChild(title(ModLang.crafting.translatable))
+                list.addChild(paragraph(ModLang.cellOverview))
+                list.addChild(title(ModLang.crafting))
                 list.addChild(paragraph(ModLang.cellCrafting))
                 this@KnowledgeScreen.recipe("chronon_cell".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                val cap = Component.literal(NumberFormat.getInstance().format(CommonConfigCache.Capacitor.capacity)).withColor(Tempad.HIGHLIGHTED_ORANGE.value)
-                list.addChild(paragraph(Component.translatable(ModLang.cellUsage, cap)))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.cellUsage))
             }
             put(ModItems.chrononGenerator.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.genCrafting, ModItems.chronometer, ModItems.metronome))
-                this@KnowledgeScreen.recipe("chronometer".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.genUsage, ModItems.metronome))
+                list.addChild(paragraph(ModLang.chrononGenOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.chrononGenCrafting))
+                this@KnowledgeScreen.recipe("chronon_generator".tempadId)?.let(list::addChild)
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.chrononGenUsage))
+                if (CommonConfigCache.ChrononGenerator.capacity > 0) {
+                    list.addChild(paragraph(ModLang.chrononGenStorage))
+                }
             }
             put(ModItems.locationCard.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.cardCrafting, ModItems.timeSteel))
-                this@KnowledgeScreen.recipe("location_card".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.cardUsage, ModItems.timedoorMarker, ModItems.chronomark, ModItems.tempad,
-                    ModItems.timedoorMarker, ModItems.chronomark, ModItems.tempad, ModItems.cardWallet, ModItems.timedoorProjector))
+                list.addChild(paragraph(ModLang.cardOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.cardCrafting))
+                this@KnowledgeScreen.recipe("cheap_card".tempadId)?.let(list::addChild)
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.cardUsage))
+                list.addChild(paragraph(ModLang.cardUsage2))
+                list.addChild(paragraph(ModLang.cardUsage3))
             }
             put(ModItems.cardWallet.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.walletCrafting, ModItems.locationCard, ModItems.timedoorProjector, ModItems.locationCard))
+                list.addChild(paragraph(ModLang.walletOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.walletCrafting))
                 this@KnowledgeScreen.recipe("card_wallet".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.walletUsage, ModItems.tempad))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.walletUsage))
+                list.addChild(paragraph(ModLang.walletUsage2))
+                list.addChild(paragraph(ModLang.walletUsage3))
             }
             put(ModItems.timedoorMarker.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
+                list.addChild(paragraph(ModLang.markerOverview))
+                list.addChild(title(ModLang.crafting))
                 list.addChild(paragraph(ModLang.markerCrafting))
                 this@KnowledgeScreen.recipe("timedoor_marker".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.markerUsage, ModItems.locationCard, ModItems.locationCard,
-                    ModItems.timedoorProjector, ModItems.tempad, ModItems.chronomark, ModItems.locationCard))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.markerUsage))
+                list.addChild(paragraph(ModLang.markerUsage2))
             }
             put(ModItems.timedoorProjector.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.projectorCrafting, ModItems.tempad, ModItems.chrononCell))
+                list.addChild(paragraph(ModLang.projectorOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.projectorCrafting))
                 this@KnowledgeScreen.recipe("timedoor_projector".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.projectorUsage, ModItems.locationCard))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.projectorUsage))
                 list.addChild(paragraph(ModLang.projectorUsage2))
+                list.addChild(title(ModEntities.timedoor.description))
+                list.addChild(paragraph(ModLang.projectorTimedoors))
+                list.addChild(paragraph(ModLang.projectorTimedoors2))
             }
             put(ModItems.locationBroadcaster.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.broadcasterCrafting, ModItems.tempad))
+                list.addChild(paragraph(ModLang.locationBroadcastersOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.locationBroadcastersCrafting))
                 this@KnowledgeScreen.recipe("location_broadcaster".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.broadcasterUsage, ModItems.tempad))
-                list.addChild(paragraph(ModLang.broadcasterUsage2))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.locationBroadcastersUsage))
+                list.addChild(paragraph(ModLang.locationBroadcastersUsage2))
             }
         })
-        put(ModLang.steel.translatable, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
+        put(ModLang.steel, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
             put(ModItems.timeSteel.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(paragraph(ModLang.timeSteelUsage))
-                list.addChild(title(ModLang.crafting.translatable))
-                (this@KnowledgeScreen.recipe("time_steel_shaped".tempadId) ?: this@KnowledgeScreen.recipe("time_steel_shapeless".tempadId))?.let(list::addChild)
+                list.addChild(paragraph(ModLang.timeSteelOverview))
+                list.addChild(title(ModLang.crafting))
                 list.addChild(paragraph(ModLang.timeSteelCrafting))
+                this@KnowledgeScreen.recipe("time_steel".tempadId)?.let(list::addChild)
                 list.addChild(paragraph(ModLang.timeSteelCrafting2))
             }
             put(ModItems.chrononBattery.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.batteryCrafting, ModItems.timeSteel, ModItems.chrononCell))
+                list.addChild(paragraph(ModLang.chrononBatteryOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.chrononBatteryCrafting))
                 this@KnowledgeScreen.recipe("chronon_battery".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.batteryUsage, ModItems.chronometer, ModItems.chrononGenerator, ModItems.metronome))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.chrononBatteryUsage))
             }
             put(ModItems.chronometer.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.chronometerCrafting, ModItems.timeSteel, ModItems.chrononBattery))
+                list.addChild(paragraph(ModLang.chronometerOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.chronometerCrafting))
                 this@KnowledgeScreen.recipe("chronometer".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.chronometerUsage, ModItems.chrononGenerator, ModItems.chrononGenerator))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.chronometerUsage))
+                if (CommonConfigCache.Chronometer.capacity > 0) {
+                    list.addChild(paragraph(ModLang.chronometerInternalStorage))
+                }
             }
             put(ModItems.chronomark.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.chronomarkCrafting, ModItems.timeSteel))
+                list.addChild(paragraph(ModLang.chronomarkOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.chronomarkCrafting))
                 this@KnowledgeScreen.recipe("chronomark".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.chronomarkUsage, ModItems.locationCard, ModItems.timedoorProjector, ModItems.locationCard))
-
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.chronomarkUsage))
+                list.addChild(paragraph(ModLang.chronomarkUsage2))
             }
             put(ModItems.tempad.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(paragraph(ModLang.tempadUsage, ModItems.timeTwister))
-                list.addChild(title(ModLang.apps.translatable))
-                list.addChild(paragraph(ModLang.tempadAppUsage))
-                list.addChild(title(ModLang.newLocationAppTitle.translatable))
-                list.addChild(paragraph(ModLang.newLocationApp))
-                list.addChild(title(ModLang.teleportTitle.translatable))
-                list.addChild(paragraph(ModLang.teleportApp, ModItems.timedoorMarker, ModItems.chronomark))
-                list.addChild(subTitle(ModLang.teleportSortingTitle.translatable))
-                list.addChild(paragraph(ModLang.teleportSorting))
-                list.addChild(subTitle(ModLang.teleportLocationTitle.translatable))
-                list.addChild(paragraph(ModLang.teleportLocationManagement))
-                list.addChild(title(ModLang.portalSetupTitle.translatable))
-                list.addChild(paragraph(ModLang.portalSetup, ModItems.workstation, ModItems.workstation))
-                list.addChild(title(ModLang.travelTimelineTitle.translatable))
-                list.addChild(paragraph(ModLang.travelTimeline, ModItems.timeTwister, ModItems.timeTwister))
-                list.addChild(title(ModLang.settingsTitle.translatable))
-                list.addChild(paragraph(ModLang.settings))
+                list.addChild(paragraph(ModLang.tempadOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.tempadCrafting))
+                this@KnowledgeScreen.recipe("tempad".tempadId)?.let(list::addChild)
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.tempadUsage))
+                list.addChild(paragraph(ModLang.tempadUsage2))
+                list.addChild(title(ModEntities.timedoor.description))
+                list.addChild(paragraph(ModLang.tempadTimedoors))
+                list.addChild(paragraph(ModLang.tempadTimedoors2))
+                list.addChild(title(ModLang.tempadApps))
+                list.addChild(subtitle("app.tempad.teleport".translatable))
+                list.addChild(paragraph(ModLang.tempadAppTeleport))
+                list.addChild(paragraph(ModLang.tempadAppTeleport2))
+                list.addChild(paragraph(ModLang.tempadAppTeleport3))
+                list.addChild(subtitle("app.tempad.new_location".translatable))
+                list.addChild(paragraph(ModLang.tempadAppNewLocation))
+                list.addChild(subtitle("app.tempad.travel_timeline".translatable))
+                list.addChild(paragraph(ModLang.tempadAppTravelTimeline))
+                list.addChild(subtitle("app.tempad.settings".translatable))
+                list.addChild(paragraph(ModLang.tempadAppSettings))
+                list.addChild(subtitle("app.tempad.portal_setup".translatable))
+                list.addChild(paragraph(ModLang.tempadAppPortalSetup))
+
             }
             put(ModItems.workstation.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.workstationCrafting, ModItems.tempad, ModItems.timeSteel))
+                list.addChild(paragraph(ModLang.workstationOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.workstationCrafting))
                 this@KnowledgeScreen.recipe("workstation".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.workstationUsage, ModItems.tempad, ModItems.tempad))
-                list.addChild(paragraph(ModLang.workstationUpgrades, ModItems.tempad, ModItems.tempad, ModItems.locationBroadcaster, ModItems.screeningDevice))
-                list.addChild(paragraph(ModLang.workstationTerminal, ModItems.tempad, ModItems.timedoorProjector))
-                list.addChild(paragraph(ModLang.workstationApp, ModItems.tempad))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.workstationUsage))
+                list.addChild(paragraph(ModLang.workstationUsage2))
+                list.addChild(paragraph(ModLang.workstationUsage3))
             }
             put(ModItems.timeTwister.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.twisterCrafting, ModItems.timeSteel, ModItems.chrononBattery))
+                list.addChild(paragraph(ModLang.timeTwisterOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.timeTwisterCrafting))
                 this@KnowledgeScreen.recipe("time_twister".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.twisterUsage))
-                list.addChild(paragraph(ModLang.twisterUsage2))
-                list.addChild(paragraph(ModLang.twisterApp, ModItems.tempad, ModItems.tempad, ModItems.tempad))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.timeTwisterUsage))
+                list.addChild(paragraph(ModLang.timeTwisterUsage2))
+                list.addChild(paragraph(ModLang.timeTwisterUsage3))
             }
             put(ModItems.screeningDevice.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.screeningCrafting, ModItems.locationBroadcaster, ModItems.timeSteel))
+                list.addChild(paragraph(ModLang.screeningDeviceOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.screeningDeviceCrafting))
                 this@KnowledgeScreen.recipe("screening_device".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.screeningUsage, ModItems.tempad))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.screeningDeviceUsage))
             }
             put(ModItems.metronome.id) {
                 val list = it.rowSpacing(4).rows(0, 1)
-                list.addChild(title(ModLang.crafting.translatable))
-                list.addChild(paragraph(ModLang.metronomeCrafting, ModItems.timeSteel, ModItems.chrononBattery))
+                list.addChild(paragraph(ModLang.metronomesOverview))
+                list.addChild(title(ModLang.crafting))
+                list.addChild(paragraph(ModLang.metronomesCrafting))
                 this@KnowledgeScreen.recipe("metronome".tempadId)?.let(list::addChild)
-                list.addChild(title(ModLang.usage.translatable))
-                list.addChild(paragraph(ModLang.metronomeBooting, ModItems.chrononCell, ModItems.chrononBattery))
-                list.addChild(paragraph(ModLang.metronomeBattery))
-                list.addChild(paragraph(ModLang.metronomeSyncing))
+                list.addChild(title(ModLang.usage))
+                list.addChild(paragraph(ModLang.metronomesUsage))
+                list.addChild(paragraph(ModLang.metronomesUsage2))
+                if (CommonConfigCache.Metronome.scaleGeneration) {
+                    list.addChild(paragraph(ModLang.metronomesMultiCharge))
+                } else {
+                    list.addChild(paragraph(ModLang.metronomesNoMultiCharge))
+                }
             }
         })
     }
@@ -282,6 +333,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
             addRenderableWidget(Widgets.text(ModItems.handbook.description) {
                 it.withColor(Tempad.ORANGE)
                 it.withPosition(leftPos + 4, topPos + 6)
+                it.withShadow()
             })
         }
 
@@ -346,9 +398,8 @@ class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
                         })
                         it.withCallback {
                             selected.value = stack
-                            description.value = text
-                            currentTitle.value = stack.hoverName
-                            this.init()
+                            currentTitle = stack.hoverName
+                            description = text
                         }
                     })
                 }
@@ -363,9 +414,12 @@ class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
             }
         }
 
-        addRenderableWidget(Widgets.text(currentTitle.value).withColor(Tempad.ORANGE).withPosition(leftPos + 78, topPos + 22))
+        titleWidget = addRenderableWidget(StringWidget(leftPos + 78, topPos + 22, 116, 10, currentTitle, font).apply {
+            setColor(Tempad.ORANGE.value)
+            alignLeft()
+        })
 
-        val information = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
+        descriptionWidget = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
             withPosition(leftPos + 78, topPos + 32)
             withSize(116, 82)
             withScrollableY(TriState.UNDEFINED)
@@ -380,7 +434,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
             }
         }
 
-        information.withContents(description.value)
+        descriptionWidget?.withContents(description)
     }
 
     override fun renderBackground(
@@ -409,16 +463,19 @@ class KnowledgeScreen() : BaseCursorScreen(ModLang.title.translatable) {
         if (style.clickEvent?.action == ClickEvent.Action.CHANGE_PAGE) {
             val item = style.clickEvent?.let { ResourceLocation.tryParse(it.value) } ?: return false
             val stack = BuiltInRegistries.ITEM.get(item).defaultInstance
-            currentTitle.value = stack.hoverName
+            currentTitle = stack.hoverName
             selected.value = stack
             for ((_, entries) in chapters) {
                 val newDesc = entries[item] ?: continue
-                description.value = newDesc
+                description = newDesc
             }
-            init()
             return true
         }
         return false
+    }
+
+    override fun tick() {
+        age++
     }
 
     override fun isPauseScreen(): Boolean = false

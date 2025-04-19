@@ -21,7 +21,7 @@ import com.teamresourceful.resourcefulconfig.api.types.entries.Observable;
     CommonConfig.Tempad.class,
     CommonConfig.TimeTwister.class,
     CommonConfig.Chronometer.class,
-    CommonConfig.Capacitor.class,
+    CommonConfig.Cell.class,
     CommonConfig.Metronome.class,
 })
 public final class CommonConfig {
@@ -76,6 +76,10 @@ public final class CommonConfig {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Tempad can store (without the time twister being installed).")
         public static Observable<Integer> capacityTempad = Observable.of(6000);
+
+        @ConfigEntry(id = "max_offset")
+        @Comment("The maximum range that you can set the portal position to be")
+        public static Observable<Integer> maxOffsetTempad = Observable.of(5);
     }
 
     @Category("time_twister")
@@ -135,7 +139,7 @@ public final class CommonConfig {
 
         @ConfigEntry(id = "should_scale_generation")
         @Comment("Whether or not the number of chronons generated per cycle is scaled to the number of metronomes placed")
-        public static boolean scaleGeneration = true;
+        public static Observable<Boolean> scaleGeneration = Observable.of(true);
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The number of chronons thats transferred to each internal slot or to a neighboring block per tick.")
@@ -146,17 +150,23 @@ public final class CommonConfig {
         public static int jumpStartAmount = 2000;
     }
 
-    @Category("capacitor")
-    public static final class Capacitor {
+    @Category("chronon_cell")
+    public static final class Cell {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Capacitor can store.")
         public static Observable<Integer> capacityCapacitor = Observable.of(2000);
     }
 
-    @Category("battery")
+    @Category("chronon_battery")
     public static final class Battery {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Battery can store.")
         public static Observable<Integer> capacityBattery = Observable.of(4000);
+    }
+
+    public static final class Chronomark {
+        @ConfigEntry(id = "max_offset")
+        @Comment("The maximum range that you can set the portal position to be")
+        public static Observable<Integer> maxOffsetChronomark = Observable.of(5);
     }
 }
