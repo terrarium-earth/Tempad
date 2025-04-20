@@ -1,7 +1,9 @@
 package earth.terrarium.tempad.data.client
 
 import com.teamresourceful.resourcefullibkt.common.id
+import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
@@ -19,7 +21,6 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
     companion object {
         private val entries = mutableMapOf<String, String>()
 
-        val title = bookLang("title", "Knowledge Projector")
         val credits = bookLang("credits", "By CodexAdrian & Robonebi")
         val travelAdvisory = bookLang(
             "travel_advisory",
@@ -71,7 +72,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 ModItems.chrononGenerator,
                 ModItems.chronometer,
                 ModItems.metronome,
-                CommonConfigCache.ChrononCell.capacity
+                CommonConfigCache.ChrononCell.capacity.format()
             )
         //endregion
 
@@ -291,14 +292,13 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val markerUsage
             get() = bookLang(
                 "marker_usage",
-                "To write data to a %s, place the %s and right-click it with a %s. The card will then be written and can be used with the %s. " +
-                        "The %s displays %ss and %ss owned by the user automatically, but %ss linked to devices can be shared with others.",
-                ModItems.locationCard, ModItems.timedoorMarker, ModItems.locationCard, ModItems.timedoorProjector,
-                ModItems.tempad, ModItems.timedoorMarker, ModItems.chronomark, ModItems.locationCard
+                "To write data to a %s, place the Timedoor Marker and right-click it with a %s. The card will then be written and can be used with the %s. " +
+                        "The %s displays Timedoor Markers and %ss owned by the user automatically, but %ss linked to devices can be shared with others.",
+                ModItems.locationCard, ModItems.locationCard, ModItems.timedoorProjector,
+                ModItems.tempad, ModItems.chronomark, ModItems.locationCard
             )
 
-        val markerUsage2
-            get() = bookLang(
+        val markerUsage2 = bookLang(
                 "marker_usage_2",
                 "Right-clicking the device with an empty hand brings up an interface where device name, Timedoor color, and security options can be configured."
             )
@@ -345,16 +345,15 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
 
         val projectorUsage get() = bookLang(
             "projector_usage",
-            "Timedoor Projectors allow for the creation of Timedoors to spatial coordinates read from %ss. These can be loaded into the device by right-clicking the card onto the %s while it is either in the inventory or placed in the world, " +
+            "Timedoor Projectors allow for the creation of Timedoors to spatial coordinates read from %ss. These can be loaded into the device by right-clicking the card onto the Timedoor Projector while it is either in the inventory or placed in the world, " +
                     "or by right-clicking a card in the inventory while holding the projector with the cursor. Cards can be retrieved from the device by either right-clicking it on an empty inventory space, or by right-clicking the device where it is placed in the world.",
-            ModItems.locationCard, ModItems.timedoorProjector
+            ModItems.locationCard
         )
 
-        val projectorUsage2 get() = bookLang(
+        val projectorUsage2 = bookLang(
             "projector_usage_2",
             "The device can be activated while held by using it (right-click). Holding crouch and using the device will place it on the block being looked at. " +
-                    "Placing the %s allows it to be triggered by a Redstone signal instead, such as from an adjacent button.",
-            ModItems.timedoorProjector
+                    "Placing the Timedoor Projector allows it to be triggered by a Redstone signal instead, such as from an adjacent button.",
         )
 
         val projectorTimedoors = bookLang(
@@ -362,10 +361,9 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             "Timedoors are doorways between two points in space and/or time. They appear as glowing panels of glass, and can be passed through in either direction like any other doorway."
         )
 
-        val projectorTimedoors2 get() = bookLang(
+        val projectorTimedoors2 = bookLang(
             "projector_timedoors_2",
-            "Timedoors consume Chronons from the %s upon generation and appear for a set amount of time before closing automatically.",
-            ModItems.timedoorProjector
+            "Timedoors consume Chronons from the Timedoor Projector upon generation and appear for a set amount of time before closing automatically.",
         )
 
         //endregion
@@ -387,23 +385,25 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
          * The device can be used in the hand to toggle between its modes of operation. The screen on the device will glow green if teleportation is enabled, and will glow red if disabled. This allows the carrier to decide when they are open to Timedoors being opened to their location.
          */
         val locationBroadcastersOverview get() = bookLang("location_broadcasters_overview",
-            "The %s allow lost agents to be found and rescued by agents with specially upgraded %s.",
-            ModItems.locationBroadcaster, ModItems.tempad
+            "The Location Broadcaster allow lost agents to be found and rescued by agents with specially upgraded %s.",
+            ModItems.tempad
         )
 
         val locationBroadcastersCrafting get() = bookLang("location_broadcasters_crafting",
-            "%s are crafted with a block of Glass, an Emerald, a measure of Redstone Dust, a Compass, and an Iron Ingot.",
-            ModItems.locationBroadcaster
+            "Location Broadcasters are crafted with a block of Glass, an Emerald, a measure of Redstone Dust, a Compass, and an Iron Ingot.",
+
         )
 
         val locationBroadcastersUsage get() = bookLang("location_broadcasters_usage",
-            "If a %s is carried in the inventory or curio slot and is turned on, the carrier will appear in the list of possible teleports for %s with the Teleport to Players upgrade.",
-            ModItems.locationBroadcaster, ModItems.tempad
+            "If a Location Broadcaster is carried in the inventory or curio slot and is turned on, the carrier will appear" +
+                    "in the list of possible teleports for %s with the Teleport to Players upgrade.",
+            ModItems.tempad
         )
 
-        val locationBroadcastersUsage2 get() = bookLang("location_broadcasters_toggle",
-            "The device can be used in the hand to toggle between its modes of operation. The screen on the device will glow green if teleportation is enabled, and will glow red if disabled. This allows the carrier to decide when they are open to Timedoors being opened to their location.",
-            ModItems.locationBroadcaster
+        val locationBroadcastersUsage2 = bookLang("location_broadcasters_toggle",
+            "The device can be used in the hand to toggle between its modes of operation. The screen on the device will " +
+                    "glow green if teleportation is enabled, and will glow red if disabled. This allows the carrier to decide " +
+                    "when they are open to Timedoors being opened to their location.",
         )
         //endregion
 
@@ -522,9 +522,9 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val chronometerUsage
             get() = bookLang(
                 "chronometer_usage",
-                "Kept in the main inventory or a curio slot, a %s or %s will invert the temporal decay of local background radiation to synthesize Chronons, " +
+                "Kept in the main inventory or a curio slot, a Chronometer or %s will invert the temporal decay of local background radiation to synthesize Chronons, " +
                         "which are then distributed to all carried devices or storage cells automatically, so long as they are all present in the main inventory or curio slots.",
-                ModItems.chrononGenerator, ModItems.chronometer
+                ModItems.chrononGenerator
             )
 
         val chronometerInternalStorage
@@ -575,13 +575,12 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "chronomark_usage",
                 "To write data to a %s, place the Chronomark and right-click it with a %s. The card will then be written and can be used with %s. " +
-                        "The %s displays %ss and %ss owned by the user automatically, but written %ss can be shared with others.",
+                        "The %s displays Chronomarks and %ss owned by the user automatically, but written %ss can be shared with others.",
                 ModItems.locationCard, ModItems.locationCard, ModItems.timedoorProjector,
-                ModItems.tempad, ModItems.timedoorMarker, ModItems.chronomark, ModItems.locationCard
+                ModItems.tempad, ModItems.timedoorMarker, ModItems.locationCard
             )
 
-        val chronomarkUsage2
-            get() = bookLang(
+        val chronomarkUsage2 = bookLang(
                 "chronomark_usage_2",
                 "Filters can be set on the Chronomark to only allow certain users to freely access the device based on available and compatible team or guild frameworks. " +
                         "Right-clicking the device with an empty hand brings up an interface where device name, Timedoor color, security options, and offsets can be configured."
@@ -634,36 +633,33 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val tempadOverview
             get() = bookLang(
                 "tempad_overview",
-                "The standard issue %s is the single most powerful piece of technology covered in this database. " +
-                        "A %s can create Timedoors to any coordinates saved in the device, as well as access a docked %s to allow the user to view and move along their personal timeline.",
-                ModItems.tempad, ModItems.tempad, ModItems.timeTwister
+                "The standard issue Tempad is the single most powerful piece of technology covered in this database. " +
+                        "A Tempad can create Timedoors to any coordinates saved in the device, as well as access a docked %s to allow the user to view and move along their personal timeline.",
+                ModItems.timeTwister
             )
 
         val tempadCrafting
             get() = bookLang(
                 "tempad_crafting",
-                "The %s is crafted with blocks of Tinted Glass, a piece of Nether Quartz, an Ender Pearl, a Redstone Lamp, ingots of %s, and a %s.",
-                ModItems.tempad, ModItems.timeSteel, ModItems.chrononBattery
+                "The Tempad is crafted with blocks of Tinted Glass, a piece of Nether Quartz, an Ender Pearl, a Redstone Lamp, ingots of %s, and a %s.",
+                ModItems.timeSteel, ModItems.chrononBattery
             )
 
-        val tempadUsage
-            get() = bookLang(
+        val tempadUsage = bookLang(
                 "tempad_usage",
-                "Holding the %s and right-clicking will bring up the Tempad’s interface as well as the user’s inventory. " +
+                "Holding the Tempad and right-clicking will bring up the Tempad’s interface as well as the user’s inventory. " +
                         "Tempad functionality is organized into apps and presented to the user through the app tray on the left of the interface. " +
                         "Clicking these app buttons will open the appropriate app within the device and give access to all of its powerful functions.",
-                ModItems.tempad
             )
 
         val tempadUsage2
             get() = bookLang(
                 "tempad_usage_2",
-                "Location data can be added to the %s for teleporting via the New Location app. To use %ss with the %s, please see the %s.",
-                ModItems.tempad, ModItems.locationCard, ModItems.tempad, ModItems.cardWallet
+                "Location data can be added to the Tempad for teleporting via the New Location app. To use %ss with the Tempad, please see the %s.",
+                ModItems.locationCard, ModItems.cardWallet
             )
 
-        val tempadTimedoors
-            get() = bookLang(
+        val tempadTimedoors = bookLang(
                 "tempad_timedoors",
                 "Timedoors are doorways between two points in space and/or time. They appear as glowing panels of glass, and can be passed through in either direction like any other doorway."
             )
@@ -671,9 +667,9 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val tempadTimedoors2
             get() = bookLang(
                 "tempad_timedoors_2",
-                "Timedoors consume Chronons from the %s upon generation and appear for a set amount of time before closing automatically. " +
+                "Timedoors consume Chronons from the Tempad upon generation and appear for a set amount of time before closing automatically. " +
                         "%ss given a constant redstone signal will open a door indefinitely for a continuous Chronon cost.",
-                ModItems.tempad, ModItems.workstation
+                ModItems.workstation
             )
 
         val tempadApps
@@ -707,41 +703,35 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 ModItems.locationCard
             )
 
-        val tempadAppNewLocation
-            get() = bookLang(
+        val tempadAppNewLocation = bookLang(
                 "tempad_app_new_location",
-                "The New Location app allows the user to save their current coordinates in the %s to allow for travel via the Teleport app. " +
+                "The New Location app allows the user to save their current coordinates in the Tempad to allow for travel via the Teleport app. " +
                         "A map is present on the screen to help users find their bearings when saving locations. " +
                         "The location can be named before saving, and the user may also specify a specific color for Timedoors opened to the location.",
-                ModItems.tempad
             )
 
         val tempadAppTravelTimeline
             get() = bookLang(
                 "tempad_app_travel_timeline",
-                "With a %s docked inside the %s, access is gained to the Travel Timeline app. This expands the functionality of the docked %s " +
+                "With a %s docked inside the Tempad, access is gained to the Travel Timeline app. This expands the functionality of the docked %s " +
                         "and gives more granular control, allowing the user to move back along to more points along their timeline instead of being limited to major events.",
-                ModItems.timeTwister, ModItems.tempad, ModItems.timeTwister
+                ModItems.timeTwister, ModItems.timeTwister
             )
 
-        val tempadAppSettings
-            get() = bookLang(
+        val tempadAppSettings = bookLang(
                 "tempad_app_settings",
-                "The Settings app allows users to adjust the behaviour of certain %s functions. " +
+                "The Settings app allows users to adjust the behaviour of certain Tempad functions. " +
                         "The function of the Tempad’s macro button can be changed, as well as which app opens by default when the Tempad is opened.",
-                ModItems.tempad
             )
 
         val tempadAppPortalSetup
             get() = bookLang(
                 "tempad_app_portal_setup",
-                "When docked on a %s, the terminal provides access to the Portal Setup app, allowing for selection of a destination from the user’s docked %s, " +
+                "When docked on a %s, the terminal provides access to the Portal Setup app, allowing for selection of a destination from the user’s docked Tempad, " +
                         "and for precision tweaks to the opened Timedoor’s position and rotation (plus or minus %s blocks from the default position). " +
-                        "This app is not available without docking the %s. Please see the %s entry for more information.",
+                        "This app is not available without docking the Tempad. Please see the %s entry for more information.",
                 ModItems.workstation,
-                ModItems.tempad,
                 CommonConfigCache.Tempad.maxOffset.format(),
-                ModItems.tempad,
                 ModItems.workstation
             )
 
@@ -778,8 +768,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val workstationOverview
             get() = bookLang(
                 "workstation_overview",
-                "The %s is a stationary computer terminal that allows the user to accomplish various tasks when a %s is placed on the docking pad.",
-                ModItems.workstation, ModItems.tempad
+                "The Workstation is a stationary computer terminal that allows the user to accomplish various tasks when a %s is placed on the docking pad.",
+                ModItems.tempad
             )
 
         val workstationCrafting
@@ -801,8 +791,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "workstation_usage_2",
                 "When a %s is docked on the docking pad, the terminal to the left is also unlocked, allowing the user to set up a stationary teleportation device. " +
-                        "The usage of the %s in this way is similar to the %s, in that it accepts a redstone signal from any side and creates a Timedoor for the user.",
-                ModItems.tempad, ModItems.workstation, ModItems.timedoorProjector
+                        "The usage of the Workstation in this way is similar to the %s, in that it accepts a redstone signal from any side and creates a Timedoor for the user.",
+                ModItems.tempad, ModItems.timedoorProjector
             )
 
         val workstationUsage3
@@ -849,11 +839,9 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
          * This also provides the benefit of carrying the Time Twister without it taking an extra inventory slot.
          */
 
-        val timeTwisterOverview
-            get() = bookLang(
+        val timeTwisterOverview = bookLang(
                 "time_twister_overview",
-                "The %s is a hand-held device that allows users to move back along significant events on their personal timeline.",
-                ModItems.timeTwister
+                "The Time Twister is a hand-held device that allows users to move back along significant events on their personal timeline.",
             )
 
         val timeTwisterCrafting
@@ -863,37 +851,29 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 ModItems.timeSteel, ModItems.chrononBattery
             )
 
-        val timeTwisterUsage
-            get() = bookLang(
+        val timeTwisterUsage = bookLang(
                 "time_twister_usage",
-                "Using the %s in the hand will present the user with a radial display showing points in the user’s past where they changed dimensions or died. " +
-                        "Clicking one of the options will teleport the user back to the indicated location. Any points on the timeline forward from the selected point " +
-                        "(options counter-clockwise from the selected point) will be destroyed to prevent paradoxes.",
-                ModItems.timeTwister
+                "Using the Time Twister in the hand will present the user with a radial display showing points in the user’s past where they changed dimensions or died. " +
+                    "Clicking one of the options will teleport the user back to the indicated location. Any points on the timeline forward from the selected point " +
+                    "(options counter-clockwise from the selected point) will be destroyed to prevent paradoxes.",
             )
 
-        val timeTwisterUsage2
-            get() = bookLang(
+        val timeTwisterUsage2 = bookLang(
                 "time_twister_usage_2",
-                "Note that if the selected point involves moving the user to a different dimension, new options will appear in the %s for leaving your current dimension " +
-                        "and appearing in the new one. This means that in some instances the %s can appear to not be deleting future entries properly, " +
+                "Note that if the selected point involves moving the user to a different dimension, new options will appear in the Time Twister for leaving your current dimension " +
+                        "and appearing in the new one. This means that in some instances the Time Twister can appear to not be deleting future entries properly, " +
                         "when in fact this is a failure of the user to pay attention.",
-                ModItems.timeTwister, ModItems.timeTwister
             )
 
         val timeTwisterUsage3
             get() = bookLang(
                 "time_twister_usage_3",
-                "If more granularity in timeline events is required, the %s can be docked with a %s to provide access to the Travel Timeline app. " +
-                        "The %s is docked by right-clicking it onto a %s in the inventory, or by right-clicking a %s onto the %s. " +
-                        "This also provides the benefit of carrying the %s without it taking an extra inventory slot.",
-                ModItems.timeTwister,
-                ModItems.tempad,
-                ModItems.timeTwister,
+                "If more granularity in timeline events is required, the Time Twister can be docked with a %s to provide access to the Travel Timeline app. " +
+                        "The Time Twister is docked by right-clicking it onto a %s in the inventory, or by right-clicking a %s onto the Time Twister. " +
+                        "This also provides the benefit of carrying the Time Twister without it taking an extra inventory slot.",
                 ModItems.tempad,
                 ModItems.tempad,
-                ModItems.timeTwister,
-                ModItems.timeTwister
+                ModItems.tempad,
             )
         //endregion
 
@@ -916,8 +896,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val screeningDeviceOverview
             get() = bookLang(
                 "screening_device_overview",
-                "The %s is an advanced version of the %s that features more advanced filtering capability.",
-                ModItems.screeningDevice, ModItems.locationBroadcaster
+                "The Screening Device is an advanced version of the %s that features more advanced filtering capability.",
+                ModItems.locationBroadcaster
             )
 
         val screeningDeviceCrafting
@@ -930,10 +910,10 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val screeningDeviceUsage
             get() = bookLang(
                 "screening_device_usage",
-                "On a surface level, the %s provides the same functionality as the %s, allowing users with upgraded %s to open Timedoors directly to their location. " +
-                        "Additionally, the %s can also filter who is given this permission based on available and compatible team or guild frameworks. " +
+                "On a surface level, the Screening Device provides the same functionality as the %s, allowing users with upgraded %s to open Timedoors directly to their location. " +
+                        "Additionally, the Screening Device can also filter who is given this permission based on available and compatible team or guild frameworks. " +
                         "Holding the device and right-click using it will cycle the device through its available modes.",
-                ModItems.screeningDevice, ModItems.locationBroadcaster, ModItems.tempad, ModItems.screeningDevice
+                ModItems.locationBroadcaster, ModItems.tempad, ModItems.screeningDevice
             )
 
         //endregion
@@ -960,12 +940,10 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
          * {If config disallows multi-charge}
          * If the user places additional Metronomes, after booting they will link with existing Metronomes owned by the user in a multiversal network, combining their maximum storage capacities.
          */
-        val metronomesOverview
-            get() = bookLang(
+        val metronomesOverview = bookLang(
                 "metronomes_overview",
-                "The %s are a Chronon generation device that can be placed in the world to provide a stationary solution to " +
-                        "charging devices and storing Chronons.",
-                ModItems.metronome
+                "Metronomes are a Chronon generation device that can be placed in the world to provide a stationary solution to " +
+                        "charging devices and storing Chronons."
             )
 
         val metronomesCrafting
@@ -978,46 +956,44 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val metronomesUsage
             get() = bookLang(
                 "metronomes_usage",
-                "Generally, %s cannot be charged within the inventory, and instead need to be placed into the world. There " +
+                "Generally, Metronomes cannot be charged within the inventory, and instead need to be placed into the world. There " +
                         "is an initial charge of Chronons needed to boot the device and gain access to its functionality" +
                         " after it is placed. This boot charge can be provided from a %s or %s in hand by crouch-right-clicking" +
-                        " the %s.",
-                ModItems.metronome, ModItems.chrononCell, ModItems.chrononBattery, ModItems.metronome
+                        " the Metronome.",
+                ModItems.chrononCell, ModItems.chrononBattery
             )
 
         val metronomesUsage2
             get() = bookLang(
                 "metronomes_booted",
-                "Once booted, the %s will begin to generate Chronons into its own internal battery, which holds %s Chronons. " +
+                "Once booted, the Metronome will begin to generate Chronons into its own internal battery, which holds %s Chronons. " +
                         "Right-clicking the device will bring up the interface, where devices can be placed to store Chronons" +
-                        " via the left-hand slots or take Chronons via the right-hand slots. Additionally, the %s is coded " +
+                        " via the left-hand slots or take Chronons via the right-hand slots. Additionally, the Metronome is coded " +
                         "to the user’s temporal aura, and may be locked to prevent unauthorized access via the lock button" +
                         " in the upper right. It is locked by default.",
-                ModItems.metronome, CommonConfigCache.Metronome.capacity.format(), ModItems.metronome
+                CommonConfigCache.Metronome.capacity.format()
             )
 
         val metronomesMultiCharge
             get() = bookLang(
                 "metronomes_multi_charge",
-                "If the user places additional %s, after booting they will link with existing %s owned by the user in a " +
-                        "multiversal network, combining their maximum storage capacities. Linked %s will also combine " +
+                "If the user places additional Metronomes, after booting they will link with existing Metronomes owned by the user in a " +
+                        "multiversal network, combining their maximum storage capacities. Linked Metronomes will also combine " +
                         "charging power to generate more Chronons with each pulse.",
-                ModItems.metronome, ModItems.metronome, ModItems.metronome
             )
 
         val metronomesNoMultiCharge
             get() = bookLang(
                 "metronomes_no_multi_charge",
-                "If the user places additional %s, after booting they will link with existing %s owned by the user in a " +
+                "If the user places additional Metronome, after booting they will link with existing Metronome owned by the user in a " +
                         "multiversal network, combining their maximum storage capacities.",
-                ModItems.metronome, ModItems.metronome
             )
 
         //endregion
 
         fun bookLang(key: String, value: String, vararg args: Any): Component {
-            val finalKey = ModItems.handbook.descriptionId + "." + key
-            val shouldBeNull = entries.put(finalKey, value)
+            val finalKey = ModItems.knowledgeProjector.descriptionId + "." + key
+            entries.put(finalKey, value)
             val args = args.map {
                 return@map if (it is Item) {
                     Component.translatable(it.descriptionId)
@@ -1034,14 +1010,17 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 }
             }.toTypedArray()
 
-            if (shouldBeNull != null) {
-                throw IllegalStateException("Duplicate translation key $finalKey")
-            }
             return Component.translatable(finalKey, *args)
         }
     }
 
     override fun addTranslations() {
+        for ((text, value) in KnowledgeScreen().chapters) {
+            for ((name, descGetter) in value) {
+                descGetter.invoke(ClearableGridLayout())
+            }
+        }
+
         for ((key, value) in entries) {
             add(key, value)
         }
@@ -1063,6 +1042,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         add("datapack.tempad.required_location_upgrade", "Require Upgrade for Location Saving")
         add(ModItems.newLocationKey.toLanguageKey("upgrade"), "Create Saved Locations")
         add(ModItems.playerKey.toLanguageKey("upgrade"), "Teleport to Players")
+        add(ModItems.guideKey.toLanguageKey("upgrade"), "View Knowledge Respository")
 
         add("error.tempad.owner_mismatch", "This isn't yours. Return to owner or Reset item")
         add("error.tempad.block_locked", "%s is Locked")
@@ -1096,6 +1076,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         ModBlocks.workstation.apply {
             addSub("installing", "Installing: %s")
         }
+
+        add(ModItems.guideKey.toLanguageKey("app"), "Knowledge Repository")
 
         addRoot("app.tempad.teleport", "Teleport") {
             it.addSub("pin", "Pin")
@@ -1145,8 +1127,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         addRoot("key.tempad", "") {
             it.addSub("shortcut", "Open Tempad Screen")
             it.addSub("macro", "Use Tempad Macro")
-            it.addSub("macro", "Open Tempad New Location App")
-            it.addSub("macro", "Open Tempad Travel Timeline App")
+            it.addSub("new_location", "Open Tempad New Location App")
+            it.addSub("travel_timeline", "Open Tempad Travel Timeline App")
         }
     }
 

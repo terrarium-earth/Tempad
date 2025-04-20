@@ -38,12 +38,12 @@ object ModMenus {
         )
     }
 
-    class NewLocationMenu(id: Int, inv: Inventory, data: Optional<NewStaticNamedGlobalPos>): AbstractTempadMenu<NewStaticNamedGlobalPos>(id, inv, newLocation, data)
+    class NewLocationMenu(id: Int, inv: Inventory, data: Optional<NewLocationAppData>): AbstractTempadMenu<NewLocationAppData>(id, inv, newLocation, data)
 
     val newLocation: MenuType<NewLocationMenu> by registry.register("new_location") {
         MenuContentHelper.create(
             ::NewLocationMenu,
-            RecordCodecMenuContentSerializer(NewStaticNamedGlobalPos.codec)
+            RecordCodecMenuContentSerializer(NewLocationAppData.codec)
         )
     }
 
@@ -62,6 +62,15 @@ object ModMenus {
         MenuContentHelper.create(
             ::PortalSetupMenu,
             RecordCodecMenuContentSerializer(PortalSetupData.codec)
+        )
+    }
+
+    class KnowledgeMenu(id: Int, inv: Inventory, data: Optional<BasicAppContent>): AbstractTempadMenu<BasicAppContent>(id, inv, guide, data)
+
+    val guide: MenuType<KnowledgeMenu> by registry.register("guide") {
+        MenuContentHelper.create(
+            ::KnowledgeMenu,
+            RecordCodecMenuContentSerializer(BasicAppContent.codec)
         )
     }
 

@@ -31,18 +31,6 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         val NAME_FIELD = "new_location.name".toLanguageKey("app")
         val COLOR_FIELD = "new_location.color".toLanguageKey("app")
 
-        val COLORS = listOf(
-            Tempad.ORANGE,
-            ConstantColors.yellow,
-            ConstantColors.lime,
-            ConstantColors.cyan,
-            ConstantColors.purple,
-            ConstantColors.red,
-            ConstantColors.white,
-            ConstantColors.black,
-            Color.RAINBOW
-        )
-
         fun getEntries(pos: Vec3i): List<Component> {
             return listOf(
                 Component.literal("X: ${pos.x}"),
@@ -171,4 +159,5 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             }
         })
     }
+
 }

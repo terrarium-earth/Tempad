@@ -1,6 +1,5 @@
 package earth.terrarium.tempad.common.registries
 
-import com.mojang.datafixers.kinds.App
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.app.AppRegistry
@@ -15,6 +14,7 @@ object ModApps {
     val newLocation = "new_location".tempadId
     val timeline = "timeline".tempadId
     val settings = "settings".tempadId
+    val guide = ModItems.guideKey
 
     fun init() {
         AppRegistry[teleport] = { ctx, isStationary -> if(!isStationary) TeleportApp(ctx) else null}
@@ -29,5 +29,10 @@ object ModApps {
         }
         AppRegistry[timeline] = { ctx, isStationary -> if(!ctx.stack.twisterEquipped) null else TimelineApp(ctx, isStationary) }
         AppRegistry[settings] = ::SettingsApp
+        AppRegistry[guide] = { ctx, isStationary ->
+            if(ctx.stack.upgrades?.contains(ModItems.guideKey) == true) {
+                KnowledgeRepositoryApp(ctx, isStationary)
+            } else null
+        }
     }
 }

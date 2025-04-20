@@ -59,15 +59,16 @@ object CuriosRenderer: ICurioRenderer {
             }
             when (slotContext.identifier) {
                 "belt" -> {
-                    val offset = if(!slotContext.entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty) {
-                        0.2
-                    } else if(!slotContext.entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty) {
+                    if (slotContext.index != 0) return
+                    val offset = if(!slotContext.entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty) {
                         0.1
                     } else 0.0
-                    matrixStack.translate(-0.3, 1.4, -0.4 - offset)
+                    matrixStack.translate(-0.75 - offset, 2.0, 0.0)
                     matrixStack.mulPose(Axis.ZP.rotationDegrees(180f))
+                    matrixStack.mulPose(Axis.YP.rotationDegrees(90f))
                 }
                 "charm" -> {
+                    if (slotContext.index > 3) return
                     val zOffset = if(!slotContext.entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty) {
                         0.35
                     } else if(!slotContext.entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty) {
@@ -78,12 +79,10 @@ object CuriosRenderer: ICurioRenderer {
                     matrixStack.mulPose(Axis.ZP.rotationDegrees(180f))
                 }
                 "bracelet" -> {
+                    if (slotContext.index != 0) return
                     val render = Minecraft.getInstance().entityRenderDispatcher.getRenderer<LivingEntity?>(slotContext.entity)
-
                     if (render is LivingEntityRenderer<*, *>) {
                         val model = render.getModel()
-
-
                         if (model is HumanoidModel<*>) {
                             if(slotContext.entity.mainArm == HumanoidArm.RIGHT) {
                                 model.leftArm.translateAndRotate(matrixStack)

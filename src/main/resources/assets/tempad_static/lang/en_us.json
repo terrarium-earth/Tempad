@@ -46,6 +46,7 @@
 
   "screen.tempad.marker": "Marker",
   "screen.tempad.marker.access_field" : "Who can access?",
+  "screen.tempad.marker.public_access" : "Public access:",
   "screen.tempad.marker.yoffset": "Portal Y Offset:",
   "screen.tempad.marker.angle": "Angle:",
 

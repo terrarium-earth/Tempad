@@ -4,7 +4,6 @@ import earth.terrarium.olympus.client.components.base.BaseWidget
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.clientLevel
-import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Tooltip
@@ -12,8 +11,19 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.crafting.CraftingRecipe
 import kotlin.jvm.optionals.getOrNull
 
-class CraftingRecipeWidget(val screen: KnowledgeScreen, val recipe: CraftingRecipe) : BaseWidget() {
+class CraftingRecipeWidget(val recipe: CraftingRecipe) : BaseWidget() {
     val font = Minecraft.getInstance().font
+    var age = 0
+
+    companion object {
+        fun create(id: ResourceLocation): CraftingRecipeWidget? {
+            val recipe = clientLevel?.recipeManager?.byKey(id) ?: return null
+            (recipe.getOrNull()?.value as? CraftingRecipe)?.let { craftingRecipe ->
+                return CraftingRecipeWidget(craftingRecipe)
+            }
+            return null
+        }
+    }
 
     init {
         height = 58
@@ -34,7 +44,7 @@ class CraftingRecipeWidget(val screen: KnowledgeScreen, val recipe: CraftingReci
                 if (row * tableSize + col >= recipe.ingredients.size) break
                 val ingredient = recipe.ingredients[row * tableSize + col]
                 if (ingredient.items.size == 0) continue
-                val stack = ingredient.items[(screen.age / 30) % ingredient.items.size]
+                val stack = ingredient.items[(age / 30) % ingredient.items.size]
                 val itemX = x + 3 + col * 18
                 val itemY = y + 3 + row * 18
                 graphics.renderItem(stack, itemX, itemY)
@@ -55,12 +65,8 @@ class CraftingRecipeWidget(val screen: KnowledgeScreen, val recipe: CraftingReci
             tooltip = null
         }
     }
-}
 
-fun KnowledgeScreen.recipe(id: ResourceLocation): CraftingRecipeWidget? {
-    val recipe = clientLevel?.recipeManager?.byKey(id)
-    (recipe?.getOrNull()?.value as? CraftingRecipe)?.let { craftingRecipe ->
-        return CraftingRecipeWidget(this, craftingRecipe)
+    fun tick() {
+        age++
     }
-    return null
 }

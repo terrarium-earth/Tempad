@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "H": {
+      "item": "tempad:knowledge_projector"
+    },
+    "k": {
+      "item": "minecraft:dried_kelp"
+    },
+    "o": {
+      "item": "minecraft:book"
+    }
+  },
+  "pattern": [
+    "kkk",
+    "oHo",
+    "kkk"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:knowledge_repository_upgrade"
+  }
+}

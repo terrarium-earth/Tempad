@@ -18,6 +18,7 @@ import earth.terrarium.tempad.client.screen.MetronomeScreen
 import earth.terrarium.tempad.client.screen.TimedoorMarkerScreen
 import earth.terrarium.tempad.client.screen.WalletScreen
 import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen
+import earth.terrarium.tempad.client.screen.tempad.KnowledgeAppScreen
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
 import earth.terrarium.tempad.client.screen.tempad.PortalSetupScreen
 import earth.terrarium.tempad.client.screen.tempad.SettingsScreen
@@ -200,6 +201,7 @@ object TempadClient {
         event.register(ModMenus.settings, ::SettingsScreen)
         event.register(ModMenus.timeline, ::TimelineScreen)
         event.register(ModMenus.portalSetup, ::PortalSetupScreen)
+        event.register(ModMenus.guide, ::KnowledgeAppScreen)
         event.register(ModMenus.metronome, ::MetronomeScreen)
         event.register(ModMenus.wallet, ::WalletScreen)
     }
@@ -251,7 +253,7 @@ object TempadClient {
     }
 
     fun openTimedoorMarker(packet: OpenTimedoorMarker) {
-        Minecraft.getInstance().setScreen(TimedoorMarkerScreen(packet.blockPos, packet.name, packet.color, packet.accessOptions, packet.access, packet.locked))
+        Minecraft.getInstance().setScreen(TimedoorMarkerScreen(packet.blockPos, packet.name, packet.color, packet.canAccess, packet.locked))
     }
 
     fun openChronomark(packet: OpenChronomark) {
@@ -269,4 +271,4 @@ object TempadClient {
     }
 }
 
-val clientLevel: Level? get() = Minecraft.getInstance().level
+val clientLevel: Level? get() = Minecraft.getInstance()?.level
