@@ -6,7 +6,7 @@ object CommonConfigCache {
     val CACHE = ConfigCache("tempad", ModNetworking.channel)
 
     fun init() {
-        Capacitor
+        ChrononCell
         Battery
         ChrononGenerator
         Chronometer
@@ -17,8 +17,8 @@ object CommonConfigCache {
         ModNetworking.channel.register(CACHE.syncType)
     }
 
-    object Capacitor {
-        val capacity by CACHE.ofInt(CommonConfig.Capacitor::capacityCapacitor)
+    object ChrononCell {
+        val capacity by CACHE.ofInt(CommonConfig.Cell::capacityCapacitor)
     }
 
     object Battery {
@@ -33,8 +33,13 @@ object CommonConfigCache {
         val capacity by CACHE.ofInt(CommonConfig.Chronometer::capacityChronometer)
     }
 
+    object Chronomark {
+        val maxOffset by CACHE.ofInt(CommonConfig.Chronomark::maxOffsetChronomark)
+    }
+
     object Metronome {
         val capacity by CACHE.ofInt(CommonConfig.Metronome::capacityMetronome)
+        val scaleGeneration by CACHE.ofBoolean(CommonConfig.Metronome::scaleGeneration)
     }
 
     object RudimentaryTempad {
@@ -43,6 +48,8 @@ object CommonConfigCache {
 
     object Tempad {
         val capacity by CACHE.ofInt(CommonConfig.Tempad::capacityTempad)
+
+        val maxOffset by CACHE.ofInt(CommonConfig.Tempad::maxOffsetTempad)
     }
 
     object TimeTwister {

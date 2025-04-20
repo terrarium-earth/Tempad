@@ -3,7 +3,7 @@ package earth.terrarium.tempad.data
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.data.client.ModBlockStateData
 import earth.terrarium.tempad.data.client.ModItemModelData
-import earth.terrarium.tempad.data.client.ModLangData
+import earth.terrarium.tempad.data.client.ModLang
 import earth.terrarium.tempad.data.server.ModBlockTags
 import earth.terrarium.tempad.data.server.ModEntityTags
 import earth.terrarium.tempad.data.server.ModItemTags
@@ -29,7 +29,7 @@ class TempadData(bus: IEventBus) {
 
         generator.addProvider(event.includeClient(), ModBlockStateData(output, existingFileHelper))
         generator.addProvider(event.includeClient(), ModItemModelData(output, existingFileHelper))
-        generator.addProvider(event.includeClient(), ModLangData(output))
+        generator.addProvider(event.includeClient(), ModLang(output))
         generator.addProvider(event.includeServer(), ModRecipeData(output, lookupProvider))
         generator.addProvider(event.includeServer(), ModLootTables(output, lookupProvider))
         generator.addProvider(event.includeServer(), ModEntityTags(output, lookupProvider, existingFileHelper))

@@ -1,7 +1,7 @@
-// 1.21.1	2025-04-12T19:26:39.554272	Tags for minecraft:item mod id tempad
+// 1.21.1	2025-04-13T17:30:55.451359	Tags for minecraft:item mod id tempad
 6a87dcb52663844fe6885d3d368d49034f0a0c1b data/curios/tags/item/belt.json
 c2cf295058915d301cb91eb8bbd551bd7e44aca5 data/curios/tags/item/bracelet.json
 d2a02cd3be857dffb71f6f37b79f8e18d858b8f6 data/curios/tags/item/charm.json
-422d5160095059288f814cce5396159e12439dc8 data/tempad/tags/item/auto_charge_blacklist.json
+5ad7c8267c490dcaaeb283686ed3bc6e343a6692 data/tempad/tags/item/auto_charge_blacklist.json
 e7da78d82ae4ae960b45b496b08066517fe9640d data/tempad/tags/item/batteries.json
 681ad6479e32a570f7e0c08bf0c7b800a9a21d62 data/tempad/tags/item/chronon_generators.json

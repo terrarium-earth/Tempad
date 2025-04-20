@@ -6,11 +6,13 @@ import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRendererContext
 import earth.terrarium.olympus.client.components.buttons.Button
+import earth.terrarium.olympus.client.components.compound.LayoutWidget
 import earth.terrarium.olympus.client.components.dropdown.DropdownBuilder
 import earth.terrarium.olympus.client.components.renderers.ColorableWidget
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.components.textbox.TextBox
 import earth.terrarium.olympus.client.constants.MinecraftColors
+import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.olympus.client.utils.State
 import earth.terrarium.olympus.client.utils.StateUtils
 import earth.terrarium.tempad.Tempad
@@ -43,6 +45,36 @@ object TempadUI {
     val lockIcon = "icons/mini/lock".tempadId
     val unlockIcon = "icons/mini/unlock".tempadId
     val xIcon = "icons/mini/x".tempadId
+
+    val scrollbarYRenderer: WidgetRenderer<LayoutWidget<ClearableGridLayout>> =
+        WidgetRenderer { graphics, context, partialTick ->
+            val widget = context.getWidget();
+            val scrollHeight =
+                ((context.height.toFloat() * (context.height.toFloat() / widget.contentHeight)).toInt() + (widget.viewHeight - context.height)).coerceIn(0, context.height)
+            val scrollY =
+                ((widget.yScroll.toFloat() + widget.overscrollY) / widget.contentHeight.toFloat() * context.height.toFloat()).toInt()
+            graphics.fill(
+                context.x - 2,
+                context.y - 2,
+                context.x + context.width + 2,
+                context.y + widget.height - 2,
+                0x4aff6f00.toInt()
+            )
+            graphics.fill(
+                context.x + 2,
+                context.y,
+                context.x + context.width - 2,
+                context.y + widget.height - 6,
+                Tempad.ORANGE.value
+            )
+            graphics.blitSprite(
+                "button/normal".tempadId,
+                context.x,
+                context.y + scrollY,
+                context.width,
+                scrollHeight
+            )
+        }
 
 
     fun <T: AbstractWidget, W> W.colored(): WidgetRenderer<T> where W: WidgetRenderer<T>, W: ColorableWidget  {

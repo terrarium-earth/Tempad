@@ -33,12 +33,16 @@ object ModItems {
     val locationCard: Item by registry.register("location_card") { LocationCardItem() }
     val cardWallet: Item by registry.register("card_wallet") { WalletItem() }
     val timeSteel: Item by registry.register("time_steel") { Item(Item.Properties()) }
+    val knowledgeProjector: Item by registry.register("knowledge_projector") { HandbookItem() }
 
     val newLocationUpgrade: Item by registry.register("new_location_upgrade") { Item(Item.Properties().requiredFeatures(Tempad.flag)) }
     val newLocationKey = "new_location".tempadId
 
     val playerTeleportUpgrade: Item by registry.register("player_teleport_upgrade") { Item(Item.Properties()) }
     val playerKey = "player_teleport".tempadId
+
+    val guideUpgrade: Item by registry.register("knowledge_repository_upgrade") { Item(Item.Properties()) }
+    val guideKey = "knowledge_repository".tempadId
 
     // Rudi Tier
     val timedoorProjector: Item by registry.register("timedoor_projector") { RudimentaryTempadItem() }

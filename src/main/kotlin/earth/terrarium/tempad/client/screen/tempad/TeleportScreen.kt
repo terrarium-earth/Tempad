@@ -54,36 +54,6 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 Sorting.Dimension
             }
         )
-
-        val scrollbarYRenderer: WidgetRenderer<LayoutWidget<ClearableGridLayout>> =
-            WidgetRenderer { graphics, context, partialTick ->
-                val widget = context.getWidget();
-                val scrollHeight =
-                    (context.height.toFloat() * (context.height.toFloat() / widget.contentHeight)).toInt() + (widget.viewHeight - context.height)
-                val scrollY =
-                    ((widget.yScroll.toFloat() + widget.overscrollY) / widget.contentHeight.toFloat() * context.height.toFloat()).toInt()
-                graphics.fill(
-                    context.x - 2,
-                    context.y - 2,
-                    context.x + context.width + 2,
-                    context.y + context.height + 4,
-                    0x4aff6f00.toInt()
-                )
-                graphics.fill(
-                    context.x + 2,
-                    context.y,
-                    context.x + context.width - 2,
-                    context.y + context.height,
-                    Tempad.ORANGE.value
-                )
-                graphics.blitSprite(
-                    "button/normal".tempadId,
-                    context.x,
-                    context.y + scrollY,
-                    context.width,
-                    scrollHeight
-                )
-            }
     }
 
     var selected: Triple<ResourceLocation, UUID, NamedGlobalVec3>? = null
@@ -258,8 +228,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             withSize(112, 76)
             withContentFillWidth()
             withScrollableY(TriState.UNDEFINED)
-            withScrollbarYRenderer(scrollbarYRenderer)
-            withTexture("element/normal".tempadId)
+            withScrollbarYRenderer(TempadUI.scrollbarYRenderer)
+            withTexture(TempadUI.element.get(true, false))
             withOverscrollY(2)
             withContentMargin(1)
         }

@@ -52,6 +52,9 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
     val driedKelp = 'k'
     val clock = 'K'
     val netheriteScrap = 's'
+    val book = 'o'
+    val netherStar = '*'
+    val knowledgeProjector = 'H'
 
     val air = ' '
 
@@ -65,6 +68,8 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
     fun ShapedRecipeBuilder.card() = define(card, ModItems.locationCard)
 
     fun ShapedRecipeBuilder.locationBroadcaster() = define(locationBroadcaster, ModItems.locationBroadcaster)
+
+    fun ShapedRecipeBuilder.knowledgeProjector() = define(knowledgeProjector, ModItems.knowledgeProjector)
 
     //vanilla
     fun ShapedRecipeBuilder.copper() = define(copper, Tags.Items.INGOTS_COPPER)
@@ -108,6 +113,10 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
     fun ShapedRecipeBuilder.clock() = define(clock, Items.CLOCK)
 
     fun ShapedRecipeBuilder.netheriteScrap() = define(netheriteScrap, Items.NETHERITE_SCRAP)
+
+    fun ShapedRecipeBuilder.book() = define(book, Items.BOOK)
+
+    fun ShapedRecipeBuilder.netherStar() = define(netherStar, Items.NETHER_STAR)
 
     fun ShapedRecipeBuilder.pattern(vararg char: Char): ShapedRecipeBuilder {
         pattern(char.joinToString(""))
@@ -157,6 +166,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
 
         recipes.upgrade(ModItems.playerTeleportUpgrade, ModItems.playerKey)
         recipes.upgrade(ModItems.newLocationUpgrade, ModItems.newLocationKey)
+        recipes.upgrade(ModItems.guideUpgrade, ModItems.guideKey)
 
         recipes.shaped(ModItems.tempad) {
             timeSteel()
@@ -324,6 +334,36 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
             pattern(driedKelp, driedKelp, driedKelp)
             pattern(enderPearl, locationBroadcaster, enderPearl)
             pattern(driedKelp, driedKelp, driedKelp)
+        }
+
+        recipes.shaped(ModItems.newLocationUpgrade) {
+            driedKelp()
+            enderPearl()
+            netherStar()
+            unlockedBy(Items.DRIED_KELP)
+            pattern(driedKelp, driedKelp, driedKelp)
+            pattern(enderPearl, netherStar, enderPearl)
+            pattern(driedKelp, driedKelp, driedKelp)
+        }
+
+        recipes.shaped(ModItems.guideUpgrade) {
+            driedKelp()
+            book()
+            knowledgeProjector()
+            unlockedBy(Items.DRIED_KELP)
+            pattern(driedKelp, driedKelp, driedKelp)
+            pattern(book, knowledgeProjector, book)
+            pattern(driedKelp, driedKelp, driedKelp)
+        }
+
+        recipes.shaped(ModItems.knowledgeProjector) {
+            book()
+            glass()
+            copper()
+            unlockedBy(Items.COPPER_INGOT)
+            pattern(glass)
+            pattern(book)
+            pattern(copper)
         }
 
         recipes.clean(ModItems.locationCard)

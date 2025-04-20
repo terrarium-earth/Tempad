@@ -42,11 +42,11 @@
   "block.tempad.workstation_child": "Workstation Terminal",
 
   "category.tempad": "Tempad",
-  "key.tempad.favorite": "Open Favorited location",
   "key.tempad.shortcut": "Open Tempad screen",
 
   "screen.tempad.marker": "Marker",
   "screen.tempad.marker.access_field" : "Who can access?",
+  "screen.tempad.marker.public_access" : "Public access:",
   "screen.tempad.marker.yoffset": "Portal Y Offset:",
   "screen.tempad.marker.angle": "Angle:",
 

@@ -4,11 +4,11 @@ import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.buttons.Button
-import earth.terrarium.olympus.client.components.dropdown.DropdownState
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.components.string.TextWidget
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.layouts.Layouts
+import earth.terrarium.olympus.client.layouts.LinearViewLayout
 import earth.terrarium.olympus.client.ui.OverlayAlignment
 import earth.terrarium.olympus.client.ui.UIConstants
 import earth.terrarium.tempad.api.player_access.PlayerAccessApi
@@ -19,29 +19,30 @@ import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.layouts.FrameLayout
+import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.layouts.SpacerElement
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 
-open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, val accessOptions: List<ResourceLocation>, access: ResourceLocation, locked: Boolean): BaseCursorScreen(
+open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, access: Boolean, locked: Boolean): BaseCursorScreen(
     Component.translatable("screen.tempad.marker")) {
     companion object {
-        private val accessField = Component.translatable("screen.tempad.marker.access_field")
+        internal val publicAccess = Component.translatable("screen.tempad.marker.public_access")
     }
 
     val name: MutableState<String> = MutableState.of(name)
     val color: MutableState<Color> = MutableState.of(color)
-    val access: DropdownState<ResourceLocation> = DropdownState.of(access)
+    val booleanAccess: MutableState<Boolean> = MutableState.of(access)
     val locked: MutableState<Boolean> = MutableState.of(locked)
 
     var bgHeight = 0
     var bgWidth = 150
 
+    fun TextWidget.configure(): TextWidget = this.withColor(MinecraftColors.GRAY).withShadow()
+
     override fun init() {
         super.init()
 
-        fun TextWidget.configure(): TextWidget = this.withColor(MinecraftColors.GRAY).withShadow()
         val fields = Layouts.column().withGap(4)
 
         fields.withChild(FrameLayout(bgWidth - 10, 10).apply {
@@ -107,18 +108,25 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, v
             })
         })
 
-        fields.withChild(Widgets.text(accessField).configure())
-        fields.withChild(
-            Widgets.dropdown(access, accessOptions + PlayerAccessApi.noAccess, { Component.translatable(it.toLanguageKey("access")) },
-            { it.withSize(100, 20) },
-            {
-                it.withAlignment(OverlayAlignment.TOP_RIGHT)
-            }
-        ))
+        setupAccessField(fields)
 
         fields.build(this::addRenderableWidget)
         bgHeight = fields.height + 12
         fields.setPosition((width - bgWidth) / 2 + 5, (height - bgHeight) / 2 + 5)
+    }
+
+    open fun setupAccessField(fields: LinearViewLayout) {
+        fields.withChild(LinearLayout(0, 0, LinearLayout.Orientation.HORIZONTAL).apply {
+            addChild(Widgets.text(publicAccess).configure()) {
+                it.alignVerticallyMiddle()
+                it.paddingRight(4)
+            }
+            addChild(Widgets.toggle(booleanAccess) {
+                it.withSize(22, 12)
+            }) {
+                it.alignVerticallyMiddle()
+            }
+        })
     }
 
     override fun renderBackground(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -133,7 +141,7 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, v
     }
 
     open fun sync() {
-        UpdateAnchorPacket(pos, color.value, name.value, access.get(), locked.get()).sendToServer()
+        UpdateAnchorPacket(pos, color.value, name.value, booleanAccess.get(), locked.get()).sendToServer()
     }
 
     override fun isPauseScreen(): Boolean = false

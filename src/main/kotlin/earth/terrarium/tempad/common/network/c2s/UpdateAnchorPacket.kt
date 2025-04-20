@@ -7,8 +7,11 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
+import earth.terrarium.tempad.common.block.timedoor_marker.TimedoorMarkerBE
+import earth.terrarium.tempad.common.block.timedoor_marker.TimedoorMarkerBlock
 import earth.terrarium.tempad.common.network.ServerPacketCompanion
 import earth.terrarium.tempad.common.registries.accessId
+import earth.terrarium.tempad.common.registries.canAccess
 import earth.terrarium.tempad.common.registries.color
 import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
@@ -18,7 +21,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 
-data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name: String, val access: ResourceLocation, val locked: Boolean): Packet<UpdateAnchorPacket> {
+data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name: String, val access: Boolean, val locked: Boolean): Packet<UpdateAnchorPacket> {
     override fun type(): PacketType<UpdateAnchorPacket> = Companion
 
     companion object: ServerPacketCompanion<UpdateAnchorPacket> {
@@ -27,18 +30,18 @@ data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name
             ExtraByteCodecs.BLOCK_POS.fieldOf(UpdateAnchorPacket::blockPos),
             Color.BYTE_CODEC.fieldOf(UpdateAnchorPacket::color),
             ByteCodec.STRING.fieldOf(UpdateAnchorPacket::name),
-            ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(UpdateAnchorPacket::access),
+            ByteCodec.BOOLEAN.fieldOf(UpdateAnchorPacket::access),
             ByteCodec.BOOLEAN.fieldOf(UpdateAnchorPacket::locked),
             ::UpdateAnchorPacket
         )
 
         override fun onReceive(packet: UpdateAnchorPacket, player: Player) {
-            (player.level().getBlockEntity(packet.blockPos) as? AbstractMarkerBe)?.let {
+            (player.level().getBlockEntity(packet.blockPos) as? TimedoorMarkerBE)?.let {
                 if(!player.mayInteract(player.level(), packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
 
                 it.color = packet.color
                 it.posName = Component.literal(packet.name)
-                it.accessId = packet.access
+                it.canAccess = packet.access
                 it.locked = packet.locked && it.owner?.id == player.gameProfile.id
                 it.setChanged()
             }

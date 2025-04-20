@@ -71,6 +71,12 @@ object ModAttachments {
         }
     }
 
+    val boolAccess: AttachmentType<Boolean> by registry.register("can_access") {
+        attachmentType({ false }) {
+            codec = Codec.BOOL
+        }
+    }
+
     val id: AttachmentType<UUID> by registry.register("id") {
         attachmentType({ UUID.randomUUID() }) {
             codec = UUIDUtil.STRING_CODEC
@@ -126,6 +132,7 @@ var AttachmentHolder.owner by ModAttachments.owner.optional()
 var AttachmentHolder.color by ModAttachments.color.synced(ModAttachments.syncedColor)
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
+var AttachmentHolder.canAccess by ModAttachments.boolAccess
 var AttachmentHolder.yOffset by ModAttachments.yOffset
 // var AttachmentHolder.name by ModAttachments.name.optional()
 var AttachmentHolder.angle by ModAttachments.angle

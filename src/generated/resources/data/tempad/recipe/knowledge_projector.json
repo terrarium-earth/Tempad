@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "tag": "c:ingots/copper"
+    },
+    "g": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "o": {
+      "item": "minecraft:book"
+    }
+  },
+  "pattern": [
+    "g",
+    "o",
+    "c"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tempad:knowledge_projector"
+  }
+}
