@@ -87,7 +87,7 @@ dependencies {
         isTransitive = false
     }
 
-    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${baseVersion}", version = "2.0.0-beta.4") {
+    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${baseVersion}", version = "2.0.0-alpha.5") {
         isTransitive = false
     }
 

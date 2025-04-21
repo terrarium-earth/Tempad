@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.block
 
+import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.sizing.FloorPlacementSettings
 import earth.terrarium.tempad.api.sizing.TimedoorPlacementSettings
 import earth.terrarium.tempad.api.sizing.VerticalPlacementSettings
@@ -147,7 +148,8 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         val nearby = level.getEntitiesOfClass(ServerPlayer::class.java, AABB(blockPos).inflate(5.0))
         safeLet(inventory[0].selectedPos, upgrades, chronons, owner) { pos, upgrades, chronons, player ->
             pos.get(upgrades, chronons)?.let {
-                TimedoorEntity.openTimedoor(player, this, it, getSizing()) {
+                val (_, _, provider, id) = pos
+                TimedoorEntity.openTimedoor(player, this, provider, id, it, getSizing()) {
                     this.timedoorId = it.uuid
                     it.yRot = inventory[0].portalOffset.angle.toFloat() + direction.toYRot()
                 }?.let { msg ->

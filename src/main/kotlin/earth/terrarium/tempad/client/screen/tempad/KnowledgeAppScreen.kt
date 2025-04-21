@@ -38,7 +38,7 @@ class KnowledgeAppScreen(menu: ModMenus.KnowledgeMenu, inv: Inventory, title: Co
             descriptionWidget?.withContents {
                 it.clear()
                 value.invoke(it)
-            }
+            }?.withScrollY(-3)
         }
 
     val selected = MutableState.of<ItemStack?>(null)

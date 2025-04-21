@@ -1,5 +1,7 @@
 package earth.terrarium.tempad.common.items
 
+import earth.terrarium.tempad.api.context.SyncableContext
+import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.client.tooltip.tooltip
@@ -22,32 +24,32 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import java.util.*
+import kotlin.to
 
 class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties().stacksTo(1)) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (level.isClientSide) return InteractionResultHolder.success(player.getItemInHand(usedHand))
-        val ctx = player.ctx(usedHand.getSlot(player))
-        ctx.stack.portalTarget?.get(ctx.stack.upgrades!!, ctx.stack.chronons!!)?.let {
-            TimedoorEntity.openTimedoor(player, ctx, it) {
-                it.glitching = true
-            }
-        } ?: {
-            player.displayClientMessage(TimedoorEntity.posFail, true)
-        }
+        player.ctx(usedHand.getSlot(player)).openTimedoor(player)
         return InteractionResultHolder.success(player.getItemInHand(usedHand))
     }
 
     override fun useOn(context: UseOnContext): InteractionResult {
         if (context.player?.isShiftKeyDown == true) return super.useOn(context)
         val player = context.player ?: return InteractionResult.PASS
-        context.syncableCtx?.let { ctx ->
-            context.itemInHand.portalTarget?.get(ctx.stack.upgrades!!, ctx.stack.chronons!!)?.let { pos ->
-                if (!context.level.isClientSide) TimedoorEntity.openTimedoor(player, ctx, pos)
-            } ?: {
-                if (!context.level.isClientSide) player.displayClientMessage(TimedoorEntity.posFail, true)
-            }
-        }
+        context.syncableCtx?.openTimedoor(player)
         return InteractionResult.PASS
+    }
+
+    fun SyncableContext<*>.openTimedoor(player: Player) {
+        val portalTarget = stack.portalTarget
+        portalTarget?.get(stack.upgrades!!, stack.chronons!!)?.let { pos ->
+            if (!player.level().isClientSide) {
+                val (provider, id) = (portalTarget as? IndirectLocation).let { it?.provider to it?.id }
+                TimedoorEntity.openTimedoor(player, this, provider, id, pos)
+            }
+        } ?: {
+            if (!player.level().isClientSide) player.displayClientMessage(TimedoorEntity.posFail, true)
+        }
     }
 
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {

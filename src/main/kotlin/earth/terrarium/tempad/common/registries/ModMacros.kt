@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.registries
 
+import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.macro.MacroRegistry
 import earth.terrarium.tempad.common.data.getPinnedLocation
@@ -11,7 +12,8 @@ object ModMacros {
     fun init() {
         MacroRegistry[teleportToPinned] = { player, ctx ->
             player.getPinnedLocation(ctx)?.let {
-                TimedoorEntity.openTimedoor(player, ctx, it)?.let { player.displayClientMessage(it, true)}
+                val (provider, id) = player.pinnedPosition.let { it?.providerId to it?.locationId }
+                TimedoorEntity.openTimedoor(player, ctx, provider, id, it)?.let { player.displayClientMessage(it, true)}
             }
         }
     }

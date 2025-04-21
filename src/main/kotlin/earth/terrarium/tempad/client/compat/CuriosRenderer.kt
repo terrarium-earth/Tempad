@@ -51,15 +51,16 @@ object CuriosRenderer: ICurioRenderer {
         headPitch: Float,
     ) {
         if (renderLayerParent is PlayerRenderer) {
+            val render = Minecraft.getInstance().entityRenderDispatcher.getRenderer<LivingEntity?>(slotContext.entity) as? LivingEntityRenderer<*, *> ?: return
+            val model = render.getModel() as? HumanoidModel<*> ?: return
             matrixStack.pushPose()
             if (slotContext.identifier != "bracelet") {
-                ICurioRenderer.translateIfSneaking(matrixStack, slotContext.entity)
-                ICurioRenderer.rotateIfSneaking(matrixStack, slotContext.entity)
+                model.body.translateAndRotate(matrixStack)
                 matrixStack.scale(0.35f, 0.35f, 0.35f)
             }
             when (slotContext.identifier) {
                 "belt" -> {
-                    if (slotContext.index != 0) return
+                    if (slotContext.index != 0) return matrixStack.popPose()
                     val offset = if(!slotContext.entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty) {
                         0.1
                     } else 0.0
@@ -68,37 +69,31 @@ object CuriosRenderer: ICurioRenderer {
                     matrixStack.mulPose(Axis.YP.rotationDegrees(90f))
                 }
                 "charm" -> {
-                    if (slotContext.index > 3) return
+                    if (slotContext.index > 3) return matrixStack.popPose()
                     val zOffset = if(!slotContext.entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty) {
                         0.35
                     } else if(!slotContext.entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty) {
                         0.15
                     } else 0.0
                     matrixStack.scale(0.5f, 0.5f, 0.5f)
-                    matrixStack.translate(1 - slotContext.index * 1.0, 2.8, 0.75 + zOffset)
+                    matrixStack.translate(1 - slotContext.index * 1.0, 3.65, 0.75 + zOffset)
                     matrixStack.mulPose(Axis.ZP.rotationDegrees(180f))
                 }
                 "bracelet" -> {
-                    if (slotContext.index != 0) return
-                    val render = Minecraft.getInstance().entityRenderDispatcher.getRenderer<LivingEntity?>(slotContext.entity)
-                    if (render is LivingEntityRenderer<*, *>) {
-                        val model = render.getModel()
-                        if (model is HumanoidModel<*>) {
-                            if(slotContext.entity.mainArm == HumanoidArm.RIGHT) {
-                                model.leftArm.translateAndRotate(matrixStack)
-                                matrixStack.mulPose(Axis.XP.rotationDegrees(90f))
-                                matrixStack.mulPose(Axis.YP.rotationDegrees(90f))
-                                matrixStack.scale(0.4f, 0.4f, 0.4f)
-                                matrixStack.translate(1.0, 0.0, 0.35)
-                            } else {
-                                model.rightArm.translateAndRotate(matrixStack)
-                                model.rightArm.yScale
-                                matrixStack.mulPose(Axis.XP.rotationDegrees(-90f))
-                                matrixStack.mulPose(Axis.YP.rotationDegrees(-90f))
-                                matrixStack.scale(0.4f, 0.4f, 0.4f)
-                                matrixStack.translate(1.0, 0.0, 0.35 )
-                            }
-                        }
+                    if (slotContext.index != 0) return matrixStack.popPose()
+                    if(slotContext.entity.mainArm == HumanoidArm.RIGHT) {
+                        model.leftArm.translateAndRotate(matrixStack)
+                        matrixStack.mulPose(Axis.XP.rotationDegrees(90f))
+                        matrixStack.mulPose(Axis.YP.rotationDegrees(90f))
+                        matrixStack.scale(0.4f, 0.4f, 0.4f)
+                        matrixStack.translate(1.0, 0.0, 0.35)
+                    } else {
+                        model.rightArm.translateAndRotate(matrixStack)
+                        model.rightArm.yScale
+                        matrixStack.mulPose(Axis.XP.rotationDegrees(-90f))
+                        matrixStack.mulPose(Axis.YP.rotationDegrees(-90f))
+                        matrixStack.scale(0.4f, 0.4f, 0.4f)
+                        matrixStack.translate(1.0, 0.0, 0.35 )
                     }
                 }
             }
