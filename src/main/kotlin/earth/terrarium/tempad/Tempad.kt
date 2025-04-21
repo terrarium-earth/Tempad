@@ -19,6 +19,7 @@ import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.WorkstationBE
+import earth.terrarium.tempad.common.compat.CadmusCompat
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
@@ -39,6 +40,7 @@ import net.minecraft.world.flag.FeatureFlag
 import net.minecraft.world.flag.FeatureFlags
 import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
+import net.neoforged.fml.ModList
 import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
@@ -104,6 +106,10 @@ class Tempad(bus: IEventBus) {
         ModSounds.registry.init()
         ModLocations.init()
         CommonConfigCache.init()
+
+        if (ModList.get().isLoaded("cadmus")) {
+            CadmusCompat.init()
+        }
 
         bus.addListener { event: RegisterCapabilitiesEvent ->
             val chrononBlocks = event.register(ChrononHandler.block)

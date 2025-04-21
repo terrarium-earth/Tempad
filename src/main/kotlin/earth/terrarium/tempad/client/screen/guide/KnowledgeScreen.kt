@@ -361,7 +361,6 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                                         0x3aff6f00.toInt()
                                     )
                                 }
-
                                 graphics.renderItem(stack, ctx.x + 1, ctx.y + 1)
                             })
                             it.withCallback {
@@ -402,7 +401,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
             descriptionWidget?.withContents {
                 it.clear()
                 value.invoke(it)
-            }
+            }?.withScrollY(-3)
         }
 
     val selected = MutableState.of<ItemStack?>(null)

@@ -28,6 +28,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
@@ -66,6 +67,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         fun openTimedoor(
             player: Player,
             ctx: SyncableContext<*>,
+            provider: ResourceLocation?,
+            locationId: UUID?,
             location: NamedGlobalVec3,
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
@@ -81,7 +84,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             timedoor.sizing = if (player.xRot > 45) FloorPlacementSettings() else DynamicAngledPlacement()
             timedoor.sizing.placeTimedoor(DoorType.ENTRY, player.position(), player.yRot, timedoor)
 
-            val event = TimedoorEvent.OpenWithItem(timedoor, player, ctx).post()
+            val event = TimedoorEvent.OpenWithItem(timedoor, player.gameProfile, ctx, provider, locationId).post()
             if (event.isCanceled) return event.errorMessage ?: fail
             else logTimedoorOpen(player.name.string, location, timedoor)
 
@@ -99,6 +102,8 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         fun openTimedoor(
             player: GameProfile,
             block: BlockEntity,
+            provider: ResourceLocation?,
+            locationId: UUID?,
             location: NamedGlobalVec3,
             sizing: TimedoorPlacementSettings = DynamicAngledPlacement(),
             onOpen: (TimedoorEntity) -> Unit = {},
@@ -117,7 +122,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                 timedoor
             )
 
-            val event = TimedoorEvent.OpenWithBlock(timedoor, player, block).post()
+            val event = TimedoorEvent.OpenWithBlock(timedoor, player, block, provider, locationId).post()
 
             if (event.isCanceled) return event.errorMessage ?: fail
             else logTimedoorOpen(player.name, location, timedoor)
