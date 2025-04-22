@@ -82,20 +82,20 @@ object CuriosRenderer: ICurioRenderer {
                 }
                 "bracelet" -> {
                     if (slotContext.index != 0) return matrixStack.popPose()
-                    val armOffset = if ((model as PlayerModelAccessor).slim) 0.2 else 0.3
+                    val armOffset = if ((model as PlayerModelAccessor).slim) 0.0 else 0.15
                     if(slotContext.entity.mainArm == HumanoidArm.RIGHT) {
                         model.leftArm.translateAndRotate(matrixStack)
                         matrixStack.mulPose(Axis.XP.rotationDegrees(90f))
                         matrixStack.mulPose(Axis.YP.rotationDegrees(90f))
                         matrixStack.scale(0.4f, 0.4f, 0.4f)
-                        matrixStack.translate(1.0, 0.0, 0.35)
+                        matrixStack.translate(1.0, 0.0, 0.35 + armOffset)
                     } else {
                         model.rightArm.translateAndRotate(matrixStack)
                         model.rightArm.yScale
                         matrixStack.mulPose(Axis.XP.rotationDegrees(-90f))
                         matrixStack.mulPose(Axis.YP.rotationDegrees(-90f))
                         matrixStack.scale(0.4f, 0.4f, 0.4f)
-                        matrixStack.translate(1.0, 0.0, 0.35)
+                        matrixStack.translate(1.0, 0.0, 0.35 + armOffset)
                     }
                 }
             }
