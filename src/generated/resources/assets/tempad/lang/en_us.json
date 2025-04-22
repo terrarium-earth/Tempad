@@ -42,6 +42,8 @@
   "error.tempad.owner_mismatch": "This isn't yours. Return to owner or Reset item",
   "item.tempad.card_wallet": "Card Wallet",
   "item.tempad.card_wallet.empty": "No cards",
+  "item.tempad.card_wallet.insert_fail": "No wallet to insert card into",
+  "item.tempad.card_wallet.inserted": "Inserted card into Card Wallet",
   "item.tempad.card_wallet.prefix": "Contains:",
   "item.tempad.chronometer": "Chronometer",
   "item.tempad.chronon_battery": "Chronon Battery",

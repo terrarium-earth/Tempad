@@ -21,8 +21,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 
+val ItemStack.items: WalletInventory get() = WalletInventory(this)
 class WalletItem() : Item(Properties().stacksTo(1)) {
-    val ItemStack.items: WalletInventory get() = WalletInventory(this)
 
     override fun use(
         level: Level,

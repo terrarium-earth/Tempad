@@ -2,6 +2,7 @@ package earth.terrarium.tempad.client.compat
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
+import earth.terrarium.tempad.common.mixin.PlayerModelAccessor
 import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.client.Minecraft
 import net.minecraft.client.model.EntityModel
@@ -51,7 +52,7 @@ object CuriosRenderer: ICurioRenderer {
         headPitch: Float,
     ) {
         if (renderLayerParent is PlayerRenderer) {
-            val render = Minecraft.getInstance().entityRenderDispatcher.getRenderer<LivingEntity?>(slotContext.entity) as? LivingEntityRenderer<*, *> ?: return
+            val render = Minecraft.getInstance().entityRenderDispatcher.getRenderer<LivingEntity?>(slotContext.entity) as? PlayerRenderer ?: return
             val model = render.getModel() as? HumanoidModel<*> ?: return
             matrixStack.pushPose()
             if (slotContext.identifier != "bracelet") {
@@ -81,6 +82,7 @@ object CuriosRenderer: ICurioRenderer {
                 }
                 "bracelet" -> {
                     if (slotContext.index != 0) return matrixStack.popPose()
+                    val armOffset = if ((model as PlayerModelAccessor).slim) 0.2 else 0.3
                     if(slotContext.entity.mainArm == HumanoidArm.RIGHT) {
                         model.leftArm.translateAndRotate(matrixStack)
                         matrixStack.mulPose(Axis.XP.rotationDegrees(90f))
@@ -93,7 +95,7 @@ object CuriosRenderer: ICurioRenderer {
                         matrixStack.mulPose(Axis.XP.rotationDegrees(-90f))
                         matrixStack.mulPose(Axis.YP.rotationDegrees(-90f))
                         matrixStack.scale(0.4f, 0.4f, 0.4f)
-                        matrixStack.translate(1.0, 0.0, 0.35 )
+                        matrixStack.translate(1.0, 0.0, 0.35)
                     }
                 }
             }

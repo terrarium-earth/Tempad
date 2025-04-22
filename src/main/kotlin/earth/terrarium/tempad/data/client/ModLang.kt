@@ -1067,6 +1067,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         ModItems.cardWallet.apply {
             addSub("prefix", "Contains:")
             addSub("empty", "No cards")
+            addSub("inserted", "Inserted card into Card Wallet")
+            addSub("insert_fail", "No wallet to insert card into")
         }
 
         ModBlocks.metronome.apply {

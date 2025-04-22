@@ -116,7 +116,7 @@ public final class CommonConfig {
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
-        public static int generationRate = 48;
+        public static int generationRate = 36;
 
         @ConfigEntry(id = "generation_amount")
         @Comment("The amount of chronons generated everytime the Chronometer does a tick of work.")
