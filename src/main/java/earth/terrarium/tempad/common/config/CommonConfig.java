@@ -141,11 +141,11 @@ public final class CommonConfig {
         @Comment("Whether or not the number of chronons generated per cycle is scaled to the number of metronomes placed")
         public static Observable<Boolean> scaleGeneration = Observable.of(true);
 
-        @ConfigEntry(id = "generation_rate")
+        @ConfigEntry(id = "transfer_rate")
         @Comment("The number of chronons thats transferred to each internal slot or to a neighboring block per tick.")
         public static int transferRate = 20;
 
-        @ConfigEntry(id = "should_scale_generation")
+        @ConfigEntry(id = "jump_start_amount")
         @Comment("Whether or not the number of chronons generated per cycle is scaled to the number of metronomes placed")
         public static int jumpStartAmount = 2000;
     }
