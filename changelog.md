@@ -2,3 +2,4 @@
 - Add sfx when walking through a timedoor
 - Add sfx when placing an upgrade in workstation
 - Add sfx for upgrade installing
+- Fix config not working properly
