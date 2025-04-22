@@ -1,8 +1,44 @@
 {
-  "entity.timedoor.open": {
-    "sounds": [
-      "tempad:timedoor_open"
-    ],
-    "subtitle": "subtitles.tempad.entity.timedoor.open"
-  }
+    "entity.timedoor.open": {
+        "sounds": [
+            "tempad:timedoor_open"
+        ],
+        "subtitle": "subtitles.tempad.entity.timedoor.open"
+    },
+    "entity.timedoor.enter.mono": {
+        "sounds": [
+            "tempad:timedoor_enter_mono"
+        ],
+        "subtitle": "subtitles.tempad.entity.timedoor.enter"
+    },
+    "entity.timedoor.enter.stereo": {
+        "sounds": [
+            "tempad:timedoor_enter_stereo"
+        ],
+        "subtitle": "subtitles.tempad.entity.timedoor.enter"
+    },
+    "block.workstation.upgrade.place.mono": {
+        "sounds": [
+            "tempad:upgrade_use_mono"
+        ],
+        "subtitle": "subtitles.tempad.block.workstation.upgrade.place"
+    },
+    "block.workstation.upgrade.place.stereo": {
+        "sounds": [
+            "tempad:upgrade_use_stereo"
+        ],
+        "subtitle": "subtitles.tempad.block.workstation.upgrade.place"
+    },
+    "block.workstation.upgrade.remove": {
+        "sounds": [
+            "tempad:upgrade_use_stereo"
+        ],
+        "subtitle": "subtitles.tempad.block.workstation.upgrade.remove"
+    },
+    "block.workstation.upgrade.installing": {
+        "sounds": [
+            "tempad:upgrade_installing"
+        ],
+        "subtitle": "subtitles.tempad.block.workstation.upgrade.installing"
+    }
 }

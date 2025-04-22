@@ -13,4 +13,24 @@ object ModSounds {
     val timedoorOpen by registry.register("entity.timedoor.open") {
         SoundEvent.createVariableRangeEvent("entity.timedoor.open".tempadId)
     }
+
+    val timedoorEnterMono by registry.register("entity.timedoor.enter.mono") {
+        SoundEvent.createVariableRangeEvent("entity.timedoor.enter.mono".tempadId)
+    }
+
+    val timedoorEnterStereo by registry.register("entity.timedoor.enter.stereo") {
+        SoundEvent.createVariableRangeEvent("entity.timedoor.enter.stereo".tempadId)
+    }
+
+    val upgradePlaceMono by registry.register("block.workstation.upgrade.place.mono") {
+        SoundEvent.createVariableRangeEvent("block.workstation.upgrade.place.mono".tempadId)
+    }
+
+    val upgradePlaceStereo by registry.register("block.workstation.upgrade.place.stereo") {
+        SoundEvent.createVariableRangeEvent("block.workstation.upgrade.place.stereo".tempadId)
+    }
+
+    val upgradeInstalling by registry.register("block.workstation.upgrade.installing") {
+        SoundEvent.createVariableRangeEvent("block.workstation.upgrade.installing".tempadId)
+    }
 }

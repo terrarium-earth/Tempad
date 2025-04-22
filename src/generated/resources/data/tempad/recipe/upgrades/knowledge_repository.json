@@ -1,6 +1,6 @@
 {
   "type": "tempad:upgrade",
-  "download_time": 40,
+  "download_time": 80,
   "item": {
     "item": "tempad:knowledge_repository_upgrade"
   },

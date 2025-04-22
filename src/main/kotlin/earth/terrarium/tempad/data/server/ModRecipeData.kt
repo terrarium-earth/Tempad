@@ -148,7 +148,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
             .save(this, (BuiltInRegistries.ITEM.getKey(item).path + "_clean").tempadId)
     }
 
-    fun RecipeOutput.upgrade(item: Item, resourceLocation: ResourceLocation, downloadTime: Int = 40) {
+    fun RecipeOutput.upgrade(item: Item, resourceLocation: ResourceLocation, downloadTime: Int = 80) {
         val upgrade = TempadUpgradeRecipe(
             Ingredient.of(item),
             downloadTime,

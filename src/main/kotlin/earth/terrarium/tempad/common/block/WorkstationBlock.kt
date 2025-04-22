@@ -7,13 +7,18 @@ import earth.terrarium.tempad.common.recipe.UpgradeRecipeInput
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.ModRecipes
+import earth.terrarium.tempad.common.registries.ModSounds
 import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.set
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.Holder
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ClientboundSoundPacket
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
@@ -100,6 +105,11 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         } else if (!blockEntity.inventory[0].isEmpty && blockEntity.downloadTime == 0) {
             val recipe = level.recipeManager.getRecipeFor(ModRecipes.upgradeRecipe, UpgradeRecipeInput(blockEntity.inventory[0], stack), level).getOrNull()?.value
             if (recipe == null || recipe.output in blockEntity.upgrades!!) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+            (player as? ServerPlayer)?.let {
+                player.connection.send(ClientboundSoundPacket(Holder.direct(ModSounds.upgradePlaceMono), SoundSource.BLOCKS, pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0f, 1.0f, 0))
+                level.playSound(it, pos, ModSounds.upgradePlaceStereo, SoundSource.BLOCKS)
+            }
+            level.playSound(null, pos, ModSounds.upgradeInstalling, SoundSource.BLOCKS)
             blockEntity.downloadTime = recipe.downloadTime
             blockEntity.maxDownloadTime = recipe.downloadTime
             blockEntity.recipe = recipe.output

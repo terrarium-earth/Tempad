@@ -16,20 +16,20 @@ import earth.terrarium.tempad.api.sizing.TimedoorPlacementSettings
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
-import earth.terrarium.tempad.common.registries.ModEntities
-import earth.terrarium.tempad.common.registries.ModSounds
-import earth.terrarium.tempad.common.registries.ModTags
-import earth.terrarium.tempad.common.registries.ageUntilAllowedThroughTimedoor
+import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.*
+import net.minecraft.core.Holder
 import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
@@ -301,6 +301,11 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()
             if (event.isCanceled) continue
+
+            (entity as? ServerPlayer)?.let {
+                entity.connection.send(ClientboundSoundEntityPacket(Holder.direct(ModSounds.timedoorEnterMono), soundSource, this, 1.0f, 1.0f, 0))
+                level().playSound(it, this, ModSounds.timedoorEnterStereo, soundSource, 1.0f, 1.0f)
+            }
 
             if (entity.level().dimension() == targetLevel.dimension()) {
                 entity.deltaMovement = entity.deltaMovement.yRot(this.yRot - targetAngle)
