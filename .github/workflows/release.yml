@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
 
       - name: Setup Gradle Caches
         uses: actions/cache@v3
@@ -38,8 +38,7 @@ jobs:
           MAVEN_PASS: ${{ secrets.MAVEN_PASSWORD }}
 
       - name: Upload NeoForge Releases (Curse/Modrinth/Github)
-        id: forge_release
-        if: contains(steps.properties.outputs.enabledPlatforms, 'neoforge')
+        id: release
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           curseforge-id: ${{ vars.CURSE_ID }}
@@ -49,7 +48,7 @@ jobs:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
           files: ./neoforge/build/libs/!(*-@(dev|sources|dev-shadow)).jar
-          name: "[NeoForge] Tempad ${{ steps.properties.outputs.version }}"
+          name: "Tempad ${{ steps.properties.outputs.version }}"
           version: ${{ steps.properties.outputs.version }}
           version-type: release
           changelog-file: changelog.md
@@ -60,41 +59,18 @@ jobs:
           dependencies: |
             resourceful-lib | depends | *
             resourceful-config | depends | *
-            botarium | recommends | *
+            kotlin-for-forge | depends | *
             curios | recommends | *
-
-      - name: Upload Fabric Releases (Curse/Modrinth/Github)
-        id: fabric_release
-        if: contains(steps.properties.outputs.enabledPlatforms, 'fabric')
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          curseforge-id: ${{ vars.CURSE_ID }}
-          curseforge-token: ${{ secrets.CURSE_TOKEN }}
-
-          modrinth-id: ${{ vars.MODRINTH_ID }}
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-          files: ./fabric/build/libs/!(*-@(dev|sources|dev-shadow)).jar
-          name: "[Fabric] Tempad ${{ steps.properties.outputs.version }}"
-          version: ${{ steps.properties.outputs.version }}
-          version-type: release
-          changelog-file: changelog.md
-          loaders: fabric
-          game-versions: ${{ steps.properties.outputs.minecraftVersion }}
-          version-resolver: exact
-
-          dependencies: |
-            fabric-api | depends | *
-            resourceful-lib | depends | *
-            resourceful-config | depends | *
-            botarium | recommends | *
-            trinkets | recommends | *
+            cadmus | recommends | *
+            argonauts | recommends | *
+            jade | recommends | *
+            ftb-teams-forge | recommends | *
 
       - name: Generate Discord Embed
         run: ./gradlew injectEmbed
         env:
-          FORGE_RELEASE_URL: ${{ steps.forge_release.outputs.modrinth-version }}
-          FABRIC_RELEASE_URL: ${{ steps.fabric_release.outputs.modrinth-version }}
+          CURSE_RELEASE_URL: ${{ steps.release.outputs.modrinth-version }}
+          MODRINTH_RELEASE_URL: ${{ steps.release.outputs.curseforge-version }}
 
       - name: Upload Discord Embed
         uses: tsickert/discord-webhook@v5.3.0

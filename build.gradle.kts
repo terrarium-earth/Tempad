@@ -184,16 +184,16 @@ resourcefulGradle {
             val minecraftVersion: String by project
             val version: String by project
             val changelog: String = file("changelog.md").readText(Charsets.UTF_8)
-            val fabricLink: String? = System.getenv("FABRIC_RELEASE_URL")
-            val forgeLink: String? = System.getenv("FORGE_RELEASE_URL")
+            val mrLink: String? = System.getenv("MODRINTH_RELEASE_URL")
+            val cfLink: String? = System.getenv("CURSEFORGE_RELEASE_URL")
 
             source.set(file("templates/embed.json.template"))
             injectedValues.set(mapOf(
                     "minecraft" to minecraftVersion,
                     "version" to version,
                     "changelog" to StringEscapeUtils.escapeJava(changelog),
-                    "fabric_link" to fabricLink,
-                    "forge_link" to forgeLink
+                    "modrinth_link" to mrLink,
+                    "curseforge_link" to cfLink
             ))
         }
     }

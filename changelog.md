@@ -1,4 +1,4 @@
-- Location Cards are now craftable
-- Blank cards are needed to create a location card from the GUI
-- OP Tempad is now craftable
-- New crafting component: Temporal Sheilding (Will be used in future update with new content)
+- Fix rendering on bracelet worn curios clipping through non-slim arms
+- Add sfx when walking through a timedoor
+- Add sfx when placing an upgrade in workstation
+- Add sfx for upgrade installing

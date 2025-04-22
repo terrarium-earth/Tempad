@@ -5,15 +5,15 @@
             "components": [
                 {
                     "type": 2,
-                    "label": "Fabric",
+                    "label": "Modrinth",
                     "style": 5,
-                    "url": "https://modrinth.com/mod/tempad/version/${fabric_link}"
+                    "url": "https://modrinth.com/mod/tempad/version/${modrinth_link}"
                 },
                 {
                     "type": 2,
-                    "label": "NeoForge",
+                    "label": "CurseForge",
                     "style": 5,
-                    "url": "https://modrinth.com/mod/tempad/version/${forge_link}"
+                    "url": "https://www.curseforge.com/minecraft/mc-mods/tempad/files/${curseforge_link}"
                 }
             ]
 
