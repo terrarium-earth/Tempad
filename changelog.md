@@ -5,6 +5,7 @@
 - Removed delete button from locations that dont permit deletion
 - Timedoor now faces you when opening it
 - Default position of the timedoor is now to the left of the workstation
+- Fixed missing lang entries
 - Fixed placement of player when going back through a timedoor
 - Fixed tempad not working with AE2 (https://github.com/AppliedEnergistics/Applied-Energistics-2/issues/8482#issuecomment-2841728230)
 - Dimension tag for blacklisting now accepts a dimension type, not a dimension
