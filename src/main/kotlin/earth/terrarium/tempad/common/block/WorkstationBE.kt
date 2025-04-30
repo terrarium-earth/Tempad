@@ -151,7 +151,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
                 val (_, _, provider, id) = pos
                 TimedoorEntity.openTimedoor(player, this, provider, id, it, getSizing()) {
                     this.timedoorId = it.uuid
-                    it.yRot = inventory[0].portalOffset.angle.toFloat() + direction.toYRot()
+                    it.yRot = inventory[0].portalOffset.angle.toFloat() + direction.toYRot() + 180
                 }?.let { msg ->
                     nearby.error(msg)
                 }

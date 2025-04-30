@@ -61,8 +61,8 @@ jobs:
             resourceful-config | depends | *
             kotlin-for-forge | depends | *
             curios | recommends | *
-            cadmus | recommends | *
-            argonauts | recommends | *
+            odyssey-allies | recommends | *
+            odyssey-claims | recommends | *
             jade | recommends | *
             ftb-teams-forge | recommends | *
 

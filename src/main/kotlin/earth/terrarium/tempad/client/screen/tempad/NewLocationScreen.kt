@@ -41,8 +41,10 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
     }
 
     var currentColor = MutableState.of(Color(0xff6f00))
-    var doneBtn: AppearanceState = AppearanceState()
-    var textState = MutableState.of("")
+    var doneBtn: AppearanceState = AppearanceState().apply { active = false }
+    var textState = MutableState.of("", {
+        doneBtn.active = it.isNotBlank()
+    })
 
     var mapState = MutableState.of<MapRenderer>()
 

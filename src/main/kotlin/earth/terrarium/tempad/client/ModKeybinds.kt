@@ -1,7 +1,6 @@
 package earth.terrarium.tempad.client
 
 import com.mojang.blaze3d.platform.InputConstants
-import earth.terrarium.argonauts.client.utils.ClientUtils
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
 import earth.terrarium.tempad.common.network.c2s.OpenTempadPacket

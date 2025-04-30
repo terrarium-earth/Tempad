@@ -17,6 +17,8 @@ class AppearanceState : MutableState<List<AbstractWidget>>(mutableListOf()) {
 
     operator fun plusAssign(widget: AbstractWidget) {
         value += widget
+        widget.visible = visible
+        widget.active = active
     }
 
     override var value: List<AbstractWidget>

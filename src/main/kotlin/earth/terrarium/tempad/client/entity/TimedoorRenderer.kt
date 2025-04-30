@@ -55,7 +55,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         val finalHeight = entity.sizing.dimensions.height
 
         poseStack.pushPose()
-        poseStack.mulPose(Axis.YN.rotationDegrees(entity.yRot))
+        poseStack.mulPose(Axis.YN.rotationDegrees(entity.yRot + 180))
         poseStack.translate(width / -2.0, finalHeight / 2.0 - height / 2.0 + 0.01, depth / -2.0)
         if (entity.glitching && ticks % 65 > 60) {
             val randomX = Mth.randomBetween(entity.random, -0.05f, 0.05f)

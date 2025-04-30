@@ -17,19 +17,13 @@
   "gui.tempad.y": "Y: %s",
   "gui.tempad.z": "Z: %s",
   "gui.tempad.angle": "Angle: %s",
-  "tooltip.tempad.durability_cost": "Uses left: %s/%s",
-  "tooltip.tempad.timeleft": "Recharging: %s",
-  "tooltip.tempad.timer_cost": "Cooldown: %s",
-  "tooltip.tempad.energy_info": "Energy: %s/%s RF",
-  "tooltip.tempad.energy_cost": "Consumes %s RF per use",
-  "tooltip.tempad.item_option_info": "Requires fuel item to use",
-  "tooltip.tempad.experience_level_cost": "Requires %s Level(s) to open Timedoor",
-  "tooltip.tempad.experience_points_cost": "Requires %s Experience Point(s) to open Timedoor",
+
   "advancements.tempad.tempad": "For All Time. Always.",
   "advancements.tempad.tempad.description": "Obtain a Tempad",
   "advancements.tempad.he_who_remains": "Glorious purpose!",
   "advancements.tempad.he_who_remains.description": "Obtain 'He Who Remains'' Tempad",
   "subtitles.tempad.entity.timedoor.open": "Timedoor opens",
+  "message.tempad.not_enough_chronons": "Not enough chronons",
 
   "dimension.minecraft.overworld": "Overworld",
   "dimension.minecraft.the_nether": "The Nether",
@@ -54,7 +48,7 @@
   "access.tempad.public": "Everyone",
   "access.tempad.guild": "Guildmates",
   "access.tempad.party": "Party members",
-  "access.tempad.ftb": "Team",
+  "access.tempad.ftbteams": "Team",
 
   "app.tempad.tp_to.teleport": "Teleport",
   "app.tempad.tp_to.selected": "Selected",
@@ -103,6 +97,7 @@
     { "text": "Error: ", "color": "#ff6f00" },
     { "text": "Player locations cannot be saved", "color": "#91450d" }
   ],
+  "tempad.error.timedoor_already_open": "Timedoor already opened",
 
   "entity.tempad.timedoor": "Timedoor",
   "entity.tempad.timedoor.success": "Timedoor opened",

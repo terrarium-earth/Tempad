@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.block
 
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.tva_device.chronons
@@ -57,7 +58,7 @@ class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBloc
         val level = level
         if(level == null || level !is ServerLevel) return
         val nearby = level.getEntitiesOfClass(ServerPlayer::class.java, AABB(blockPos).inflate(5.0))
-        if(timedoorId?.let { id -> level.entities.get(id) } != null) return nearby.error(Component.translatable("tempad.error.timedoor_already_open"))
+        if(timedoorId?.let { id -> level.entities.get(id) } != null) return nearby.error(Component.translatable("tempad.error.timedoor_already_open").withColor(Tempad.ORANGE.value))
         safeLet(portalTarget, upgrades, chronons, owner) { pos, upgrades, chronons, player ->
             pos.get(upgrades, chronons)?.let {
                 val (provider, id) = (pos as? IndirectLocation).let { it?.provider to it?.id }

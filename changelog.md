@@ -1,5 +1,8 @@
-- Fix rendering on bracelet worn curios clipping through non-slim arms
-- Add sfx when walking through a timedoor
-- Add sfx when placing an upgrade in workstation
-- Add sfx for upgrade installing
-- Fix config not working properly
+- Add support for latest version of Odyssey Allies (still in alpha)
+- Fix issue with Time Twister not working in survival
+- Fix keyboard shortcuts not opening tempad screens
+- Added a confirmation window when you delete a location
+- Removed delete button from locations that dont permit deletion
+- Timedoor now faces you when opening it
+- Default position of the timedoor is now to the left of the workstation
+- Fixed placement of player when going back through a timedoor

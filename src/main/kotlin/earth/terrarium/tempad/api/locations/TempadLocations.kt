@@ -26,10 +26,17 @@ object TempadLocations {
     val registry: Map<ResourceLocation, LocationProvider>
         field = mutableMapOf()
 
+    val deletable: Set<ResourceLocation>
+        field = mutableSetOf()
+
     @JvmStatic
     @JvmName("register")
     operator fun set(settings: ResourceLocation, provider: LocationProvider) {
         registry[settings] = provider
+    }
+
+    fun setDeletable(settings: ResourceLocation) {
+        deletable += settings
     }
 
     @JvmStatic

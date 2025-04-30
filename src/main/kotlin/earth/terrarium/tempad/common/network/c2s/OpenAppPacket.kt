@@ -24,7 +24,7 @@ data class OpenAppPacket(val id: ResourceLocation): Packet<OpenAppPacket> {
 
         override fun onReceive(packet: OpenAppPacket, player: Player) {
             val ctx = ContextRegistry.locate(player) { it.`is`(ModItems.tempad) } ?: return
-            AppRegistry[id, ctx, false]?.openMenu(player as ServerPlayer)
+            AppRegistry[packet.id, ctx, false]?.openMenu(player as ServerPlayer)
         }
     }
 

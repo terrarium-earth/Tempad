@@ -39,7 +39,7 @@ open class DynamicAngledPlacement: TimedoorPlacementSettings {
     override fun placeTimedoor(type: DoorType, anchor: Vec3, angle: Float, timedoor: TimedoorEntity) {
         val offset = offsetLocation(anchor, angle, if(type == DoorType.ENTRY) CommonConfig.TimeDoor.placementDistance else 1)
         timedoor.setPos(offset.x, anchor.y, offset.z)
-        timedoor.yRot = angle
+        timedoor.yRot = angle + if (type == DoorType.ENTRY) 180 else 0
     }
 
     override fun TimedoorEntity.isInside(entity: Entity): Boolean {

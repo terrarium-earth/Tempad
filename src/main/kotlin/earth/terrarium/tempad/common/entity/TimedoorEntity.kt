@@ -142,9 +142,9 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             location: NamedGlobalVec3,
             ignoreRestrictions: Boolean = false,
         ): Either<TimedoorEntity, Component> {
-            val lookup = level.registryAccess().lookup(Registries.DIMENSION)
-            val targetHolder = lookup.get().get(location.dimension).getOrNull() ?: return Either.right(posFail)
-            val sourceHolder = lookup.get().get(level.dimension()).getOrNull() ?: return Either.right(posFail)
+            val lookup = level.registryAccess().lookup(Registries.DIMENSION_TYPE)
+            val targetHolder = level.server?.getLevel(location.dimension)?.dimensionTypeRegistration()?.key?.let { lookup.get().get(it).getOrNull() } ?: return Either.right(posFail)
+            val sourceHolder = level.dimensionTypeRegistration().key?.let { lookup.get().get(it).getOrNull() } ?: return Either.right(posFail)
             if (!ignoreRestrictions) {
                 level.dimension().let {
                     if (it != location.dimension) {

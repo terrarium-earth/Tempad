@@ -83,7 +83,7 @@ dependencies {
         isTransitive = false
     }.also { jarJar(it) }
 
-    implementation(group = "earth.terrarium.argonauts", name = "argonauts-neoforge-${baseVersion}", version = "2.0.0-beta.3") {
+    implementation("earth.terrarium:odyssey_allies-neoforge-1.21:2.0.0-alpha.5") {
         isTransitive = false
     }
 

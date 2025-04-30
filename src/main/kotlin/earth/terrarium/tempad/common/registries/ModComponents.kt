@@ -181,7 +181,7 @@ var MutableDataComponentHolder.owner by ModComponents.owner
 
 var MutableDataComponentHolder.anchorId by ModComponents.anchorId
 
-var MutableDataComponentHolder.portalOffset by ModComponents.portalOffset.withDefault(PortalPlacementComponent(0f, 0f, 0f, 0, true))
+var MutableDataComponentHolder.portalOffset by ModComponents.portalOffset.withDefault(PortalPlacementComponent(-2.5f, 0f, 0f, 0, true))
 
 var MutableDataComponentHolder.portalTarget by ModComponents.portalTarget
 

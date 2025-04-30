@@ -11,10 +11,13 @@ import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.components.string.MultilineTextWidget
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.ui.ClearableGridLayout
+import earth.terrarium.olympus.client.ui.modals.DeleteConfirmModal
+import earth.terrarium.olympus.client.ui.modals.Modals
 import earth.terrarium.olympus.client.utils.ListenableState
 import earth.terrarium.olympus.client.utils.Translatable
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
+import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.TempadUI.colored
 import earth.terrarium.tempad.client.TempadUI.style
@@ -35,6 +38,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -60,7 +64,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         set(value) {
             field = value
             teleportBtn.active = value != null
-            locationButtons.visible = value != null
+            pinButton.visible = value != null
+            deleteButton.visible = value != null && value.first in TempadLocations.deletable
         }
 
     var search = ListenableState.of("").apply {
@@ -75,7 +80,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             value.toMutableMap()
         }
 
-    private var locationButtons: AppearanceState = AppearanceState().apply { visible = false }
+    private var pinButton: AppearanceState = AppearanceState().apply { visible = false }
+    private var deleteButton: AppearanceState = AppearanceState().apply { visible = false }
     private var teleportBtn = AppearanceState().apply { active = false }
 
     private var favorite: FavoriteLocationAttachment? = menu.appContent.favoriteLocation
@@ -87,6 +93,17 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
 
     private lateinit var locationList: LayoutWidget<ClearableGridLayout>
     private lateinit var infoTextWidget: LayoutWidget<ClearableGridLayout>
+
+    val deleteModal = Modals.delete("app.tempad.teleport.delete_modal".translatable, "app.tempad.teleport.delete_modal.description".translatable) {
+        if (minecraft == null || selected == null) return@delete
+        val (provider, locationId, _) = selected!!
+        DeleteLocationPacket(menu.ctxHolder, provider, locationId).sendToServer()
+
+        locations[provider]?.remove(locationId)
+        selected = null
+        updateLocationPanel()
+        updateInfoPanel()
+    }
 
     fun ClearableGridLayout.initLocationPanel() {
         var list = this.rows(0, 1)
@@ -254,7 +271,17 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             it.padding(4)
         }
 
-        locationButtons += options.addChild(Widgets.button {
+        deleteButton += options.addChild(
+            Widgets.button {
+                it.withTexture(null)
+                it.withRenderer(WidgetRenderers.icon<Button>("icons/mini/x".tempadId).colored().withCentered(7, 7))
+                it.withSize(7, 7)
+                it.withCallback(deleteModal::open)
+                it.withTooltip(deleteText)
+            },
+        )
+
+        pinButton += options.addChild(Widgets.button {
             it.withTexture(null)
             it.withSize(7, 7)
             it.withRenderer { graphics, ctx, dunno ->
@@ -278,25 +305,6 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
             }
             it.withTooltip("app.tempad.teleport.${if (isSelectedPinned) "unpin" else "pin"}".translatable)
         })
-
-        locationButtons += options.addChild(
-            Widgets.button {
-                it.withTexture(null)
-                it.withRenderer(WidgetRenderers.icon<Button>("icons/mini/x".tempadId).colored().withCentered(7, 7))
-                it.withSize(7, 7)
-                it.withCallback {
-                    if (minecraft == null || selected == null) return@withCallback
-                    val (provider, locationId, _) = selected!!
-                    DeleteLocationPacket(menu.ctxHolder, provider, locationId).sendToServer()
-
-                    locations[provider]?.remove(locationId)
-                    selected = null
-                    updateLocationPanel()
-                    updateInfoPanel()
-                }
-                it.withTooltip(deleteText)
-            },
-        )
 
         infoLayout.arrangeElements()
         infoLayout.visitWidgets(::addRenderableWidget)
@@ -370,7 +378,10 @@ enum class Sorting : Translatable {
                 val alphabetMap = values.flatMap { (provider, locations) ->
                     locations.map { (id, pos) -> Triple(provider, id, pos) }
                 }.sortedBy { it.third.name.string }
-                    .groupBy { Component.literal(it.third.name.string.first().uppercaseChar().toString()) }
+                    .groupBy {
+                        if (it.third.name.string.isEmpty()) CommonComponents.EMPTY
+                        else Component.literal(it.third.name.string.first().uppercaseChar().toString())
+                    }
                 return alphabetMap.mapValues { (_, value) -> value.sortedBy { it.third.name.string } }
             }
 

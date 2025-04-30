@@ -26,9 +26,10 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
             ),
             NetworkHandle.handle { packet, player ->
                 val ctx = packet.ctx.getCtx(player)
-                if (!player.isCreative && ctx.stack.chronons?.extract(CommonConfig.TimeTwister.costToBacktrack, ActionType.Simulate) != 1000) return@handle
+                val cost = CommonConfig.TimeTwister.costToBacktrack
+                if (!player.isCreative && ctx.stack.chronons?.extract(cost, ActionType.Simulate) != cost) return@handle
                 ctx.modify {
-                    it.chronons?.extract(CommonConfig.TimeTwister.costToBacktrack, ActionType.Execute)
+                    it.chronons?.extract(cost, ActionType.Execute)
                 }
                 player.cooldowns.addCooldown(ctx.stack.item, 40)
                 player.travelHistory.backtrackTo(player, packet.time)

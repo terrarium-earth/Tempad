@@ -615,7 +615,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
          *
          * Next to the search bar, there is a button that will cycle through the available sorting modes. Locations may be sorted by dimension, alphabetical order, or by type. In all modes, locations are sorted into collapsible categories to make the list easier to view.
          *
-         * When a location is selected from the list, and the info panel to the right is populated, two additional buttons display at the bottom of the panel. The pin button will pin the location to the top of the list. Only one location may be pinned at a time. The X button will delete the location from the list. There is no confirmation for deletion, so caution is advised. A Location Card right-clicked onto this information panel will be written with the location data from the saved location.
+         * When a location is selected from the list, and the info panel to the right is populated, two additional buttons display at the bottom of the panel. The pin button will pin the location to the top of the list. Only one location may be pinned at a time. The X button will delete the location from the list. A Location Card right-clicked onto this information panel will be written with the location data from the saved location.
          *
          * New Location
          * The New Location app allows the user to save their current coordinates in the Tempad to allow for travel via the Teleport app. A map is present on the screen to help users find their bearings when saving locations. The location can be named before saving, and the user may also specify a specific color for timedoors opened to the location.
@@ -699,7 +699,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "tempad_app_teleport_3",
                 "When a location is selected from the list, and the info panel to the right is populated, two additional buttons display at the bottom of the panel. " +
                         "The pin button will pin the location to the top of the list. Only one location may be pinned at a time. The X button will delete the location from the list. " +
-                        "There is no confirmation for deletion, so caution is advised. A %s right-clicked onto this information panel will be written with the location data from the saved location.",
+                        "A %s right-clicked onto this information panel will be written with the location data from the saved location.",
                 ModItems.locationCard
             )
 
@@ -1086,6 +1086,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             it.addSub("unpin", "Unpin")
             it.addSub("teleport", "Teleport")
             it.addSub("delete", "Delete")
+            it.addSub("delete_modal", "Delete Location?")
+            it.addSub("delete_modal.description", "Are you sure you want to delete this location? This action cannot be undone.")
             it.addSub("no_selection", "No location selected. Click on a location view details")
         }
 

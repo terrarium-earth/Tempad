@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.registries
 import earth.terrarium.tempad.api.locations.*
 import earth.terrarium.tempad.api.player_access.DefaultAccess
 import earth.terrarium.tempad.api.player_access.PlayerAccessApi
-import earth.terrarium.tempad.common.compat.initArgonautsAccess
+import earth.terrarium.tempad.common.compat.initAlliesAccess
 import earth.terrarium.tempad.common.compat.initFTBTeamsAccess
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.location_handlers.PlayerHandler
@@ -19,8 +19,10 @@ object ModLocations {
         TempadLocations[PlayerHandler.ID] = { player, upgrades, _ -> PlayerHandler(player, upgrades) }
         TempadLocations[WalletLocationHandler.id] = ::WalletLocationHandler
 
+        TempadLocations.setDeletable(DefaultLocationHandler.ID)
+
         PlayerAccessApi["public".tempadId] = DefaultAccess.Public
-        if(ModList.get().isLoaded("argonauts")) initArgonautsAccess()
+        if(ModList.get().isLoaded("odyssey_claims")) initAlliesAccess()
         if(ModList.get().isLoaded("ftbteams")) initFTBTeamsAccess()
     }
 }
