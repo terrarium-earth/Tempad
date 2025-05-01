@@ -19,6 +19,10 @@ class BlockChrononContent(val block: BlockEntity, val setter: (Int) -> Unit, val
             if (maxPower <= 0) return null
             return BlockChrononContent(block, { block.bootChronons = it }, { block.bootChronons }, maxPower)
         }
+
+        fun metronomeClient(block: MetronomeBe): BlockChrononContent? {
+            return BlockChrononContent(block, { block.localChronons = it }, { block.localChronons }, block.localCapacity)
+        }
     }
 
     override var power: Int

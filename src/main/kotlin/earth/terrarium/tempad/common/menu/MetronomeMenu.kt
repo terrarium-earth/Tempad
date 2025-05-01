@@ -6,6 +6,7 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.menu.MenuContent
 import com.teamresourceful.resourcefullib.common.menu.MenuContentSerializer
 import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.common.block.MetronomeDataContainer
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.GlobalPos
@@ -13,6 +14,8 @@ import net.minecraft.core.UUIDUtil
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.ContainerData
+import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.items.IItemHandler
@@ -21,12 +24,13 @@ import net.neoforged.neoforge.items.SlotItemHandler
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val data: MetronomeMenuData?) : AbstractContainerMenu(ModMenus.metronome, id) {
-    constructor(id: Int, inv: Inventory, data: Optional<MetronomeMenuData>) : this(id, inv, ItemStackHandler(8), data.getOrNull())
+class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val energy: ContainerData, val data: MetronomeMenuData?) : AbstractContainerMenu(ModMenus.metronome, id) {
+    constructor(id: Int, inv: Inventory, data: Optional<MetronomeMenuData>) : this(id, inv, ItemStackHandler(8), SimpleContainerData(2), data.getOrNull())
 
     init {
         this.addMenuSlots(items)
         this.addPlayerInvSlots(inv)
+        this.addDataSlots(energy)
     }
 
     override fun quickMoveStack(

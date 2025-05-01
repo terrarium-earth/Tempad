@@ -27,6 +27,7 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -38,6 +39,8 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
     var locked = true
     var initialChronons = 0
     var bootChronons = 0
+    var localChronons = 0
+    var localCapacity = 0
     var bootTime = 100
     val inventory = ItemStackHandler(8)
 
@@ -67,6 +70,12 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
             return
         }
 
+        level?.server?.tickCount?.let {
+            if ((it + 1) % CommonConfig.Metronome.generationRate == 0) {
+                level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
+                this.setChanged()
+            }
+        }
         chronons?.let { metronome ->
             for (i in 0 .. 7) {
                 if (i < 4) {
@@ -111,11 +120,19 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         locked = tag.getBoolean("Locked")
         initialChronons = tag.getInt("InitialChronons")
         bootChronons = tag.getInt("BootChronons")
+        localChronons = tag.getInt("LocalChronons")
+        localCapacity = tag.getInt("LocalCapacity")
         inventory.deserializeNBT(registries, tag.getCompound("Inventory"))
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
-        return CompoundTag().apply { saveAdditional(this, registries) }
+        return CompoundTag().apply {
+            saveAdditional(this, registries)
+            safeLet(metronomeEnergy, this@MetronomeBe.owner) { energy, owner ->
+                this.putInt("LocalChronons", energy.getStored(owner.id))
+                this.putInt("LocalCapacity", energy.getCapacity(owner.id))
+            }
+        }
     }
 
     override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
@@ -135,6 +152,6 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         playerInventory: Inventory,
         player: Player,
     ): AbstractContainerMenu? {
-        return MetronomeMenu(containerId, playerInventory, inventory, safeLet(level, owner) { lvl, own -> MetronomeMenuData(own.id, GlobalPos(lvl.dimension(), blockPos), locked) })
+        return MetronomeMenu(containerId, playerInventory, inventory, owner?.id?.let { MetronomeDataContainer(it) } ?: SimpleContainerData(2), safeLet(level, owner) { lvl, own -> MetronomeMenuData(own.id, GlobalPos(lvl.dimension(), blockPos), locked) })
     }
 }

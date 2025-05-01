@@ -24,23 +24,10 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
                 Codec.unboundedMap(UUIDUtil.STRING_CODEC, GlobalPos.CODEC.listOf()).fieldOf("positions").forGetter { it.positions }
             ).apply(it, ::MetronomeData)
         }
-
-        val byteCodec: ByteCodec<MetronomeData> = ObjectByteCodec.create(
-            ByteCodec.mapOf(ByteCodec.UUID, ByteCodec.INT).fieldOf { it.stored },
-            ByteCodec.mapOf(ByteCodec.UUID, ByteCodec.INT).fieldOf { it.positions.mapValues { it.value.size } },
-            MetronomeData::forClient
-        )
-
-        fun forClient(stored: Map<UUID, Int>, capacities: Map<UUID, Int>): MetronomeData {
-            val metronomeData = MetronomeData(stored, emptyMap<UUID, List<GlobalPos>>())
-            metronomeData.capacities = capacities
-            return metronomeData
-        }
     }
 
     val positions: MutableMap<UUID, MutableList<GlobalPos>> = mutableMapOf()
     val stored: Object2IntMap<UUID> = Object2IntOpenHashMap()
-    var capacities: Map<UUID, Int>? = null
 
     init {
         for ((player, blocks) in positions) {
@@ -54,7 +41,6 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
         if (positions[player] != null && pos in positions[player]!!) return
         positions.getOrPut(player) { mutableListOf() } += pos
         stored[player] = contents + (stored[player] ?: 0)
-        Tempad.server?.overworld()?.let { syncData(it, ModAttachments.syncedEnergy, this) }
     }
 
     fun getCount(player: UUID): Int {
@@ -62,7 +48,7 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
     }
 
     fun getCapacity(player: UUID): Int {
-        return (capacities?.get(player) ?: positions[player]?.size ?: 0) * CommonConfigCache.Metronome.capacity
+        return (positions[player]?.size ?: 0) * CommonConfigCache.Metronome.capacity
     }
 
     fun getStored(player: UUID): Int {
@@ -73,11 +59,6 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
         for ((player, amount) in stored) {
             stored[player] = (CommonConfig.Metronome.generationAmount * (if(CommonConfigCache.Metronome.scaleGeneration) getCount(player) else 1) + amount).coerceAtMost(getCapacity(player))
         }
-        sync()
-    }
-
-    fun sync() {
-        Tempad.server?.overworld()?.let { syncData(it, ModAttachments.syncedEnergy, this) }
     }
 
     fun remove(player: UUID, pos: GlobalPos): Int {

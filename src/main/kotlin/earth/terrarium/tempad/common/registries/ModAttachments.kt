@@ -16,7 +16,6 @@ import earth.terrarium.tempad.common.data.MetronomeData
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.location_handlers.AnchorPointsData
 import earth.terrarium.tempad.common.location_handlers.PlayerPointsData
-import earth.terrarium.tempad.common.registries.ModAttachments.syncedEnergy
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
@@ -107,10 +106,6 @@ object ModAttachments {
         }
     }
 
-    val syncedEnergy: DataSyncSerializer<MetronomeData> by syncer.register("metronome_energy") {
-        DataSyncSerializer.create( { this@ModAttachments.metronomeEnergy }, StreamCodecByteCodec.to(MetronomeData.byteCodec))
-    }
-
     val yOffset: AttachmentType<Float> by registry.register("yoffset") {
         attachmentType({ 0f }) {
             codec = Codec.FLOAT
@@ -139,4 +134,4 @@ var AttachmentHolder.angle by ModAttachments.angle
 
 val anchorPoints by ModAttachments.anchorPoints.serverData
 val playerPoints by ModAttachments.playerPoints.serverData
-val metronomeEnergy by SyncedServerDataDelegate(ModAttachments.metronomeEnergy, syncedEnergy)
+val metronomeEnergy by ServerDataDelegate(ModAttachments.metronomeEnergy)

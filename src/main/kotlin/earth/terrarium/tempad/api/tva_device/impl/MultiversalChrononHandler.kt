@@ -16,7 +16,6 @@ class MultiversalChrononHandler(val playerId: UUID): ChrononHandler {
         val newPower = (power - amount).coerceAtLeast(0)
         if (action == ActionType.Execute) {
             metronomeEnergy?.stored[playerId] = newPower
-            metronomeEnergy?.sync()
         }
         return oldPower - newPower
     }
@@ -26,7 +25,6 @@ class MultiversalChrononHandler(val playerId: UUID): ChrononHandler {
         val newPower = (power + amount).coerceAtMost(maxPower)
         if (action == ActionType.Execute) {
             metronomeEnergy?.stored[playerId] = newPower
-            metronomeEnergy?.sync()
         }
         return newPower - oldPower
     }

@@ -135,6 +135,7 @@ class Tempad(bus: IEventBus) {
                     if (block.bootTime > 0) {
                         BlockChrononContent.metronome(block, CommonConfig.Metronome.jumpStartAmount)
                     } else {
+                        if (server == null) return@safeLet BlockChrononContent.metronomeClient(block)
                         MultiversalChrononHandler(owner.id)
                     }
                 }

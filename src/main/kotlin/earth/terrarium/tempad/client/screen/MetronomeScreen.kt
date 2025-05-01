@@ -64,15 +64,13 @@ class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Co
     override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         graphics.blitSprite(sprite, leftPos, topPos, imageWidth, imageHeight)
 
-        safeLet(metronomeEnergy, menu.data?.uuid) { energy, id ->
-            val power = energy.getStored(id)
-            val capacity = energy.getCapacity(id)
-            val height = ((power.toFloat() / capacity).coerceIn(0f, 1f) * 54).toInt()
-            graphics.blitSprite(TempadUI.powerVert, 6, 54, 0, 54 - height, leftPos + 102, topPos + 20 + 54 - height, 6, height)
+        val power = menu.energy.get(0)
+        val capacity =  menu.energy.get(1)
+        val height = ((power.toFloat() / capacity).coerceIn(0f, 1f) * 54).toInt()
+        graphics.blitSprite(TempadUI.powerVert, 6, 54, 0, 54 - height, leftPos + 102, topPos + 20 + 54 - height, 6, height)
 
-            if (mouseX >= leftPos + 102 && mouseX <= leftPos + 106 && mouseY >= topPos + 20 && mouseY <= topPos + 74) {
-                ScreenUtils.setTooltip(Component.literal("${power}/${capacity}"))
-            }
+        if (mouseX >= leftPos + 102 && mouseX <= leftPos + 106 && mouseY >= topPos + 20 && mouseY <= topPos + 74) {
+            ScreenUtils.setTooltip(Component.literal("${power}/${capacity}"))
         }
     }
 
