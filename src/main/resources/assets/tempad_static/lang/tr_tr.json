@@ -1,0 +1,144 @@
+{
+  "config.jade.plugin_tempad.chronon": "Chronon",
+  "gui.tempad.search_field": "Ara...",
+  "gui.tempad.name_field": "Ad...",
+  "gui.tempad.teleport_disabled": "Bu konuma ışınlanamazsınız",
+  "gui.tempad.delete": "Konumu sil",
+  "gui.tempad.delete_disabled": "Bu konumu silemezsiniz",
+  "gui.tempad.favorite": "Favori konum",
+  "gui.tempad.unfavorite": "Favorilerden çıkar",
+  "gui.tempad.timedoor": "Zaman Kapısı",
+  "gui.tempad.dimension": "Boyut: %s",
+  "gui.tempad.no_locations.first_line": "Konum eklemek için",
+  "gui.tempad.no_locations.second_line": "[+] tuşuna basın",
+  "gui.tempad.no_selection.first_line": "Daha fazla detay için",
+  "gui.tempad.no_selection.second_line": "bir konum seçin",
+  "gui.tempad.x": "X: %s",
+  "gui.tempad.y": "Y: %s",
+  "gui.tempad.z": "Z: %s",
+  "gui.tempad.angle": "Açı: %s",
+  
+  "advancements.tempad.tempad": "Tüm Zamanlar İçin. Her Zaman.",
+  "advancements.tempad.tempad.description": "Bir Tempad edinin",
+  "advancements.tempad.he_who_remains": "Muhteşem amaç!",
+  "advancements.tempad.he_who_remains.description": "'Geriye Kalan'ın Tempad'ini edinin",
+  "subtitles.tempad.entity.timedoor.open": "Zaman Kapısı açılıyor",
+  "message.tempad.not_enough_chronons": "Yeterli chronon yok",
+  
+  "dimension.minecraft.overworld": "Ana Dünya",
+  "dimension.minecraft.the_nether": "Nether",
+  "dimension.minecraft.the_end": "End",
+  
+  "locations.tempad.anchor_point": "İşaretleyici Adı: \"%s\"",
+  "locations.tempad.player": "Oyuncu Takip Ediliyor: %s",
+  
+  "item.tempad.creative_chronometer.infinite": "Sonsuz",
+  "block.tempad.workstation_child": "Çalışma İstasyonu Alt Birimi",
+  
+  "category.tempad": "Tempad",
+  "key.tempad.shortcut": "Tempad ekranını aç",
+  
+  "screen.tempad.marker": "İşaretleyici",
+  "screen.tempad.marker.access_field": "Kimler erişebilir?",
+  "screen.tempad.marker.public_access": "Herkese açık erişim:",
+  "screen.tempad.marker.yoffset": "Portal Y Kaydırması:",
+  "screen.tempad.marker.angle": "Açı:",
+  
+  "access.tempad.private": "Sadece sen",
+  "access.tempad.public": "Herkes",
+  "access.tempad.guild": "Lonca mensupları",
+  "access.tempad.party": "Grup mensupları",
+  "access.tempad.ftbteams": "Takım",
+  
+  "app.tempad.tp_to.teleport": "Işınlan",
+  "app.tempad.tp_to.selected": "Seçildi",
+  
+  "provider.tempad.default": "Cihazda",
+  "provider.tempad.markers": "İşaretleyiciler",
+  "provider.tempad.player": "Oyuncular",
+  "provider.tempad.wallet": "Kart Cüzdanı",
+  
+  "macro.tempad.default": "Favoriyi Aç",
+  "macro.tempad.default.description": "Favori konuma ışınlan",
+  
+  "button.tempad.type": "Türe Göre Sırala",
+  "button.tempad.alphabetical": "Alfabetik Sırala",
+  "button.tempad.dimension": "Boyuta Göre Sırala",
+  
+  "marker.tempad.death": "Şurada öldü",
+  "marker.tempad.respawn": "Şurada yeniden doğdu",
+  "marker.tempad.dimension_exit": "Boyuttan şurada ayrıldı",
+  "marker.tempad.dimension_enter": "Boyuta şurada girdi",
+  
+  "config.jade.plugin_tempad.timedoor": "Zaman Kapısı",
+  "config.jade.plugin_tempad.anchor": "İşaretleyici",
+  "config.jade.plugin_tempad.rudimentary": "Zaman Kapısı Projektörü",
+  "config.jade.plugin_tempad.metronome": "Metronom",
+  "config.jade.plugin_tempad.workstation": "Çalışma İstasyonu",
+  
+  "jade.tempad.will_close": "%s saniye içinde kapanıyor",
+  "jade.tempad.closing": "Kapanıyor...",
+  "jade.tempad.pos": "%s konumuna ışınlanıyor: %s",
+  "misc.tempad.return": "%s'e dönülüyor",
+  "tempad.tooltip.player_pos": "Hedeflenen: %s",
+  
+  "misc.tempad.upgrades": "Yüklü Yükseltmeler:",
+  "misc.tempad.wandering": "Şurada dolaşıyor",
+  
+  "misc.tempad.shift_key_info": "Daha fazla bilgi için [%s] tuşunu basılı tutun",
+  
+  "location.tempad.saved": [
+    "",
+    { "text": "Kaydedilen konum: ", "color": "#ff6f00" },
+    { "index": 0, "color": "#91450d" }
+  ],
+  "location.tempad.player.error": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Oyuncu konumları kaydedilemez", "color": "#91450d" }
+  ],
+  "tempad.error.timedoor_already_open": "Zaman Kapısı zaten açık",
+  
+  "entity.tempad.timedoor": "Zaman Kapısı",
+  "entity.tempad.timedoor.success": "Zaman Kapısı açıldı",
+  "entity.tempad.timedoor.fail": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Zaman Kapısı açılamadı", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.pos": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Pozisyon başlatılmadı", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.interdimensional": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Boyutlar arası seyahate izin verilmiyor", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional_all": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Boyut içi seyahate izin verilmiyor", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Bu boyut içinde seyahate izin verilmiyor", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.leaving": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Bu boyuttan ayrılmaya izin verilmiyor", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.entering": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Bu boyuta girmeye izin verilmiyor", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.no_chronons": [
+    "",
+    { "text": "Hata: ", "color": "#ff6f00" },
+    { "text": "Yeterli chronon yok", "color": "#91450d" }
+  ]
+}
