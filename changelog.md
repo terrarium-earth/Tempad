@@ -1,2 +1,6 @@
-- Fix massive server lag with metronome data
-- Fixed metronome not having its energy when you drop it
+- You can now shift right click batteries on blocks to take energy if the battery is empty
+- Metronome inventory is now accessible with pipes
+- Fixed text rendering being crunchy and weird (thanks nebi for that phrasing)
+- Fixed Timedoor Projector not opening glitchy portals when its in your hand
+- Fixed several missing config entries
+- Fix timedoors forever being chunkloaded
