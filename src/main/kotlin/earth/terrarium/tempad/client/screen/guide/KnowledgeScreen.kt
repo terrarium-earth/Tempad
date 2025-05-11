@@ -41,6 +41,7 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
+import kotlin.math.ceil
 
 class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.description), TickingScreen {
     companion object {
@@ -270,10 +271,16 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
             return recipe
         }
 
+        fun closestPercent(percent: Float): Float {
+            val minecraft = Minecraft.getInstance()
+            val scale = minecraft.options.guiScale().get().takeIf { it > 0 } ?: minecraft.window.calculateScale(0, minecraft.isEnforceUnicode)
+            return ceil(scale * percent) / scale
+        }
+
         fun Screen.paragraph(text: Component): MultilineTextWidget? {
             if (Minecraft.getInstance() == null) return null
             val text = Widgets.textarea(text, 98)
-            text.scale(0.7f)
+            text.scale(closestPercent(0.7f))
             text.alignLeft()
             text.setColor(Tempad.ORANGE.value)
             text.clickActionCallback(::handleComponentClicked)
@@ -290,7 +297,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         fun subtitle(text: Component): MultilineTextWidget? {
             if (Minecraft.getInstance() == null) return null
             return Widgets.textarea(text, 98) {
-                it.scale(0.8f)
+                it.scale(closestPercent(0.8f))
                 it.alignLeft()
                 it.setColor(Tempad.ORANGE.value)
             }

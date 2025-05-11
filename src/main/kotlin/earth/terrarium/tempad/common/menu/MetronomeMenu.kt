@@ -7,6 +7,7 @@ import com.teamresourceful.resourcefullib.common.menu.MenuContent
 import com.teamresourceful.resourcefullib.common.menu.MenuContentSerializer
 import earth.terrarium.tempad.api.tva_device.chronons
 import earth.terrarium.tempad.common.block.MetronomeDataContainer
+import earth.terrarium.tempad.common.block.MetronomeItemHandler
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.GlobalPos
@@ -25,7 +26,8 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val energy: ContainerData, val data: MetronomeMenuData?) : AbstractContainerMenu(ModMenus.metronome, id) {
-    constructor(id: Int, inv: Inventory, data: Optional<MetronomeMenuData>) : this(id, inv, ItemStackHandler(8), SimpleContainerData(2), data.getOrNull())
+    constructor(id: Int, inv: Inventory, data: Optional<MetronomeMenuData>) : this(id, inv,
+        MetronomeItemHandler(), SimpleContainerData(2), data.getOrNull())
 
     init {
         this.addMenuSlots(items)
@@ -75,19 +77,7 @@ class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val energy
 
     private fun addMenuSlots(items: ItemStackHandler, x: Int = 25, y: Int = 10) {
         for (slot in 0..7) {
-            this.addSlot(ChrononSlot(items, slot, x + (slot + if(slot > 3) 1 else 0) * 18, y + 30, slot < 4))
-        }
-    }
-
-    inner class ChrononSlot(itemHandler: IItemHandler, index: Int, xPosition: Int, yPosition: Int, val input: Boolean) :
-        SlotItemHandler(itemHandler, index, xPosition, yPosition) {
-
-        override fun mayPlace(stack: ItemStack): Boolean {
-            return if(input) {
-                stack.chronons?.canExtract == true
-            } else {
-                stack.chronons?.canInsert == true
-            }
+            this.addSlot(SlotItemHandler(items, slot, x + (slot + if(slot > 3) 1 else 0) * 18, y + 30))
         }
     }
 }

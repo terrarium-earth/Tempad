@@ -37,10 +37,14 @@ open class CapacitorItem: ChrononItem() {
     }
 
     override fun useOn(context: UseOnContext): InteractionResult {
-        val to = context.level.getBlockEntity(context.clickedPos)?.chronons ?: return super.useOn(context)
+        val block = context.level.getBlockEntity(context.clickedPos)?.chronons ?: return super.useOn(context)
         if (!context.level.isClientSide) {
             context.itemInHand.chronons?.let {
-                move(it, to, 1000)
+                if (it.power == 0 && block.canExtract) {
+                    move(block, it, it.maxPower)
+                } else if (block.canInsert) {
+                    move(it, block, block.maxPower)
+                }
             }
         }
         return InteractionResult.SUCCESS

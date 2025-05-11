@@ -25,6 +25,7 @@ import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.items.ScreeningDeviceAccess
+import earth.terrarium.tempad.common.items.items
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
@@ -42,6 +43,7 @@ import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModList
 import net.neoforged.fml.common.Mod
+import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent
@@ -117,6 +119,8 @@ class Tempad(bus: IEventBus) {
             val upgradeItems = event.register(UpgradeHandler.item)
             val upgradeBlocks = event.register(UpgradeHandler.block)
             val accessItems = event.register(PlayerAccess.item)
+            val blockItems = event.register(Capabilities.ItemHandler.BLOCK)
+            val itemItems = event.register(Capabilities.ItemHandler.ITEM)
 
             chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.let {
@@ -199,6 +203,14 @@ class Tempad(bus: IEventBus) {
 
             upgradeBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 RudimentaryUpgradeHandler
+            }
+
+            blockItems[ModBlocks.metronomeBe] = { it, _ ->
+                (it as? MetronomeBe)?.inventory
+            }
+
+            itemItems[ModItems.cardWallet] = { it, _ ->
+                it.items
             }
         }
 

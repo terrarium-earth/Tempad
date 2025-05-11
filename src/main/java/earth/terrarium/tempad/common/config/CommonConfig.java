@@ -17,12 +17,15 @@ import com.teamresourceful.resourcefulconfig.api.types.entries.Observable;
 @ConfigInfo.Color("#ff6f00")
 @Config(value = "tempad", categories = {
     CommonConfig.TimeDoor.class,
+    CommonConfig.Chronometer.class,
+    CommonConfig.ChrononGenerator.class,
+    CommonConfig.Cell.class,
+    CommonConfig.Battery.class,
     CommonConfig.RudimentaryTempad.class,
     CommonConfig.Tempad.class,
     CommonConfig.TimeTwister.class,
-    CommonConfig.Chronometer.class,
-    CommonConfig.Cell.class,
     CommonConfig.Metronome.class,
+    CommonConfig.Chronomark.class,
 })
 public final class CommonConfig {
     @ConfigEntry(id = "allow_interdimensional_travel")
@@ -164,6 +167,7 @@ public final class CommonConfig {
         public static Observable<Integer> capacityBattery = Observable.of(4000);
     }
 
+    @Category("chronomark")
     public static final class Chronomark {
         @ConfigEntry(id = "max_offset")
         @Comment("The maximum range that you can set the portal position to be")

@@ -18,6 +18,7 @@ import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.network.s2c.RotatePlayerMomentumPacket
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.*
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
 import net.minecraft.core.particles.DustParticleOptions
 import net.minecraft.core.registries.Registries
@@ -30,8 +31,10 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.server.level.TicketType
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -297,7 +300,11 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
         val targetLevel = targetLevel ?: return
         val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
-        if (entities.isNotEmpty()) tryInitReceivingPortal()
+        if (entities.isNotEmpty()) {
+            tryInitReceivingPortal()
+            val pos = BlockPos.containing(targetPos)
+            targetLevel.chunkSource.addRegionTicket(TicketType.PORTAL, ChunkPos(pos), 3, pos)
+        }
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()
             if (event.isCanceled) continue
@@ -347,7 +354,6 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         val targetLevel = targetLevel ?: return
         linkedPortalEntity?.let { return }
         val targetPortal = TimedoorEntity(ModEntities.timedoor, targetLevel)
-        Tempad.ticketController.forceChunk(level() as ServerLevel, targetPortal, chunkPosition().x, chunkPosition().z, true, false)
         targetPortal.linkedPortalId = this.uuid
         targetPortal.closingTime = this.closingTime
         targetPortal.setLocation(selfLocation)
@@ -370,7 +376,6 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun remove(reason: RemovalReason) {
         super.remove(reason)
         if(original) this.linkedPortalEntity?.remove(reason)
-        Tempad.ticketController.forceChunk(level() as ServerLevel, this, chunkPosition().x, chunkPosition().z, false, false)
     }
 
     fun setLocation(location: NamedGlobalVec3) {
@@ -389,7 +394,6 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun onAddedToLevel() {
         super.onAddedToLevel()
         if (level().isClientSide) return
-        Tempad.ticketController.forceChunk(level() as ServerLevel, this, chunkPosition().x, chunkPosition().z, true, false)
         level().playSound(null, blockPosition(), ModSounds.timedoorOpen, soundSource, 1.0f, 1.0f)
     }
 }

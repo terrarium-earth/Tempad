@@ -56,6 +56,7 @@ class MetronomeData(stored: Map<UUID, Int>, positions: Map<UUID, List<GlobalPos>
     }
 
     fun tick() {
+        val test = Object2IntOpenHashMap<String>();
         for ((player, amount) in stored) {
             stored[player] = (CommonConfig.Metronome.generationAmount * (if(CommonConfigCache.Metronome.scaleGeneration) getCount(player) else 1) + amount).coerceAtMost(getCapacity(player))
         }

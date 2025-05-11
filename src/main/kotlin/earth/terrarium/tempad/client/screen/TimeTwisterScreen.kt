@@ -67,7 +67,7 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
         }
     }
 
-    private val locations = history.toSortedMap().reversed().entries.toList()
+    private val locations = history.toSortedMap().entries.toList().reversed()
 
     private fun getIndex(): Int {
         minecraft?.let { mc ->

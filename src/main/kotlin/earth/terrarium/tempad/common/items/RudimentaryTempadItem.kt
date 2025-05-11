@@ -45,7 +45,9 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties(
         portalTarget?.get(stack.upgrades!!, stack.chronons!!)?.let { pos ->
             if (!player.level().isClientSide) {
                 val (provider, id) = (portalTarget as? IndirectLocation).let { it?.provider to it?.id }
-                TimedoorEntity.openTimedoor(player, this, provider, id, pos)
+                TimedoorEntity.openTimedoor(player, this, provider, id, pos) {
+                    it.glitching = true
+                }
             }
         } ?: {
             if (!player.level().isClientSide) player.displayClientMessage(TimedoorEntity.posFail, true)

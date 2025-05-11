@@ -42,7 +42,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
     var localChronons = 0
     var localCapacity = 0
     var bootTime = 100
-    val inventory = ItemStackHandler(8)
+    val inventory = MetronomeItemHandler()
 
     fun tick() {
         if(level !is ServerLevel) return
