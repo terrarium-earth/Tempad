@@ -23,7 +23,7 @@
         {
             "title": "Tempad",
             "description": "**Changelog:**\\n${changelog}",
-            "color": 5814783,
+            "color": 16738816,
             "fields": [
                 {
                     "name": "Minecraft Version",
