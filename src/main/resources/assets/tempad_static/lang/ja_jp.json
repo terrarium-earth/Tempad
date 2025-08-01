@@ -1,0 +1,144 @@
+{
+  "config.jade.plugin_tempad.chronon": "クロノン",
+  "gui.tempad.search_field": "検索...",
+  "gui.tempad.name_field": "名前...",
+  "gui.tempad.teleport_disabled": "このロケーションにはテレポートできません",
+  "gui.tempad.delete": "ロケーションを削除",
+  "gui.tempad.delete_disabled": "このロケーションは削除できません",
+  "gui.tempad.favorite": "お気に入りに追加",
+  "gui.tempad.unfavorite": "お気に入りから削除",
+  "gui.tempad.timedoor": "タイムドア",
+  "gui.tempad.dimension": "次元: %s",
+  "gui.tempad.no_locations.first_line": "[+] を押して",
+  "gui.tempad.no_locations.second_line": "ロケーションを追加",
+  "gui.tempad.no_selection.first_line": "ロケーションを選択して",
+  "gui.tempad.no_selection.second_line": "詳細を表示",
+  "gui.tempad.x": "X: %s",
+  "gui.tempad.y": "Y: %s",
+  "gui.tempad.z": "Z: %s",
+  "gui.tempad.angle": "角度: %s",
+
+  "advancements.tempad.tempad": "すべての時間を。常に",
+  "advancements.tempad.tempad.description": "テンパッドを入手する",
+  "advancements.tempad.he_who_remains": "栄光の使命！",
+  "advancements.tempad.he_who_remains.description": "時が残した「かの者」のテンパッドを入手する",
+  "subtitles.tempad.entity.timedoor.open": "タイムドアが開く",
+  "message.tempad.not_enough_chronons": "クロノンが不足しています",
+
+  "dimension.minecraft.overworld": "オーバーワールド",
+  "dimension.minecraft.the_nether": "ネザー",
+  "dimension.minecraft.the_end": "エンド",
+
+  "locations.tempad.anchor_point": "マーカー名：「%s」",
+  "locations.tempad.player": "プレイヤーを追跡中：%s",
+
+  "item.tempad.creative_chronometer.infinite": "無限",
+  "block.tempad.workstation_child": "ワークステーション端末",
+
+  "category.tempad": "テンパッド",
+  "key.tempad.shortcut": "テンパッド画面を開く",
+
+  "screen.tempad.marker": "マーカー",
+  "screen.tempad.marker.access_field": "アクセス権の設定",
+  "screen.tempad.marker.public_access": "公開設定：",
+  "screen.tempad.marker.yoffset": "ポータルのY位置補正：",
+  "screen.tempad.marker.angle": "角度：",
+
+  "access.tempad.private": "自分のみ",
+  "access.tempad.public": "全員",
+  "access.tempad.guild": "ギルドメンバー",
+  "access.tempad.party": "パーティーメンバー",
+  "access.tempad.ftbteams": "チーム",
+
+  "app.tempad.tp_to.teleport": "テレポート",
+  "app.tempad.tp_to.selected": "選択済み",
+
+  "provider.tempad.default": "端末内",
+  "provider.tempad.markers": "マーカー",
+  "provider.tempad.player": "プレイヤー",
+  "provider.tempad.wallet": "カードウォレット"
+
+  "macro.tempad.default": "お気に入りを開く",
+  "macro.tempad.default.description": "お気に入りのロケーションへテレポート",
+
+  "button.tempad.type": "種類で並べ替え",
+  "button.tempad.alphabetical": "アルファベット順に並べ替え",
+  "button.tempad.dimension": "次元で並べ替え",
+
+  "marker.tempad.death": "死亡地点",
+  "marker.tempad.respawn": "リスポーン地点",
+  "marker.tempad.dimension_exit": "次元から出た場所",
+  "marker.tempad.dimension_enter": "次元に入った場所",
+
+  "config.jade.plugin_tempad.timedoor": "タイムドア",
+  "config.jade.plugin_tempad.anchor": "マーカー",
+  "config.jade.plugin_tempad.rudimentary": "タイムドアプロジェクター",
+  "config.jade.plugin_tempad.metronome": "メトロノーム",
+  "config.jade.plugin_tempad.workstation": "ワークステーション",
+
+  "jade.tempad.will_close": "あと %s 秒で閉じます",
+  "jade.tempad.closing": "閉じています...",
+  "jade.tempad.pos": "%s の %s へテレポート中",
+  "misc.tempad.return": "%s に戻ります",
+  "tempad.tooltip.player_pos": "対象: %s",
+
+  "misc.tempad.upgrades": "インストール済みのアップグレード：",
+  "misc.tempad.wandering": "%s をさまよっています",
+
+  "misc.tempad.shift_key_info": "[%s] を押して詳細を表示",
+
+  "location.tempad.saved": [
+    "",
+    { "text": "保存した場所: ", "color": "#ff6f00" },
+    { "index": 0, "color": "#91450d" }
+  ],
+  "location.tempad.player.error": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "プレイヤーの位置は保存できません", "color": "#91450d" }
+  ],
+  "tempad.error.timedoor_already_open": "タイムドアはすでに開いています",
+
+  "entity.tempad.timedoor": "タイムドア",
+  "entity.tempad.timedoor.success": "タイムドアを開きました",
+  "entity.tempad.timedoor.fail": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "タイムドアの起動に失敗しました", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.pos": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "座標が初期化されていません", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.interdimensional": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "次元間の移動は禁止されています", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional_all": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "いかなる次元内での移動も禁止されています", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "この次元内での移動は禁止されています", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.leaving": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "この次元からの移動は禁止されています", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.entering": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "この次元への移動は禁止されています", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.no_chronons": [
+    "",
+    { "text": "エラー: ", "color": "#ff6f00" },
+    { "text": "クロノンが不足しています", "color": "#91450d" }
+  ]
+}
