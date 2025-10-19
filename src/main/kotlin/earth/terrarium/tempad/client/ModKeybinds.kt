@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.network.c2s.OpenAppPacket
 import earth.terrarium.tempad.common.network.c2s.OpenTempadPacket
+import earth.terrarium.tempad.common.network.c2s.OpenWalletPacket
 import earth.terrarium.tempad.common.network.c2s.UseMacroPacket
 import earth.terrarium.tempad.common.registries.ModApps
 import earth.terrarium.tempad.common.utils.sendToServer
@@ -47,6 +48,13 @@ object ModKeybinds {
         "category.tempad"
     )
 
+    val openCardWallet: KeyMapping = KeyMapping(
+        "key.tempad.open_wallet",
+        InputConstants.Type.KEYSYM,
+        InputConstants.UNKNOWN.value,
+        "category.tempad"
+    )
+
     @SubscribeEvent @JvmStatic
     fun init(event: FMLClientSetupEvent) {
         NeoForge.EVENT_BUS.addListener(::onClientTick);
@@ -58,6 +66,7 @@ object ModKeybinds {
         event.register(useMacro)
         event.register(newLocation)
         event.register(travelTimeline)
+        event.register(openCardWallet)
     }
 
     private fun onClientTick(event: ClientTickEvent.Post) {
@@ -72,6 +81,9 @@ object ModKeybinds {
         }
         while (travelTimeline.consumeClick()) {
             OpenAppPacket(ModApps.timeline).sendToServer()
+        }
+        while(openCardWallet.consumeClick()) {
+            OpenWalletPacket().sendToServer()
         }
     }
 }

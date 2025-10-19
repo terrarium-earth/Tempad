@@ -15,6 +15,7 @@ object ModNetworking {
         channel.register(RedirectAppPacket.type)
         channel.register(OpenAppPacket)
         channel.register(OpenTempadPacket)
+        channel.register(OpenWalletPacket)
         channel.register(OpenTimedoorPacket.type)
         channel.register(SaveSettingsPacket.type)
         channel.register(SetFavoritePacket.type)
