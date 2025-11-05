@@ -12,7 +12,7 @@
   "gui.tempad.no_locations.first_line": "按[+]以",
   "gui.tempad.no_locations.second_line": "添加一个位置",
   "gui.tempad.no_selection.first_line": "选择一个位置",
-  "gui.tempad.no_selection.second_line": "更多信息",
+  "gui.tempad.no_selection.second_line": "以获取更多信息",
   "gui.tempad.x": "X：%s",
   "gui.tempad.y": "Y：%s",
   "gui.tempad.z": "Z：%s",
@@ -30,7 +30,7 @@
   "dimension.minecraft.the_end": "末地",
 
   "locations.tempad.anchor_point": "时门标记已命名: \"%s\"",
-  "locations.tempad.player": "正在追踪的玩家: %s",
+  "locations.tempad.player": "正在追踪玩家: %s",
 
   "item.tempad.creative_chronometer.infinite": "无限",
   "block.tempad.workstation_child": "时门终端",
