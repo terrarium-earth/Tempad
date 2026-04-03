@@ -45,6 +45,8 @@ import kotlin.math.ceil
 
 class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.description), TickingScreen {
     companion object {
+        val background = "screen/knowledge_repository".tempadId
+
         val collapsed = mutableSetOf<Component>()
 
         val defaultDescription: (ClearableGridLayout) -> Unit = { layout ->
@@ -52,14 +54,14 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
             list.addChild(UnclickableWidget().apply {
                 renderer =
                     WidgetRenderers.icon<AbstractWidget>("guide/images/tva".tempadId).withColor(MinecraftColors.WHITE)
-                        .withCentered(64, 32)
-                height = 32
+                        .withCentered(128, 64)
+                height = 64
             })
             list.addChild(
-                Widgets.textarea(ModLang.credits, 98).setColor(Tempad.ORANGE.value).alignCenter().textAlignCenter()
+                Widgets.textarea(ModLang.credits, 152).setColor(Tempad.ORANGE.value).alignCenter().textAlignCenter()
             )
-            list.addChild(SpacerElement(1, 4))
-            list.addChild(Widgets.textarea(ModLang.travelAdvisory, 98) {
+            list.addChild(SpacerElement(1, 75))
+            list.addChild(Widgets.textarea(ModLang.travelAdvisory, 152) {
                 it.setColor(Tempad.ORANGE.value)
                 it.alignCenter()
                 it.textAlignCenter()
@@ -279,7 +281,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
         fun Screen.paragraph(text: Component): MultilineTextWidget? {
             if (Minecraft.getInstance() == null) return null
-            val text = Widgets.textarea(text, 98)
+            val text = Widgets.textarea(text, 142)
             text.scale(closestPercent(0.7f))
             text.alignLeft()
             text.setColor(Tempad.ORANGE.value)
@@ -296,7 +298,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
         fun subtitle(text: Component): MultilineTextWidget? {
             if (Minecraft.getInstance() == null) return null
-            return Widgets.textarea(text, 98) {
+            return Widgets.textarea(text, 142) {
                 it.scale(closestPercent(0.8f))
                 it.alignLeft()
                 it.setColor(Tempad.ORANGE.value)
@@ -392,8 +394,8 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
     var leftPos = 0
     var topPos = 0
-    var imageWidth = 198
-    var imageHeight = 118
+    var imageWidth = 244
+    var imageHeight = 220
     var titleWidget: StringWidget? = null
     var currentTitle: Component = ModLang.overview
         set(value) {
@@ -417,8 +419,8 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
     override fun init() {
         super.init()
-        leftPos = (width - imageWidth) / 2
-        topPos = (height - imageHeight) / 2
+        leftPos = (width - 256) / 2 + 7
+        topPos = (height - 256) / 2 + 7
         addRenderableWidget(Widgets.text(ModItems.knowledgeProjector.description) {
             it.withColor(Tempad.ORANGE)
             it.withPosition(leftPos + 4, topPos + 6)
@@ -427,7 +429,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
         val tableOfContents = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
             withPosition(leftPos + 4, topPos + 20)
-            withSize(72, 94)
+            withSize(72, 193)
             withScrollableY(TriState.TRUE)
             withScrollbarYRenderer(TempadUI.scrollbarYRenderer)
             withTexture(TempadUI.element.get(true, false))
@@ -441,14 +443,14 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
             }
         }
 
-        titleWidget = addRenderableWidget(StringWidget(leftPos + 78, topPos + 22, 116, 10, currentTitle, font).apply {
+        titleWidget = addRenderableWidget(StringWidget(leftPos + 80, topPos + 22, 116, 10, currentTitle, font).apply {
             setColor(Tempad.ORANGE.value)
             alignLeft()
         })
 
         descriptionWidget = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
-            withPosition(leftPos + 78, topPos + 32)
-            withSize(116, 82)
+            withPosition(leftPos + 80, topPos + 33)
+            withSize(158, 180)
             withScrollableY(TriState.UNDEFINED)
             withScrollbarYRenderer(TempadUI.scrollbarYRenderer)
             withTexture(TempadUI.element.get(true, false))
@@ -474,7 +476,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
     ) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick)
         RenderSystem.enableBlend()
-        graphics.blitSprite(TempadUI.element.get(true, false), leftPos, topPos, imageWidth, imageHeight)
+        graphics.blitSprite(background, (width - 256) /2, (height - 256) / 2, 256, 256)
     }
 
     override fun render(

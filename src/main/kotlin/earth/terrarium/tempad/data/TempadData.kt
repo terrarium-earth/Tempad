@@ -4,6 +4,7 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.data.client.ModBlockStateData
 import earth.terrarium.tempad.data.client.ModItemModelData
 import earth.terrarium.tempad.data.client.ModLang
+import earth.terrarium.tempad.data.server.ModAdvancements
 import earth.terrarium.tempad.data.server.ModBlockTags
 import earth.terrarium.tempad.data.server.ModEntityTags
 import earth.terrarium.tempad.data.server.ModItemTags
@@ -36,6 +37,6 @@ class TempadData(bus: IEventBus) {
         val blockTags = ModBlockTags(output, lookupProvider, existingFileHelper)
         generator.addProvider(event.includeServer(), blockTags)
         generator.addProvider(event.includeServer(), ModItemTags(output, lookupProvider, blockTags.contentsGetter(), existingFileHelper))
-
+        generator.addProvider(event.includeServer(), ModAdvancements(output, lookupProvider, existingFileHelper))
     }
 }

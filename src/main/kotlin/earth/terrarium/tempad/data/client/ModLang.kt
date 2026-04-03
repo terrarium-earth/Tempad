@@ -1015,8 +1015,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
     }
 
     override fun addTranslations() {
-        for ((text, value) in KnowledgeScreen().chapters) {
-            for ((name, descGetter) in value) {
+        for ((_, value) in KnowledgeScreen().chapters) {
+            for ((_, descGetter) in value) {
                 descGetter.invoke(ClearableGridLayout())
             }
         }

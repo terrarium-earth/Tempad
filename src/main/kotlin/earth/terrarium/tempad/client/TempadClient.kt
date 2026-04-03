@@ -39,6 +39,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.client.renderer.ItemBlockRenderTypes
 import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
 import net.minecraft.client.renderer.RenderType
@@ -201,7 +202,7 @@ object TempadClient {
         event.register(ModMenus.settings, ::SettingsScreen)
         event.register(ModMenus.timeline, ::TimelineScreen)
         event.register(ModMenus.portalSetup, ::PortalSetupScreen)
-        event.register(ModMenus.guide, ::KnowledgeAppScreen)
+        event.register(ModMenus.guide, ::KnowledgeAppScreen) // TODO convert
         event.register(ModMenus.metronome, ::MetronomeScreen)
         event.register(ModMenus.wallet, ::WalletScreen)
     }

@@ -3,7 +3,7 @@ package earth.terrarium.tempad.common.config
 import earth.terrarium.tempad.common.registries.ModNetworking
 
 object CommonConfigCache {
-    val CACHE = ConfigCache("tempad", ModNetworking.channel)
+    val CACHE = ConfigSyncedCache("tempad", ModNetworking.channel)
 
     fun init() {
         ChrononCell

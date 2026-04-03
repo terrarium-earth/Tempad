@@ -6,11 +6,13 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.sounds.SoundEvent
 import com.teamresourceful.resourcefullibkt.common.getValue
+import net.minecraft.world.entity.LivingEntity
 
 object ModSounds {
     val registry = ResourcefulRegistries.create(BuiltInRegistries.SOUND_EVENT, Tempad.MOD_ID)
 
     val timedoorOpen by registry.register("entity.timedoor.open") {
+        LivingEntity.createLivingAttributes()
         SoundEvent.createVariableRangeEvent("entity.timedoor.open".tempadId)
     }
 

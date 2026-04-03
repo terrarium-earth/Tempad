@@ -15,9 +15,9 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import kotlin.reflect.KProperty
 
-typealias Data<T> = ConfigCache.ConfigEntry<T>.ConfigSyncData
+typealias Data<T> = ConfigSyncedCache.ConfigEntry<T>.ConfigSyncData
 
-class ConfigCache(val modId: String, val network: Network) {
+class ConfigSyncedCache(val modId: String, val network: Network) {
     val syncType = ConfigSyncType()
     val entries = mutableMapOf<ResourceLocation, ConfigEntry<*>>()
     private val syncId = ResourceLocation.fromNamespaceAndPath(modId, "config_sync")
@@ -39,7 +39,7 @@ class ConfigCache(val modId: String, val network: Network) {
         override fun decode(buffer: RegistryFriendlyByteBuf): ConfigSync {
             val decodedEntries = mutableMapOf<ResourceLocation, Data<*>>()
             var size = buffer.readVarInt()
-            (0 until size).forEach {
+            (0 until size).forEach { _ ->
                 val id = buffer.readResourceLocation()
                 entries[id]?.syncType?.decode(buffer)?.let { entry -> decodedEntries.put(id, entry) }
             }

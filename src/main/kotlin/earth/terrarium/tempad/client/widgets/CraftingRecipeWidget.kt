@@ -36,6 +36,7 @@ class CraftingRecipeWidget(val recipe: CraftingRecipe) : BaseWidget() {
         mouseY: Int,
         partialTick: Float,
     ) {
+        val x = x + (width - 90) / 2
         graphics.blitSprite(TempadUI.element.get(true, false), x, y, 58, height)
         val tableSize = if (recipe.ingredients.size > 4) 3 else 2
         var tooltipChanged = false
@@ -54,12 +55,12 @@ class CraftingRecipeWidget(val recipe: CraftingRecipe) : BaseWidget() {
                 }
             }
         }
-        graphics.fill(x + 58, y + 25, x + width - 20, y + 32, Tempad.ORANGE.value)
-        graphics.blitSprite(TempadUI.element.get(true, false), x + width - 20, y + 18, 20, 20)
+        graphics.fill(x + 58, y + 25, x + 90 - 20, y + 32, Tempad.ORANGE.value)
+        graphics.blitSprite(TempadUI.element.get(true, false), x + 90 - 20, y + 18, 20, 20)
         val resultItem = recipe.getResultItem(clientLevel!!.registryAccess())
-        graphics.renderItem(resultItem, x + width - 18, y + 20)
-        graphics.renderItemDecorations(font, resultItem, x + width - 18, y + 20)
-        if (mouseX > x + width - 18 && mouseX < x + width && mouseY > y + 20 && mouseY < y + 38) {
+        graphics.renderItem(resultItem, x + 90 - 18, y + 20)
+        graphics.renderItemDecorations(font, resultItem, x + 90 - 18, y + 20)
+        if (mouseX > x + 90 - 18 && mouseX < x + width && mouseY > y + 20 && mouseY < y + 38) {
             tooltip = Tooltip.create(resultItem.hoverName)
         } else if (!tooltipChanged) {
             tooltip = null

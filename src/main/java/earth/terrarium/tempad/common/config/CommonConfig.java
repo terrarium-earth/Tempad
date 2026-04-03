@@ -100,11 +100,11 @@ public final class CommonConfig {
     public static final class ChrononGenerator {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Chronometer can store.")
-        public static Observable<Integer> capacitorGenerator = Observable.of(0);
+        public static Observable<Integer> capacitorGenerator = Observable.of(2000);
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
-        public static int generationRate = 48;
+        public static int generationRate = 24;
 
         @ConfigEntry(id = "generation_amount")
         @Comment("The amount of chronons generated everytime the Chronometer does a tick of work.")
@@ -115,11 +115,11 @@ public final class CommonConfig {
     public static final class Chronometer {
         @ConfigEntry(id = "capacity")
         @Comment("The amount of fuel that the Chronometer can store.")
-        public static Observable<Integer> capacityChronometer = Observable.of(0);
+        public static Observable<Integer> capacityChronometer = Observable.of(4000);
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
-        public static int generationRate = 36;
+        public static int generationRate = 18;
 
         @ConfigEntry(id = "generation_amount")
         @Comment("The amount of chronons generated everytime the Chronometer does a tick of work.")
@@ -134,7 +134,7 @@ public final class CommonConfig {
 
         @ConfigEntry(id = "generation_rate")
         @Comment("The amount of time it takes for the Chronometer to generate 1 chronon (in ticks).")
-        public static int generationRate = 24;
+        public static int generationRate = 12;
 
         @ConfigEntry(id = "generation_amount")
         @Comment("The number of chronons generated everytime the Chronometer does a tick of work.")
@@ -150,7 +150,7 @@ public final class CommonConfig {
 
         @ConfigEntry(id = "jump_start_amount")
         @Comment("Whether or not the number of chronons generated per cycle is scaled to the number of metronomes placed")
-        public static int jumpStartAmount = 2000;
+        public static int jumpStartAmount = 500;
     }
 
     @Category("chronon_cell")
