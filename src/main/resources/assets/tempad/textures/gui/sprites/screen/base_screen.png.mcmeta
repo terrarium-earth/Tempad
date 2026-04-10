@@ -9,7 +9,7 @@
             "type": "nine_slice",
             "width": 256,
             "height": 256,
-            "border": 7
+            "border": 8
         }
     }
 }

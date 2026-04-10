@@ -1,7 +1,6 @@
 package earth.terrarium.tempad.client.screen.guide
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen
 import com.teamresourceful.resourcefullib.common.utils.TriState
 import com.teamresourceful.resourcefullibkt.common.id
 import earth.terrarium.olympus.client.components.Widgets
@@ -17,6 +16,7 @@ import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.TempadUI.colored
+import earth.terrarium.tempad.client.screen.ExpandedProjectorScreen
 import earth.terrarium.tempad.client.screen.TickingScreen
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.client.widgets.CraftingRecipeWidget
@@ -31,7 +31,6 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
-import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.layouts.SpacerElement
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.core.registries.BuiltInRegistries
@@ -43,10 +42,8 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import kotlin.math.ceil
 
-class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.description), TickingScreen {
+class KnowledgeScreen() : ExpandedProjectorScreen(), TickingScreen {
     companion object {
-        val background = "screen/knowledge_repository".tempadId
-
         val collapsed = mutableSetOf<Component>()
 
         val defaultDescription: (ClearableGridLayout) -> Unit = { layout ->
@@ -74,6 +71,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                 put(ModLang.iron, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
                     put(ModItems.chrononCell.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.chrononCell.description))
                         list.addChild(paragraph(ModLang.cellOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.cellCrafting))
@@ -83,6 +81,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.chrononGenerator.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.chrononGenerator.description))
                         list.addChild(paragraph(ModLang.chrononGenOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.chrononGenCrafting))
@@ -95,6 +94,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.locationCard.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.locationCard.description))
                         list.addChild(paragraph(ModLang.cardOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.cardCrafting))
@@ -106,6 +106,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.cardWallet.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.cardWallet.description))
                         list.addChild(paragraph(ModLang.walletOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.walletCrafting))
@@ -117,6 +118,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.timedoorMarker.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.timedoorMarker.description))
                         list.addChild(paragraph(ModLang.markerOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.markerCrafting))
@@ -127,6 +129,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.timedoorProjector.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.timedoorProjector.description))
                         list.addChild(paragraph(ModLang.projectorOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.projectorCrafting))
@@ -140,6 +143,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.locationBroadcaster.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.locationBroadcaster.description))
                         list.addChild(paragraph(ModLang.locationBroadcastersOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.locationBroadcastersCrafting))
@@ -152,6 +156,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                 put(ModLang.steel, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
                     put(ModItems.timeSteel.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.timeSteel.description))
                         list.addChild(paragraph(ModLang.timeSteelOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.timeSteelCrafting))
@@ -161,6 +166,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.chrononBattery.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.chrononBattery.description))
                         list.addChild(paragraph(ModLang.chrononBatteryOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.chrononBatteryCrafting))
@@ -170,6 +176,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.chronometer.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.chronometer.description))
                         list.addChild(paragraph(ModLang.chronometerOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.chronometerCrafting))
@@ -182,6 +189,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.chronomark.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.chronomark.description))
                         list.addChild(paragraph(ModLang.chronomarkOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.chronomarkCrafting))
@@ -192,6 +200,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.tempad.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.tempad.description))
                         list.addChild(paragraph(ModLang.tempadOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.tempadCrafting))
@@ -219,6 +228,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.workstation.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.workstation.description))
                         list.addChild(paragraph(ModLang.workstationOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.workstationCrafting))
@@ -230,6 +240,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.timeTwister.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.timeTwister.description))
                         list.addChild(paragraph(ModLang.timeTwisterOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.timeTwisterCrafting))
@@ -241,6 +252,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.screeningDevice.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.screeningDevice.description))
                         list.addChild(paragraph(ModLang.screeningDeviceOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.screeningDeviceCrafting))
@@ -250,6 +262,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     put(ModItems.metronome.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
+                        list.addChild(title(ModItems.metronome.description))
                         list.addChild(paragraph(ModLang.metronomesOverview))
                         list.addChild(title(ModLang.crafting))
                         list.addChild(paragraph(ModLang.metronomesCrafting))
@@ -392,16 +405,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         }
     }
 
-    var leftPos = 0
-    var topPos = 0
-    var imageWidth = 244
-    var imageHeight = 220
-    var titleWidget: StringWidget? = null
     var currentTitle: Component = ModLang.overview
-        set(value) {
-            field = value
-            titleWidget?.message = value
-        }
 
     var descriptionWidget: LayoutWidget<ClearableGridLayout>? = null
     var description: (ClearableGridLayout) -> Unit = defaultDescription
@@ -419,17 +423,16 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
     override fun init() {
         super.init()
-        leftPos = (width - 256) / 2 + 7
-        topPos = (height - 256) / 2 + 7
+        tickers.clear()
         addRenderableWidget(Widgets.text(ModItems.knowledgeProjector.description) {
             it.withColor(Tempad.ORANGE)
-            it.withPosition(leftPos + 4, topPos + 6)
+            it.withPosition(panelX + 4, panelY + 6)
             it.withShadow()
         })
 
         val tableOfContents = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
-            withPosition(leftPos + 4, topPos + 20)
-            withSize(72, 193)
+            withPosition(panelX + 4, panelY + 20)
+            withSize(140, panelHeight - 24)
             withScrollableY(TriState.TRUE)
             withScrollbarYRenderer(TempadUI.scrollbarYRenderer)
             withTexture(TempadUI.element.get(true, false))
@@ -443,14 +446,9 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
             }
         }
 
-        titleWidget = addRenderableWidget(StringWidget(leftPos + 80, topPos + 22, 116, 10, currentTitle, font).apply {
-            setColor(Tempad.ORANGE.value)
-            alignLeft()
-        })
-
         descriptionWidget = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
-            withPosition(leftPos + 80, topPos + 33)
-            withSize(158, 180)
+            withPosition(panelX + 148, panelY + 20)
+            withSize(panelWidth - 152, panelHeight - 24)
             withScrollableY(TriState.UNDEFINED)
             withScrollbarYRenderer(TempadUI.scrollbarYRenderer)
             withTexture(TempadUI.element.get(true, false))
@@ -466,17 +464,6 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         initTableOfContents(chapters, tableOfContents, selected, {title -> currentTitle = title}, {text -> description = text})
 
         descriptionWidget?.withContents(description)
-    }
-
-    override fun renderBackground(
-        graphics: GuiGraphics,
-        mouseX: Int,
-        mouseY: Int,
-        partialTick: Float,
-    ) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick)
-        RenderSystem.enableBlend()
-        graphics.blitSprite(background, (width - 256) /2, (height - 256) / 2, 256, 256)
     }
 
     override fun render(

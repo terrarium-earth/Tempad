@@ -36,7 +36,6 @@ class CraftingRecipeWidget(val recipe: CraftingRecipe) : BaseWidget() {
         mouseY: Int,
         partialTick: Float,
     ) {
-        val x = x + (width - 90) / 2
         graphics.blitSprite(TempadUI.element.get(true, false), x, y, 58, height)
         val tableSize = if (recipe.ingredients.size > 4) 3 else 2
         var tooltipChanged = false
