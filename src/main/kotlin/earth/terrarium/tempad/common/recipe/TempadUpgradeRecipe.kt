@@ -15,7 +15,7 @@ import io.netty.buffer.ByteBuf
 import net.minecraft.core.HolderLookup
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.Recipe
@@ -28,13 +28,13 @@ import net.minecraft.world.item.crafting.SmithingRecipeInput
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.items.ItemStackHandler
 
-data class TempadUpgradeRecipe(val upgrade: Ingredient, val downloadTime: Int, val output: ResourceLocation): Recipe<UpgradeRecipeInput> {
+data class TempadUpgradeRecipe(val upgrade: Ingredient, val downloadTime: Int, val output: Identifier): Recipe<UpgradeRecipeInput> {
     companion object Serializer: RecipeSerializer<TempadUpgradeRecipe> {
         val codec: MapCodec<TempadUpgradeRecipe> = RecordCodecBuilder.mapCodec {
             it.group(
                 Ingredient.CODEC.fieldOf("item").forGetter(TempadUpgradeRecipe::upgrade),
                 Codec.INT.fieldOf("download_time").forGetter(TempadUpgradeRecipe::downloadTime),
-                ResourceLocation.CODEC.fieldOf("upgrade").forGetter(TempadUpgradeRecipe::output)
+                Identifier.CODEC.fieldOf("upgrade").forGetter(TempadUpgradeRecipe::output)
             ).apply(it, ::TempadUpgradeRecipe)
         }
 

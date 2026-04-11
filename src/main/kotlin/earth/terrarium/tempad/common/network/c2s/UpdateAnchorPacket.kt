@@ -18,14 +18,14 @@ import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
 
 data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name: String, val access: Boolean, val locked: Boolean): Packet<UpdateAnchorPacket> {
     override fun type(): PacketType<UpdateAnchorPacket> = Companion
 
     companion object: ServerPacketCompanion<UpdateAnchorPacket> {
-        override val id: ResourceLocation = "update_anchor".tempadId
+        override val id: Identifier = "update_anchor".tempadId
         override val byteCodec: ByteCodec<UpdateAnchorPacket> = ObjectByteCodec.create(
             ExtraByteCodecs.BLOCK_POS.fieldOf(UpdateAnchorPacket::blockPos),
             Color.BYTE_CODEC.fieldOf(UpdateAnchorPacket::color),

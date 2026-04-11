@@ -39,7 +39,7 @@ import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import kotlin.math.ceil
 
@@ -68,8 +68,8 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         }
 
         fun <T> T.createChapters() where T : Screen, T : TickingScreen =
-            mutableMapOf<Component, MutableMap<ResourceLocation, (ClearableGridLayout) -> Unit>>().apply {
-                put(ModLang.iron, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
+            mutableMapOf<Component, MutableMap<Identifier, (ClearableGridLayout) -> Unit>>().apply {
+                put(ModLang.iron, mutableMapOf<Identifier, (ClearableGridLayout) -> Unit>().apply {
                     put(ModItems.chrononCell.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.cellOverview))
@@ -147,7 +147,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                         list.addChild(paragraph(ModLang.locationBroadcastersUsage2))
                     }
                 })
-                put(ModLang.steel, mutableMapOf<ResourceLocation, (ClearableGridLayout) -> Unit>().apply {
+                put(ModLang.steel, mutableMapOf<Identifier, (ClearableGridLayout) -> Unit>().apply {
                     put(ModItems.timeSteel.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.timeSteelOverview))
@@ -265,7 +265,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
             }
 
-        fun TickingScreen.recipe(id: ResourceLocation): CraftingRecipeWidget? {
+        fun TickingScreen.recipe(id: Identifier): CraftingRecipeWidget? {
             val recipe = CraftingRecipeWidget.create(id)
             recipe?.let { this.tickers.add(it::tick) }
             return recipe
@@ -304,7 +304,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         }
 
         fun initTableOfContents(
-            chapters: Map<Component, Map<ResourceLocation, (ClearableGridLayout) -> Unit>>,
+            chapters: Map<Component, Map<Identifier, (ClearableGridLayout) -> Unit>>,
             tableOfContentsWidget: LayoutWidget<ClearableGridLayout>,
             selected: MutableState<ItemStack?>,
             titleSetter: (Component) -> Unit,
@@ -490,7 +490,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
     override fun handleComponentClicked(style: Style?): Boolean {
         if (style == null) return false
         if (style.clickEvent?.action == ClickEvent.Action.CHANGE_PAGE) {
-            val item = style.clickEvent?.let { ResourceLocation.tryParse(it.value) } ?: return false
+            val item = style.clickEvent?.let { Identifier.tryParse(it.value) } ?: return false
             val stack = BuiltInRegistries.ITEM.get(item).defaultInstance
             currentTitle = stack.hoverName
             selected.value = stack

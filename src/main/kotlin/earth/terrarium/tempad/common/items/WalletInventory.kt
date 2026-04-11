@@ -1,56 +1,36 @@
 package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.common.menu.WalletMenu
+import earth.terrarium.tempad.common.registries.ModComponents
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.portalTarget
-import earth.terrarium.tempad.common.registries.walletContents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.component.ItemContainerContents
-import net.neoforged.neoforge.items.ItemStackHandler
+import net.neoforged.neoforge.transfer.access.ItemAccess
+import net.neoforged.neoforge.transfer.item.ItemAccessItemHandler
+import net.neoforged.neoforge.transfer.item.ItemResource
 
-class WalletInventory(val stack: ItemStack): ItemStackHandler(18), MenuProvider {
+class WalletInventory(val stack: ItemAccess): ItemAccessItemHandler(stack, ModComponents.walletContents, 18), MenuProvider {
     val isFull: Boolean get() {
-        for (item in stacks) {
-            if (item.isEmpty) return false
+        for (i in 0 until size) {
+            if (getAmountAsInt(i) == 0) return false
         }
         return true
     }
 
-    val hasAnyItems: Boolean get() {
-        for (item in stacks) {
-            if (!item.isEmpty) return true
-        }
-        return false
-    }
-
-    fun insertItem(stack: ItemStack, simulate: Boolean): ItemStack {
-        var remaining = stack
-        for (i in 0 until 18) {
-            remaining = insertItem(i, remaining, simulate)
-            if (remaining.isEmpty) return ItemStack.EMPTY
-        }
-        return remaining
-    }
-
-    init {
-        stack.walletContents.copyInto(this.stacks)
-    }
-
-    override fun onContentsChanged(slot: Int) {
-        stack.walletContents = ItemContainerContents.fromItems(stacks)
-    }
-
-    override fun isItemValid(slot: Int, stack: ItemStack): Boolean {
+    override fun isValid(
+        index: Int,
+        resource: ItemResource,
+    ): Boolean {
+        val stack = resource.toStack()
         return stack.portalTarget != null && stack.item === ModItems.locationCard
     }
 
     override fun getDisplayName(): Component {
-        return stack.hoverName
+        return stack.resource.hoverName
     }
 
     override fun createMenu(

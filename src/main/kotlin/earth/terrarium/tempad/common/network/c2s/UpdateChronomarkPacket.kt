@@ -17,14 +17,14 @@ import earth.terrarium.tempad.common.registries.yOffset
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
 
-data class UpdateChronomarkPacket(val blockPos: BlockPos, val color: Color, val name: String, val access: ResourceLocation, val locked: Boolean, val yOffset: Float, val angle: Int): Packet<UpdateChronomarkPacket> {
+data class UpdateChronomarkPacket(val blockPos: BlockPos, val color: Color, val name: String, val access: Identifier, val locked: Boolean, val yOffset: Float, val angle: Int): Packet<UpdateChronomarkPacket> {
     override fun type(): PacketType<UpdateChronomarkPacket> = Companion
 
     companion object: ServerPacketCompanion<UpdateChronomarkPacket> {
-        override val id: ResourceLocation = "update_chronomark".tempadId
+        override val id: Identifier = "update_chronomark".tempadId
         override val byteCodec: ByteCodec<UpdateChronomarkPacket> = ObjectByteCodec.create(
             ExtraByteCodecs.BLOCK_POS.fieldOf(UpdateChronomarkPacket::blockPos),
             Color.BYTE_CODEC.fieldOf(UpdateChronomarkPacket::color),

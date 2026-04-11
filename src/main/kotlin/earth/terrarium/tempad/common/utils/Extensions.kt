@@ -23,7 +23,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
@@ -136,21 +136,21 @@ var Entity.pos: Vec3
 
 val Entity.globalPos: GlobalPos get() = GlobalPos(this.level().dimension(), this.blockPosition())
 
-fun ResourceLocation.appSprites(): WidgetSprites = WidgetSprites(
-    ResourceLocation.fromNamespaceAndPath(this.namespace, "app/${this.path}/normal"),
-    ResourceLocation.fromNamespaceAndPath(this.namespace, "app/${this.path}/disabled"),
-    ResourceLocation.fromNamespaceAndPath(this.namespace, "app/${this.path}/hover"),
+fun Identifier.appSprites(): WidgetSprites = WidgetSprites(
+    Identifier.fromNamespaceAndPath(this.namespace, "app/${this.path}/normal"),
+    Identifier.fromNamespaceAndPath(this.namespace, "app/${this.path}/disabled"),
+    Identifier.fromNamespaceAndPath(this.namespace, "app/${this.path}/hover"),
 )
 
 fun String.btnSprites(): WidgetSprites = sprites("button")
 
 fun String.sprites(type: String) = WidgetSprites(
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/normal"),
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/disabled"),
-    ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/hover"),
+    Identifier.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/normal"),
+    Identifier.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/disabled"),
+    Identifier.fromNamespaceAndPath(Tempad.MOD_ID, "${type}/${this}/hover"),
 )
 
-fun ResourceLocation.appTitle(): Component = Component.translatable(this.toLanguageKey("app"))
+fun Identifier.appTitle(): Component = Component.translatable(this.toLanguageKey("app"))
 
 fun String.toLanguageKey(type: String): Component = Component.translatable("${type}.${Tempad.MOD_ID}.${this}")
 
@@ -181,8 +181,8 @@ fun <T: Event> T.post(): T = NeoForge.EVENT_BUS.post(this)
 
 fun Entity.teleportTo(pos: Vec3) = this.teleportTo(pos.x, pos.y, pos.z)
 
-val String.vanillaId: ResourceLocation
-    get() = ResourceLocation.withDefaultNamespace(this)
+val String.vanillaId: Identifier
+    get() = Identifier.withDefaultNamespace(this)
 
 val <T> StreamCodec<RegistryFriendlyByteBuf, T>.byteCodec: ByteCodec<T> get() = StreamCodecByteCodec.ofRegistry(this)
 
@@ -241,3 +241,5 @@ fun <T> CompoundTag.save(codec: Codec<T>, key: String, value: T) {
 fun <T> CompoundTag.load(codec: Codec<T>, key: String): T? {
     return codec.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull()?.first
 }
+
+fun Player.itemAccess(hand: InteractionHand): PlayerItemAccess = PlayerItemAccess()

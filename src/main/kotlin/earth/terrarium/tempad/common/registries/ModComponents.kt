@@ -19,7 +19,7 @@ import net.minecraft.core.UUIDUtil
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ItemContainerContents
 import net.neoforged.neoforge.common.MutableDataComponentHolder
@@ -30,17 +30,17 @@ object ModComponents {
     val registry: ResourcefulRegistry<DataComponentType<*>> =
         ResourcefulRegistries.create(BuiltInRegistries.DATA_COMPONENT_TYPE, Tempad.MOD_ID)
 
-    val defaultApp: DataComponentType<ResourceLocation> by registry.register("default_app") {
+    val defaultApp: DataComponentType<Identifier> by registry.register("default_app") {
         componentType {
-            serialize = ResourceLocation.CODEC
-            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
+            serialize = Identifier.CODEC
+            networkSerialize = ExtraByteCodecs.IDENTIFIER
         }
     }
 
-    val defaultMacro: DataComponentType<ResourceLocation> by registry.register("default_macro") {
+    val defaultMacro: DataComponentType<Identifier> by registry.register("default_macro") {
         componentType {
-            serialize = ResourceLocation.CODEC
-            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
+            serialize = Identifier.CODEC
+            networkSerialize = ExtraByteCodecs.IDENTIFIER
         }
     }
 
@@ -142,9 +142,9 @@ object ModComponents {
         }
     }
 
-    val accessId: DataComponentType<ResourceLocation> by registry.register("access_id") {
+    val accessId: DataComponentType<Identifier> by registry.register("access_id") {
         componentType {
-            serialize = ResourceLocation.CODEC
+            serialize = Identifier.CODEC
             networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
         }
     }

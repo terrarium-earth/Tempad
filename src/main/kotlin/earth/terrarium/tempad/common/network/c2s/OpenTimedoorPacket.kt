@@ -11,10 +11,10 @@ import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.tempadId
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import java.util.*
 
-data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: UUID, val ctx: ContextHolder<*>) :
+data class OpenTimedoorPacket(val providerId: Identifier, val locationId: UUID, val ctx: ContextHolder<*>) :
     Packet<OpenTimedoorPacket> {
     companion object {
         val type = CodecPacketType.Server.create("open_timedoor".tempadId,

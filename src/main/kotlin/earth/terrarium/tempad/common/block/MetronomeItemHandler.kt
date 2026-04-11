@@ -1,11 +1,12 @@
 package earth.terrarium.tempad.common.block
 
 import earth.terrarium.tempad.api.tva_device.chronons
-import net.minecraft.world.item.ItemStack
-import net.neoforged.neoforge.items.ItemStackHandler
+import net.neoforged.neoforge.transfer.item.ItemResource
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler
 
-class MetronomeItemHandler: ItemStackHandler(8) {
-    override fun isItemValid(slot: Int, stack: ItemStack): Boolean {
-        return slot < 4 && stack.chronons?.canExtract == true || slot >= 4 && stack.chronons?.canInsert == true
+class MetronomeItemHandler: ItemStacksResourceHandler(8) {
+    override fun isValid(index: Int, resource: ItemResource): Boolean {
+        val stackVer = resource.toStack()
+        return index < 4 && stackVer.chronons?.canExtract == true || index >= 4 && stackVer.chronons?.canInsert == true
     }
 }

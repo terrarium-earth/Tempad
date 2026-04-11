@@ -40,7 +40,7 @@ import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Inventory
 import java.util.*
 
@@ -60,7 +60,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         )
     }
 
-    var selected: Triple<ResourceLocation, UUID, NamedGlobalVec3>? = null
+    var selected: Triple<Identifier, UUID, NamedGlobalVec3>? = null
         set(value) {
             field = value
             teleportBtn.active = value != null
@@ -75,7 +75,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
     }
 
     // make map of ids to locations from menu.appContent.locations mutable
-    private val locations: Map<ResourceLocation, MutableMap<UUID, NamedGlobalVec3>> =
+    private val locations: Map<Identifier, MutableMap<UUID, NamedGlobalVec3>> =
         menu.appContent.locations.mapValues { (_, value) ->
             value.toMutableMap()
         }
@@ -363,7 +363,7 @@ enum class Sorting : Translatable {
         return "button.tempad.${this.toString().lowercase()}"
     }
 
-    fun reorganize(values: Map<ResourceLocation, Map<UUID, NamedGlobalVec3>>): Map<Component, List<Triple<ResourceLocation, UUID, NamedGlobalVec3>>> {
+    fun reorganize(values: Map<Identifier, Map<UUID, NamedGlobalVec3>>): Map<Component, List<Triple<Identifier, UUID, NamedGlobalVec3>>> {
         when (this) {
             Dimension -> {
                 // provider to map of id to pos -> dimension to list of provider to id to pos

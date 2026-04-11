@@ -12,10 +12,10 @@ import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.items.TempadItem
 import earth.terrarium.tempad.common.registries.ModItems
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import java.util.UUID
 
-data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: ResourceLocation, val locationId: UUID): Packet<DeleteLocationPacket> {
+data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: Identifier, val locationId: UUID): Packet<DeleteLocationPacket> {
     companion object {
         val type = CodecPacketType.Server.create(
             "delete_location".tempadId,

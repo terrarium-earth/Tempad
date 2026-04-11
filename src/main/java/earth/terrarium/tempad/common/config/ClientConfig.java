@@ -9,7 +9,7 @@ import earth.terrarium.tempad.client.screen.tempad.Sorting;
 @Config("tempad-client")
 public class ClientConfig {
 
-    @ConfigEntry(id = "sorting_mode", type = EntryType.STRING)
+    @ConfigEntry(id = "sorting_mode")
     @Comment("The sorting mode for the Tempad screen. Options: Dimension, Alphabetical, Type")
     public static String sortingMode = Sorting.Dimension.name();
 }

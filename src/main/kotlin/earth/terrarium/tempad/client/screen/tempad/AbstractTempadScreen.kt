@@ -23,12 +23,12 @@ import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Inventory
 import org.lwjgl.glfw.GLFW
 
 abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
-    val appSprite: ResourceLocation?,
+    val appSprite: Identifier?,
     menu: T,
     val inv: Inventory,
     title: Component,

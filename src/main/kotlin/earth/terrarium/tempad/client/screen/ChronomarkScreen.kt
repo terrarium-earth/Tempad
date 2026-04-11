@@ -13,9 +13,9 @@ import earth.terrarium.tempad.common.network.c2s.UpdateChronomarkPacket
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
-class ChronomarkScreen(pos: BlockPos, name: String, color: Color, val accessOptions: List<ResourceLocation>, access: ResourceLocation, locked: Boolean, yOffset: Float, angle: Int) :
+class ChronomarkScreen(pos: BlockPos, name: String, color: Color, val accessOptions: List<Identifier>, access: Identifier, locked: Boolean, yOffset: Float, angle: Int) :
     TimedoorMarkerScreen(pos, name, color, false, locked) {
     companion object {
         internal val accessField = Component.translatable("screen.tempad.marker.access_field")

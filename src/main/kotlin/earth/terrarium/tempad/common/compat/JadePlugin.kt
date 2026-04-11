@@ -25,7 +25,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.Vec2
 import snownee.jade.api.*
@@ -49,7 +49,7 @@ class JadePlugin: IWailaPlugin {
 }
 
 object TimedoorComponentProvider: IEntityComponentProvider {
-    override fun getUid(): ResourceLocation = "timedoor".tempadId
+    override fun getUid(): Identifier = "timedoor".tempadId
 
     override fun appendTooltip(tooltip: ITooltip, accessor: EntityAccessor, config: IPluginConfig) {
         val timedoorEntity = accessor.entity as? TimedoorEntity ?: return
@@ -66,7 +66,7 @@ object TimedoorComponentProvider: IEntityComponentProvider {
 
 object AnchorComponentProvider: IBlockComponentProvider {
     val id = "anchor".tempadId
-    override fun getUid(): ResourceLocation = id
+    override fun getUid(): Identifier = id
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         (accessor.blockEntity as? AbstractMarkerBe)?.let {
@@ -88,7 +88,7 @@ object AnchorComponentProvider: IBlockComponentProvider {
 object RudimentaryTempadComponentProvider: IBlockComponentProvider {
     val id = "rudimentary".tempadId
 
-    override fun getUid(): ResourceLocation = id
+    override fun getUid(): Identifier = id
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         (accessor.blockEntity as? RudimentaryTempadBE)?.let {
@@ -118,7 +118,7 @@ object RudimentaryTempadComponentProvider: IBlockComponentProvider {
 object MetronomeComponentProvider: IBlockComponentProvider {
     val id = "metronome".tempadId
 
-    override fun getUid(): ResourceLocation = id
+    override fun getUid(): Identifier = id
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         (accessor.blockEntity as? MetronomeBe)?.let { blockEntity ->
@@ -144,7 +144,7 @@ object MetronomeComponentProvider: IBlockComponentProvider {
 
 object WorkstationComponentProvider: IBlockComponentProvider {
     val id = "workstation".tempadId
-    override fun getUid(): ResourceLocation = id
+    override fun getUid(): Identifier = id
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         (accessor.blockEntity as? WorkstationBE)?.let { blockEntity ->
@@ -172,7 +172,7 @@ object WorkstationComponentProvider: IBlockComponentProvider {
 
 object ChrononComponentProvider: IBlockComponentProvider {
     val id = "chronon".tempadId
-    override fun getUid(): ResourceLocation = id
+    override fun getUid(): Identifier = id
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         accessor.blockEntity?.chronons?.let {

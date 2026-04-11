@@ -20,7 +20,7 @@ import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.NeoForgeRegistries
@@ -64,9 +64,9 @@ object ModAttachments {
         DataSyncSerializer.create( { color }, StreamCodecByteCodec.to(Color.BYTE_CODEC))
     }
 
-    val access: AttachmentType<ResourceLocation> by registry.register("access") {
+    val access: AttachmentType<Identifier> by registry.register("access") {
         attachmentType({ PlayerAccessApi.noAccess }) {
-            codec = ResourceLocation.CODEC
+            codec = Identifier.CODEC
         }
     }
 

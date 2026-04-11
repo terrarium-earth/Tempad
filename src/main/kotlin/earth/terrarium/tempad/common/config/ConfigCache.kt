@@ -11,7 +11,7 @@ import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.Tempad
 import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
 import kotlin.reflect.KProperty
 
@@ -19,8 +19,8 @@ typealias Data<T> = ConfigCache.ConfigEntry<T>.ConfigSyncData
 
 class ConfigCache(val modId: String, val network: Network) {
     val syncType = ConfigSyncType()
-    val entries = mutableMapOf<ResourceLocation, ConfigEntry<*>>()
-    private val syncId = ResourceLocation.fromNamespaceAndPath(modId, "config_sync")
+    val entries = mutableMapOf<Identifier, ConfigEntry<*>>()
+    private val syncId = Identifier.fromNamespaceAndPath(modId, "config_sync")
 
     fun syncAll(player: Player) {
         val syncData = entries.mapValues { it.value.createPacket() }
@@ -34,13 +34,13 @@ class ConfigCache(val modId: String, val network: Network) {
     fun ofString(observable: KProperty<Observable<String>>) = ConfigEntry(observable, ByteCodec.STRING).apply { entries.put(syncType.id(), this) }
 
     inner class ConfigSyncType: ClientboundPacketType<ConfigSync> {
-        override fun id(): ResourceLocation = syncId
+        override fun id(): Identifier = syncId
 
         override fun decode(buffer: RegistryFriendlyByteBuf): ConfigSync {
-            val decodedEntries = mutableMapOf<ResourceLocation, Data<*>>()
+            val decodedEntries = mutableMapOf<Identifier, Data<*>>()
             var size = buffer.readVarInt()
             (0 until size).forEach {
-                val id = buffer.readResourceLocation()
+                val id = buffer.readIdentifier()
                 entries[id]?.syncType?.decode(buffer)?.let { entry -> decodedEntries.put(id, entry) }
             }
             return ConfigSync(decodedEntries)
@@ -53,13 +53,13 @@ class ConfigCache(val modId: String, val network: Network) {
         override fun encode(message: ConfigSync, buffer: RegistryFriendlyByteBuf) {
             buffer.writeVarInt(message.entries.size)
             message.entries.forEach { id, entry ->
-                buffer.writeResourceLocation(id)
+                buffer.writeIdentifier(id)
                 entry.encode(buffer)
             }
         }
     }
 
-    inner class ConfigSync(val entries: Map<ResourceLocation, Data<*>>): Packet<ConfigSync> {
+    inner class ConfigSync(val entries: Map<Identifier, Data<*>>): Packet<ConfigSync> {
         override fun type(): PacketType<ConfigSync> = syncType
     }
 
@@ -67,7 +67,7 @@ class ConfigCache(val modId: String, val network: Network) {
         var value: T = observable.getter.call().get()
 
         val syncType: CodecPacketType.Client<ConfigSyncData> = CodecPacketType.Client.create(
-            ResourceLocation.fromNamespaceAndPath(modId, CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, observable.name)),
+            Identifier.fromNamespaceAndPath(modId, CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, observable.name)),
             codec.map({ ConfigSyncData(it) }, { it.config }),
             NetworkHandle.handle { message ->
                 value = message.config

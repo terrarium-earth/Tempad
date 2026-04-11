@@ -28,7 +28,7 @@ import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.level.TicketType
@@ -70,7 +70,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         fun openTimedoor(
             player: Player,
             ctx: SyncableContext<*>,
-            provider: ResourceLocation?,
+            provider: Identifier?,
             locationId: UUID?,
             location: NamedGlobalVec3,
             onOpen: (TimedoorEntity) -> Unit = {},
@@ -105,7 +105,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         fun openTimedoor(
             player: GameProfile,
             block: BlockEntity,
-            provider: ResourceLocation?,
+            provider: Identifier?,
             locationId: UUID?,
             location: NamedGlobalVec3,
             sizing: TimedoorPlacementSettings = DynamicAngledPlacement(),

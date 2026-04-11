@@ -9,11 +9,11 @@ import earth.terrarium.tempad.api.app.AppHolder
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.registries.*
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 
 data class RedirectAppPacket(val appHolder: AppHolder) : Packet<RedirectAppPacket> {
-    constructor(appID: ResourceLocation, data: ContextHolder<*>, isStationary: Boolean) : this(AppHolder(appID, data, isStationary))
+    constructor(appID: Identifier, data: ContextHolder<*>, isStationary: Boolean) : this(AppHolder(appID, data, isStationary))
 
     companion object {
         val type = CodecPacketType.Server.create(

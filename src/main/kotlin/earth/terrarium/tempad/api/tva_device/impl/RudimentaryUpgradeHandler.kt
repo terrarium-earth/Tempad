@@ -1,18 +1,18 @@
 package earth.terrarium.tempad.api.tva_device.impl
 
 import earth.terrarium.tempad.api.tva_device.UpgradeHandler
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 object RudimentaryUpgradeHandler: UpgradeHandler {
-    override val installedUpgrades: List<ResourceLocation> = listOf()
+    override val installedUpgrades: List<Identifier> = listOf()
 
-    override fun contains(upgrade: ResourceLocation): Boolean = false
+    override fun contains(upgrade: Identifier): Boolean = false
 
-    override fun plusAssign(upgrade: ResourceLocation) {}
+    override fun plusAssign(upgrade: Identifier) {}
 
-    override fun minusAssign(upgrade: ResourceLocation) {}
+    override fun minusAssign(upgrade: Identifier) {}
 
-    override fun willAccept(upgrade: ResourceLocation): Boolean = false
+    override fun willAccept(upgrade: Identifier): Boolean = false
 
-    override fun isRemovable(upgrade: ResourceLocation): Boolean = false
+    override fun isRemovable(upgrade: Identifier): Boolean = false
 }

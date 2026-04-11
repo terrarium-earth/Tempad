@@ -24,7 +24,7 @@ import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.Items
@@ -44,7 +44,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
     val inventory = ItemStackHandler(1)
     var downloadTime: Int = 0
     var maxDownloadTime: Int = 0
-    var recipe: ResourceLocation? = null
+    var recipe: Identifier? = null
     var timedoorId: UUID? = null
     val active get() = activeLeft || activeRight
     var activeLeft = false
@@ -81,7 +81,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         maxDownloadTime = tag.getInt(MAX_DOWNLOAD_TIME)
         activeLeft = tag.getBoolean(LEFT)
         activeRight = tag.getBoolean(RIGHT)
-        recipe = ResourceLocation.tryParse(tag.getString(RECIPE))
+        recipe = Identifier.tryParse(tag.getString(RECIPE))
         timedoorId = tag.getString(TIMEDOOR).takeUnless { it.isEmpty() }?.let { UUID.fromString(it) }
     }
 

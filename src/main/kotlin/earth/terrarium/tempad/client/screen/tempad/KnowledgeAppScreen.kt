@@ -19,7 +19,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.item.ItemStack
 
@@ -92,7 +92,7 @@ class KnowledgeAppScreen(menu: ModMenus.KnowledgeMenu, inv: Inventory, title: Co
     override fun handleComponentClicked(style: Style?): Boolean {
         if (style == null) return false
         if (style.clickEvent?.action == ClickEvent.Action.CHANGE_PAGE) {
-            val item = style.clickEvent?.let { ResourceLocation.tryParse(it.value) } ?: return false
+            val item = style.clickEvent?.let { Identifier.tryParse(it.value) } ?: return false
             val stack = BuiltInRegistries.ITEM.get(item).defaultInstance
             currentTitle = stack.hoverName
             selected.value = stack

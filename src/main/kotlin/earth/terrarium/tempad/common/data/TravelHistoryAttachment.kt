@@ -9,7 +9,7 @@ import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
@@ -18,13 +18,13 @@ import net.minecraft.world.phys.Vec3
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-class HistoricalLocation(val marker: ResourceLocation?, val dimension: ResourceKey<Level>, val pos: Vec3) {
-    constructor(marker: Optional<ResourceLocation>, dimension: ResourceKey<Level>, pos: Vec3) : this(marker.getOrNull(), dimension, pos)
+class HistoricalLocation(val marker: Identifier?, val dimension: ResourceKey<Level>, val pos: Vec3) {
+    constructor(marker: Optional<Identifier>, dimension: ResourceKey<Level>, pos: Vec3) : this(marker.getOrNull(), dimension, pos)
 
     companion object {
         val CODEC: Codec<HistoricalLocation> = RecordCodecBuilder.create { instance ->
             instance.group(
-                ResourceLocation.CODEC.optionalFieldOf("marker").nullableGetter(HistoricalLocation::marker),
+                Identifier.CODEC.optionalFieldOf("marker").nullableGetter(HistoricalLocation::marker),
                 Level.RESOURCE_KEY_CODEC.fieldOf("dimension").forGetter { it.dimension },
                 Vec3.CODEC.fieldOf("pos").forGetter { it.pos }
             ).apply(instance, ::HistoricalLocation)
@@ -61,7 +61,7 @@ class TravelHistoryAttachment(val history: MutableMap<Date, HistoricalLocation>)
         history[Date()] = historicalLocation
     }
 
-    fun logLocation(entity: LivingEntity, marker: ResourceLocation? = null) {
+    fun logLocation(entity: LivingEntity, marker: Identifier? = null) {
         if (entity.isSpectator || (entity as? Player)?.abilities?.instabuild == true) return
         if (history.isEmpty() || marker != null) {
             this += HistoricalLocation(marker, entity.level().dimension(), entity.pos)

@@ -9,7 +9,7 @@ import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.registries.ModMenus
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -33,7 +33,7 @@ data class SettingsApp(val ctx: SyncableContext<*>, val isStationary: Boolean) :
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class SettingsData(val providers: Set<ResourceLocation>, isStationary: Boolean, ctx: ContextHolder<*>) : AppContent<SettingsData>(ctx, isStationary, codec) {
+class SettingsData(val providers: Set<Identifier>, isStationary: Boolean, ctx: ContextHolder<*>) : AppContent<SettingsData>(ctx, isStationary, codec) {
     companion object {
         val codec: ByteCodec<SettingsData> = ObjectByteCodec.create(
             ExtraByteCodecs.RESOURCE_LOCATION.setOf().fieldOf { it.providers },

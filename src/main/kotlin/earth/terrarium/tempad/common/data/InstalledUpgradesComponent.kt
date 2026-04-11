@@ -3,14 +3,14 @@ package earth.terrarium.tempad.common.data
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 
-data class InstalledUpgradesComponent(val upgrades: List<ResourceLocation>): TooltipComponent {
+data class InstalledUpgradesComponent(val upgrades: List<Identifier>): TooltipComponent {
     companion object {
         val codec = RecordCodecBuilder.create { it ->
             it.group(
-                ResourceLocation.CODEC.listOf().fieldOf("upgrades").forGetter(InstalledUpgradesComponent::upgrades)
+                Identifier.CODEC.listOf().fieldOf("upgrades").forGetter(InstalledUpgradesComponent::upgrades)
             ).apply(it, ::InstalledUpgradesComponent)
         }
 
@@ -20,15 +20,15 @@ data class InstalledUpgradesComponent(val upgrades: List<ResourceLocation>): Too
         )
     }
 
-    operator fun plus(upgrade: ResourceLocation): InstalledUpgradesComponent {
+    operator fun plus(upgrade: Identifier): InstalledUpgradesComponent {
         return InstalledUpgradesComponent(upgrades + upgrade)
     }
 
-    operator fun minus(upgrade: ResourceLocation): InstalledUpgradesComponent {
+    operator fun minus(upgrade: Identifier): InstalledUpgradesComponent {
         return InstalledUpgradesComponent(upgrades - upgrade)
     }
 
-    operator fun contains(upgrade: ResourceLocation): Boolean {
+    operator fun contains(upgrade: Identifier): Boolean {
         return upgrade in upgrades
     }
 }

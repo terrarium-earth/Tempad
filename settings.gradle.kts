@@ -1,26 +1,15 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-dependencyResolutionManagement {
-    addVersionCatalog(this, "compactmods")
-}
-
 rootProject.name = "Tempad"
 
 pluginManagement {
     repositories {
-        maven(url = "https://maven.architectury.dev/")
-        maven(url = "https://maven.neoforged.net/releases/")
-        maven(url = "https://maven.resourcefulbees.com/repository/maven-public/")
         gradlePluginPortal()
+        maven(url = "https://maven.msrandom.net/repository/cloche")
     }
 }
 
 plugins {
+    // This plugin allows Gradle to automatically download arbitrary versions of Java for you
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
-
-fun addVersionCatalog(dependencyResolutionManagement: DependencyResolutionManagement, name: String) {
-    dependencyResolutionManagement.versionCatalogs.create(name) {
-        from(files("./gradle/$name.versions.toml"))
-    }
 }

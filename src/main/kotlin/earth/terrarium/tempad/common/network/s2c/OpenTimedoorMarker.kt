@@ -10,13 +10,13 @@ import earth.terrarium.tempad.client.TempadClient
 import earth.terrarium.tempad.common.network.ClientPacketCompanion
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 data class OpenTimedoorMarker(val blockPos: BlockPos, val color: Color, val name: String, val canAccess: Boolean, val locked: Boolean): Packet<OpenTimedoorMarker> {
     override fun type(): ClientboundPacketType<OpenTimedoorMarker> = Companion
 
     companion object: ClientPacketCompanion<OpenTimedoorMarker> {
-        override val id: ResourceLocation = "open_timedoor_marker".tempadId
+        override val id: Identifier = "open_timedoor_marker".tempadId
 
         override val byteCodec: ByteCodec<OpenTimedoorMarker> = ObjectByteCodec.create(
             ExtraByteCodecs.BLOCK_POS.fieldOf(OpenTimedoorMarker::blockPos),

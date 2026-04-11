@@ -7,7 +7,7 @@ import earth.terrarium.tempad.client.clientLevel
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Tooltip
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.crafting.CraftingRecipe
 import kotlin.jvm.optionals.getOrNull
 
@@ -16,7 +16,7 @@ class CraftingRecipeWidget(val recipe: CraftingRecipe) : BaseWidget() {
     var age = 0
 
     companion object {
-        fun create(id: ResourceLocation): CraftingRecipeWidget? {
+        fun create(id: Identifier): CraftingRecipeWidget? {
             val recipe = clientLevel?.recipeManager?.byKey(id) ?: return null
             (recipe.getOrNull()?.value as? CraftingRecipe)?.let { craftingRecipe ->
                 return CraftingRecipeWidget(craftingRecipe)

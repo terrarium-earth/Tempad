@@ -11,12 +11,12 @@ import earth.terrarium.tempad.api.context.ContextHolder
 import earth.terrarium.tempad.common.data.OrganizationMethod
 import earth.terrarium.tempad.common.registries.defaultApp
 import earth.terrarium.tempad.common.registries.defaultMacro
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 class SaveSettingsPacket(
     val ctxData: ContextHolder<*>,
-    val defaultApp: ResourceLocation,
-    val defaultMacro: ResourceLocation
+    val defaultApp: Identifier,
+    val defaultMacro: Identifier
 ) :
     Packet<SaveSettingsPacket> {
     companion object {

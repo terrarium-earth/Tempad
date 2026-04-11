@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.texture.DynamicTexture
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.Mth
 import org.joml.Matrix4f
 import org.joml.Vector2i
@@ -23,10 +23,10 @@ import org.joml.Vector2i
 
 class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<TimedoorEntity>(ctx) {
     companion object {
-        private val faceTextures = hashMapOf<Pair<TimedoorPlacementSettings, BoxFace>, ResourceLocation>()
+        private val faceTextures = hashMapOf<Pair<TimedoorPlacementSettings, BoxFace>, Identifier>()
     }
 
-    override fun getTextureLocation(pEntity: TimedoorEntity): ResourceLocation = "".tempadId
+    override fun getTextureLocation(pEntity: TimedoorEntity): Identifier = "".tempadId
 
     override fun render(
         entity: TimedoorEntity,
@@ -94,7 +94,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         }
     }
 
-    fun registerFaceTexture(sizing: TimedoorPlacementSettings, face: BoxFace): ResourceLocation? {
+    fun registerFaceTexture(sizing: TimedoorPlacementSettings, face: BoxFace): Identifier? {
         if (!ShaderModBridge.shadersEnabled) return null
         return faceTextures.computeIfAbsent(sizing to face) { _ ->
             Minecraft.getInstance().textureManager.register(

@@ -16,7 +16,7 @@ import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.chat.MutableComponent
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.minecraft.world.item.Item
@@ -79,12 +79,12 @@ data class DirectLocation(val location: NamedGlobalVec3) : LocationGetter, Toolt
     }
 }
 
-data class IndirectLocation(val accessor: GameProfile, val info: Component, val provider: ResourceLocation, val id: UUID) : LocationGetter, TooltipProvider {
+data class IndirectLocation(val accessor: GameProfile, val info: Component, val provider: Identifier, val id: UUID) : LocationGetter, TooltipProvider {
     companion object {
         val codec: Codec<IndirectLocation> = RecordCodecBuilder.create { it.group(
             ExtraCodecs.GAME_PROFILE.fieldOf("accessor").forGetter(IndirectLocation::accessor),
             ComponentSerialization.CODEC.fieldOf("info").forGetter(IndirectLocation::info),
-            ResourceLocation.CODEC.fieldOf("provider").forGetter(IndirectLocation::provider),
+            Identifier.CODEC.fieldOf("provider").forGetter(IndirectLocation::provider),
             UUIDUtil.CODEC.fieldOf("id").forGetter(IndirectLocation::id),
         ).apply(it, ::IndirectLocation) }
 

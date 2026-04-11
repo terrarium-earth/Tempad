@@ -11,7 +11,7 @@ import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.data.LanguageProvider
@@ -1136,7 +1136,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         }
     }
 
-    val ResourceLocation.formatted
+    val Identifier.formatted
         get() = path.split('_').joinToString(" ") { it.replaceFirstChar { it.uppercaseChar() } }
 
     fun Block.addSub(key: String, value: String) {

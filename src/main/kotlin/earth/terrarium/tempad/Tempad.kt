@@ -31,7 +31,7 @@ import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.register
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.repository.Pack
@@ -62,8 +62,8 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-val String.tempadId: ResourceLocation
-    get() = ResourceLocation.fromNamespaceAndPath(Tempad.MOD_ID, this)
+val String.tempadId: Identifier
+    get() = Identifier.fromNamespaceAndPath(Tempad.MOD_ID, this)
 
 @Mod(Tempad.MOD_ID)
 class Tempad(bus: IEventBus) {
@@ -119,8 +119,8 @@ class Tempad(bus: IEventBus) {
             val upgradeItems = event.register(UpgradeHandler.item)
             val upgradeBlocks = event.register(UpgradeHandler.block)
             val accessItems = event.register(PlayerAccess.item)
-            val blockItems = event.register(Capabilities.ItemHandler.BLOCK)
-            val itemItems = event.register(Capabilities.ItemHandler.ITEM)
+            val blockItems = event.register(Capabilities.Item.BLOCK)
+            val itemItems = event.register(Capabilities.Item.ITEM)
 
             chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.let {

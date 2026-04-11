@@ -6,7 +6,7 @@ import com.teamresourceful.resourcefullib.common.fluid.data.FluidSounds
 import com.teamresourceful.resourcefullib.common.fluid.data.ImmutableFluidProperties
 import com.teamresourceful.resourcefullib.common.fluid.registry.ResourcefulFluidRegistry
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.level.pathfinder.PathType
 

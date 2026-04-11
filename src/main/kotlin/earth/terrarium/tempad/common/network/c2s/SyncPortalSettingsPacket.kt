@@ -19,7 +19,7 @@ import earth.terrarium.tempad.common.utils.nullableFieldOf
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.tempadId
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -30,7 +30,7 @@ data class SyncPortalSettingsPacket(
     val zOffset: Float,
     val angle: Int,
     val isVertical: Boolean,
-    val providerId: ResourceLocation?,
+    val providerId: Identifier?,
     val id: UUID?,
     val ctx: ContextHolder<*>,
 ) : Packet<SyncPortalSettingsPacket> {
@@ -40,7 +40,7 @@ data class SyncPortalSettingsPacket(
         zOffset: Float,
         angle: Int,
         isVertical: Boolean,
-        providerId: Optional<ResourceLocation>,
+        providerId: Optional<Identifier>,
         id: Optional<UUID>,
         ctx: ContextHolder<*>,
     ) : this(
@@ -55,7 +55,7 @@ data class SyncPortalSettingsPacket(
     )
 
     companion object : ServerPacketCompanion<SyncPortalSettingsPacket> {
-        override val id: ResourceLocation = "sync_portal_settings".tempadId
+        override val id: Identifier = "sync_portal_settings".tempadId
         override val byteCodec: ByteCodec<SyncPortalSettingsPacket> = ObjectByteCodec.create(
             ByteCodec.FLOAT.fieldOf { it.xOffset },
             ByteCodec.FLOAT.fieldOf { it.yOffset },

@@ -38,9 +38,9 @@ class ModLootTables(packOutput: PackOutput, provider: CompletableFuture<HolderLo
         }
 
         fun Block.register(pGenerator: BiConsumer<ResourceKey<LootTable>, LootTable.Builder>) {
-            val resourcelocation: ResourceKey<LootTable> = this.getLootTable()
-            if (resourcelocation !== BuiltInLootTables.EMPTY) {
-                map.remove(resourcelocation)?.let { pGenerator.accept(resourcelocation, it) }
+            val Identifier: ResourceKey<LootTable> = this.getLootTable()
+            if (Identifier !== BuiltInLootTables.EMPTY) {
+                map.remove(Identifier)?.let { pGenerator.accept(Identifier, it) }
             }
         }
     }

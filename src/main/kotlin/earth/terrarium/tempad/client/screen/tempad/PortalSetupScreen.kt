@@ -27,7 +27,7 @@ import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Inventory
 import java.util.*
 
@@ -39,7 +39,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
     val zOffset = MutableState.of(menu.ctx.stack.portalOffset.forwardBack)
     val angle = MutableState.of(menu.ctx.stack.portalOffset.angle)
     val isUpright = MutableState.of(menu.ctx.stack.portalOffset.isUpright)
-    private var selected: Pair<ResourceLocation, UUID>? = menu.ctx.stack.selectedPos?.let { it.provider to it.id }
+    private var selected: Pair<Identifier, UUID>? = menu.ctx.stack.selectedPos?.let { it.provider to it.id }
 
     val search = ListenableState.of("").apply {
         registerListener {
@@ -49,7 +49,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
 
     private lateinit var locationList: LayoutWidget<ClearableGridLayout>
 
-    private val locations: Map<ResourceLocation, MutableMap<UUID, NamedGlobalVec3>> =
+    private val locations: Map<Identifier, MutableMap<UUID, NamedGlobalVec3>> =
         menu.appContent.locations.mapValues { (_, value) ->
             value.toMutableMap()
         }

@@ -13,11 +13,11 @@ import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.defaultApp
 import earth.terrarium.tempad.common.registries.defaultMacro
 import earth.terrarium.tempad.tempadId
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Player
 
-data class OpenAppPacket(val id: ResourceLocation): Packet<OpenAppPacket> {
+data class OpenAppPacket(val id: Identifier): Packet<OpenAppPacket> {
     companion object: ServerPacketCompanion<OpenAppPacket> {
         override val id = "open_app".tempadId
         override val byteCodec: ByteCodec<OpenAppPacket> = ExtraByteCodecs.RESOURCE_LOCATION.map(::OpenAppPacket) {it.id}

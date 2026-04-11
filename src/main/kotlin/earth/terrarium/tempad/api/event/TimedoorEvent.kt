@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -17,7 +17,7 @@ open class TimedoorEvent(timedoor: TimedoorEntity) : EntityEvent(timedoor) {
         return super.getEntity() as TimedoorEntity
     }
 
-    open class Open(timedoor: TimedoorEntity, val provider: ResourceLocation?, val locationId: UUID?, val opener: GameProfile) :
+    open class Open(timedoor: TimedoorEntity, val provider: Identifier?, val locationId: UUID?, val opener: GameProfile) :
         TimedoorEvent(timedoor), ICancellableEvent {
         var errorMessage: Component? = null
 
@@ -32,12 +32,12 @@ open class TimedoorEvent(timedoor: TimedoorEntity) : EntityEvent(timedoor) {
 
     class OpenWithItem(
         timedoor: TimedoorEntity, opener: GameProfile, val tempadCtx: SyncableContext<*>,
-        provider: ResourceLocation?, locationId: UUID?,
+        provider: Identifier?, locationId: UUID?,
     ) : Open(timedoor, provider, locationId, opener)
 
     class OpenWithBlock(
         timedoor: TimedoorEntity, opener: GameProfile, val block: BlockEntity,
-        provider: ResourceLocation?, locationId: UUID?,
+        provider: Identifier?, locationId: UUID?,
     ) : Open(timedoor, provider, locationId, opener)
 
     class Close(timedoor: TimedoorEntity) : TimedoorEvent(timedoor)

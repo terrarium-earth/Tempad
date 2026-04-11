@@ -5,7 +5,7 @@ import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.data.PackOutput
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.client.model.generators.ModelFile
@@ -83,7 +83,7 @@ class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : Ite
             .predicate(propName.tempadId, 1f)
             .model(getBuilder(this.location.toString() + "_$propName").apply {
                 parent(ModelFile.UncheckedModelFile("item/generated"))
-                texture("layer0", ResourceLocation.fromNamespaceAndPath(this.location.namespace, this.location.path))
+                texture("layer0", Identifier.fromNamespaceAndPath(this.location.namespace, this.location.path))
             })
             .end()
     }

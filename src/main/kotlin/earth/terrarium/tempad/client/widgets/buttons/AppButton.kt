@@ -8,9 +8,9 @@ import earth.terrarium.tempad.common.utils.appSprites
 import earth.terrarium.tempad.common.utils.appTitle
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
-data class AppButton(val app: TempadApp<*>, val appId: ResourceLocation): ListEntry() {
+data class AppButton(val app: TempadApp<*>, val appId: Identifier): ListEntry() {
     override fun setFocused(pFocused: Boolean) {}
 
     override fun isFocused(): Boolean = false

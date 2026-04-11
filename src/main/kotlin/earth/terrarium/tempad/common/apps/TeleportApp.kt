@@ -15,7 +15,7 @@ import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.pinnedPosition
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -42,8 +42,8 @@ data class TeleportApp(val ctx: SyncableContext<*>): TempadApp<TeleportData> {
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class TeleportData(val locations: Map<ResourceLocation, Map<UUID, NamedGlobalVec3>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ContextHolder<*>): AppContent<TeleportData>(ctx, false, codec) {
-    constructor(locations: Map<ResourceLocation, Map<UUID, NamedGlobalVec3>>, fav: Optional<FavoriteLocationAttachment>, ctx: ContextHolder<*>): this(locations, fav.getOrNull(), ctx)
+class TeleportData(val locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ContextHolder<*>): AppContent<TeleportData>(ctx, false, codec) {
+    constructor(locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, fav: Optional<FavoriteLocationAttachment>, ctx: ContextHolder<*>): this(locations, fav.getOrNull(), ctx)
     companion object {
         val codec: ByteCodec<TeleportData> = ObjectByteCodec.create(
             ByteCodec.mapOf(

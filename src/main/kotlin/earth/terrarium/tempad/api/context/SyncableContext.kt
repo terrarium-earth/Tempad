@@ -3,13 +3,13 @@ package earth.terrarium.tempad.api.context
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import earth.terrarium.tempad.api.PriorityId
 import io.netty.buffer.ByteBuf
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 
 typealias ContextProvider<T> = (Player, T) -> SyncableContext<T>
 
-data class ContextType<T: Any>(val id: ResourceLocation, val codec: ByteCodec<T>) {
+data class ContextType<T: Any>(val id: Identifier, val codec: ByteCodec<T>) {
     fun getCtx(player: Player, context: T): SyncableContext<T> {
         return ContextRegistry.get(this, player, context)
     }
@@ -22,10 +22,10 @@ data class ContextType<T: Any>(val id: ResourceLocation, val codec: ByteCodec<T>
     companion object {
         val codec: ByteCodec<ContextType<*>> = ByteCodec.passthrough(
             { buf, provider ->
-                ResourceLocation.STREAM_CODEC.encode(buf, provider.id)
+                Identifier.STREAM_CODEC.encode(buf, provider.id)
             },
             { buf ->
-                val id = ResourceLocation.STREAM_CODEC.decode(buf)
+                val id = Identifier.STREAM_CODEC.decode(buf)
                 ContextRegistry.registry.keys.first { it.id == id }
             }
         )

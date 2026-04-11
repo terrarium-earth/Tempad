@@ -11,7 +11,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
@@ -148,13 +148,13 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
             .save(this, (BuiltInRegistries.ITEM.getKey(item).path + "_clean").tempadId)
     }
 
-    fun RecipeOutput.upgrade(item: Item, resourceLocation: ResourceLocation, downloadTime: Int = 80) {
+    fun RecipeOutput.upgrade(item: Item, Identifier: Identifier, downloadTime: Int = 80) {
         val upgrade = TempadUpgradeRecipe(
             Ingredient.of(item),
             downloadTime,
-            resourceLocation,
+            Identifier,
         )
-        val id = "upgrades/${resourceLocation.path}".tempadId
+        val id = "upgrades/${Identifier.path}".tempadId
         val builder: Advancement.Builder = advancement()
             .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
             .rewards(AdvancementRewards.Builder.recipe(id))

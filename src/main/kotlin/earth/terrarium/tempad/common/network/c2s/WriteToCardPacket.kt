@@ -14,10 +14,10 @@ import earth.terrarium.tempad.common.menu.menuCtx
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.utils.stack
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import java.util.UUID
 
-class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, val ctx: ContextHolder<*>): Packet<WriteToCardPacket> {
+class WriteToCardPacket(val providerId: Identifier, val locationId: UUID, val ctx: ContextHolder<*>): Packet<WriteToCardPacket> {
     companion object {
         val type = CodecPacketType.Server.create(
             "write_to_card".tempadId,

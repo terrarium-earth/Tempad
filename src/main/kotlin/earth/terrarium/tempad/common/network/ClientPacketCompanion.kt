@@ -4,14 +4,14 @@ import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.ClientboundPacketType
 import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 interface ClientPacketCompanion<T: Packet<T>>: ClientboundPacketType<T> {
-    val id: ResourceLocation
+    val id: Identifier
     val byteCodec: ByteCodec<T>
     fun onReceive(packet: T)
 
-    override fun id(): ResourceLocation? {
+    override fun id(): Identifier? {
         return id
     }
 

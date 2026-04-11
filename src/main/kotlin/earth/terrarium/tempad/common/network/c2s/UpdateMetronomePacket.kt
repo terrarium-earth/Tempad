@@ -16,14 +16,14 @@ import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
 
 data class UpdateMetronomePacket(val blockPos: BlockPos, val locked: Boolean): Packet<UpdateMetronomePacket> {
     override fun type(): PacketType<UpdateMetronomePacket> = Companion
 
     companion object: ServerPacketCompanion<UpdateMetronomePacket> {
-        override val id: ResourceLocation = "update_metronome".tempadId
+        override val id: Identifier = "update_metronome".tempadId
         override val byteCodec: ByteCodec<UpdateMetronomePacket> = ObjectByteCodec.create(
             ExtraByteCodecs.BLOCK_POS.fieldOf(UpdateMetronomePacket::blockPos),
             ByteCodec.BOOLEAN.fieldOf(UpdateMetronomePacket::locked),

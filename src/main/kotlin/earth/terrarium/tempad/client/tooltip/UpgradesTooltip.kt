@@ -8,12 +8,12 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import org.joml.Matrix4f
 
 class UpgradesTooltip(val upgrades: InstalledUpgradesComponent): ClientTooltipComponent {
     val text = upgrades.upgrades.map { Component.translatable(it.toLanguageKey("upgrade")) }
-    val images = upgrades.upgrades.map { ResourceLocation.fromNamespaceAndPath(it.namespace, "upgrade/" + it.path) }
+    val images = upgrades.upgrades.map { Identifier.fromNamespaceAndPath(it.namespace, "upgrade/" + it.path) }
 
     override fun getHeight(): Int = upgrades.upgrades.size * 12 + 14
 

@@ -1,228 +1,83 @@
-import groovy.json.StringEscapeUtils
-import io.github.offz.githubPackage
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
-    java
-    idea
-    kotlin("jvm") version "2.0.20"
-    id("maven-publish")
-    id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("net.neoforged.gradle.userdev") version "7.0.182"
-    id("io.github.0ffz.github-packages") version "1.2.1"
+    id("earth.terrarium.cloche") version "0.18.11"
+    kotlin("jvm") version "2.3.20"
 }
 
-val minecraftVersion: String by project
-val modId: String by project
-
-base {
-    archivesName.set("$modId-$minecraftVersion")
-}
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-jarJar.enable()
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 repositories {
-    maven(url = "https://maven.architectury.dev/")
-    maven(url = "https://maven.neoforged.net/releases")
-    maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
-    maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
-    maven(url = "https://maven.octo-studios.com/releases")
-    maven(url = "https://modmaven.dev/" )
-    maven(url = "https://api.modrinth.com/maven")
-    maven(url = "https://maven.blamejared.com" )
-    maven(url = "https://cursemaven.com" )
-    mavenLocal()
+    cloche.librariesMinecraft()
 
-    githubPackage("compactmods/gander") {
-        content {
-            includeGroup("dev.compactmods.gander")
+    mavenCentral()
+
+    cloche {
+        main()
+
+        mavenFabric()
+        mavenNeoforgedMeta()
+        mavenNeoforged()
+
+        maven("https://thedarkcolour.github.io/KotlinForForge/")
+        maven("https://maven.teamresourceful.com/repository/maven-public/")
+        maven("https://maven.blamejared.com")
+        maven("https://api.modrinth.com/maven")
+        maven("https://maven.ftb.dev/snapshots")
+        maven("https://maven.ftb.dev/releases")
+        maven("https://maven.gegy.dev")
+    }
+}
+
+cloche {
+    minecraftVersion = "26.1.2"
+
+    metadata {
+        modId = "example"
+        name = "Tempad"
+        license = "MIT (for code) + ARR (for everything else)"
+        description = ""
+
+        dependencies {
+            require("kotlinforforge", "6.1.0a")
+            require("resourcefullib", "4.0.0")
+            require("resourcefulconfig", "4.0.1")
         }
     }
-}
 
-dependencies {
-    val neoforgeVersion: String by project
-    val minecraftVersion: String by project
-    val baseVersion = "1.21"
+    neoforge {
+        loaderVersion = "26.1.2.5-beta"
 
-    val resourcefulConfigVersion: String by project
-    val resourcefulLibVersion: String by project
-    val resourcefulLibKtVersion: String by project
-    val kotlinForForgeVersion: String by project
-    val curiosVersion: String by project
-    val mekanismVersion: String by project
-    val patchouliVersion: String by project
-    val jadeVersion: String by project
-    val jeiVersion: String by project
-    val arsNouveauVersion: String by project
-    val lambdaDynamicLights: String by project
+        data()
 
-    implementation("net.neoforged:neoforge:${neoforgeVersion}")
-
-    compileOnly("mekanism:Mekanism:${mekanismVersion}:api")
-
-    runtimeOnly("mekanism:Mekanism:${mekanismVersion}")
-    runtimeOnly("mekanism:Mekanism:${mekanismVersion}:additions")
-    runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
-    runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
-
-    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-${baseVersion}:${resourcefulConfigVersion}")
-    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-${baseVersion}:${resourcefulLibVersion}")
-    compileOnly("com.teamresourceful:bytecodecs:1.1.0")
-    implementation("thedarkcolour:kotlinforforge-neoforge:${kotlinForForgeVersion}")
-    implementation("com.teamresourceful.resourcefullibkt:resourcefullibkt-neoforge-${baseVersion}:${resourcefulLibKtVersion}") {
-        isTransitive = false
-    }
-
-    jarJar(group = "com.teamresourceful.resourcefullibkt", name = "resourcefullibkt-neoforge-${baseVersion}", version = resourcefulLibKtVersion).also {
-        jarJar.pin(it, "[${resourcefulLibKtVersion})")
-    }
-
-    implementation(group = "earth.terrarium.olympus", name = "olympus-neoforge-${baseVersion}", version = "1.0.18") {
-        isTransitive = false
-    }.also { jarJar(it) }
-
-    implementation("earth.terrarium:odyssey_allies-neoforge-1.21:2.0.0-alpha.5") {
-        isTransitive = false
-    }
-
-    implementation(group = "earth.terrarium.cadmus", name = "cadmus-neoforge-${baseVersion}", version = "2.0.0-alpha.5") {
-        isTransitive = false
-    }
-
-    implementation("top.theillusivec4.curios:curios-neoforge:${curiosVersion}")
-
-    compileOnly("vazkii.patchouli:Patchouli:${patchouliVersion}:api")
-    runtimeOnly("vazkii.patchouli:Patchouli:${patchouliVersion}")
-
-    implementation("maven.modrinth:jade:$jadeVersion")
-    compileOnly("maven.modrinth:lambdynamiclights-unofficial-neoforge:$lambdaDynamicLights")
-
-    // compile against the JEI API but do not include it at runtime
-    compileOnly("mezz.jei:jei-${baseVersion}-neoforge-api:${jeiVersion}")
-    // at runtime, use the full JEI jar for NeoForge
-    runtimeOnly("mezz.jei:jei-${baseVersion}-neoforge:${jeiVersion}")
-
-    compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${baseVersion}.0:${arsNouveauVersion}") {
-        exclude(group = "curse.maven")
-    }
-
-    compileOnly(group = "curse.maven", name = "ftb-teams-forge-404468", version = "5631446")
-    implementation(group = "curse.maven", name = "dark-mode-everywhere-574123", version = "5922655")
-
-    implementation(group = "earth.terrarium.common_storage_lib", name = "common-storage-lib-data-neoforge-$minecraftVersion", version = "0.0.7") {
-        isTransitive = false
-    }.let { jarJar(it) }
-}
-
-java {
-    withSourcesJar()
-}
-
-tasks.jar {
-    archiveClassifier.set("dev")
-}
-
-tasks.processResources {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    filesMatching(listOf("META-INF/neoforge.mods.toml")) {
-        expand("version" to project.version)
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_21)
-        freeCompilerArgs.add("-Xjvm-default=all")
-        freeCompilerArgs.add("-Xcontext-receivers")
-    }
-
-    sourceSets.all {
-        languageSettings.enableLanguageFeature("ExplicitBackingFields")
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            artifactId = "$modId-$minecraftVersion"
-            from(components["java"])
-
-            pom {
-                name.set("Tempad")
-                url.set("https://github.com/terrarium-earth/$modId")
-
-                scm {
-                    connection.set("git:https://github.com/terrarium-earth/$modId.git")
-                    developerConnection.set("git:https://github.com/terrarium-earth/$modId.git")
-                    url.set("https://github.com/terrarium-earth/$modId")
-                }
-
-                licenses {
-                    license {
-                        name.set("ARR")
-                    }
-                }
-            }
+        runs {
+            server()
+            client()
+            data()
         }
-    }
-    repositories {
-        maven {
-            setUrl("https://maven.resourcefulbees.com/repository/terrarium/")
-            credentials {
-                username = System.getenv("MAVEN_USER")
-                password = System.getenv("MAVEN_PASS")
-            }
+
+        dependencies {
+            // Mod dependencies: Kotlin for Forge, ResourcefulLib, ResourcefulConfig, Olympus (included)
+            implementation(module(group = "thedarkcolour", name = "kotlinforforge-neoforge", version = "6.1.0a"))
+            implementation(module(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-neoforge-26.1", version = "4.0.0"))
+            implementation(module(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-neoforge-26.1", version = "4.0.1"))
+            implementation(module(group = "com.teamresourceful", name = "bytecodecs", version = "1.1.0"))
+            val olympus = module(group = "earth.terrarium.olympus", name = "olympus-neoforge-26.1", version = "1.8.0")
+            implementation(olympus)
+            include(olympus)
+
+            // JEI
+            implementation(module(group = "mezz.jei", name = "jei-26.1.2-neoforge", version = "29.5.0.24"))
+
+            // Jade
+            implementation(module(group = "maven.modrinth", name = "nvQzSEkH", version = "xp9l9JJG"))
+
+            // FTB Teams
+            implementation(module(group = "dev.ftb.mods", name = "ftb-teams-neoforge", version = "26.1.0.2-SNAPSHOT"))
+
+            // Lambda's Dynamic Lights // dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:4.10.1+26.1.1
+            implementation(module(group = "dev.lambdaurora.lambdynamiclights", name = "lambdynamiclights-api", version = "4.10.1+26.1.1"))
+            runtimeOnly(module(group = "dev.lambdaurora.lambdynamiclights", name = "lambdynamiclights-runtime", version = "4.10.1+26.1.1"))
+
+            //
         }
-    }
-}
-
-resourcefulGradle {
-    templates {
-        register("embed") {
-            val minecraftVersion: String by project
-            val version: String by project
-            val changelog: String = file("changelog.md").readText(Charsets.UTF_8)
-            val mrLink: String? = System.getenv("MODRINTH_RELEASE_URL")
-            val cfLink: String? = System.getenv("CURSE_RELEASE_URL")
-
-            source.set(file("templates/embed.json.template"))
-            injectedValues.set(mapOf(
-                    "minecraft" to minecraftVersion,
-                    "version" to version,
-                    "changelog" to StringEscapeUtils.escapeJava(changelog),
-                    "modrinth_link" to mrLink,
-                    "curseforge_link" to cfLink
-            ))
-        }
-    }
-}
-
-runs {
-    // other run configurations here
-
-    maybeCreate("data").apply {
-        programArguments.addAll(
-            "--mod", modId,
-            "--all",
-            "--output", file("src/generated/resources").absolutePath,
-            "--existing", file("src/main/resources/").absolutePath,
-            "--client",
-            "--server"
-        )
-    }
-}
-
-sourceSets.main.configure {
-    resources {
-        srcDir("src/generated/resources")
-    }
-}
-
-idea {
-    module {
-        isDownloadJavadoc = true
-        isDownloadSources = true
     }
 }

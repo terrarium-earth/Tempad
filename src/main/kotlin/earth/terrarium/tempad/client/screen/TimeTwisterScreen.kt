@@ -19,7 +19,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.Mth
 import org.joml.Vector2f
 import java.util.Date
@@ -194,7 +194,7 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
             if (index < locations.size) {
                 val (date, history) = locations[index]
                 graphics.blitSprite(
-                    ResourceLocation.fromNamespaceAndPath(history.marker!!.namespace, "marker/" + history.marker.path),
+                    Identifier.fromNamespaceAndPath(history.marker!!.namespace, "marker/" + history.marker.path),
                     (scaledWidth / 2f + pos.x() - 8).toInt(),
                     (scaledHeight / 2f + pos.y() - 8).toInt(),
                     16,

@@ -3,9 +3,9 @@ package earth.terrarium.tempad.api
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
-data class PriorityId(val id: ResourceLocation, private val priority: Priority): Comparable<PriorityId> {
+data class PriorityId(val id: Identifier, private val priority: Priority): Comparable<PriorityId> {
     override fun compareTo(other: PriorityId): Int {
         return priority.priority.compareTo(other.priority.priority)
     }

@@ -10,13 +10,13 @@ import earth.terrarium.tempad.client.TempadClient
 import earth.terrarium.tempad.common.network.ClientPacketCompanion
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
-data class OpenChronomark(val blockPos: BlockPos, val color: Color, val name: String, val accessOptions: List<ResourceLocation>, val access: ResourceLocation, val locked: Boolean, val yOffset: Float, val angle: Int): Packet<OpenChronomark> {
+data class OpenChronomark(val blockPos: BlockPos, val color: Color, val name: String, val accessOptions: List<Identifier>, val access: Identifier, val locked: Boolean, val yOffset: Float, val angle: Int): Packet<OpenChronomark> {
     override fun type(): ClientboundPacketType<OpenChronomark> = Companion
 
     companion object: ClientPacketCompanion<OpenChronomark> {
-        override val id: ResourceLocation = "open_chronomark".tempadId
+        override val id: Identifier = "open_chronomark".tempadId
 
         override val byteCodec: ByteCodec<OpenChronomark> = ObjectByteCodec.create(
             ExtraByteCodecs.BLOCK_POS.fieldOf(OpenChronomark::blockPos),

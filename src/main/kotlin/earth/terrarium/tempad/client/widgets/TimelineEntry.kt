@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.FormattedCharSequence
 import java.util.*
 
@@ -31,7 +31,7 @@ class TimelineEntry(parentWidth: Int, val font: Font, val date: Date, val locati
 
     val text: List<FormattedCharSequence> = font.split(markerComponent.append(" ").append(dimensionComponent), parentWidth - 6) + locationComponent.visualOrderText + dateDisplay.visualOrderText
 
-    val sprite = location.marker?.let { ResourceLocation.fromNamespaceAndPath(it.namespace, "marker/" + it.path) }
+    val sprite = location.marker?.let { Identifier.fromNamespaceAndPath(it.namespace, "marker/" + it.path) }
 
     override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, pPartialTick: Float) {
         if (current) {

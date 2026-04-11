@@ -10,12 +10,12 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.pinnedPosition
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 data class SetFavoritePacket(val favorite: FavoriteLocationAttachment?) : Packet<SetFavoritePacket> {
-    constructor(providerId: ResourceLocation, locationId: UUID) : this(
+    constructor(providerId: Identifier, locationId: UUID) : this(
         FavoriteLocationAttachment(
             providerId,
             locationId

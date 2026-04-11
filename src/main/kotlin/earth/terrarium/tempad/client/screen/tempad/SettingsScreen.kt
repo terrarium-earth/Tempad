@@ -21,14 +21,14 @@ import earth.terrarium.tempad.common.utils.translatable
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Inventory
 
 class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.SettingsMenu>(null, menu, inv, title) {
 
-    var defaultMacro: DropdownState<ResourceLocation> = DropdownState.of(menu.ctx.stack.defaultMacro)
-    var defaultApp: DropdownState<ResourceLocation> = DropdownState.of(menu.ctx.stack.defaultApp)
+    var defaultMacro: DropdownState<Identifier> = DropdownState.of(menu.ctx.stack.defaultMacro)
+    var defaultApp: DropdownState<Identifier> = DropdownState.of(menu.ctx.stack.defaultApp)
 
     override fun init() {
         super.init()

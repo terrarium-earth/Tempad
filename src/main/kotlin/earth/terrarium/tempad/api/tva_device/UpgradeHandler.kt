@@ -1,32 +1,32 @@
 package earth.terrarium.tempad.api.tva_device
 
 import earth.terrarium.tempad.tempadId
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.capabilities.ItemCapability
 
 interface UpgradeHandler {
-    val installedUpgrades: List<ResourceLocation>
+    val installedUpgrades: List<Identifier>
 
-    operator fun contains(upgrade: ResourceLocation): Boolean
+    operator fun contains(upgrade: Identifier): Boolean
 
-    operator fun plusAssign(upgrade: ResourceLocation)
+    operator fun plusAssign(upgrade: Identifier)
 
-    operator fun minusAssign(upgrade: ResourceLocation)
+    operator fun minusAssign(upgrade: Identifier)
 
-    fun install(upgrade: ResourceLocation) {
+    fun install(upgrade: Identifier) {
         this += upgrade
     }
 
-    fun uninstall(upgrade: ResourceLocation) {
+    fun uninstall(upgrade: Identifier) {
         this -= upgrade
     }
 
-    fun willAccept(upgrade: ResourceLocation): Boolean
+    fun willAccept(upgrade: Identifier): Boolean
 
-    fun isRemovable(upgrade: ResourceLocation): Boolean
+    fun isRemovable(upgrade: Identifier): Boolean
 
     companion object Capabilities {
         val block = BlockCapability.createVoid("upgrades".tempadId, UpgradeHandler::class.java)

@@ -48,7 +48,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction
 import net.minecraft.client.renderer.item.ItemProperties
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.component.TooltipProvider
 import net.minecraft.world.level.BlockGetter
@@ -71,7 +71,7 @@ import java.io.IOException
 @EventBusSubscriber(modid = Tempad.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object TempadClient {
     var timedoorShader: ShaderInstance? = null
-    fun renderType(textureId: ResourceLocation?): RenderType = CompositeState.builder()
+    fun renderType(textureId: Identifier?): RenderType = CompositeState.builder()
         .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
         .setCullState(NO_CULL)
         .setLayeringState(NO_LAYERING)
