@@ -1133,6 +1133,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             it.addSub("macro", "Use Tempad Macro")
             it.addSub("new_location", "Open Tempad New Location App")
             it.addSub("travel_timeline", "Open Tempad Travel Timeline App")
+            it.addSub("open_wallet","Open Location Card Wallet")
         }
     }
 
