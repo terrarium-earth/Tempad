@@ -1,0 +1,144 @@
+{
+  "config.jade.plugin_tempad.chronon": "Хрононы",
+  "gui.tempad.search_field": "Поиск...",
+  "gui.tempad.name_field": "Название...",
+  "gui.tempad.teleport_disabled": "Вы не можете телепортироваться в эту локацию",
+  "gui.tempad.delete": "Удалить локацию",
+  "gui.tempad.delete_disabled": "Вы не можете удалить эту локацию",
+  "gui.tempad.favorite": "Добавить в избранное",
+  "gui.tempad.unfavorite": "Убрать из избранного",
+  "gui.tempad.timedoor": "Временная дверь",
+  "gui.tempad.dimension": "Изм: %s",
+  "gui.tempad.no_locations.first_line": "Нажмите [+]",
+  "gui.tempad.no_locations.second_line": "чтобы добавить локацию",
+  "gui.tempad.no_selection.first_line": "Выберите локацию",
+  "gui.tempad.no_selection.second_line": "для подробностей",
+  "gui.tempad.x": "X: %s",
+  "gui.tempad.y": "Y: %s",
+  "gui.tempad.z": "Z: %s",
+  "gui.tempad.angle": "Угол: %s",
+
+  "advancements.tempad.tempad": "Во все времена. Всегда.",
+  "advancements.tempad.tempad.description": "Получить Темпад",
+  "advancements.tempad.he_who_remains": "Славная цель!",
+  "advancements.tempad.he_who_remains.description": "Получить Темпад Того, Кто Остаётся",
+  "subtitles.tempad.entity.timedoor.open": "Временная дверь открывается",
+  "message.tempad.not_enough_chronons": "Недостаточно хрононов",
+
+  "dimension.minecraft.overworld": "Верхний мир",
+  "dimension.minecraft.the_nether": "Незер",
+  "dimension.minecraft.the_end": "Энд",
+
+  "locations.tempad.anchor_point": "Маркер: \"%s\"",
+  "locations.tempad.player": "Отслеживание игрока: %s",
+
+  "item.tempad.creative_chronometer.infinite": "Бесконечный",
+  "block.tempad.workstation_child": "Терминал рабочей станции",
+
+  "category.tempad": "Tempad",
+  "key.tempad.shortcut": "Открыть экран Темпада",
+
+  "screen.tempad.marker": "Маркер",
+  "screen.tempad.marker.access_field" : "Кто имеет доступ?",
+  "screen.tempad.marker.public_access" : "Публичный доступ:",
+  "screen.tempad.marker.yoffset": "Смещение портала по Y:",
+  "screen.tempad.marker.angle": "Угол:",
+
+  "access.tempad.private": "Только вы",
+  "access.tempad.public": "Все",
+  "access.tempad.guild": "Согильдийцы",
+  "access.tempad.party": "Члены группы",
+  "access.tempad.ftbteams": "Команда",
+
+  "app.tempad.tp_to.teleport": "Телепорт",
+  "app.tempad.tp_to.selected": "Выбрано",
+
+  "provider.tempad.default": "На устройстве",
+  "provider.tempad.markers": "Маркеры",
+  "provider.tempad.player": "Игроки",
+  "provider.tempad.wallet": "Кошелёк для карт",
+
+  "macro.tempad.default": "Открыть избранное",
+  "macro.tempad.default.description": "Телепортироваться в избранную локацию",
+
+  "button.tempad.type": "Сортировать по типу",
+  "button.tempad.alphabetical": "Сортировать по алфавиту",
+  "button.tempad.dimension": "Сортировать по измерению",
+
+  "marker.tempad.death": "Умер в",
+  "marker.tempad.respawn": "Возродился в",
+  "marker.tempad.dimension_exit": "Покинул измерение в",
+  "marker.tempad.dimension_enter": "Вошёл в измерение в",
+
+  "config.jade.plugin_tempad.timedoor": "Временная дверь",
+  "config.jade.plugin_tempad.anchor": "Маркер",
+  "config.jade.plugin_tempad.rudimentary": "Проектор временных дверей",
+  "config.jade.plugin_tempad.metronome": "Метроном",
+  "config.jade.plugin_tempad.workstation": "Рабочая станция",
+
+  "jade.tempad.will_close": "Закроется через %s секунд",
+  "jade.tempad.closing": "Закрывается...",
+  "jade.tempad.pos": "Телепорт в %s на %s",
+  "misc.tempad.return": "Возвращение в %s",
+  "tempad.tooltip.player_pos": "Цель: %s",
+
+  "misc.tempad.upgrades": "Установленные улучшения:",
+  "misc.tempad.wandering": "Блуждает в",
+
+  "misc.tempad.shift_key_info": "Удерживайте [%s] для подробностей",
+
+  "location.tempad.saved": [
+    "",
+    { "text": "Сохранена локация: ", "color": "#ff6f00" },
+    { "index": 0, "color": "#91450d" }
+  ],
+  "location.tempad.player.error": [
+    "",
+    { "text": "Ошибка: ", "color": "#ff6f00" },
+    { "text": "Локации игроков нельзя сохранить", "color": "#91450d" }
+  ],
+  "tempad.error.timedoor_already_open": "Временная дверь уже открыта",
+
+  "entity.tempad.timedoor": "Временная дверь",
+  "entity.tempad.timedoor.success": "Временная дверь открыта",
+  "entity.tempad.timedoor.fail": [
+    "",
+    { "text": "Ошибка: ", "color": "#ff6f00" },
+    { "text": "Не удалось открыть временную дверь", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.pos": [
+    "",
+    { "text": "Ошибка: ", "color": "#ff6f00" },
+    { "text": "Позиция не инициализирована", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.interdimensional": [
+    "",
+    { "text": "Ошибка: ", "color": "#ff6f00" },
+    { "text": "Перемещение между измерениями запрещено", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional_all": [
+      "",
+      { "text": "Ошибка: ", "color": "#ff6f00" },
+      { "text": "Перемещение внутри измерений запрещено", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.intradimensional": [
+      "",
+      { "text": "Ошибка: ", "color": "#ff6f00" },
+      { "text": "Перемещение внутри этого измерения запрещено", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.leaving": [
+      "",
+      { "text": "Ошибка: ", "color": "#ff6f00" },
+      { "text": "Покидание этого измерения запрещено", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.entering": [
+      "",
+      { "text": "Ошибка: ", "color": "#ff6f00" },
+      { "text": "Вход в это измерение запрещён", "color": "#91450d" }
+  ],
+  "entity.tempad.timedoor.fail.no_chronons": [
+      "",
+      { "text": "Ошибка: ", "color": "#ff6f00" },
+      { "text": "Недостаточно хрононов", "color": "#91450d" }
+  ]
+}
