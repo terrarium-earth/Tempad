@@ -13,7 +13,7 @@ object ModMacros {
         MacroRegistry[teleportToPinned] = { player, ctx ->
             player.getPinnedLocation(ctx)?.let {
                 val (provider, id) = player.pinnedPosition.let { it?.providerId to it?.locationId }
-                TimedoorEntity.openTimedoor(player, ctx, provider, id, it)?.let { player.displayClientMessage(it, true)}
+                TimedoorEntity.openTimedoor(player, ctx, provider, id, it)?.let { player.sendOverlayMessage(it)}
             }
         }
     }

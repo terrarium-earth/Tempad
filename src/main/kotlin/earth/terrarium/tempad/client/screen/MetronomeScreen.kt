@@ -1,6 +1,5 @@
 package earth.terrarium.tempad.client.screen
 
-import com.teamresourceful.resourcefullib.client.screens.AbstractContainerCursorScreen
 import com.teamresourceful.resourcefullib.client.utils.ScreenUtils
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.buttons.Button
@@ -14,24 +13,21 @@ import earth.terrarium.tempad.common.registries.metronomeEnergy
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.WidgetSprites
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 
-class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Component) : AbstractContainerCursorScreen<MetronomeMenu>(menu,
-    playerInventory, title
+class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Component) : AbstractContainerScreen<MetronomeMenu>(menu,
+    playerInventory, title, 211, 178
 ) {
     companion object {
         val sprite = "screen/metronome".tempadId
     }
 
     val locked = MutableState.of(menu.data?.locked == true)
-
-    init {
-        this.imageWidth = 211
-        this.imageHeight = 178
-    }
 
     override fun init() {
         super.init()
@@ -61,30 +57,22 @@ class MetronomeScreen(menu: MetronomeMenu, playerInventory: Inventory, title: Co
         })
     }
 
-    override fun renderBg(graphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        graphics.blitSprite(sprite, leftPos, topPos, imageWidth, imageHeight)
+    override fun extractBackground(
+        graphics: GuiGraphicsExtractor,
+        mouseX: Int,
+        mouseY: Int,
+        a: Float,
+    ) {
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, leftPos, topPos, imageWidth, imageHeight)
 
         val power = menu.energy.get(0)
         val capacity =  menu.energy.get(1)
         val height = ((power.toFloat() / capacity).coerceIn(0f, 1f) * 54).toInt()
-        graphics.blitSprite(TempadUI.powerVert, 6, 54, 0, 54 - height, leftPos + 102, topPos + 20 + 54 - height, 6, height)
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TempadUI.powerVert, 6, 54, 0, 54 - height, leftPos + 102, topPos + 20 + 54 - height, 6, height)
 
         if (mouseX >= leftPos + 102 && mouseX <= leftPos + 106 && mouseY >= topPos + 20 && mouseY <= topPos + 74) {
-            ScreenUtils.setTooltip(Component.literal("${power}/${capacity}"))
+            graphics.setTooltipForNextFrame(Component.literal("${power}/${capacity}"), mouseX, mouseY)
         }
-    }
-
-    override fun renderLabels(
-        guiGraphics: GuiGraphics,
-        mouseX: Int,
-        mouseY: Int,
-    ) {
-        super.renderLabels(guiGraphics, mouseX, mouseY)
-    }
-
-    override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
-        this.renderTooltip(pGuiGraphics, pMouseX, pMouseY)
     }
 
     override fun onClose() {

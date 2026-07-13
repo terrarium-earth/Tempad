@@ -5,14 +5,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import earth.terrarium.tempad.api.locations.offsetLocation
-import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.tempadId
 import net.minecraft.world.phys.Vec3
 
 class VerticalPlacementSettings(val xOffset: Float, val yOffset: Float, val zOffset: Float): DynamicAngledPlacement() {
     companion object {
-        val type = SizingType("vertical".tempadId, ObjectByteCodec.create(
+        val type = TimedoorPlacementType("vertical".tempadId, ObjectByteCodec.create(
             ByteCodec.FLOAT.fieldOf { it.xOffset },
             ByteCodec.FLOAT.fieldOf { it.yOffset },
             ByteCodec.FLOAT.fieldOf { it.zOffset },
@@ -26,7 +25,7 @@ class VerticalPlacementSettings(val xOffset: Float, val yOffset: Float, val zOff
         })
     }
 
-    override val type: SizingType<*>
+    override val type: TimedoorPlacementType<*>
         get() = Companion.type
 
     override fun placeTimedoor(

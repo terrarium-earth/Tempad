@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3
 
 open class DynamicAngledPlacement: TimedoorPlacementSettings {
     companion object {
-        val type = SizingType("default".tempadId, ByteCodec.unit(::DynamicAngledPlacement), MapCodec.unit(::DynamicAngledPlacement))
+        val type = TimedoorPlacementType("default".tempadId, ByteCodec.unit(::DynamicAngledPlacement), MapCodec.unit(::DynamicAngledPlacement))
     }
 
     val width: Float = 20 / 16f
@@ -21,7 +21,7 @@ open class DynamicAngledPlacement: TimedoorPlacementSettings {
     val depth: Float = 6 / 16f
 
     override val showLineAnimation: Boolean = true
-    override val type: SizingType<*> = Companion.type
+    override val type: TimedoorPlacementType<*> = Companion.type
     override val dimensions: EntityDimensions = EntityDimensions.fixed(width, height)
 
     override fun widthAtPercent(percent: Float): Float {
@@ -45,7 +45,7 @@ open class DynamicAngledPlacement: TimedoorPlacementSettings {
     override fun TimedoorEntity.isInside(entity: Entity): Boolean {
         val hypotenuse = (entity.x - x) * (entity.x - x) + (entity.z - z) * (entity.z - z)
         val alpha = Mth.atan2((entity.z - z), (entity.x - x)).toFloat()
-        val theta = Mth.sin(alpha - yRot * Mth.DEG_TO_RAD)
+        val theta = Mth.sin(alpha - yRot * Mth.DEG_TO_RAD.toDouble())
         val maxDistance = (depth / 2) + entity.bbWidth / 2f
         return theta * theta * hypotenuse < maxDistance * maxDistance
     }

@@ -1,5 +1,5 @@
 package earth.terrarium.tempad.common.compat
-
+/*
 import com.mojang.authlib.GameProfile
 import earth.terrarium.cadmus.api.flags.FlagApi
 import earth.terrarium.cadmus.api.flags.types.BooleanFlag
@@ -60,3 +60,4 @@ object TimedoorProtection : Protection {
             .map<Boolean?> { id: TeamId? -> this.isPlayerAllowed(level, player, id) }.orElse(true)
     }
 }
+ */

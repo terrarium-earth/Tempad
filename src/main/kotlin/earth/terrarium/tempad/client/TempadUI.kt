@@ -1,7 +1,8 @@
 package earth.terrarium.tempad.client
 
 import com.ibm.icu.text.NumberFormat
-import com.teamresourceful.resourcefullib.client.utils.RenderUtils
+import com.teamresourceful.resourcefullibkt.client.pushPop
+import com.teamresourceful.resourcefullibkt.client.scissor
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRendererContext
@@ -20,10 +21,11 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.WidgetSprites
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import java.util.function.Consumer
 import kotlin.math.roundToInt
@@ -68,6 +70,7 @@ object TempadUI {
                 Tempad.ORANGE.value
             )
             graphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
                 "button/normal".tempadId,
                 context.x,
                 context.y + scrollY,
@@ -114,7 +117,7 @@ object TempadUI {
         val offRenderer = WidgetRenderers.sprite<Button?>(toggleDisabled)
         val switchFactory = Consumer { button: Button? ->
             button!!.withCallback(StateUtils.booleanToggle(state)).withTexture(null as WidgetSprites?)
-                .withRenderer(WidgetRenderer { graphics: GuiGraphics?, context: WidgetRendererContext<Button?>?, partialTick: Float ->
+                .withRenderer(WidgetRenderer { graphics: GuiGraphicsExtractor?, context: WidgetRendererContext<Button?>?, partialTick: Float ->
                     (if (state.get()) onRenderer else offRenderer).render(
                         graphics,
                         context,
@@ -156,13 +159,13 @@ object TempadUI {
             coolFormat(d, iteration + 1))
     }
 
-    fun renderEnergyBar(graphics: GuiGraphics, font: Font, x: Int, y: Int, power: Int, maxPower: Int) {
-        graphics.blitSprite(powerBg, x, y, 74, 13)
+    fun renderEnergyBar(graphics: GuiGraphicsExtractor, font: Font, x: Int, y: Int, power: Int, maxPower: Int) {
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, powerBg, x, y, 74, 13)
         val uWidth = if(maxPower == 0) 0 else ((power.toFloat() / maxPower).coerceIn(0f, 1f) * 72).roundToInt()
-        graphics.blitSprite(powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
 
         val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else {
-            if (Screen.hasShiftDown() || Minecraft.getInstance().player?.isShiftKeyDown == true) {
+            if (Minecraft.getInstance().hasShiftDown()) {
                 Component.literal(NumberFormat.getInstance().format(power) + "C")
             } else {
                 Component.literal(coolFormat(power.toDouble(), 0) + "/" + coolFormat(maxPower.toDouble(), 0))
@@ -170,14 +173,12 @@ object TempadUI {
         }
         val xOffset = (74 - font.width(text)) / 2
 
-        graphics.flush()
-
-        RenderUtils.createScissor(Minecraft.getInstance(), graphics, x + 1, y + 1, uWidth, 11).use {
-            graphics.drawString(font, text, x + xOffset, y + 3, 0xFF000000.toInt(), false)
+        graphics.scissor(x + 1, y + 1, uWidth, 11) {
+            graphics.text(font, text, x + xOffset, y + 3, 0xFF000000.toInt(), false)
         }
 
-        RenderUtils.createScissor(Minecraft.getInstance(), graphics, x + 1 + uWidth, y + 1, 72 - uWidth, 11).use {
-            graphics.drawString(font, text, x + xOffset, y + 3, ChatFormatting.GOLD.color ?: 0, false)
+        graphics.scissor( x + 1 + uWidth, y + 1, 72 - uWidth, 11) {
+            graphics.text(font, text, x + xOffset, y + 3, ChatFormatting.GOLD.color ?: 0, false)
         }
     }
 }

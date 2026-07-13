@@ -5,8 +5,6 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.MetronomeBlock
-import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
-import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.WorkstationBE
@@ -26,25 +24,25 @@ object ModBlocks {
     val timedoorProjector by blocks.register("timedoor_projector", ::RudimentaryTempadBlock)
 
     val timedoorProjectorBE by blockEntities.register("timedoor_projector") {
-        BlockEntityType.Builder.of(::RudimentaryTempadBE, timedoorProjector).build(null)
+        BlockEntityType(::RudimentaryTempadBE, timedoorProjector)
     }
 
     val timedoorMarker by blocks.register("timedoor_marker", ::TimedoorMarkerBlock)
 
     val timedoorMarkerBE by blockEntities.register("timedoor_marker") {
-        BlockEntityType.Builder.of(::TimedoorMarkerBE, timedoorMarker).build(null)
+        BlockEntityType(::TimedoorMarkerBE, timedoorMarker)
     }
 
     val chronomark by blocks.register("chronomark", ::ChronomarkBlock)
 
     val chronomarkBE by blockEntities.register("chronomark") {
-        BlockEntityType.Builder.of(::ChronomarkBE, chronomark).build(null)
+        BlockEntityType(::ChronomarkBE, chronomark)
     }
 
     val workstation by blocks.register("workstation", ::WorkstationBlock)
 
     val workstationBE by blockEntities.register("workstation") {
-        BlockEntityType.Builder.of(::WorkstationBE, workstation).build(null)
+        BlockEntityType(::WorkstationBE, workstation)
     }
 
     val workstationChild by blocks.register("workstation_child", ::WorkstationChildBlock)
@@ -52,6 +50,6 @@ object ModBlocks {
     val metronome by blocks.register("metronome", ::MetronomeBlock)
 
     val metronomeBe by blockEntities.register("metronome") {
-        BlockEntityType.Builder.of(::MetronomeBe, metronome).build(null)
+        BlockEntityType(::MetronomeBe, metronome)
     }
 }

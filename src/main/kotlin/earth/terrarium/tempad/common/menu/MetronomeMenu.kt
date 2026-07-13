@@ -5,13 +5,10 @@ import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.menu.MenuContent
 import com.teamresourceful.resourcefullib.common.menu.MenuContentSerializer
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.common.block.MetronomeDataContainer
 import earth.terrarium.tempad.common.block.MetronomeItemHandler
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.utils.RecordCodecMenuContentSerializer
 import net.minecraft.core.GlobalPos
-import net.minecraft.core.UUIDUtil
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -19,15 +16,22 @@ import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.neoforged.neoforge.items.IItemHandler
-import net.neoforged.neoforge.items.ItemStackHandler
-import net.neoforged.neoforge.items.SlotItemHandler
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val energy: ContainerData, val data: MetronomeMenuData?) : AbstractContainerMenu(ModMenus.metronome, id) {
-    constructor(id: Int, inv: Inventory, data: Optional<MetronomeMenuData>) : this(id, inv,
-        MetronomeItemHandler(), SimpleContainerData(2), data.getOrNull())
+class MetronomeMenu(
+    id: Int,
+    inv: Inventory,
+    items: MetronomeItemHandler,
+    val energy: ContainerData,
+    val data: MetronomeMenuData?,
+) : AbstractContainerMenu(ModMenus.metronome, id) {
+    constructor(id: Int, inv: Inventory, data: Optional<MetronomeMenuData>) : this(
+        id, inv,
+        MetronomeItemHandler(), SimpleContainerData(2), data.getOrNull()
+    )
 
     init {
         this.addMenuSlots(items)
@@ -66,7 +70,14 @@ class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val energy
     private fun addPlayerInvSlots(inventory: Inventory, x: Int = 25, y: Int = 85) {
         for (row in 0..2) {
             for (column in 0..8) {
-                this.addSlot(Slot(inventory, column + row * 9 + 9 /* Hotbar is the first 9 */, x + column * 18, y + row * 18))
+                this.addSlot(
+                    Slot(
+                        inventory,
+                        column + row * 9 + 9 /* Hotbar is the first 9 */,
+                        x + column * 18,
+                        y + row * 18
+                    )
+                )
             }
         }
 
@@ -75,14 +86,14 @@ class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val energy
         }
     }
 
-    private fun addMenuSlots(items: ItemStackHandler, x: Int = 25, y: Int = 10) {
+    private fun addMenuSlots(items: MetronomeItemHandler, x: Int = 25, y: Int = 10) {
         for (slot in 0..7) {
-            this.addSlot(SlotItemHandler(items, slot, x + (slot + if(slot > 3) 1 else 0) * 18, y + 30))
+            this.addSlot(ResourceHandlerSlot(items, items, slot, x + (slot + if (slot > 3) 1 else 0) * 18, y + 30))
         }
     }
 }
 
-data class MetronomeMenuData(val uuid: UUID, val pos: GlobalPos, val locked: Boolean): MenuContent<MetronomeMenuData> {
+data class MetronomeMenuData(val uuid: UUID, val pos: GlobalPos, val locked: Boolean) : MenuContent<MetronomeMenuData> {
     override fun serializer(): MenuContentSerializer<MetronomeMenuData> = serializer
 
     companion object {

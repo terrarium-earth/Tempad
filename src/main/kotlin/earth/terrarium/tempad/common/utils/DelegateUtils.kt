@@ -1,27 +1,19 @@
 package earth.terrarium.tempad.common.utils
 
-import earth.terrarium.common_storage_lib.data.network.BlockEntitySyncPacket
-import earth.terrarium.common_storage_lib.data.network.EntitySyncPacket
-import earth.terrarium.common_storage_lib.data.network.LevelSyncPacket
-import earth.terrarium.common_storage_lib.data.sync.DataSyncSerializer
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.client.clientLevel
+import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializer
 import net.minecraft.network.syncher.SynchedEntityData
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.Container
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.ChunkPos
-import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.common.MutableDataComponentHolder
-import net.neoforged.neoforge.network.PacketDistributor
 import java.util.*
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -50,51 +42,7 @@ class OptionalAttachmentDelegate<T : Any>(private val key: AttachmentType<T>) :
     }
 }
 
-class SyncedOptionalAttachmentDelegate<T : Any>(private val key: AttachmentType<T>, private val sync: DataSyncSerializer<T>) {
-    operator fun getValue(thisRef: AttachmentHolder, property: KProperty<*>): T? =
-        thisRef.getExistingData(key).orElse(null)
-
-    operator fun setValue(thisRef: AttachmentHolder, property: KProperty<*>, value: T?) {
-        if (value == null) {
-            thisRef -= key
-        } else {
-            thisRef[key] = value
-            // Sync the data here
-        }
-        syncData(thisRef, sync, value)
-    }
-}
-
-class SyncedAttachmentDelegate<T : Any>(private val key: AttachmentType<T>, private val sync: DataSyncSerializer<T>) :
-    ReadWriteProperty<AttachmentHolder, T> {
-    override operator fun getValue(thisRef: AttachmentHolder, property: KProperty<*>): T =
-        thisRef.getData(key)
-
-    override operator fun setValue(thisRef: AttachmentHolder, property: KProperty<*>, value: T) {
-        thisRef[key] = value
-        syncData(thisRef, sync, value)
-    }
-}
-
-
-
-fun <T : Any> syncData(thisRef: AttachmentHolder, sync: DataSyncSerializer<T>, value: T?) {
-    if (thisRef is Entity && !thisRef.level().isClientSide) {
-        PacketDistributor.sendToPlayersTrackingEntity(thisRef, EntitySyncPacket.of(thisRef, sync, value))
-    } else if (thisRef is BlockEntity && !thisRef.level!!.isClientSide) {
-        PacketDistributor.sendToPlayersTrackingChunk(
-            thisRef.level as ServerLevel, ChunkPos(thisRef.blockPos),
-            BlockEntitySyncPacket.of(thisRef, sync, value)
-        )
-    } else if (thisRef is Level && !thisRef.isClientSide) {
-        PacketDistributor.sendToAllPlayers(LevelSyncPacket.of(sync, value))
-    }
-}
-
 fun <T : Any> AttachmentType<T>.optional() = OptionalAttachmentDelegate(this)
-fun <T : Any> AttachmentType<T>.syncedOptional(sync: DataSyncSerializer<T>) = SyncedOptionalAttachmentDelegate(this, sync)
-fun <T : Any> AttachmentType<T>.synced(sync: DataSyncSerializer<T>) = SyncedAttachmentDelegate(this, sync)
-
 val <T : Any> AttachmentType<T>.serverData get() = ServerDataDelegate(this)
 
 class ServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWriteProperty<Any?, T?> {
@@ -110,21 +58,6 @@ class ServerDataDelegate<T : Any>(private val key: AttachmentType<T>) : ReadWrit
     }
 }
 
-class SyncedServerDataDelegate<T : Any>(private val key: AttachmentType<T>, private val sync: DataSyncSerializer<T>) : ReadWriteProperty<Any?, T?> {
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>): T? =
-        (Tempad.server?.overworld() ?: clientLevel)?.getData(key)
-
-    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
-        val level = Tempad.server?.overworld() ?: clientLevel ?: return
-        if (value == null) {
-            level.removeData(key)
-        } else {
-            level.setData(key, value)
-        }
-        syncData(level, sync, value)
-    }
-}
-
 class ComponentDelegate<T : Any>(private val key: DataComponentType<T>, private val default: T) {
     operator fun getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T = thisRef[key] ?: default
     operator fun setValue(thisRef: MutableDataComponentHolder, property: KProperty<*>, value: T) {
@@ -132,7 +65,11 @@ class ComponentDelegate<T : Any>(private val key: DataComponentType<T>, private 
     }
 }
 
-operator fun <T : Any> DataComponentType<T>.getValue(thisRef: MutableDataComponentHolder, property: KProperty<*>): T? =
+class ReadOnlyDelegate<T : Any>(private val key: DataComponentType<T>, private val default: T) : ReadOnlyProperty<DataComponentHolder, T?> {
+    override operator fun getValue(thisRef: DataComponentHolder, property: KProperty<*>): T = thisRef[key] ?: default
+}
+
+operator fun <T : Any> DataComponentType<T>.getValue(thisRef: DataComponentHolder, property: KProperty<*>): T? =
     thisRef[this]
 
 operator fun <T : Any> DataComponentType<T>.setValue(
@@ -148,8 +85,9 @@ operator fun <T : Any> DataComponentType<T>.setValue(
 }
 
 fun <T : Any> DataComponentType<T>.withDefault(default: T) = ComponentDelegate(this, default)
+fun <T : Any> DataComponentType<T>.readOnly(default: T) = ReadOnlyDelegate(this, default)
 
-inline fun <reified T : Entity, U> createDataKey(serializer: EntityDataSerializer<U>): EntityDataAccessor<U> =
+inline fun <reified T : Entity, U : Any> createDataKey(serializer: EntityDataSerializer<U>): EntityDataAccessor<U> =
     SynchedEntityData.defineId(T::class.java, serializer)
 
 class DataDelegate<T : Any>(private val key: EntityDataAccessor<T>) : ReadWriteProperty<Entity, T> {

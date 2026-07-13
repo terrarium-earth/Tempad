@@ -1,46 +1,47 @@
 package earth.terrarium.tempad.common.items
 
+import earth.terrarium.tempad.api.access.ItemAccessAddress
 import earth.terrarium.tempad.api.app.AppRegistry
 import earth.terrarium.tempad.api.macro.MacroRegistry
-import earth.terrarium.tempad.client.tooltip.tooltip
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contents
 import earth.terrarium.tempad.common.utils.ctx
 import earth.terrarium.tempad.common.utils.getSlot
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.SlotAccess
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ClickAction
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.inventory.tooltip.TooltipComponent
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.component.TooltipDisplay
 import net.minecraft.world.level.Level
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
-import java.util.*
 import java.util.function.Consumer
 
 class TempadItem : ChrononItem() {
 
-    override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResultHolder<ItemStack> {
+    override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         val stack = player.getItemInHand(hand)
-        if (level.isClientSide) return InteractionResultHolder.success(stack)
+        if (level.isClientSide) return InteractionResult.SUCCESS
 
         val slotId = hand.getSlot(player)
-        val ctx = player.ctx(slotId)
+        val access = player.ctx(slotId)
+        val accessAddress = ItemAccessAddress(ModItemAccess.inventory, slotId)
 
         if (player.isShiftKeyDown) {
-            MacroRegistry[stack.defaultMacro]?.run(player, ctx)
+            MacroRegistry[stack.defaultMacro]?.run(player, access)
         } else {
-            (AppRegistry[stack.defaultApp, ctx, false]?: AppRegistry[ModApps.teleport, ctx, false])!!.openMenu(player as ServerPlayer)
+            (AppRegistry[stack.defaultApp, player, accessAddress, false]?: AppRegistry[ModApps.teleport, player, accessAddress, false])!!.openMenu(player as ServerPlayer)
         }
 
-        return InteractionResultHolder.success(stack)
+        return InteractionResult.SUCCESS
     }
 
     override fun overrideStackedOnOther(stack: ItemStack, slot: Slot, action: ClickAction, player: Player): Boolean {
@@ -90,14 +91,5 @@ class TempadItem : ChrononItem() {
             return true
         }
         return super.overrideOtherStackedOnMe(stack, other, slot, action, player, access)
-    }
-
-    override fun appendHoverText(
-        stack: ItemStack,
-        context: TooltipContext,
-        tooltipComponents: MutableList<Component>,
-        tooltipFlag: TooltipFlag,
-    ) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
     }
 }

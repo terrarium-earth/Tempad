@@ -1,11 +1,11 @@
 package earth.terrarium.tempad.api.macro
 
-import earth.terrarium.tempad.api.context.SyncableContext
 import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
+import net.neoforged.neoforge.transfer.access.ItemAccess
 
 fun interface TempadMacro {
-    fun run(player: Player, ctx: SyncableContext<*>)
+    fun run(player: Player, ctx: ItemAccess)
 }
 
 private val macros = mutableMapOf<Identifier, TempadMacro>()

@@ -27,8 +27,8 @@ import net.minecraft.world.entity.player.Inventory
 class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.SettingsMenu>(null, menu, inv, title) {
 
-    var defaultMacro: DropdownState<Identifier> = DropdownState.of(menu.ctx.stack.defaultMacro)
-    var defaultApp: DropdownState<Identifier> = DropdownState.of(menu.ctx.stack.defaultApp)
+    var defaultMacro: DropdownState<Identifier> = DropdownState.of(menu.ctx.resource.defaultMacro)
+    var defaultApp: DropdownState<Identifier> = DropdownState.of(menu.ctx.resource.defaultApp)
 
     override fun init() {
         super.init()

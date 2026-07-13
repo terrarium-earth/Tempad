@@ -3,20 +3,22 @@ package earth.terrarium.tempad.client.screen
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferBuilder
-import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
-import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.api.access.ItemAccessAddress
 import earth.terrarium.tempad.client.widgets.TimelineEntry
 import earth.terrarium.tempad.common.data.HistoricalLocation
 import earth.terrarium.tempad.common.network.c2s.BackTrackLocation
 import earth.terrarium.tempad.common.utils.component
 import earth.terrarium.tempad.common.utils.sendToServer
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.KeyEvent
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -24,7 +26,7 @@ import net.minecraft.util.Mth
 import org.joml.Vector2f
 import java.util.Date
 
-class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: ContextHolder<*>) : Screen(CommonComponents.EMPTY) {
+class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: ItemAccessAddress<*>) : Screen(CommonComponents.EMPTY) {
     companion object {
         private const val MAX_ENTRIES = 8
         private const val START = 25
@@ -48,7 +50,7 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
         var lastSelect: Long = 0
 
         fun toPoint(angle: Float, length: Float): Vector2f {
-            val radians = Math.toRadians(angle.toDouble()).toFloat()
+            val radians = Math.toRadians(angle.toDouble())
             val x = Mth.sin(radians) * length
             val y = -Mth.cos(radians) * length
             return Vector2f(x, y)
@@ -73,20 +75,10 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
         minecraft?.let { mc ->
             val window = mc.window
             val mouse = mc.mouseHandler
-            val mdx: Double
-            val mdy: Double
-            val minRadius: Double
-            if (Minecraft.ON_OSX) {
-                mdx = mouse.xpos() - window.width / 4f
-                mdy = mouse.ypos() - window.height / 4f
+            val mdx = mouse.xpos() - window.width / 2f
+            val mdy = mouse.ypos() - window.height / 2f
 
-                minRadius = window.guiScale * START / 2
-            } else {
-                mdx = mouse.xpos() - window.width / 2f
-                mdy = mouse.ypos() - window.height / 2f
-
-                minRadius = window.guiScale * START
-            }
+            val minRadius = window.guiScale * START
             if (mdx * mdx + mdy * mdy < minRadius * minRadius) return -1
             var angle = Math.toDegrees(Math.atan2(mdx, -mdy)).toFloat()
             if (angle < 0) angle += 360
@@ -97,12 +89,12 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
 
     override fun isPauseScreen(): Boolean = false
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        return if (button == 0) select(getIndex()) else super.mouseClicked(mouseX, mouseY, button)
+    override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
+        return if (event.button() == 0) select(getIndex()) else super.mouseClicked(event, doubleClick)
     }
 
-    override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        return when (keyCode) {
+    override fun keyReleased(event: KeyEvent): Boolean {
+        return when (event.key) {
             InputConstants.KEY_1 -> select(0)
             InputConstants.KEY_2 -> select(1)
             InputConstants.KEY_3 -> select(2)
@@ -124,13 +116,16 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
         return true
     }
 
-    override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.render(graphics, mouseX, mouseY, partialTicks)
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractRenderState(graphics, mouseX, mouseY, a)
+        /*
         RenderSystem.disableCull()
         RenderSystem.enableBlend()
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader)
+
+         */
         val builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
 
         val hoveredIndex = getIndex()
@@ -174,14 +169,16 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
             drawXYRGBA(builder, middleX + x1 * start, middleY + y1 * start, innerColor, innerColor, innerColor, 1f)
         }
 
-        builder.build()?.let { BufferUploader.drawWithShader(it) }
+        builder.build()?.let {
+           // BufferUploader.drawWithShader(it)
+        }
 
         for (index in 0 until MAX_ENTRIES) {
             val hovered = hoveredIndex == index && index < locations.size
             val angle = angleFromIndex(index)
             var pos = toPoint(angle, if (hovered) TEXT_LENGTH_HOVERED else TEXT_LENGTH)
 
-            graphics.drawCenteredString(
+            graphics.centeredText(
                 font,
                 (index + 1).toString(),
                 (scaledWidth / 2f + pos.x()).toInt(),
@@ -194,6 +191,7 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
             if (index < locations.size) {
                 val (date, history) = locations[index]
                 graphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
                     Identifier.fromNamespaceAndPath(history.marker!!.namespace, "marker/" + history.marker.path),
                     (scaledWidth / 2f + pos.x() - 8).toInt(),
                     (scaledHeight / 2f + pos.y() - 8).toInt(),
@@ -201,7 +199,8 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
                     16
                 )
                 if (hovered) {
-                    setTooltipForNextRenderPass(
+                    graphics.setTooltipForNextFrame(
+                        font,
                         listOf(
                             Component.translatable(history.marker.toLanguageKey("marker")).apply {
                                 append(CommonComponents.SPACE)
@@ -209,7 +208,9 @@ class TimeTwisterScreen(history: Map<Date, HistoricalLocation>, val ctx: Context
                             }.visualOrderText,
                             history.pos.component.visualOrderText,
                             Component.literal(TimelineEntry.Companion.dateFormat.format(date)).visualOrderText
-                        )
+                        ),
+                        mouseX,
+                        mouseY
                     )
                 }
             }

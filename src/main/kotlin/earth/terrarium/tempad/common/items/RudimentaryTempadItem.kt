@@ -1,9 +1,8 @@
 package earth.terrarium.tempad.common.items
 
-import earth.terrarium.tempad.api.context.SyncableContext
+import earth.terrarium.tempad.api.capabilities.chronons
+import earth.terrarium.tempad.api.capabilities.upgrades
 import earth.terrarium.tempad.api.locations.IndirectLocation
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.client.tooltip.tooltip
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.entity.TimedoorEntity
@@ -12,7 +11,6 @@ import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.SlotAccess
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ClickAction
@@ -23,14 +21,15 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 import kotlin.to
 
 class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties().stacksTo(1)) {
-    override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
-        if (level.isClientSide) return InteractionResultHolder.success(player.getItemInHand(usedHand))
+    override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResult {
+        if (level.isClientSide) return InteractionResult.SUCCESS
         player.ctx(usedHand.getSlot(player)).openTimedoor(player)
-        return InteractionResultHolder.success(player.getItemInHand(usedHand))
+        return InteractionResult.SUCCESS
     }
 
     override fun useOn(context: UseOnContext): InteractionResult {
@@ -40,9 +39,9 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties(
         return InteractionResult.PASS
     }
 
-    fun SyncableContext<*>.openTimedoor(player: Player) {
-        val portalTarget = stack.portalTarget
-        portalTarget?.get(stack.upgrades!!, stack.chronons!!)?.let { pos ->
+    fun ItemAccess.openTimedoor(player: Player) {
+        val portalTarget = resource.portalTarget
+        portalTarget?.get(upgrades!!, chronons!!)?.let { pos ->
             if (!player.level().isClientSide) {
                 val (provider, id) = (portalTarget as? IndirectLocation).let { it?.provider to it?.id }
                 TimedoorEntity.openTimedoor(player, this, provider, id, pos) {
@@ -50,7 +49,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties(
                 }
             }
         } ?: {
-            if (!player.level().isClientSide) player.displayClientMessage(TimedoorEntity.posFail, true)
+            if (!player.level().isClientSide) player.sendSystemMessage(TimedoorEntity.posFail)
         }
     }
 
@@ -82,7 +81,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties(
             if (blockEntity !is RudimentaryTempadBE) return@let
             stack.portalTarget?.let { blockEntity.portalTarget = it }
             player?.let { blockEntity.owner = it.gameProfile }
-            blockEntity.chrononContent = stack.chrononContent
+            blockEntity.chronons.set(stack.chrononContent)
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state)
     }
@@ -106,7 +105,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties(
     }
 
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
-        return Optional.ofNullable(stack.chronons?.tooltip)
+        return Optional.ofNullable(stack.access.chronons?.tooltip)
     }
 
     override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean {

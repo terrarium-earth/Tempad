@@ -6,8 +6,9 @@ import earth.terrarium.tempad.common.data.HistoricalLocation
 import earth.terrarium.tempad.common.utils.component
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.navigation.ScreenRectangle
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.Identifier
@@ -27,21 +28,21 @@ class TimelineEntry(parentWidth: Int, val font: Font, val date: Date, val locati
 
     val markerComponent: MutableComponent = location.marker?.let { Component.translatable(it.toLanguageKey("marker")) } ?: Component.translatable("misc.tempad.wandering")
     val locationComponent: Component = location.pos.component
-    val dimensionComponent: Component = Component.translatable(location.dimension.location().toLanguageKey("dimension"))
+    val dimensionComponent: Component = Component.translatable(location.dimension.identifier().toLanguageKey("dimension"))
 
     val text: List<FormattedCharSequence> = font.split(markerComponent.append(" ").append(dimensionComponent), parentWidth - 6) + locationComponent.visualOrderText + dateDisplay.visualOrderText
 
     val sprite = location.marker?.let { Identifier.fromNamespaceAndPath(it.namespace, "marker/" + it.path) }
 
-    override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, pPartialTick: Float) {
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, var2: Int, var3: Int, var4: Float) {
         if (current) {
             for ((index, line) in text.withIndex()) {
                 val isLast = index == text.size - 1
-                graphics.drawCenteredString(font, line, parentCenter, y + 4 + index * 10, if (isLast) Tempad.DARK_ORANGE.value else Tempad.ORANGE.value)
+                graphics.text(font, line, parentCenter, y + 4 + index * 10, if (isLast) Tempad.DARK_ORANGE.value else Tempad.ORANGE.value)
             }
         }
 
-        sprite?.let { graphics.blitSprite(it, x + 4, y + height - 22, 12, 12) }
+        sprite?.let { graphics.blitSprite(RenderPipelines.GUI_TEXTURED, it, x + 4, y + height - 22, 12, 12) }
 
         graphics.fill(x + width / 2 - 1, y + height - 6, x + width / 2 + 1, y + height - 2, if(current) Tempad.HIGHLIGHTED_ORANGE.value else Tempad.ORANGE.value)
     }

@@ -11,7 +11,6 @@ import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.components.string.MultilineTextWidget
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.ui.ClearableGridLayout
-import earth.terrarium.olympus.client.ui.modals.DeleteConfirmModal
 import earth.terrarium.olympus.client.ui.modals.Modals
 import earth.terrarium.olympus.client.utils.ListenableState
 import earth.terrarium.olympus.client.utils.Translatable
@@ -34,10 +33,10 @@ import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.common.utils.translatable
 import earth.terrarium.tempad.tempadId
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -187,10 +186,10 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 alignLeft()
             }
         } else {
-            list.addChild(StringWidget(selected.third.dimensionText, font)).setColor(Tempad.ORANGE.value)
-            list.addChild(StringWidget(Component.literal("X: ${selected.third.x}"), font)).setColor(Tempad.ORANGE.value)
-            list.addChild(StringWidget(Component.literal("Y: ${selected.third.y}"), font)).setColor(Tempad.ORANGE.value)
-            list.addChild(StringWidget(Component.literal("Z: ${selected.third.z}"), font)).setColor(Tempad.ORANGE.value)
+            list.addChild(Widgets.text(selected.third.dimensionText) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(Component.literal("X: ${selected.third.x}")) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(Component.literal("Y: ${selected.third.y}")) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(Component.literal("Z: ${selected.third.z}")) { it.withColor(Tempad.ORANGE) })
         }
     }
 
@@ -325,33 +324,28 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         )
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, pButton: Int): Boolean {
-        if (mouseX >= localLeft + 118 && mouseX <= localLeft + 193 && mouseY >= localTop + 20 && mouseY <= localTop + 95 && !menu.carried.isEmpty) {
+    override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
+        if (event.y >= localLeft + 118 && event.x <= localLeft + 193 && event.y >= localTop + 20 && event.y <= localTop + 95 && !menu.carried.isEmpty) {
             selected?.let { (provider, locationId, _) ->
                 WriteToCardPacket(provider, locationId, menu.ctxHolder).sendToServer()
                 return true
             }
         }
-        return super.mouseClicked(mouseX, mouseY, pButton)
+        return super.mouseClicked(event, doubleClick)
     }
 
-    override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
-        super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+    override fun mouseDragged(event: MouseButtonEvent, pDragY: Double, dy: Double): Boolean {
+        super.mouseDragged(event, pDragY, dy)
         if (locationList.isDragging) { // todo fix olympus
-            locationList.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+            locationList.mouseDragged(event, pDragY, dy)
         }
         return true
     }
 
-    override fun render(
-        graphics: GuiGraphics,
-        mouseX: Int,
-        mouseY: Int,
-        pPartialTick: Float,
-    ) {
-        super.render(graphics, mouseX, mouseY, pPartialTick)
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractRenderState(graphics, mouseX, mouseY, a)
         if (mouseX >= localLeft + 118 && mouseX <= localLeft + 193 && mouseY >= localTop + 20 && mouseY <= localTop + 95 && !menu.carried.isEmpty && selected != null) {
-            graphics.renderOutline(localLeft + 118, localTop + 20, 76, 76, Tempad.HIGHLIGHTED_ORANGE.value)
+            graphics.outline(localLeft + 118, localTop + 20, 76, 76, Tempad.HIGHLIGHTED_ORANGE.value)
         }
     }
 }
@@ -369,7 +363,7 @@ enum class Sorting : Translatable {
                 // provider to map of id to pos -> dimension to list of provider to id to pos
                 val dimensionMap = values.flatMap { (provider, locations) ->
                     locations.map { (id, pos) -> Triple(provider, id, pos) }
-                }.groupBy { (_, _, pos) -> Component.translatable(pos.dimension.location().toLanguageKey("dimension")) }
+                }.groupBy { (_, _, pos) -> Component.translatable(pos.dimension.identifier().toLanguageKey("dimension")) }
                 return dimensionMap.mapValues { (_, value) -> value.sortedBy { it.third.toString() } }
             }
 

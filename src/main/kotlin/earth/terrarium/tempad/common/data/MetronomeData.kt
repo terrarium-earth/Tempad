@@ -2,14 +2,8 @@ package earth.terrarium.tempad.common.data
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import com.teamresourceful.bytecodecs.base.ByteCodec
-import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
-import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
-import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.config.CommonConfigCache
-import earth.terrarium.tempad.common.registries.ModAttachments
-import earth.terrarium.tempad.common.utils.syncData
 import it.unimi.dsi.fastutil.objects.Object2IntMap
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import net.minecraft.core.GlobalPos

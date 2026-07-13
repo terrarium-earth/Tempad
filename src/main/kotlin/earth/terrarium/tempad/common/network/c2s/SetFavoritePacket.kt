@@ -28,7 +28,7 @@ data class SetFavoritePacket(val favorite: FavoriteLocationAttachment?) : Packet
         val type = CodecPacketType.Server.create(
             "set_favorite".tempadId,
             ObjectByteCodec.create(
-                ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
+                ExtraByteCodecs.IDENTIFIER.fieldOf { it.providerId },
                 ByteCodec.UUID.fieldOf { it.locationId },
                 ::FavoriteLocationAttachment
             ).optionalOf().map(::SetFavoritePacket) { Optional.ofNullable(it.favorite) },

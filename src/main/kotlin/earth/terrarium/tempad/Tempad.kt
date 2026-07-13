@@ -2,34 +2,27 @@ package earth.terrarium.tempad
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
-import earth.terrarium.tempad.api.player_access.DefaultAccess
-import earth.terrarium.tempad.api.player_access.PlayerAccess
-import earth.terrarium.tempad.api.tva_device.ChrononHandler
-import earth.terrarium.tempad.api.tva_device.UpgradeHandler
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.impl.BlockChrononContent
-import earth.terrarium.tempad.api.tva_device.impl.InfiniteChrononHandler
-import earth.terrarium.tempad.api.tva_device.impl.ItemChrononHandler
-import earth.terrarium.tempad.api.tva_device.impl.ItemUpgradeHandler
-import earth.terrarium.tempad.api.tva_device.impl.MultiversalChrononHandler
-import earth.terrarium.tempad.api.tva_device.impl.RudimentaryUpgradeHandler
-import earth.terrarium.tempad.api.tva_device.impl.TempadChrononHandler
-import earth.terrarium.tempad.api.tva_device.impl.WorkstationChrononHandler
-import earth.terrarium.tempad.api.tva_device.upgrades
+import com.teamresourceful.resourcefullibkt.common.id
+import earth.terrarium.tempad.api.capabilities.TempadCapabilities
+import earth.terrarium.tempad.api.capabilities.chronons
+import earth.terrarium.tempad.api.capabilities.player_access.DefaultLocationAccess
+import earth.terrarium.tempad.api.capabilities.player_access.PlayerLocationAccess
+import earth.terrarium.tempad.api.capabilities.upgrades.impl.ItemUpgradeHandler
+import earth.terrarium.tempad.api.capabilities.chronons.TempadChrononHandler
+import earth.terrarium.tempad.api.capabilities.upgrades
+import earth.terrarium.tempad.client.clientLevel
 import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
 import earth.terrarium.tempad.common.block.WorkstationBE
-import earth.terrarium.tempad.common.compat.CadmusCompat
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
 import earth.terrarium.tempad.common.entity.TimedoorEntity
-import earth.terrarium.tempad.common.items.ScreeningDeviceAccess
+import earth.terrarium.tempad.common.items.ScreeningDeviceLocationAccess
 import earth.terrarium.tempad.common.items.items
 import earth.terrarium.tempad.common.registries.*
-import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.common.utils.access
 import earth.terrarium.tempad.common.utils.register
-import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import net.minecraft.server.MinecraftServer
@@ -39,12 +32,16 @@ import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlag
 import net.minecraft.world.flag.FeatureFlags
+import net.minecraft.world.item.crafting.CraftingInput
+import net.minecraft.world.item.crafting.NormalCraftingRecipe
+import net.minecraft.world.item.crafting.RecipeType
+import net.minecraft.world.level.Level
 import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.IEventBus
-import net.neoforged.fml.ModList
 import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
+import net.neoforged.neoforge.client.event.RecipesReceivedEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent
 import net.neoforged.neoforge.common.world.chunk.TicketController
@@ -59,6 +56,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.StartTracking
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.server.ServerLifecycleHooks
+import net.neoforged.neoforge.transfer.energy.InfiniteEnergyHandler
+import net.neoforged.neoforge.transfer.energy.ItemAccessEnergyHandler
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -79,11 +78,16 @@ class Tempad(bus: IEventBus) {
         val server: MinecraftServer?
             get() = ServerLifecycleHooks.getCurrentServer();
 
+        val level: Level?
+            get() = server?.overworld() ?: clientLevel;
+
         val logger: Logger = LogManager.getLogger(MOD_ID)
 
         val ticketController = TicketController("timedoor".tempadId, null)
 
         val flag: FeatureFlag = FeatureFlags.REGISTRY.getFlag("required_location_upgrade".tempadId)
+
+        val clientRecipes = mutableMapOf<Identifier, NormalCraftingRecipe>()
     }
 
     init {
@@ -92,9 +96,8 @@ class Tempad(bus: IEventBus) {
         ModApps.init()
         ModSizing.init()
         ModAttachments.registry.init()
-        ModAttachments.syncer.init()
         ModComponents.registry.init()
-        ModContext.init()
+        ModItemAccess.init()
         ModEntities.entities.init()
         ModEntities.serializers.init()
         ModBlocks.blocks.init()
@@ -109,31 +112,28 @@ class Tempad(bus: IEventBus) {
         ModLocations.init()
         CommonConfigCache.init()
 
-        if (ModList.get().isLoaded("cadmus")) {
+      /*  if (ModList.get().isLoaded("cadmus")) {
             CadmusCompat.init()
         }
-
+*/
         bus.addListener { event: RegisterCapabilitiesEvent ->
-            val chrononBlocks = event.register(ChrononHandler.block)
-            val chrononItems = event.register(ChrononHandler.item)
-            val upgradeItems = event.register(UpgradeHandler.item)
-            val upgradeBlocks = event.register(UpgradeHandler.block)
-            val accessItems = event.register(PlayerAccess.item)
+            val chrononBlocks = event.register(TempadCapabilities.Block.chronons)
+            val chrononItems = event.register(TempadCapabilities.Item.chronons)
+            val upgradeBlocks = event.register(TempadCapabilities.Block.upgrades)
+            val upgradeItems = event.register(TempadCapabilities.Item.upgrades)
+            val accessItems = event.register(PlayerLocationAccess.item)
             val blockItems = event.register(Capabilities.Item.BLOCK)
             val itemItems = event.register(Capabilities.Item.ITEM)
 
             chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
-                (it as? RudimentaryTempadBE)?.let {
-                    BlockChrononContent.projector(it, CommonConfigCache.RudimentaryTempad.capacity)
-                }
+                (it as? RudimentaryTempadBE)?.chronons
             }
 
             chrononBlocks[ModBlocks.workstationBE] = { it, _ ->
-                if((it as? WorkstationBE)?.inventory[0]?.chronons != null) {
-                    WorkstationChrononHandler(it)
-                } else null
+                (it as? WorkstationBE)?.inventory?.access(0)?.chronons
             }
 
+            /*
             chrononBlocks[ModBlocks.metronomeBe] = { it, _ ->
                 safeLet(it as? MetronomeBe, (it as? MetronomeBe)?.owner) { block, owner ->
                     if (block.bootTime > 0) {
@@ -144,65 +144,58 @@ class Tempad(bus: IEventBus) {
                     }
                 }
             }
+             */
 
-            chrononItems[ModItems.timedoorProjector] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.RudimentaryTempad.capacity)?.apply { canExtract = false }
+            chrononItems[ModItems.timedoorProjector] = { stack, access ->
+                ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.RudimentaryTempad.capacity)
             }
 
-            chrononItems[ModItems.timeTwister] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.TimeTwister.capacity)?.apply { canExtract = false }
+            chrononItems[ModItems.timeTwister] = { stack, access ->
+                ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.TimeTwister.capacity)
             }
 
-            chrononItems[ModItems.tempad] = { stack, _ ->
-                TempadChrononHandler.create(stack, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
+            chrononItems[ModItems.tempad] = { stack, access ->
+                TempadChrononHandler.create(access, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
             }
 
-            chrononItems[ModItems.chrononCell] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.ChrononCell.capacity)
+            chrononItems[ModItems.chrononCell] = { stack, access ->
+                ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.ChrononCell.capacity)
             }
 
-            chrononItems[ModItems.chrononBattery] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.Battery.capacity)
+            chrononItems[ModItems.chrononBattery] = { stack, access ->
+                ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.Battery.capacity)
             }
 
-            chrononItems[ModItems.chronometer] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.Chronometer.capacity)?.apply { canInsert = false }
+            chrononItems[ModItems.chronometer] = { stack, access ->
+                ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.Chronometer.capacity)
             }
 
-            chrononItems[ModItems.chrononGenerator] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.ChrononGenerator.capacity)?.apply { canInsert = false }
+            chrononItems[ModItems.chrononGenerator] = { stack, access ->
+                ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.ChrononGenerator.capacity)
             }
 
-            chrononItems[ModItems.metronome] = { stack, _ ->
-                ItemChrononHandler.create(stack, CommonConfigCache.Metronome.capacity)
+            chrononItems[ModItems.metronome] = { stack, access ->
+                ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.Metronome.capacity)
             }
 
             chrononItems[ModItems.creativeChronometer] = { _, _ ->
-                InfiniteChrononHandler
+                InfiniteEnergyHandler.INSTANCE
             }
 
-            upgradeItems[ModItems.tempad] = { it, _ ->
+            upgradeItems[ModItems.tempad] = { it, access ->
                 ItemUpgradeHandler(it)
             }
 
-            upgradeItems[ModItems.timedoorProjector] = { it, _ ->
-                RudimentaryUpgradeHandler
-            }
-
             accessItems[ModItems.locationBroadcaster] = { it, _ ->
-                if(it.enabled == true) DefaultAccess.Public else null
+                if(it.enabled) DefaultLocationAccess.Public else null
             }
 
             accessItems[ModItems.screeningDevice] = { it, _ ->
-                ScreeningDeviceAccess.create(it)
+                ScreeningDeviceLocationAccess.create(it)
             }
 
             upgradeBlocks[ModBlocks.workstationBE] = { it, _ ->
-                (it as? WorkstationBE)?.inventory?.getStackInSlot(0)?.upgrades
-            }
-
-            upgradeBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
-                RudimentaryUpgradeHandler
+                (it as? WorkstationBE)?.inventory?.access(0)?.upgrades
             }
 
             blockItems[ModBlocks.metronomeBe] = { it, _ ->
@@ -234,6 +227,16 @@ class Tempad(bus: IEventBus) {
                 false,
                 Pack.Position.TOP
             )
+        }
+
+        bus.addListener { event: RecipesReceivedEvent ->
+            clientRecipes.clear()
+            for (recipeHolder in event.recipeMap.byType(RecipeType.CRAFTING)) {
+                val recipe = recipeHolder.value
+                if (recipe is NormalCraftingRecipe && recipe.assemble(CraftingInput.EMPTY).id.namespace == MOD_ID) {
+                    clientRecipes[recipeHolder.id.identifier()] = recipe
+                }
+            }
         }
 
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->

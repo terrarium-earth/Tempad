@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3
 
 class FloorPlacementSettings(val xOffset: Float, val yOffset: Float, val zOffset: Float): TimedoorPlacementSettings {
     companion object {
-        val type = SizingType("floor".tempadId, ObjectByteCodec.create(
+        val type = TimedoorPlacementType("floor".tempadId, ObjectByteCodec.create(
             ByteCodec.FLOAT.fieldOf { it.xOffset },
             ByteCodec.FLOAT.fieldOf { it.yOffset },
             ByteCodec.FLOAT.fieldOf { it.zOffset },
@@ -35,7 +35,7 @@ class FloorPlacementSettings(val xOffset: Float, val yOffset: Float, val zOffset
 
     override val dimensions: EntityDimensions = EntityDimensions.fixed(width, height)
     override val showLineAnimation: Boolean = false
-    override val type: SizingType<*> = Companion.type
+    override val type: TimedoorPlacementType<*> = Companion.type
 
     override fun widthAtPercent(percent: Float): Float {
         if (percent < 0.5) return width * percent * 2

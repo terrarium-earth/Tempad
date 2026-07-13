@@ -4,22 +4,19 @@ import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.ModTags
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.PackOutput
-import net.minecraft.data.tags.ItemTagsProvider
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider
 import net.minecraft.resources.Identifier
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
-import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.Tags
-import net.neoforged.neoforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
 
 class ModItemTags(output: PackOutput,
-                  lookupProvider: CompletableFuture<HolderLookup.Provider>,
-                  blockTags: CompletableFuture<TagLookup<Block>>,
-                  existingFileHelper: ExistingFileHelper?):
-    ItemTagsProvider(output, lookupProvider, blockTags, Tempad.MOD_ID, existingFileHelper) {
+                  lookupProvider: CompletableFuture<HolderLookup.Provider>):
+    IntrinsicHolderTagsProvider<Item>(output, Registries.ITEM, lookupProvider, { item -> BuiltInRegistries.ITEM.getResourceKey(item).orElseThrow() }, Tempad.MOD_ID) {
 
     val String.curios: TagKey<Item> get() = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("curios", this))
 

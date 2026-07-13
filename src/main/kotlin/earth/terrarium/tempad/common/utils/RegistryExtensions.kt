@@ -24,27 +24,27 @@ import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import javax.naming.OperationNotSupportedException
 
-fun <T> attachmentType(supplier: () -> T, builder: AttachmentType.Builder<T>.() -> Unit): AttachmentType<T> {
+fun <T : Any> attachmentType(supplier: () -> T, builder: AttachmentType.Builder<T>.() -> Unit): AttachmentType<T> {
     return AttachmentType.builder(supplier).apply(builder).build()
 }
 
-var <T> AttachmentType.Builder<T>.codec: Codec<T>
+var <T : Any> AttachmentType.Builder<T>.codec: Codec<T>
     get() = error("No getter for codec")
     set(value) {
-        this.serialize(value)
+        this.serialize(value.fieldOf("value"))
     }
 
-fun <T> componentType(builder: DataComponentType.Builder<T>.() -> Unit): DataComponentType<T> {
+fun <T : Any> componentType(builder: DataComponentType.Builder<T>.() -> Unit): DataComponentType<T> {
     return DataComponentType.builder<T>().apply(builder).build()
 }
 
-var <T> DataComponentType.Builder<T>.serialize: Codec<T>
+var <T : Any> DataComponentType.Builder<T>.serialize: Codec<T>
     get() = error("No getter for codec")
     set(value) {
         this.persistent(value)
     }
 
-var <T> DataComponentType.Builder<T>.networkSerialize: ByteCodec<T>
+var <T : Any> DataComponentType.Builder<T>.networkSerialize: ByteCodec<T>
     get() = error("No getter for synced")
     set(value) {
         this.networkSynchronized(StreamCodecByteCodec.toRegistry(value))

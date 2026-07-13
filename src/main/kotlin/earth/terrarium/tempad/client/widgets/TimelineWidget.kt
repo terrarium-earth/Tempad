@@ -1,8 +1,7 @@
 package earth.terrarium.tempad.client.widgets
 
-import com.teamresourceful.resourcefullib.client.screens.CursorScreen
 import earth.terrarium.olympus.client.components.base.BaseParentWidget
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Renderable
 import net.minecraft.client.gui.components.events.GuiEventListener
@@ -43,11 +42,17 @@ class TimelineWidget(width: Int, height: Int) : BaseParentWidget(width, height) 
         updateScrollBar()
     }
 
-    override fun children(): List<GuiEventListener?> {
+    override fun children(): List<GuiEventListener> {
         return items
     }
 
-    public override fun renderWidget(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
+    public override fun extractWidgetRenderState(
+        graphics: GuiGraphicsExtractor,
+        mouseX: Int,
+        mouseY: Int,
+        partialTicks: Float
+    ) {
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, partialTicks)
         graphics.enableScissor(x + 1, y, x + width, y + height)
 
         var x = this.x + width / 2 - scroll.toInt() - 10
@@ -60,7 +65,7 @@ class TimelineWidget(width: Int, height: Int) : BaseParentWidget(width, height) 
             if (item.current) {
                 current = item
             }
-            item.render(graphics, this.x, this.y + height / 2, partialTicks)
+            item.extractRenderState(graphics, this.x, this.y + height / 2, partialTicks)
             x += item.width
             this.lastWidth += item.width
         }
@@ -93,10 +98,6 @@ class TimelineWidget(width: Int, height: Int) : BaseParentWidget(width, height) 
     fun scrollToBottom() {
         updateLastWidth()
         this.scroll = max(0.0, this.lastWidth.toDouble() - 20)
-    }
-
-    override fun getCursor(): CursorScreen.Cursor {
-        return CursorScreen.Cursor.POINTER
     }
 
     override fun setHeight(height: Int) {

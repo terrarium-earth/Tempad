@@ -7,7 +7,7 @@ import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.layouts.Layouts
 import earth.terrarium.olympus.client.layouts.LinearViewLayout
 import earth.terrarium.olympus.client.ui.OverlayAlignment
-import earth.terrarium.tempad.api.player_access.PlayerAccessApi
+import earth.terrarium.tempad.api.capabilities.player_access.PlayerAccessApi
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.network.c2s.UpdateChronomarkPacket
 import earth.terrarium.tempad.common.utils.sendToServer

@@ -1,21 +1,18 @@
 package earth.terrarium.tempad.common.block.timedoor_marker
 
 import com.mojang.authlib.GameProfile
-import earth.terrarium.tempad.api.locations.NamedGlobalVec3
-import earth.terrarium.tempad.api.player_access.PlayerAccessApi
+import earth.terrarium.tempad.api.capabilities.player_access.PlayerAccessApi
 import earth.terrarium.tempad.common.network.s2c.OpenChronomark
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.accessId
 import earth.terrarium.tempad.common.registries.angle
 import earth.terrarium.tempad.common.registries.color
-import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.yOffset
 import earth.terrarium.tempad.common.utils.sendToClient
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.Vec3
 import java.lang.Math.toRadians
 import kotlin.math.cos
@@ -35,6 +32,6 @@ class ChronomarkBE(pos: BlockPos, state: BlockState) : AbstractMarkerBe(ModBlock
     }
 
     override fun canAccess(player: GameProfile): Boolean {
-        return owner?.let { PlayerAccessApi[this.accessId]?.canAccess(level!!, it, player) } ?: (player.id == owner?.id)
+        return owner?.let { PlayerAccessApi[this.accessId]?.canLocate(level!!, it, player) } ?: (player.id == owner?.id)
     }
 }

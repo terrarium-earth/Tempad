@@ -62,14 +62,16 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
         mapFrameLayout.addChild(posInfoLayout) { it.alignVerticallyBottom().alignHorizontallyRight().padding(4) }
 
         minecraft?.player?.globalPos?.let { pos ->
-            mapFrameLayout.addChild(StringWidget(Component.translatable(pos.dimension().location().toLanguageKey("dimension")), font).setColor(Tempad.ORANGE.value)) {
+            mapFrameLayout.addChild(Widgets.text(Component.translatable(pos.dimension().identifier().toLanguageKey("dimension"))) {
+                it.withColor(Tempad.ORANGE)
+            }) {
                 it.alignVerticallyTop()
                 it.alignHorizontallyLeft()
                 it.padding(4)
             }
 
             getEntries(pos.pos).forEach { component ->
-                posInfoLayout.addChild(StringWidget(component, font).setColor(Tempad.ORANGE.value)) { it.alignHorizontallyRight() }
+                posInfoLayout.addChild(Widgets.text(component) { it.withColor(Tempad.ORANGE) }) { it.alignHorizontallyRight() }
             }
         }
 
@@ -78,16 +80,12 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
 
         val layout = LinearLayout(0, 0, LinearLayout.Orientation.VERTICAL).spacing(4)
 
-        layout.addChild(
-            StringWidget(
-                this.localLeft + 4,
-                this.localTop + 32,
-                100,
-                8,
-                COLOR_FIELD,
-                font
-            ).setColor(Tempad.ORANGE.value).alignLeft()
-        )
+        layout.addChild(Widgets.text(COLOR_FIELD) {
+            it.withColor(Tempad.ORANGE)
+            it.withLeftAlignment()
+            it.withPosition(localLeft + 4, localTop + 32)
+            it.withSize(100, 8)
+        })
 
         val colorOptions = layout.addChild(LinearLayout(0, 0, LinearLayout.Orientation.HORIZONTAL).spacing(2))
 
@@ -127,16 +125,12 @@ class NewLocationScreen(menu: ModMenus.NewLocationMenu, inv: Inventory, title: C
             it.withPosition(localLeft + 22, localTop + 44)
         })
 
-        layout.addChild(
-            StringWidget(
-                this.localLeft + 4,
-                this.localTop + 60,
-                100,
-                8,
-                NAME_FIELD,
-                font
-            ).setColor(Tempad.ORANGE.value).alignLeft()
-        )
+        layout.addChild(Widgets.text(NAME_FIELD) {
+            it.withColor(Tempad.ORANGE)
+            it.withLeftAlignment()
+            it.withPosition(localLeft + 4, localTop + 60)
+            it.withSize(100, 8)
+        })
 
         layout.addChild(Widgets.textInput(textState) {
             it.withSize(94, 16)

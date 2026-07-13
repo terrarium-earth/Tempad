@@ -1,6 +1,5 @@
 package earth.terrarium.tempad.client.screen
 
-import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.buttons.Button
@@ -9,22 +8,22 @@ import earth.terrarium.olympus.client.components.string.TextWidget
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.olympus.client.layouts.Layouts
 import earth.terrarium.olympus.client.layouts.LinearViewLayout
-import earth.terrarium.olympus.client.ui.OverlayAlignment
 import earth.terrarium.olympus.client.ui.UIConstants
-import earth.terrarium.tempad.api.player_access.PlayerAccessApi
 import earth.terrarium.tempad.client.screen.tempad.NewLocationScreen
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.network.c2s.UpdateAnchorPacket
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.layouts.FrameLayout
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.layouts.SpacerElement
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 
-open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, access: Boolean, locked: Boolean): BaseCursorScreen(
+open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, access: Boolean, locked: Boolean): Screen(
     Component.translatable("screen.tempad.marker")) {
     companion object {
         internal val publicAccess = Component.translatable("screen.tempad.marker.public_access")
@@ -129,10 +128,15 @@ open class TimedoorMarkerScreen(val pos: BlockPos, name: String, color: Color, a
         })
     }
 
-    override fun renderBackground(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick)
-        graphics.blitSprite(UIConstants.MODAL, (width - bgWidth) / 2, (height - bgHeight) / 2, bgWidth, bgHeight)
-        graphics.blitSprite(UIConstants.MODAL_HEADER, (width - bgWidth) / 2 + 1, (height - bgHeight) / 2 + 1, bgWidth - 2, 15)
+    override fun extractBackground(
+        graphics: GuiGraphicsExtractor,
+        mouseX: Int,
+        mouseY: Int,
+        a: Float,
+    ) {
+        super.extractBackground(graphics, mouseX, mouseY, a)
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, UIConstants.MODAL, (width - bgWidth) / 2, (height - bgHeight) / 2, bgWidth, bgHeight)
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, UIConstants.MODAL_HEADER, (width - bgWidth) / 2 + 1, (height - bgHeight) / 2 + 1, bgWidth - 2, 15)
     }
 
     override fun onClose() {

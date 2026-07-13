@@ -1,27 +1,25 @@
 package earth.terrarium.tempad.client.screen
 
-import com.teamresourceful.resourcefullib.client.screens.AbstractContainerCursorScreen
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.common.menu.WalletMenu
 import earth.terrarium.tempad.tempadId
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 
-class WalletScreen(menu: WalletMenu, inv: Inventory, component: Component) :
-    AbstractContainerCursorScreen<WalletMenu>(menu, inv, component) {
+class WalletScreen(menu: WalletMenu, inv: Inventory, component: Component) : AbstractContainerScreen<WalletMenu>(menu, inv, component, 154, 166) {
     companion object {
         val sprite = "screen/wallet".tempadId
         val slot = "screen/wallet_slot".tempadId
     }
 
     init {
-        imageHeight = 154
         inventoryLabelY = 58
-        slotColor
     }
 
     override fun init() {
@@ -43,45 +41,31 @@ class WalletScreen(menu: WalletMenu, inv: Inventory, component: Component) :
         })
     }
 
-    override fun renderBg(
-        guiGraphics: GuiGraphics,
-        partialTick: Float,
-        mouseX: Int,
-        mouseY: Int,
-    ) {
-        guiGraphics.blitSprite(sprite, leftPos, topPos, imageWidth, imageHeight)
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, a)
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, leftPos, topPos, imageWidth, imageHeight)
         val x = leftPos + 7
         val y = topPos + 18
         for (row in 0..1) {
             for (column in 0..8) {
-                guiGraphics.blitSprite(slot, x + column * 18, y + row * 18, 18, 18)
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, slot, x + column * 18, y + row * 18, 18, 18)
             }
         }
 
         for (row in 0..2) {
             for (column in 0..8) {
-                guiGraphics.blitSprite(slot, x + column * 18, y + row * 18 + 52, 18, 18)
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, slot, x + column * 18, y + row * 18 + 52, 18, 18)
             }
         }
 
         for (k in 0..8) {
-            guiGraphics.blitSprite(slot, x + k * 18, y + 18 * 3 + 56, 18, 18)
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, slot, x + k * 18, y + 18 * 3 + 56, 18, 18)
         }
     }
 
-    override fun render(
-        graphics: GuiGraphics,
-        mouseX: Int,
-        mouseY: Int,
-        f: Float,
-    ) {
-        super.render(graphics, mouseX, mouseY, f)
-        renderTooltip(graphics, mouseX, mouseY)
-    }
-
-    protected override fun renderLabels(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int) {
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF000000.toInt(), false)
-        guiGraphics.drawString(
+    protected override fun extractLabels(graphics: GuiGraphicsExtractor, xm: Int, ym: Int) {
+        graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF000000.toInt(), false)
+        graphics.text(
             this.font,
             this.playerInventoryTitle,
             this.inventoryLabelX,

@@ -1,12 +1,12 @@
 package earth.terrarium.tempad.data.client
 
-import com.teamresourceful.resourcefullibkt.common.id
 import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
@@ -994,14 +994,14 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         fun bookLang(key: String, value: String, vararg args: Any): Component {
             val finalKey = ModItems.knowledgeProjector.descriptionId + "." + key
             entries.put(finalKey, value)
-            val args = args.map {
-                return@map if (it is Item) {
+            val args = args.mapNotNull {
+                if (it is Item) {
                     Component.translatable(it.descriptionId)
                         .withStyle(
                             Style.EMPTY
                                 .withColor(Tempad.HIGHLIGHTED_ORANGE.value)
                                 .withUnderlined(true)
-                                .withClickEvent(ClickEvent(ClickEvent.Action.CHANGE_PAGE, it.id.toString()))
+                                .withClickEvent(ClickEvent.Custom(BuiltInRegistries.ITEM.getKey(it), java.util.Optional.empty()))
                         )
                 } else if (it is String) {
                     Component.literal(it).withColor(Tempad.HIGHLIGHTED_ORANGE.value)
@@ -1071,11 +1071,11 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             addSub("insert_fail", "No wallet to insert card into")
         }
 
-        ModBlocks.metronome.apply {
+        with(ModBlocks.metronome as Block) {
             addSub("booting", "Booting: %s")
         }
 
-        ModBlocks.workstation.apply {
+        with(ModBlocks.workstation as Block) {
             addSub("installing", "Installing: %s")
         }
 

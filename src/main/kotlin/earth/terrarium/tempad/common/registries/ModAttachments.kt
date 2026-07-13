@@ -7,10 +7,8 @@ import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
-import earth.terrarium.common_storage_lib.data.NeoDataLib
-import earth.terrarium.common_storage_lib.data.sync.DataSyncSerializer
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.player_access.PlayerAccessApi
+import earth.terrarium.tempad.api.capabilities.player_access.PlayerAccessApi
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.MetronomeData
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
@@ -28,7 +26,6 @@ import java.util.UUID
 
 object ModAttachments {
     val registry: ResourcefulRegistry<AttachmentType<*>> = ResourcefulRegistries.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tempad.MOD_ID)
-    val syncer: ResourcefulRegistry<DataSyncSerializer<*>> = ResourcefulRegistries.create(NeoDataLib.SYNC_SERIALIZERS, Tempad.MOD_ID)
 
     val pinnedLocation: AttachmentType<FavoriteLocationAttachment> by registry.register("pinned_location") {
         attachmentType(::FavoriteLocationAttachment) {
@@ -57,11 +54,8 @@ object ModAttachments {
     val color: AttachmentType<Color> by registry.register("color") {
         attachmentType({ Tempad.ORANGE.withAlpha(0) }) {
             codec = Color.CODEC
-        }
-    }
 
-    val syncedColor: DataSyncSerializer<Color> by syncer.register("color") {
-        DataSyncSerializer.create( { color }, StreamCodecByteCodec.to(Color.BYTE_CODEC))
+        }
     }
 
     val access: AttachmentType<Identifier> by registry.register("access") {
@@ -124,7 +118,7 @@ var AttachmentHolder.travelHistory by ModAttachments.travelHistory
 var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLastTimedoor.optional()
 
 var AttachmentHolder.owner by ModAttachments.owner.optional()
-var AttachmentHolder.color by ModAttachments.color.synced(ModAttachments.syncedColor)
+var AttachmentHolder.color by ModAttachments.color
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
 var AttachmentHolder.canAccess by ModAttachments.boolAccess

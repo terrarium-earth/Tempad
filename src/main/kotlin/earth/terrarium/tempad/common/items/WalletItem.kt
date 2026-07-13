@@ -2,7 +2,6 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.locations.DirectLocation
 import earth.terrarium.tempad.api.locations.IndirectLocation
-import earth.terrarium.tempad.api.player_access.PlayerAccess
 import earth.terrarium.tempad.common.menu.WalletMenu
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.portalTarget
@@ -14,7 +13,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.SlotAccess
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ClickAction
@@ -37,7 +35,7 @@ class WalletItem() : Item(Properties().stacksTo(1)) {
         hand: InteractionHand,
     ): InteractionResult {
         val stack = player.getItemInHand(hand)
-        player.openMenu(WalletInventory(ItemAccess()))
+        player.openMenu(WalletInventory(ItemAccess.forPlayerInteraction(player, hand)))
         return InteractionResult.SUCCESS
     }
 

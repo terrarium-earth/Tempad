@@ -25,7 +25,6 @@ import earth.terrarium.tempad.common.registries.portalOffset
 import earth.terrarium.tempad.common.registries.selectedPos
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
-import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Inventory
@@ -34,12 +33,12 @@ import java.util.*
 class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: Component) :
     AbstractTempadScreen<ModMenus.PortalSetupMenu>(null, menu, inv, title) {
 
-    val xOffset = MutableState.of(menu.ctx.stack.portalOffset.leftRight)
-    val yOffset = MutableState.of(menu.ctx.stack.portalOffset.upDown)
-    val zOffset = MutableState.of(menu.ctx.stack.portalOffset.forwardBack)
-    val angle = MutableState.of(menu.ctx.stack.portalOffset.angle)
-    val isUpright = MutableState.of(menu.ctx.stack.portalOffset.isUpright)
-    private var selected: Pair<Identifier, UUID>? = menu.ctx.stack.selectedPos?.let { it.provider to it.id }
+    val xOffset = MutableState.of(menu.ctx.resource.portalOffset.leftRight)
+    val yOffset = MutableState.of(menu.ctx.resource.portalOffset.upDown)
+    val zOffset = MutableState.of(menu.ctx.resource.portalOffset.forwardBack)
+    val angle = MutableState.of(menu.ctx.resource.portalOffset.angle)
+    val isUpright = MutableState.of(menu.ctx.resource.portalOffset.isUpright)
+    private var selected: Pair<Identifier, UUID>? = menu.ctx.resource.selectedPos?.let { it.provider to it.id }
 
     val search = ListenableState.of("").apply {
         registerListener {
@@ -209,15 +208,6 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
         }
     }
 
-    override fun render(
-        pGuiGraphics: GuiGraphics,
-        pMouseX: Int,
-        pMouseY: Int,
-        pPartialTick: Float,
-    ) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
-    }
-
     override fun onClose() {
         super.onClose()
         SyncPortalSettingsPacket(
@@ -228,7 +218,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
             isUpright.get(),
             selected?.first,
             selected?.second,
-            menu.ctx.holder
+            menu.ctxHolder
         ).sendToServer()
     }
 }

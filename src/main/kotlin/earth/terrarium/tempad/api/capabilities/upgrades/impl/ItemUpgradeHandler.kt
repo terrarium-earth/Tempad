@@ -1,7 +1,6 @@
-package earth.terrarium.tempad.api.tva_device.impl
+package earth.terrarium.tempad.api.capabilities.upgrades.impl
 
-import earth.terrarium.tempad.api.tva_device.UpgradeHandler
-import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.api.capabilities.upgrades.UpgradeHandler
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
 import earth.terrarium.tempad.common.registries.installedUpgrades
 import net.minecraft.resources.Identifier

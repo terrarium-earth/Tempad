@@ -2,21 +2,14 @@ package earth.terrarium.tempad.common.block
 
 import com.mojang.authlib.GameProfile
 import com.teamresourceful.resourcefullib.common.menu.ContentMenuProvider
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.move
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.menu.MetronomeMenuData
 import earth.terrarium.tempad.common.registries.ModBlocks
-import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.metronomeEnergy
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_CODEC
-import earth.terrarium.tempad.common.utils.get
-import earth.terrarium.tempad.common.utils.load
 import earth.terrarium.tempad.common.utils.safeLet
-import earth.terrarium.tempad.common.utils.save
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
@@ -31,10 +24,12 @@ import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import net.neoforged.neoforge.items.ItemStackHandler
-import java.util.Optional
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
+import kotlin.jvm.optionals.getOrNull
 
-class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metronomeBe, pos, state), ContentMenuProvider<MetronomeMenuData> {
+class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metronomeBe, pos, state),
+    ContentMenuProvider<MetronomeMenuData> {
     var owner: GameProfile? = null
     var locked = true
     var initialChronons = 0
@@ -45,8 +40,8 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
     val inventory = MetronomeItemHandler()
 
     fun tick() {
-        if(level !is ServerLevel) return
-        if(bootTime > 0) {
+        if (level !is ServerLevel) return
+        if (bootTime > 0) {
             if (bootChronons >= CommonConfig.Metronome.jumpStartAmount) {
                 bootTime--
 
@@ -76,12 +71,19 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
                 this.setChanged()
             }
         }
+
+        /*
         chronons?.let { metronome ->
             for (i in 0 .. 7) {
                 if (i < 4) {
+                    HandlerItemAccess(inventory, i).getCapability(Tempad)?.let {
+
+                    }
+
                     inventory[i].chronons?.let { target ->
                         move(target, metronome, CommonConfig.Metronome.transferRate)
                     }
+
                 } else {
                     inventory[i].chronons?.let { target ->
                         move(metronome, target, CommonConfig.Metronome.transferRate)
@@ -95,39 +97,45 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
                 }
             }
         }
+         */
     }
 
-    override fun saveAdditional(
-        tag: CompoundTag,
-        registries: HolderLookup.Provider,
-    ) {
-        super.saveAdditional(tag, registries)
-        owner?.let { tag.save(GAME_PROFILE_CODEC.codec(), "Owner", it) }
-        tag.put("Inventory", inventory.serializeNBT(registries))
+    override fun saveAdditional(tag: ValueOutput) {
+        super.saveAdditional(tag)
+        owner?.let { tag.store("Owner", GAME_PROFILE_CODEC.codec(), it) }
+        tag.putChild("Inventory", inventory)
         tag.putInt("BootTime", bootTime)
         tag.putInt("BootChronons", bootChronons)
         tag.putInt("InitialChronons", initialChronons)
         tag.putBoolean("Locked", locked)
     }
 
-    override fun loadAdditional(
-        tag: CompoundTag,
-        registries: HolderLookup.Provider,
+    override fun loadAdditional(tag: ValueInput) {
+        super.loadAdditional(tag)
+        owner = tag.read("Owner", GAME_PROFILE_CODEC.codec()).getOrNull()
+        bootTime = tag.getIntOr("BootTime", 100)
+        locked = tag.getBooleanOr("Locked", true)
+        initialChronons = tag.getIntOr("InitialChronons", 0)
+        bootChronons = tag.getIntOr("BootChronons", 0)
+        localChronons = tag.getIntOr("LocalChronons", 0)
+        localCapacity = tag.getIntOr("LocalCapacity", 0)
+        tag.readChild("Inventory", inventory)
+    }
+
+    override fun preRemoveSideEffects(
+        pos: BlockPos,
+        state: BlockState,
     ) {
-        super.loadAdditional(tag, registries)
-        owner = tag.load(GAME_PROFILE_CODEC.codec(), "Owner")
-        bootTime = if("BootTime" in tag) tag.getInt("BootTime") else 100
-        locked = tag.getBoolean("Locked")
-        initialChronons = tag.getInt("InitialChronons")
-        bootChronons = tag.getInt("BootChronons")
-        localChronons = tag.getInt("LocalChronons")
-        localCapacity = tag.getInt("LocalCapacity")
-        inventory.deserializeNBT(registries, tag.getCompound("Inventory"))
+        if (level?.isClientSide?.not() ?: false && bootTime == 0) {
+            safeLet(metronomeEnergy, owner?.id) { energy, owner ->
+                initialChronons = energy.remove(owner, GlobalPos(level!!.dimension(), pos))
+            }
+        }
+        super.preRemoveSideEffects(pos, state)
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
         return CompoundTag().apply {
-            saveAdditional(this, registries)
             safeLet(metronomeEnergy, this@MetronomeBe.owner) { energy, owner ->
                 this.putInt("LocalChronons", energy.getStored(owner.id))
                 this.putInt("LocalCapacity", energy.getCapacity(owner.id))
@@ -152,6 +160,17 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
         playerInventory: Inventory,
         player: Player,
     ): AbstractContainerMenu? {
-        return MetronomeMenu(containerId, playerInventory, inventory, owner?.id?.let { MetronomeDataContainer(it) } ?: SimpleContainerData(2), safeLet(level, owner) { lvl, own -> MetronomeMenuData(own.id, GlobalPos(lvl.dimension(), blockPos), locked) })
+        return MetronomeMenu(
+            containerId,
+            playerInventory,
+            inventory,
+            owner?.id?.let { MetronomeDataContainer(it) } ?: SimpleContainerData(2),
+            safeLet(level, owner) { lvl, own ->
+                MetronomeMenuData(
+                    own.id,
+                    GlobalPos(lvl.dimension(), blockPos),
+                    locked
+                )
+            })
     }
 }

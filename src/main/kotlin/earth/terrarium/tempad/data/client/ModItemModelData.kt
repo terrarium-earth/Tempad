@@ -1,119 +1,142 @@
 package earth.terrarium.tempad.data.client
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.client.model.BooleanComponentProperty
+import earth.terrarium.tempad.client.model.ChrononChargeProperty
+import earth.terrarium.tempad.client.model.WalletFullProperty
 import earth.terrarium.tempad.common.registries.ModBlocks
-import earth.terrarium.tempad.tempadId
+import earth.terrarium.tempad.common.registries.ModComponents
 import earth.terrarium.tempad.common.registries.ModItems
+import earth.terrarium.tempad.tempadId
+import net.minecraft.client.data.models.BlockModelGenerators
+import net.minecraft.client.data.models.ItemModelGenerators
+import net.minecraft.client.data.models.ModelProvider
+import net.minecraft.client.data.models.model.ItemModelUtils
+import net.minecraft.client.data.models.model.ModelTemplates
+import net.minecraft.client.renderer.item.ItemModel
+import net.minecraft.client.renderer.item.properties.conditional.HasComponent
+import net.minecraft.client.renderer.item.properties.conditional.IsUsingItem
+import net.minecraft.core.Holder
 import net.minecraft.data.PackOutput
-import net.minecraft.resources.Identifier
-import net.neoforged.neoforge.client.model.generators.ItemModelBuilder
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider
-import net.neoforged.neoforge.client.model.generators.ModelFile
-import net.neoforged.neoforge.common.data.ExistingFileHelper
+import net.minecraft.world.item.Item
+import net.minecraft.world.level.block.Block
+import java.util.stream.Stream
 
-class ModItemModelData(output: PackOutput, fileHelper: ExistingFileHelper) : ItemModelProvider(output, Tempad.MOD_ID, fileHelper) {
-    override fun registerModels() {
-        getBuilder("tempad").apply {
-            parent(ModelFile.UncheckedModelFile("item/generated"))
-            texture("layer0", "tempad:item/tempad/base")
-            for (attached in arrayOf(0f, 1f)) {
-                for (inUse in arrayOf(0f, 1f)) {
-                    for ((index, charge) in arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f).withIndex()) {
-                        var path = "tempad:item/tempad/"
-                        path += (if (attached == 1f) "attached" else "base")
-                        path += "_"
-                        path += (if (inUse == 1f) "in_use" else "idle")
-                        path += "_$index"
+class ModItemModelData(output: PackOutput) : ModelProvider(output, Tempad.MOD_ID) {
 
-                        override().apply {
-                            predicate("attached".tempadId, attached)
-                            predicate("in_use".tempadId, inUse)
-                            predicate("charge".tempadId, charge)
+    override fun getKnownItems(): Stream<out Holder<Item>> = Stream.empty()
+    override fun getKnownBlocks(): Stream<out Holder<Block>> = Stream.empty()
 
-                            model(getBuilder(path).apply {
-                                parent(ModelFile.UncheckedModelFile("item/generated"))
+    override fun registerModels(blockModels: BlockModelGenerators, itemModels: ItemModelGenerators) {
+        // Simple flat items
+        itemModels.generateFlatItem(ModItems.timeTwister, ModelTemplates.FLAT_ITEM)
+        itemModels.generateFlatItem(ModItems.newLocationUpgrade, ModelTemplates.FLAT_ITEM)
+        itemModels.generateFlatItem(ModItems.playerTeleportUpgrade, ModelTemplates.FLAT_ITEM)
+        itemModels.generateFlatItem(ModItems.guideUpgrade, ModelTemplates.FLAT_ITEM)
+        itemModels.generateFlatItem(ModItems.timeSteel, ModelTemplates.FLAT_ITEM)
+        itemModels.generateFlatItem(ModItems.creativeChronometer, ModelTemplates.FLAT_ITEM)
+        itemModels.generateFlatItem(ModItems.knowledgeProjector, ModelTemplates.FLAT_ITEM)
 
-                                var layer = 0
-                                texture("layer0", "item/tempad/base${if (attached == 1f) "_with_twister" else ""}".tempadId)
+        // Block items — reference existing block model files
+        blockModels.registerSimpleItemModel(ModBlocks.timedoorMarker, "tempad:block/timedoor_marker".tempadId)
+        blockModels.registerSimpleItemModel(ModBlocks.chronomark, "tempad:block/chronomark".tempadId)
+        blockModels.registerSimpleItemModel(ModBlocks.metronome, "tempad:block/metronome".tempadId)
+        blockModels.registerSimpleItemModel(ModBlocks.workstation, "tempad:block/workstation_full".tempadId)
 
-                                if (inUse == 1f) {
-                                    texture("layer" + ++layer, "item/tempad/screen_on".tempadId)
-                                }
+        // timedoor_projector: conditional on has_card (portalTarget component present)
+        itemModels.itemModelOutput.accept(
+            ModItems.timedoorProjector,
+            ItemModelUtils.conditional(
+                HasComponent(ModComponents.portalTarget, false),
+                ItemModelUtils.plainModel("tempad:item/timedoor_projector_with_card".tempadId),
+                ItemModelUtils.plainModel("tempad:item/timedoor_projector".tempadId),
+            ),
+        )
 
-                                texture("layer"+ ++layer, "item/tempad/charge_${index}")
-                            })
-                        }
-                    }
-                }
-            }
-        }
+        // location_card: conditional on written (portalTarget component present)
+        itemModels.itemModelOutput.accept(
+            ModItems.locationCard,
+            ItemModelUtils.conditional(
+                HasComponent(ModComponents.portalTarget, false),
+                ItemModelUtils.plainModel("tempad:item/location_card_written".tempadId),
+                ItemModelUtils.plainModel("tempad:item/location_card".tempadId),
+            ),
+        )
 
-        basicItem(ModItems.chronometer).chargedLayered("chronometer")
-        basicItem(ModItems.chrononGenerator).chargedLayered("chronon_generator")
+        // location_broadcaster: conditional on enabled (default=true)
+        itemModels.itemModelOutput.accept(
+            ModItems.locationBroadcaster,
+            ItemModelUtils.conditional(
+                BooleanComponentProperty.of(ModComponents.enabled, true),
+                ItemModelUtils.plainModel("tempad:item/location_broadcaster_enabled".tempadId),
+                ItemModelUtils.plainModel("tempad:item/location_broadcaster".tempadId),
+            ),
+        )
 
-        basicItem(ModItems.chrononCell).charged("chronon_cell")
-        basicItem(ModItems.chrononBattery).charged("chronon_battery")
+        // screening_device: conditional on enabled (default=true)
+        itemModels.itemModelOutput.accept(
+            ModItems.screeningDevice,
+            ItemModelUtils.conditional(
+                BooleanComponentProperty.of(ModComponents.enabled, true),
+                ItemModelUtils.plainModel("tempad:item/screening_device_enabled".tempadId),
+                ItemModelUtils.plainModel("tempad:item/screening_device".tempadId),
+            ),
+        )
 
-        basicItem(ModItems.locationBroadcaster).booleanProp("enabled")
-        basicItem(ModItems.screeningDevice).booleanProp("enabled")
+        // card_wallet: conditional on full
+        itemModels.itemModelOutput.accept(
+            ModItems.cardWallet,
+            ItemModelUtils.conditional(
+                WalletFullProperty,
+                ItemModelUtils.plainModel("tempad:item/card_wallet_full".tempadId),
+                ItemModelUtils.plainModel("tempad:item/card_wallet".tempadId),
+            ),
+        )
 
-        basicItem(ModItems.locationCard).booleanProp("written")
-        withExistingParent("tempad:item/timedoor_projector", "tempad:block/timedoor_projector_off")
-            .override()
-            .predicate("has_card".tempadId, 1f)
-            .model(withExistingParent("tempad:item/timedoor_projector_with_card", "tempad:block/timedoor_projector_off_with_card"))
+        // Charge-based items (range dispatch by ChrononChargeProperty)
+        itemModels.itemModelOutput.accept(ModItems.chrononCell, chargeModel("chronon_cell"))
+        itemModels.itemModelOutput.accept(ModItems.chrononBattery, chargeModel("chronon_battery"))
+        itemModels.itemModelOutput.accept(ModItems.chronometer, chargeModel("chronometer"))
+        itemModels.itemModelOutput.accept(ModItems.chrononGenerator, chargeModel("chronon_generator"))
 
-        basicItem(ModItems.timeTwister)
-        basicItem(ModItems.newLocationUpgrade)
-        basicItem(ModItems.playerTeleportUpgrade)
-        basicItem(ModItems.guideUpgrade)
-        basicItem(ModItems.timeSteel)
-        basicItem(ModItems.creativeChronometer)
-        basicItem(ModItems.knowledgeProjector)
-        basicItem(ModItems.cardWallet).booleanProp("full")
-        simpleBlockItem(ModBlocks.timedoorMarker)
-        simpleBlockItem(ModBlocks.chronomark)
-        simpleBlockItem(ModBlocks.metronome)
-
-        withExistingParent("tempad:item/workstation", "tempad:block/workstation_full")
+        // tempad: nested conditional (twisterEquipped × isUsingItem × charge)
+        itemModels.itemModelOutput.accept(
+            ModItems.tempad,
+            ItemModelUtils.conditional(
+                BooleanComponentProperty.of(ModComponents.twisterEquipped, false),
+                // twister attached
+                ItemModelUtils.conditional(
+                    IsUsingItem(),
+                    tempadChargeModel("attached_in_use"),
+                    tempadChargeModel("attached_idle"),
+                ),
+                // no twister
+                ItemModelUtils.conditional(
+                    IsUsingItem(),
+                    tempadChargeModel("base_in_use"),
+                    tempadChargeModel("base_idle"),
+                ),
+            ),
+        )
     }
 
-    fun ItemModelBuilder.booleanProp(propName: String): ItemModelBuilder {
-        return this.override()
-            .predicate(propName.tempadId, 1f)
-            .model(getBuilder(this.location.toString() + "_$propName").apply {
-                parent(ModelFile.UncheckedModelFile("item/generated"))
-                texture("layer0", Identifier.fromNamespaceAndPath(this.location.namespace, this.location.path))
-            })
-            .end()
-    }
+    private fun chargeModel(name: String): ItemModel.Unbaked =
+        ItemModelUtils.rangeSelect(
+            ChrononChargeProperty,
+            ItemModelUtils.plainModel("tempad:item/${name}_0".tempadId),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/${name}_1".tempadId), 0.25f),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/${name}_2".tempadId), 0.5f),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/${name}_3".tempadId), 0.75f),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/${name}_4".tempadId), 1.0f),
+        )
 
-    fun ItemModelBuilder.charged(name: String, values: Array<Float> = arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f)) {
-        for ((index, charge) in values.withIndex()) {
-            override().apply {
-                predicate("charge".tempadId, charge)
-
-                model(getBuilder("tempad:${name}_${index}").apply {
-                    parent(ModelFile.UncheckedModelFile("item/generated"))
-
-                    texture("layer0", "tempad:item/$name/charge_${index}")
-                })
-            }
-        }
-    }
-
-    fun ItemModelBuilder.chargedLayered(name: String, values: Array<Float> = arrayOf(0f, 0.25f, 0.5f, 0.75f, 1f)) {
-        for ((index, charge) in values.withIndex()) {
-            override().apply {
-                predicate("charge".tempadId, charge)
-
-                model(getBuilder("tempad:${name}_${index}").apply {
-                    parent(ModelFile.UncheckedModelFile("item/generated"))
-
-                    texture("layer0", "tempad:item/$name")
-                    if (index > 0) texture("layer1", "tempad:item/$name/charge_${index}")
-                })
-            }
-        }
-    }
+    private fun tempadChargeModel(variant: String): ItemModel.Unbaked =
+        ItemModelUtils.rangeSelect(
+            ChrononChargeProperty,
+            ItemModelUtils.plainModel("tempad:item/tempad/${variant}_0".tempadId),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/tempad/${variant}_1".tempadId), 0.25f),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/tempad/${variant}_2".tempadId), 0.5f),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/tempad/${variant}_3".tempadId), 0.75f),
+            ItemModelUtils.override(ItemModelUtils.plainModel("tempad:item/tempad/${variant}_4".tempadId), 1.0f),
+        )
 }

@@ -1,10 +1,11 @@
 package earth.terrarium.tempad.common.items
 
-import earth.terrarium.tempad.api.tva_device.chronons
+import earth.terrarium.tempad.api.capabilities.chronons
 import earth.terrarium.tempad.client.tooltip.tooltip
 import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.chrononContent
+import earth.terrarium.tempad.common.utils.access
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.tooltip.TooltipComponent
@@ -33,6 +34,6 @@ class MetronomeItem() : BlockItem(ModBlocks.metronome, Properties().stacksTo(1))
     }
 
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
-        return Optional.ofNullable(stack.chronons?.tooltip)
+        return Optional.ofNullable(stack.access.chronons?.tooltip)
     }
 }

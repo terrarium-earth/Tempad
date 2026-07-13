@@ -2,7 +2,7 @@ package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.client.TempadClient
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -13,8 +13,8 @@ class HandbookItem: Item(Properties()) {
         level: Level,
         player: Player,
         usedHand: InteractionHand,
-    ): InteractionResultHolder<ItemStack?> {
+    ): InteractionResult {
         if(level.isClientSide) TempadClient.openGuide()
-        return InteractionResultHolder.success(player.getItemInHand(usedHand))
+        return InteractionResult.SUCCESS
     }
 }

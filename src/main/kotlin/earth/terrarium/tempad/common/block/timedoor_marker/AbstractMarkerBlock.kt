@@ -6,8 +6,6 @@ import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contains
 import earth.terrarium.tempad.common.utils.safeLet
-import net.minecraft.ChatFormatting
-import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.component.DataComponents
@@ -15,11 +13,8 @@ import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -55,6 +50,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         )
     }
 
+    /* TODO: Re-add this to block item.
     override fun appendHoverText(
         stack: ItemStack,
         context: Item.TooltipContext,
@@ -74,6 +70,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
             }
         }
     }
+     */
 
     override fun useItemOn(
         stack: ItemStack,
@@ -83,12 +80,12 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         player: Player,
         hand: InteractionHand,
         hitResult: BlockHitResult,
-    ): ItemInteractionResult {
+    ): InteractionResult {
         if (stack.item === ModItems.locationCard) {
-            if (level.isClientSide) return ItemInteractionResult.sidedSuccess(level.isClientSide)
+            if (level.isClientSide) return InteractionResult.SUCCESS
             val blockEntity = level.getBlockEntity(pos) as AbstractMarkerBe
             stack.portalTarget = AnchorPointsHandler(player.gameProfile).getSerializable(blockEntity.id!!)
-            return ItemInteractionResult.sidedSuccess(level.isClientSide)
+            return InteractionResult.SUCCESS_SERVER
         }
 
         val color = when (stack) {
@@ -116,7 +113,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
             it.color = color
             level.setBlockAndUpdate(pos, state)
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide)
+        return InteractionResult.SUCCESS_SERVER
     }
 
     override fun useWithoutItem(
@@ -126,17 +123,17 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         player: Player,
         hitResult: BlockHitResult,
     ): InteractionResult {
-        if (level.isClientSide) return InteractionResult.sidedSuccess(level.isClientSide)
+        if (level.isClientSide) return InteractionResult.SUCCESS
         (level.getBlockEntity(pos) as? AbstractMarkerBe)?.let {
             if (it.owner == null) {
                 it.owner = player.gameProfile
             } else if (it.locked && it.owner?.id != player.gameProfile.id) {
-                player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+                player.sendOverlayMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value))
                 return InteractionResult.FAIL
             }
             it.openScreen(player)
         }
-        return InteractionResult.sidedSuccess(level.isClientSide)
+        return InteractionResult.SUCCESS_SERVER
     }
 
     override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
@@ -162,16 +159,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         super.onPlace(state, level, pos, oldState, moved)
     }
 
-    override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, moved: Boolean) {
-        if (level is ServerLevel) {
-            safeLet((level.getBlockEntity(pos) as? AbstractMarkerBe)?.id, anchorPoints) { blockEntity, points ->
-                points -= blockEntity
-            }
-        }
-        super.onRemove(state, level, pos, newState, moved)
-    }
-
-    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
+    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
         builder.add(BlockStateProperties.HORIZONTAL_FACING).add(BlockStateProperties.UP)
     }
 

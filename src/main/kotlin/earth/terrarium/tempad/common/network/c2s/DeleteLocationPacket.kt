@@ -8,26 +8,24 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.locations.TempadLocations
-import earth.terrarium.tempad.api.context.ContextHolder
-import earth.terrarium.tempad.api.context.SyncableContext
-import earth.terrarium.tempad.common.items.TempadItem
+import earth.terrarium.tempad.api.access.ItemAccessAddress
 import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.resources.Identifier
 import java.util.UUID
 
-data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: Identifier, val locationId: UUID): Packet<DeleteLocationPacket> {
+data class DeleteLocationPacket(val ctx: ItemAccessAddress<*>, val providerId: Identifier, val locationId: UUID): Packet<DeleteLocationPacket> {
     companion object {
         val type = CodecPacketType.Server.create(
             "delete_location".tempadId,
             ObjectByteCodec.create(
-                ContextHolder.codec.fieldOf(DeleteLocationPacket::ctx),
-                ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
+                ItemAccessAddress.codec.fieldOf(DeleteLocationPacket::ctx),
+                ExtraByteCodecs.IDENTIFIER.fieldOf { it.providerId },
                 ByteCodec.UUID.fieldOf { it.locationId },
                 ::DeleteLocationPacket
             ),
             NetworkHandle.handle { message, player ->
-                val ctx = message.ctx.getCtx(player)
-                if (ctx.stack.item !== ModItems.tempad) return@handle
+                val ctx = message.ctx.getAccess(player)
+                if (ctx.resource.item !== ModItems.tempad) return@handle
                 TempadLocations[player, ctx, message.providerId]!! -= message.locationId
             }
         )

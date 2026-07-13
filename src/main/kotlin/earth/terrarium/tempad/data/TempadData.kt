@@ -17,25 +17,30 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
 @Mod(Tempad.MOD_ID)
 class TempadData(bus: IEventBus) {
     init {
-        bus.addListener(::gatherData)
+        bus.addListener(::gatherClientData)
+        bus.addListener(::gatherServerData)
     }
 
     @SubscribeEvent
-    fun gatherData(event: GatherDataEvent) {
+    fun gatherClientData(event: GatherDataEvent.Client) {
         val generator = event.generator
         val output = generator.packOutput
-        val existingFileHelper = event.existingFileHelper
+
+        generator.addProvider(true, ModBlockStateData(output))
+        generator.addProvider(true, ModItemModelData(output))
+        generator.addProvider(true, ModLang(output))
+    }
+
+    @SubscribeEvent
+    fun gatherServerData(event: GatherDataEvent.Server) {
+        val generator = event.generator
+        val output = generator.packOutput
         val lookupProvider = event.lookupProvider
 
-        generator.addProvider(event.includeClient(), ModBlockStateData(output, existingFileHelper))
-        generator.addProvider(event.includeClient(), ModItemModelData(output, existingFileHelper))
-        generator.addProvider(event.includeClient(), ModLang(output))
-        generator.addProvider(event.includeServer(), ModRecipeData(output, lookupProvider))
-        generator.addProvider(event.includeServer(), ModLootTables(output, lookupProvider))
-        generator.addProvider(event.includeServer(), ModEntityTags(output, lookupProvider, existingFileHelper))
-        val blockTags = ModBlockTags(output, lookupProvider, existingFileHelper)
-        generator.addProvider(event.includeServer(), blockTags)
-        generator.addProvider(event.includeServer(), ModItemTags(output, lookupProvider, blockTags.contentsGetter(), existingFileHelper))
-
+        generator.addProvider(true, ModRecipeData(output, lookupProvider))
+        generator.addProvider(true, ModLootTables(output, lookupProvider))
+        generator.addProvider(true, ModEntityTags(output, lookupProvider))
+        generator.addProvider(true, ModBlockTags(output, lookupProvider))
+        generator.addProvider(true, ModItemTags(output, lookupProvider))
     }
 }

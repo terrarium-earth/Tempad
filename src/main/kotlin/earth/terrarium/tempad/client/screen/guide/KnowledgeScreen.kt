@@ -1,7 +1,5 @@
 package earth.terrarium.tempad.client.screen.guide
 
-import com.mojang.blaze3d.systems.RenderSystem
-import com.teamresourceful.resourcefullib.client.screens.BaseCursorScreen
 import com.teamresourceful.resourcefullib.common.utils.TriState
 import com.teamresourceful.resourcefullibkt.common.id
 import earth.terrarium.olympus.client.components.Widgets
@@ -17,7 +15,7 @@ import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.TempadUI.colored
-import earth.terrarium.tempad.client.screen.TickingScreen
+import earth.terrarium.tempad.client.screen.ExtendedWikiScreen
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.client.widgets.CraftingRecipeWidget
 import earth.terrarium.tempad.client.widgets.UnclickableWidget
@@ -29,11 +27,12 @@ import earth.terrarium.tempad.data.client.ModLang
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
-import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.layouts.SpacerElement
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.input.MouseButtonEvent
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
@@ -43,7 +42,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import kotlin.math.ceil
 
-class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.description), TickingScreen {
+class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.translatable), ExtendedWikiScreen {
     companion object {
         val collapsed = mutableSetOf<Component>()
 
@@ -67,7 +66,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
             })
         }
 
-        fun <T> T.createChapters() where T : Screen, T : TickingScreen =
+        fun <T> T.createChapters() where T : Screen, T : ExtendedWikiScreen =
             mutableMapOf<Component, MutableMap<Identifier, (ClearableGridLayout) -> Unit>>().apply {
                 put(ModLang.iron, mutableMapOf<Identifier, (ClearableGridLayout) -> Unit>().apply {
                     put(ModItems.chrononCell.id) {
@@ -265,7 +264,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
 
             }
 
-        fun TickingScreen.recipe(id: Identifier): CraftingRecipeWidget? {
+        fun ExtendedWikiScreen.recipe(id: Identifier): CraftingRecipeWidget? {
             val recipe = CraftingRecipeWidget.create(id)
             recipe?.let { this.tickers.add(it::tick) }
             return recipe
@@ -277,7 +276,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
             return ceil(scale * percent) / scale
         }
 
-        fun Screen.paragraph(text: Component): MultilineTextWidget? {
+        fun <T> T.paragraph(text: Component): MultilineTextWidget? where T : Screen, T : ExtendedWikiScreen {
             if (Minecraft.getInstance() == null) return null
             val text = Widgets.textarea(text, 98)
             text.scale(closestPercent(0.7f))
@@ -343,7 +342,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                     }
                     val grid = Layouts.columns(3)
                     for ((entry, text) in contents) {
-                        val stack = BuiltInRegistries.ITEM.get(entry).defaultInstance
+                        val stack = ItemStack(BuiltInRegistries.ITEM.get(entry).get())
                         grid.withChild(Widgets.button {
                             it.withSize(18, 18)
                             it.withTexture(null)
@@ -368,7 +367,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                                         0x3aff6f00.toInt()
                                     )
                                 }
-                                graphics.renderItem(stack, ctx.x + 1, ctx.y + 1)
+                                graphics.item(stack, ctx.x + 1, ctx.y + 1)
                             })
                             it.withCallback {
                                 selected.value = stack
@@ -394,7 +393,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
     var topPos = 0
     var imageWidth = 198
     var imageHeight = 118
-    var titleWidget: StringWidget? = null
+    var titleWidget: TextWidget? = null
     var currentTitle: Component = ModLang.overview
         set(value) {
             field = value
@@ -419,7 +418,7 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         super.init()
         leftPos = (width - imageWidth) / 2
         topPos = (height - imageHeight) / 2
-        addRenderableWidget(Widgets.text(ModItems.knowledgeProjector.description) {
+        addRenderableWidget(Widgets.text(ModItems.knowledgeProjector.descriptionId.translatable) {
             it.withColor(Tempad.ORANGE)
             it.withPosition(leftPos + 4, topPos + 6)
             it.withShadow()
@@ -440,10 +439,11 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
                 }
             }
         }
-
-        titleWidget = addRenderableWidget(StringWidget(leftPos + 78, topPos + 22, 116, 10, currentTitle, font).apply {
-            setColor(Tempad.ORANGE.value)
-            alignLeft()
+        titleWidget = addRenderableWidget(Widgets.text(currentTitle) {
+            it.withPosition(leftPos + 78, topPos + 22)
+            it.withSize(116, 10)
+            it.withColor(Tempad.ORANGE)
+            it.withLeftAlignment()
         })
 
         descriptionWidget = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
@@ -466,32 +466,21 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         descriptionWidget?.withContents(description)
     }
 
-    override fun renderBackground(
-        graphics: GuiGraphics,
+    override fun extractBackground(
+        graphics: GuiGraphicsExtractor,
         mouseX: Int,
         mouseY: Int,
-        partialTick: Float,
+        a: Float,
     ) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick)
-        RenderSystem.enableBlend()
-        graphics.blitSprite(TempadUI.element.get(true, false), leftPos, topPos, imageWidth, imageHeight)
-    }
-
-    override fun render(
-        graphics: GuiGraphics,
-        mouseX: Int,
-        mouseY: Int,
-        f: Float,
-    ) {
-        RenderSystem.enableBlend()
-        super.render(graphics, mouseX, mouseY, f)
+        super.extractBackground(graphics, mouseX, mouseY, a)
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TempadUI.element.get(true, false), leftPos, topPos, imageWidth, imageHeight)
     }
 
     override fun handleComponentClicked(style: Style?): Boolean {
         if (style == null) return false
-        if (style.clickEvent?.action == ClickEvent.Action.CHANGE_PAGE) {
-            val item = style.clickEvent?.let { Identifier.tryParse(it.value) } ?: return false
-            val stack = BuiltInRegistries.ITEM.get(item).defaultInstance
+        if (style.clickEvent?.action() == ClickEvent.Action.CUSTOM) {
+            val item = (style.clickEvent as? ClickEvent.Custom)?.id() ?: return false
+            val stack = ItemStack(BuiltInRegistries.ITEM.get(item).get())
             currentTitle = stack.hoverName
             selected.value = stack
             for ((_, entries) in chapters) {
@@ -502,6 +491,8 @@ class KnowledgeScreen() : BaseCursorScreen(ModItems.knowledgeProjector.descripti
         }
         return false
     }
+
+
 
     override fun tick() {
         for (function in tickers) {

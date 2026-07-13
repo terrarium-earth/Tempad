@@ -2,16 +2,16 @@ package earth.terrarium.tempad.common.data
 
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import earth.terrarium.tempad.api.locations.TempadLocations
-import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.location_handlers.DefaultLocationHandler
 import earth.terrarium.tempad.common.registries.pinnedPosition
-import net.minecraft.Util
 import net.minecraft.core.UUIDUtil
 import net.minecraft.resources.Identifier
+import net.minecraft.util.Util
 import net.minecraft.world.entity.player.Player
+import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 
-fun Player.getPinnedLocation(ctx: SyncableContext<*>) = this.pinnedPosition?.let { id -> TempadLocations[this, ctx, id.providerId]?.let { it[id.locationId] } }
+fun Player.getPinnedLocation(ctx: ItemAccess) = this.pinnedPosition?.let { id -> TempadLocations[this, ctx, id.providerId]?.let { it[id.locationId] } }
 
 data class FavoriteLocationAttachment(val providerId: Identifier, val locationId: UUID) {
     companion object {

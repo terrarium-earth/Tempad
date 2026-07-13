@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.block
 
 import earth.terrarium.tempad.api.sizing.DoorType
-import earth.terrarium.tempad.api.sizing.SizingType
+import earth.terrarium.tempad.api.sizing.TimedoorPlacementType
 import earth.terrarium.tempad.api.sizing.TimedoorPlacementSettings
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.world.entity.Entity
@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3
 class WorkstationTimedoorConfig(
     override val dimensions: EntityDimensions,
     override val showLineAnimation: Boolean,
-    override val type: SizingType<*>
+    override val type: TimedoorPlacementType<*>
 ) : TimedoorPlacementSettings {
     override fun widthAtPercent(percent: Float): Float {
         TODO("Not yet implemented")

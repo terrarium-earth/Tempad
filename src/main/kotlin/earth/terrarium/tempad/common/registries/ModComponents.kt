@@ -16,6 +16,7 @@ import earth.terrarium.tempad.common.data.PortalPlacementComponent
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.NonNullList
 import net.minecraft.core.UUIDUtil
+import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
@@ -145,7 +146,7 @@ object ModComponents {
     val accessId: DataComponentType<Identifier> by registry.register("access_id") {
         componentType {
             serialize = Identifier.CODEC
-            networkSerialize = ExtraByteCodecs.RESOURCE_LOCATION
+            networkSerialize = ExtraByteCodecs.IDENTIFIER
         }
     }
 
@@ -158,38 +159,49 @@ object ModComponents {
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
+val DataComponentHolder.defaultApp by ModComponents.defaultApp.readOnly(ModApps.teleport)
 
 var MutableDataComponentHolder.defaultMacro by ModComponents.defaultMacro.withDefault(ModMacros.teleportToPinned)
+val DataComponentHolder.defaultMacro by ModComponents.defaultMacro.readOnly(ModMacros.teleportToPinned)
 
 var MutableDataComponentHolder.chrononContent by ModComponents.chrononContent.withDefault(0)
+val DataComponentHolder.chrononContent by ModComponents.chrononContent.readOnly(0)
 
 var MutableDataComponentHolder.chrononContentTempad by ModComponents.chrononContentTempad.withDefault(0)
+val DataComponentHolder.chrononContentTempad by ModComponents.chrononContentTempad.readOnly(0)
 
 var MutableDataComponentHolder.chrononContentTimeTwister by ModComponents.chrononContentTimeTwister.withDefault(0)
+val DataComponentHolder.chrononContentTimeTwister by ModComponents.chrononContentTimeTwister.readOnly(0)
 
 var MutableDataComponentHolder.twisterData by ModComponents.twisterData
 
 var MutableDataComponentHolder.enabled by ModComponents.enabled.withDefault(true)
 
 var MutableDataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.withDefault(false)
+val DataComponentHolder.twisterEquipped by ModComponents.twisterEquipped.readOnly(false)
 
 var MutableDataComponentHolder.installedUpgrades by ModComponents.installedUpgrades.withDefault(InstalledUpgradesComponent(emptyList()))
 
 var MutableDataComponentHolder.color by ModComponents.color
 
 var MutableDataComponentHolder.owner by ModComponents.owner
+val DataComponentHolder.owner by ModComponents.owner
 
 var MutableDataComponentHolder.anchorId by ModComponents.anchorId
 
 var MutableDataComponentHolder.portalOffset by ModComponents.portalOffset.withDefault(PortalPlacementComponent(-2.5f, 0f, 0f, 0, true))
+val DataComponentHolder.portalOffset by ModComponents.portalOffset.readOnly(PortalPlacementComponent(-2.5f, 0f, 0f, 0, true))
 
 var MutableDataComponentHolder.portalTarget by ModComponents.portalTarget
+val DataComponentHolder.portalTarget by ModComponents.portalTarget
 
 var MutableDataComponentHolder.selectedPos by ModComponents.selectedPos
+val DataComponentHolder.selectedPos by ModComponents.selectedPos
 
-var MutableDataComponentHolder.walletContents by ModComponents.walletContents.withDefault(ItemContainerContents.fromItems(
-    NonNullList.withSize(18, ItemStack.EMPTY)))
+var MutableDataComponentHolder.walletContents by ModComponents.walletContents.withDefault(ItemContainerContents.fromItems(NonNullList.withSize(18, ItemStack.EMPTY)))
+val DataComponentHolder.walletContents by ModComponents.walletContents.readOnly(ItemContainerContents.fromItems(NonNullList.withSize(18, ItemStack.EMPTY)))
 
 var MutableDataComponentHolder.accessId by ModComponents.accessId
 
 var MutableDataComponentHolder.locked by ModComponents.locked.withDefault(true)
+val DataComponentHolder.locked by ModComponents.locked.readOnly(true)

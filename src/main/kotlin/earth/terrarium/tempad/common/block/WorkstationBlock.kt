@@ -2,7 +2,7 @@ package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.api.capabilities.upgrades
 import earth.terrarium.tempad.common.recipe.UpgradeRecipeInput
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
@@ -11,17 +11,20 @@ import earth.terrarium.tempad.common.registries.ModSounds
 import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.common.utils.isEmpty
 import earth.terrarium.tempad.common.utils.set
+import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundSource
+import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
@@ -29,6 +32,8 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
+import net.minecraft.world.level.LevelReader
+import net.minecraft.world.level.ScheduledTickAccess
 import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
@@ -37,12 +42,14 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.redstone.Orientation
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.neoforge.transfer.item.ItemResource
 import kotlin.jvm.optionals.getOrNull
 
 class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(3.0f, 1200f)) {
@@ -88,23 +95,23 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         player: Player,
         hand: InteractionHand,
         hitResult: BlockHitResult,
-    ): ItemInteractionResult {
-        if (level.isClientSide) {
-            return ItemInteractionResult.SUCCESS
+    ): InteractionResult {
+        if (level !is ServerLevel) {
+            return InteractionResult.SUCCESS
         }
 
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE
-            ?: return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
-        if (blockEntity.inventory[0].isEmpty && stack.`is`(ModItems.tempad)) {
+            ?: return InteractionResult.PASS
+        if (blockEntity.inventory.isEmpty(0) && stack.`is`(ModItems.tempad)) {
             stack.owner = player.gameProfile
-            blockEntity.inventory[0] = stack
+            blockEntity.inventory.set(0, ItemResource.of(stack), stack.count)
             blockEntity.setChanged()
             player.setItemInHand(hand, ItemStack.EMPTY)
             level.sendBlockUpdated(pos, state, state, UPDATE_ALL)
-            return ItemInteractionResult.SUCCESS
-        } else if (!blockEntity.inventory[0].isEmpty && blockEntity.downloadTime == 0) {
-            val recipe = level.recipeManager.getRecipeFor(ModRecipes.upgradeRecipe, UpgradeRecipeInput(blockEntity.inventory[0], stack), level).getOrNull()?.value
-            if (recipe == null || recipe.output in blockEntity.upgrades!!) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+            return InteractionResult.SUCCESS
+        } else if (!blockEntity.inventory.isEmpty(0) && blockEntity.downloadTime == 0) {
+            val recipe = level.recipeAccess().getRecipeFor(ModRecipes.upgradeRecipe, UpgradeRecipeInput(blockEntity.inventory.stack(0), stack), level).getOrNull()?.value
+            if (recipe == null || recipe.output in blockEntity.upgrades!!) return InteractionResult.PASS
             (player as? ServerPlayer)?.let {
                 player.connection.send(ClientboundSoundPacket(Holder.direct(ModSounds.upgradePlaceMono), SoundSource.BLOCKS, pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0f, 1.0f, 0))
                 level.playSound(it, pos, ModSounds.upgradePlaceStereo, SoundSource.BLOCKS)
@@ -117,16 +124,16 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
             blockEntity.setChanged()
             level.setBlock(pos, state.setValue(HAS_TAPE, true), UPDATE_ALL)
             if (stack.isEmpty) player.setItemInHand(hand, ItemStack.EMPTY)
-            return ItemInteractionResult.SUCCESS
+            return InteractionResult.SUCCESS
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+        return InteractionResult.PASS
     }
 
-    override fun <T : BlockEntity?> getTicker(
+    override fun <T : BlockEntity> getTicker(
         level: Level,
         state: BlockState,
-        type: BlockEntityType<T?>,
-    ): BlockEntityTicker<T?>? {
+        type: BlockEntityType<T>
+    ): BlockEntityTicker<T>? {
         return if (level.isClientSide) null else createTickerHelper(type, ModBlocks.workstationBE) { _, _, _, it -> it.tick() }
     }
 
@@ -145,9 +152,9 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
             ?: return InteractionResult.PASS
 
         if (blockEntity.maxDownloadTime > 0) return InteractionResult.PASS
-        val stack = blockEntity.inventory[0]
+        val stack = blockEntity.inventory.stack(0)
         if (stack.locked && stack.owner?.id != player.gameProfile.id) {
-            player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+            player.sendOverlayMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value))
             return InteractionResult.FAIL
         }
         stack.owner = null
@@ -156,7 +163,7 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         } else {
             player.inventory.placeItemBackInInventory(stack.copy())
         }
-        blockEntity.inventory[0] = ItemStack.EMPTY
+        blockEntity.inventory.set(0, ItemResource.EMPTY, 0)
         level.sendBlockUpdated(pos, state, state, UPDATE_ALL)
         blockEntity.setChanged()
         return InteractionResult.SUCCESS
@@ -187,12 +194,12 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
             val newState = ModBlocks.workstationChild.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, dir)
             val blockpos = getPos(dir, pos)
             level.setBlock(blockpos, newState, UPDATE_ALL)
-            level.blockUpdated(pos, Blocks.AIR)
+            // level.blockUpdated(pos, Blocks.AIR)
             newState.updateNeighbourShapes(level, pos, UPDATE_ALL)
         }
     }
 
-    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
+    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
         builder.add(BlockStateProperties.HORIZONTAL_FACING).add(HAS_TAPE)
     }
 
@@ -235,24 +242,26 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
 
     override fun updateShape(
         state: BlockState,
-        facing: Direction,
-        facingState: BlockState,
-        level: LevelAccessor,
-        currentPos: BlockPos,
+        level: LevelReader,
+        ticks: ScheduledTickAccess,
         neighborPos: BlockPos,
+        facing: Direction,
+        neighbourPos: BlockPos,
+        facingState: BlockState,
+        random: RandomSource
     ): BlockState {
         return if (facing == relativeDir(state) && facingState.block == Blocks.AIR) {
             Blocks.AIR.defaultBlockState()
         } else {
-            super.updateShape(state, facing, facingState, level, currentPos, neighborPos)
+            super.updateShape(state, level, ticks, neighborPos, facing, neighbourPos, facingState, random)
         }
     }
 
     override fun getDrops(state: BlockState, params: LootParams.Builder): List<ItemStack> {
         val drops = super.getDrops(state, params).toMutableList()
         val blockE = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-        if (blockE is WorkstationBE && !blockE.inventory[0].isEmpty) {
-            drops.add(blockE.inventory[0])
+        if (blockE is WorkstationBE && !blockE.inventory.isEmpty(0)) {
+            drops.add(blockE.inventory.stack(0))
         }
         return drops.toList()
     }
@@ -262,8 +271,8 @@ class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(
         level: Level,
         pos: BlockPos,
         block: Block,
-        fromPos: BlockPos,
-        isMoving: Boolean,
+        orientation: Orientation?,
+        isMoving: Boolean
     ) {
         val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above())
         val blockEntity = level.getBlockEntity(pos) as? WorkstationBE ?: return

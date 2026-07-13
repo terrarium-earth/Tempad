@@ -4,46 +4,40 @@ import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.Tempad
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.PlayerFaceRenderer
+import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.components.PlayerFaceExtractor
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
-import org.joml.Matrix4f
-import sun.java2d.cmm.Profile
+import net.minecraft.world.item.component.ResolvableProfile
 
 class PlayerPosTooltip(val profile: GameProfile): ClientTooltipComponent {
     val text = Component.literal(profile.name)
 
-    val playerTexture get() = Minecraft.getInstance().skinManager.getInsecureSkin(profile).texture()
+    val playerTexture get() = Minecraft.getInstance().playerSkinRenderCache().createLookup(ResolvableProfile.createResolved(profile))
 
-    override fun getHeight(): Int = 10
+    override fun getHeight(p0: Font): Int = 10
     override fun getWidth(font: Font): Int = font.width(text) + 13
 
-    override fun renderText(
+    override fun extractText(
+        graphics: GuiGraphicsExtractor,
         font: Font,
-        mouseX: Int,
-        mouseY: Int,
-        matrix: Matrix4f,
-        bufferSource: MultiBufferSource.BufferSource,
+        x: Int,
+        y: Int,
     ) {
-        super.renderText(font, mouseX, mouseY, matrix, bufferSource)
-        font.drawInBatch(
-            text,
-            mouseX.toFloat() + 13,
-            mouseY.toFloat() + 1,
-            Tempad.ORANGE.value,
-            true,
-            matrix,
-            bufferSource,
-            Font.DisplayMode.NORMAL,
-            0,
-            15728880
-        )
+        super.extractText(graphics, font, x, y)
+        graphics.text(font, text, x + 13, y + 1, Tempad.ORANGE.value, true)
     }
 
-    override fun renderImage(font: Font, x: Int, y: Int, guiGraphics: GuiGraphics) {
-        super.renderImage(font, x, y, guiGraphics)
-        PlayerFaceRenderer.draw(guiGraphics, playerTexture, x, y, 9)
+    override fun extractImage(
+        font: Font,
+        x: Int,
+        y: Int,
+        w: Int,
+        h: Int,
+        graphics: GuiGraphicsExtractor,
+    ) {
+        super.extractImage(font, x, y, w, h, graphics)
+        val playerExtract = playerTexture.get()
+        PlayerFaceExtractor.extractRenderState(graphics, playerExtract.playerSkin(), x, y, 9)
     }
 }

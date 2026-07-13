@@ -7,14 +7,17 @@ import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
 import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketType
 import earth.terrarium.tempad.tempadId
-import earth.terrarium.tempad.api.context.ContextHolder
-import earth.terrarium.tempad.common.data.OrganizationMethod
+import earth.terrarium.tempad.api.access.ItemAccessAddress
+import earth.terrarium.tempad.common.registries.ModComponents
 import earth.terrarium.tempad.common.registries.defaultApp
 import earth.terrarium.tempad.common.registries.defaultMacro
+import earth.terrarium.tempad.common.utils.commit
+import earth.terrarium.tempad.common.utils.exchange
+import earth.terrarium.tempad.common.utils.transfer
 import net.minecraft.resources.Identifier
 
 class SaveSettingsPacket(
-    val ctxData: ContextHolder<*>,
+    val ctxData: ItemAccessAddress<*>,
     val defaultApp: Identifier,
     val defaultMacro: Identifier
 ) :
@@ -23,16 +26,20 @@ class SaveSettingsPacket(
         val type = CodecPacketType.Server.create(
             "save_settings".tempadId,
             ObjectByteCodec.create(
-                ContextHolder.codec.fieldOf(SaveSettingsPacket::ctxData),
-                ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(SaveSettingsPacket::defaultApp),
-                ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(SaveSettingsPacket::defaultMacro),
+                ItemAccessAddress.codec.fieldOf(SaveSettingsPacket::ctxData),
+                ExtraByteCodecs.IDENTIFIER.fieldOf(SaveSettingsPacket::defaultApp),
+                ExtraByteCodecs.IDENTIFIER.fieldOf(SaveSettingsPacket::defaultMacro),
                 ::SaveSettingsPacket
             ),
             NetworkHandle.handle { packet, player ->
-                val ctx = packet.ctxData.getCtx(player)
-                val tempad = ctx.stack
-                tempad.defaultApp = packet.defaultApp
-                tempad.defaultMacro = packet.defaultMacro
+                val access = packet.ctxData.getAccess(player)
+                transfer {
+                    access.exchange(
+                        access.resource.with(ModComponents.defaultApp, packet.defaultApp).with(ModComponents.defaultMacro, packet.defaultMacro),
+                        access.amount
+                    )
+                    commit()
+                }
             }
         )
     }

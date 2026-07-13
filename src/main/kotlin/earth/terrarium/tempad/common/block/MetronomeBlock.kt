@@ -34,28 +34,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
 
 class MetronomeBlock() : BaseEntityBlock(Properties.of().strength(3.0f, 1200f)) {
-    override fun <T : BlockEntity?> getTicker(
+    override fun <T : BlockEntity> getTicker(
         level: Level,
         state: BlockState,
-        blockEntityType: BlockEntityType<T>,
+        type: BlockEntityType<T>
     ): BlockEntityTicker<T>? {
-        return createTickerHelper(blockEntityType, ModBlocks.metronomeBe) { _, _, _, block -> block.tick() }
-    }
-
-    override fun onRemove(
-        state: BlockState,
-        level: Level,
-        pos: BlockPos,
-        newState: BlockState,
-        movedByPiston: Boolean,
-    ) {
-        val blockEntity = level.getBlockEntity(pos)
-        if (blockEntity is MetronomeBe && !level.isClientSide && blockEntity.bootTime == 0) {
-            safeLet(metronomeEnergy, blockEntity.owner?.id) { energy, owner ->
-                blockEntity.initialChronons = energy.remove(owner, GlobalPos(level.dimension(), pos))
-            }
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston)
+        return createTickerHelper(type, ModBlocks.metronomeBe) { _, _, _, block -> block.tick() }
     }
 
     override fun onPlace(
@@ -87,7 +71,7 @@ class MetronomeBlock() : BaseEntityBlock(Properties.of().strength(3.0f, 1200f)) 
                 if (blockEntity.owner == null) {
                     blockEntity.owner = player.gameProfile
                 } else if (blockEntity.locked && blockEntity.owner?.id != player.gameProfile.id) {
-                    player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+                    player.sendOverlayMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value))
                     return InteractionResult.FAIL
                 }
                 blockEntity.openMenu(opener)

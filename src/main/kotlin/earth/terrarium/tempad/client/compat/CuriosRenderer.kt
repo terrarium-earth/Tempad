@@ -8,51 +8,63 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.model.HumanoidModel
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.entity.LivingEntityRenderer
+import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.RenderLayerParent
-import net.minecraft.client.renderer.entity.player.PlayerRenderer
-import net.minecraft.client.renderer.texture.OverlayTexture
+import net.minecraft.client.renderer.entity.player.AvatarRenderer
+import net.minecraft.client.renderer.entity.state.EntityRenderState
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState
+import net.minecraft.world.entity.Display
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.HumanoidArm
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import top.theillusivec4.curios.api.SlotContext
-import top.theillusivec4.curios.api.client.CuriosRendererRegistry
 import top.theillusivec4.curios.api.client.ICurioRenderer
 
 fun initCuriosCompat() {
-    CuriosRendererRegistry.register(ModItems.tempad) { CuriosRenderer }
-    CuriosRendererRegistry.register(ModItems.cardWallet) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.tempad) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.cardWallet) { CuriosRenderer }
 
-    CuriosRendererRegistry.register(ModItems.chrononBattery) { CuriosRenderer }
-    CuriosRendererRegistry.register(ModItems.chrononCell) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.chrononBattery) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.chrononCell) { CuriosRenderer }
 
-    CuriosRendererRegistry.register(ModItems.chronometer) { CuriosRenderer }
-    CuriosRendererRegistry.register(ModItems.chrononGenerator) { CuriosRenderer }
-    CuriosRendererRegistry.register(ModItems.creativeChronometer) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.chronometer) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.chrononGenerator) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.creativeChronometer) { CuriosRenderer }
 
-    CuriosRendererRegistry.register(ModItems.screeningDevice) { CuriosRenderer }
-    CuriosRendererRegistry.register(ModItems.locationBroadcaster) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.screeningDevice) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.locationBroadcaster) { CuriosRenderer }
 }
 
-object CuriosRenderer: ICurioRenderer {
-    override fun <T : LivingEntity, M : EntityModel<T>> render(
+object CuriosRenderer : ICurioRenderer {
+    override fun <S : LivingEntityRenderState, M : EntityModel<in S>> render(
         stack: ItemStack,
         slotContext: SlotContext,
         matrixStack: PoseStack,
-        renderLayerParent: RenderLayerParent<T, M>,
-        renderTypeBuffer: MultiBufferSource,
-        light: Int,
-        limbSwing: Float,
-        limbSwingAmount: Float,
-        partialTicks: Float,
-        ageInTicks: Float,
-        netHeadYaw: Float,
-        headPitch: Float,
+        submitNodeCollector: SubmitNodeCollector,
+        packedLight: Int,
+        renderState: S,
+        renderLayerParent: RenderLayerParent<S, M>,
+        context: EntityRendererProvider.Context,
+        yRotation: Float,
+        xRotation: Float
     ) {
-        if (renderLayerParent is PlayerRenderer) {
-            val render = Minecraft.getInstance().entityRenderDispatcher.getRenderer<LivingEntity?>(slotContext.entity) as? PlayerRenderer ?: return
+        super.render(
+            stack,
+            slotContext,
+            matrixStack,
+            submitNodeCollector,
+            packedLight,
+            renderState,
+            renderLayerParent,
+            context,
+            yRotation,
+            xRotation
+        )
+        if (renderLayerParent is AvatarRenderer<*>) {
+            val render = Minecraft.getInstance().entityRenderDispatcher.getRenderer(slotContext.entity) as? AvatarRenderer ?: return
             val model = render.getModel() as? HumanoidModel<*> ?: return
             matrixStack.pushPose()
             if (slotContext.identifier != "bracelet") {
@@ -100,8 +112,12 @@ object CuriosRenderer: ICurioRenderer {
                 }
             }
 
-            Minecraft.getInstance().itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, slotContext.entity.level(), 0)
+            val state = Display.ItemDisplay.ItemRenderState(stack, ItemDisplayContext.FIXED)
+
+            // TODO: How the heck do you render an item now?
+            // Minecraft.getInstance().itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, matrixStack, renderTypeBuffer, slotContext.entity.level(), 0)
             matrixStack.popPose()
+
         }
     }
 }

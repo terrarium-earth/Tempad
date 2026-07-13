@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.utils.*
@@ -13,7 +14,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.portal.DimensionTransition
+import net.minecraft.world.level.portal.TeleportTransition
 import net.minecraft.world.phys.Vec3
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -31,7 +32,7 @@ class HistoricalLocation(val marker: Identifier?, val dimension: ResourceKey<Lev
         }
 
         val BYTE_CODEC: ByteCodec<HistoricalLocation> = ObjectByteCodec.create(
-            ExtraByteCodecs.RESOURCE_LOCATION.nullableFieldOf { it.marker },
+            ExtraByteCodecs.IDENTIFIER.nullableFieldOf { it.marker },
             ExtraByteCodecs.DIMENSION.fieldOf { it.dimension },
             VEC3_BYTE_CODEC.fieldOf { it.pos },
             ::HistoricalLocation
@@ -86,7 +87,8 @@ class TravelHistoryAttachment(val history: MutableMap<Date, HistoricalLocation>)
             if (historicalTime >= time) ids.add(historicalTime)
         }
         for (id in ids) history.remove(id)
-        entity.changeDimension(DimensionTransition(entity.server[historicalLocation.dimension]!!, historicalLocation.pos, Vec3.ZERO, 0.0F, 0.0F, false, DimensionTransition.DO_NOTHING))
+        // TODO Check entities ridable params
+        entity.teleport(TeleportTransition(Tempad.server[historicalLocation.dimension]!!, historicalLocation.pos, Vec3.ZERO, 0.0F, 0.0F, TeleportTransition.DO_NOTHING))
     }
 
     val relevantHistory get() = history.filter { it.value.marker != null }

@@ -2,23 +2,23 @@ package earth.terrarium.tempad.common.location_handlers
 
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.context.ContextRegistry
+import earth.terrarium.tempad.api.access.ItemAccessRegistry
 import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
-import earth.terrarium.tempad.api.tva_device.ChrononHandler
-import earth.terrarium.tempad.api.tva_device.UpgradeHandler
+import earth.terrarium.tempad.api.capabilities.upgrades.UpgradeHandler
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.registries.walletContents
 import earth.terrarium.tempad.tempadId
 import net.minecraft.server.level.ServerPlayer
+import net.neoforged.neoforge.transfer.energy.EnergyHandler
 import java.util.*
 
 class WalletLocationHandler(
     val playerProfile: GameProfile,
-    val upgrades: UpgradeHandler,
-    val chronons: ChrononHandler,
+    val upgrades: UpgradeHandler?,
+    val chronons: EnergyHandler?,
 ) : LocationHandler {
     companion object {
         val id = "wallet".tempadId
@@ -50,12 +50,13 @@ class WalletLocationHandler(
     override val locations: Map<UUID, NamedGlobalVec3>
         get() {
             val player = player ?: return emptyMap()
-            val wallet = ContextRegistry.locate(player) {
+            val wallet = ItemAccessRegistry.locate(player) {
                 it.`is`(ModItems.cardWallet) && it.walletContents.nonEmptyItems().count() > 0
             } ?: return emptyMap()
+            val access = wallet.getAccess(player)
 
             val values = mutableMapOf<UUID, NamedGlobalVec3>()
-            val walletContents = wallet.stack.walletContents
+            val walletContents = access.resource.walletContents
             for (i in 0 until walletContents.slots) {
                 walletContents.getStackInSlot(i).portalTarget?.get(upgrades, chronons)
                     ?.let { values.put(ids[i], it) }

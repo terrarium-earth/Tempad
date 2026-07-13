@@ -1,15 +1,14 @@
 package earth.terrarium.tempad.api.event
 
 import com.mojang.authlib.GameProfile
-import earth.terrarium.tempad.api.context.SyncableContext
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.bus.api.ICancellableEvent
 import net.neoforged.neoforge.event.entity.EntityEvent
+import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 
 open class TimedoorEvent(timedoor: TimedoorEntity) : EntityEvent(timedoor) {
@@ -31,7 +30,7 @@ open class TimedoorEvent(timedoor: TimedoorEntity) : EntityEvent(timedoor) {
     }
 
     class OpenWithItem(
-        timedoor: TimedoorEntity, opener: GameProfile, val tempadCtx: SyncableContext<*>,
+        timedoor: TimedoorEntity, opener: GameProfile, val tempadCtx: ItemAccess,
         provider: Identifier?, locationId: UUID?,
     ) : Open(timedoor, provider, locationId, opener)
 

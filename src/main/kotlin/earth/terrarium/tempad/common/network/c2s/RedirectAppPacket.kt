@@ -7,13 +7,14 @@ import com.teamresourceful.resourcefullib.common.network.defaults.CodecPacketTyp
 import earth.terrarium.tempad.tempadId
 import earth.terrarium.tempad.api.app.AppHolder
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.api.context.ContextHolder
+import earth.terrarium.tempad.api.access.ItemAccessAddress
 import earth.terrarium.tempad.common.registries.*
+import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 
 data class RedirectAppPacket(val appHolder: AppHolder) : Packet<RedirectAppPacket> {
-    constructor(appID: Identifier, data: ContextHolder<*>, isStationary: Boolean) : this(AppHolder(appID, data, isStationary))
+    constructor(appID: Identifier, data: ItemAccessAddress<*>, isStationary: Boolean) : this(AppHolder(appID, data, isStationary))
 
     companion object {
         val type = CodecPacketType.Server.create(

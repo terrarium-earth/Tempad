@@ -1,12 +1,14 @@
 package earth.terrarium.tempad.client.screen.tempad
 
 import com.teamresourceful.resourcefullib.common.utils.TriState
+import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.buttons.Button
 import earth.terrarium.olympus.client.components.compound.LayoutWidget
+import earth.terrarium.olympus.client.components.string.TextWidget
 import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.client.TempadUI
-import earth.terrarium.tempad.client.screen.TickingScreen
+import earth.terrarium.tempad.client.screen.ExtendedWikiScreen
 import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen.Companion.createChapters
 import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen.Companion.defaultDescription
 import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen.Companion.initTableOfContents
@@ -23,8 +25,8 @@ import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.item.ItemStack
 
-class KnowledgeAppScreen(menu: ModMenus.KnowledgeMenu, inv: Inventory, title: Component) : AbstractTempadScreen<ModMenus.KnowledgeMenu>(null, menu, inv, title), TickingScreen {
-    var titleWidget: StringWidget? = null
+class KnowledgeAppScreen(menu: ModMenus.KnowledgeMenu, inv: Inventory, title: Component) : AbstractTempadScreen<ModMenus.KnowledgeMenu>(null, menu, inv, title), ExtendedWikiScreen {
+    var titleWidget: TextWidget? = null
     var currentTitle: Component = ModLang.overview
         set(value) {
             field = value
@@ -66,10 +68,12 @@ class KnowledgeAppScreen(menu: ModMenus.KnowledgeMenu, inv: Inventory, title: Co
 
         initTableOfContents(chapters, tableOfContents, selected, {title -> currentTitle = title}, {text -> description = text})
 
-        titleWidget = addRenderableWidget(StringWidget(localLeft + 78, localTop + 22, 116, 10, currentTitle, font).apply {
-            setColor(Tempad.ORANGE.value)
-            alignLeft()
-        })
+        titleWidget = addRenderableWidget(Widgets.text(currentTitle, { it ->
+            it.withPosition(localLeft + 78, localTop + 22)
+            it.withSize(116, 10)
+            it.withColor(Tempad.ORANGE)
+            it.withLeftAlignment()
+        }))
 
         descriptionWidget = addRenderableWidget(LayoutWidget(ClearableGridLayout())).apply {
             withPosition(localLeft + 78, localTop + 32)
@@ -91,9 +95,9 @@ class KnowledgeAppScreen(menu: ModMenus.KnowledgeMenu, inv: Inventory, title: Co
 
     override fun handleComponentClicked(style: Style?): Boolean {
         if (style == null) return false
-        if (style.clickEvent?.action == ClickEvent.Action.CHANGE_PAGE) {
-            val item = style.clickEvent?.let { Identifier.tryParse(it.value) } ?: return false
-            val stack = BuiltInRegistries.ITEM.get(item).defaultInstance
+        if (style.clickEvent?.action() == ClickEvent.Action.CUSTOM) {
+            val item = (style.clickEvent as? ClickEvent.Custom)?.id() ?: return false
+            val stack = ItemStack(BuiltInRegistries.ITEM.get(item).get())
             currentTitle = stack.hoverName
             selected.value = stack
             for ((_, entries) in chapters) {

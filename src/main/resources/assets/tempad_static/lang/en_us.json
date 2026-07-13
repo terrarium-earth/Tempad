@@ -36,6 +36,7 @@
   "block.tempad.workstation_child": "Workstation Terminal",
 
   "category.tempad": "Tempad",
+  "key.category.tempad.tempad": "Tempad",
   "key.tempad.shortcut": "Open Tempad screen",
 
   "screen.tempad.marker": "Marker",

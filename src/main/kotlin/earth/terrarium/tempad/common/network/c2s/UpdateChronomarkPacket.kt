@@ -18,6 +18,7 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
 
 data class UpdateChronomarkPacket(val blockPos: BlockPos, val color: Color, val name: String, val access: Identifier, val locked: Boolean, val yOffset: Float, val angle: Int): Packet<UpdateChronomarkPacket> {
@@ -29,7 +30,7 @@ data class UpdateChronomarkPacket(val blockPos: BlockPos, val color: Color, val 
             ExtraByteCodecs.BLOCK_POS.fieldOf(UpdateChronomarkPacket::blockPos),
             Color.BYTE_CODEC.fieldOf(UpdateChronomarkPacket::color),
             ByteCodec.STRING.fieldOf(UpdateChronomarkPacket::name),
-            ExtraByteCodecs.RESOURCE_LOCATION.fieldOf(UpdateChronomarkPacket::access),
+            ExtraByteCodecs.IDENTIFIER.fieldOf(UpdateChronomarkPacket::access),
             ByteCodec.BOOLEAN.fieldOf(UpdateChronomarkPacket::locked),
             ByteCodec.FLOAT.fieldOf(UpdateChronomarkPacket::yOffset),
             ByteCodec.INT.fieldOf(UpdateChronomarkPacket::angle),
@@ -38,7 +39,7 @@ data class UpdateChronomarkPacket(val blockPos: BlockPos, val color: Color, val 
 
         override fun onReceive(packet: UpdateChronomarkPacket, player: Player) {
             (player.level().getBlockEntity(packet.blockPos) as? ChronomarkBE)?.let {
-                if(!player.mayInteract(player.level(), packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
+                if(!player.mayInteract(player.level() as ServerLevel, packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
 
                 it.color = packet.color
                 it.posName = Component.literal(packet.name)

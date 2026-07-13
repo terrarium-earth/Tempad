@@ -5,11 +5,10 @@ import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.api.app.TempadApp
-import earth.terrarium.tempad.api.context.ContextHolder
-import earth.terrarium.tempad.api.context.SyncableContext
+import earth.terrarium.tempad.api.capabilities.chronons
+import earth.terrarium.tempad.api.capabilities.upgrades
+import earth.terrarium.tempad.api.access.ItemAccessAddress
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.upgrades
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.registries.ModMenus.TeleportMenu
 import earth.terrarium.tempad.common.registries.owner
@@ -23,7 +22,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-data class TeleportApp(val ctx: SyncableContext<*>): TempadApp<TeleportData> {
+data class TeleportApp(val ctx: ItemAccessAddress<*>): TempadApp<TeleportData> {
     override fun createMenu(pContainerId: Int, inventory: Inventory, player: Player): AbstractContainerMenu {
         return TeleportMenu(
             pContainerId,
@@ -35,30 +34,31 @@ data class TeleportApp(val ctx: SyncableContext<*>): TempadApp<TeleportData> {
     override fun getDisplayName(): Component = Component.translatable("app.tempad.teleport")
 
     override fun createContent(player: ServerPlayer): TeleportData {
-        val profile = ctx.stack.owner ?: player.gameProfile
-        return TeleportData(TempadLocations[profile, ctx.stack.upgrades!!, ctx.stack.chronons!!], player.pinnedPosition, ctx.holder)
+        val access = ctx.getAccess(player)
+        val profile = access.resource.owner ?: player.gameProfile
+        return TeleportData(TempadLocations[profile, access.upgrades!!, access.chronons!!], player.pinnedPosition, ctx)
     }
 
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class TeleportData(val locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ContextHolder<*>): AppContent<TeleportData>(ctx, false, codec) {
-    constructor(locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, fav: Optional<FavoriteLocationAttachment>, ctx: ContextHolder<*>): this(locations, fav.getOrNull(), ctx)
+class TeleportData(val locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ItemAccessAddress<*>): AppContent<TeleportData>(ctx, false, codec) {
+    constructor(locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, fav: Optional<FavoriteLocationAttachment>, ctx: ItemAccessAddress<*>): this(locations, fav.getOrNull(), ctx)
     companion object {
         val codec: ByteCodec<TeleportData> = ObjectByteCodec.create(
             ByteCodec.mapOf(
-                ExtraByteCodecs.RESOURCE_LOCATION,
+                ExtraByteCodecs.IDENTIFIER,
                 ByteCodec.mapOf(
                     ByteCodec.UUID,
                     NamedGlobalVec3.BYTE_CODEC
                 )
             ).fieldOf { it.locations },
             ObjectByteCodec.create(
-                ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.providerId },
+                ExtraByteCodecs.IDENTIFIER.fieldOf { it.providerId },
                 ByteCodec.UUID.fieldOf { it.locationId },
                 ::FavoriteLocationAttachment
             ).optionalFieldOf { Optional.ofNullable(it.favoriteLocation) },
-            ContextHolder.codec.fieldOf { it.ctx },
+            ItemAccessAddress.codec.fieldOf { it.ctx },
             ::TeleportData
         )
     }

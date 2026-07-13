@@ -1,13 +1,13 @@
 package earth.terrarium.tempad.api.locations
 
 import com.mojang.authlib.GameProfile
-import earth.terrarium.tempad.api.context.ItemContext
-import earth.terrarium.tempad.api.tva_device.ChrononHandler
-import earth.terrarium.tempad.api.tva_device.UpgradeHandler
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.api.capabilities.chronons
+import earth.terrarium.tempad.api.capabilities.upgrades
+import earth.terrarium.tempad.api.capabilities.upgrades.UpgradeHandler
 import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.player.Player
+import net.neoforged.neoforge.transfer.access.ItemAccess
+import net.neoforged.neoforge.transfer.energy.EnergyHandler
 import java.util.*
 
 interface LocationHandler {
@@ -20,7 +20,7 @@ interface LocationHandler {
     fun getSerializable(locationId: UUID): LocationGetter?
 }
 
-typealias LocationProvider = (GameProfile, UpgradeHandler, ChrononHandler) -> LocationHandler
+typealias LocationProvider = (GameProfile, UpgradeHandler?, EnergyHandler?) -> LocationHandler
 
 object TempadLocations {
     val registry: Map<Identifier, LocationProvider>
@@ -43,17 +43,17 @@ object TempadLocations {
     operator fun get(id: Identifier): LocationProvider? = registry[id]
 
     @JvmStatic
-    operator fun get(player: GameProfile, upgrades: UpgradeHandler, chronons: ChrononHandler, id: Identifier): LocationHandler? =
+    operator fun get(player: GameProfile, upgrades: UpgradeHandler, chronons: EnergyHandler, id: Identifier): LocationHandler? =
         registry[id]?.let { it(player, upgrades, chronons) }
 
-    operator fun get(player: Player, ctx: ItemContext, id: Identifier): LocationHandler? =
-        registry[id]?.let { it(player.gameProfile, ctx.stack.upgrades!!, ctx.stack.chronons!!) }
+    operator fun get(player: Player, ctx: ItemAccess, id: Identifier): LocationHandler? =
+        registry[id]?.let { it(player.gameProfile, ctx.upgrades, ctx.chronons) }
 
     @JvmStatic
-    operator fun get(player: GameProfile, upgrades: UpgradeHandler, chronons: ChrononHandler): Map<Identifier, Map<UUID, NamedGlobalVec3>> =
+    operator fun get(player: GameProfile, upgrades: UpgradeHandler, chronons: EnergyHandler): Map<Identifier, Map<UUID, NamedGlobalVec3>> =
         registry.mapValues { it.value(player, upgrades, chronons).locations }
 
     @JvmStatic
-    operator fun get(player: Player, ctx: ItemContext): Map<Identifier, Map<UUID, NamedGlobalVec3>> =
-        registry.mapValues { it.value(player.gameProfile, ctx.stack.upgrades!!, ctx.stack.chronons!!).locations }
+    operator fun get(player: Player, ctx: ItemAccess): Map<Identifier, Map<UUID, NamedGlobalVec3>> =
+        registry.mapValues { it.value(player.gameProfile, ctx.upgrades, ctx.chronons).locations }
 }

@@ -15,7 +15,7 @@ data class InstalledUpgradesComponent(val upgrades: List<Identifier>): TooltipCo
         }
 
         val byteCodec = ObjectByteCodec.create(
-            ExtraByteCodecs.RESOURCE_LOCATION.listOf().fieldOf { it.upgrades },
+            ExtraByteCodecs.IDENTIFIER.listOf().fieldOf { it.upgrades },
             ::InstalledUpgradesComponent
         )
     }

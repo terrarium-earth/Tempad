@@ -8,8 +8,7 @@ import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.tva_device.ChrononHandler
-import earth.terrarium.tempad.api.tva_device.UpgradeHandler
+import earth.terrarium.tempad.api.capabilities.upgrades.UpgradeHandler
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_BYTE_CODEC
 import net.minecraft.ChatFormatting
 import net.minecraft.core.UUIDUtil
@@ -17,16 +16,17 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.Identifier
+import net.minecraft.core.component.DataComponentGetter
 import net.minecraft.util.ExtraCodecs
-import net.minecraft.world.inventory.tooltip.TooltipComponent
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.component.TooltipProvider
+import net.neoforged.neoforge.transfer.energy.EnergyHandler
 import java.util.*
 import java.util.function.Consumer
 
 sealed interface LocationGetter {
-    fun get(upgrades: UpgradeHandler, energy: ChrononHandler): NamedGlobalVec3?
+    fun get(upgrades: UpgradeHandler?, energy: EnergyHandler?): NamedGlobalVec3?
 
     companion object {
         val codec: Codec<LocationGetter> = Codec.either(DirectLocation.codec, IndirectLocation.codec).xmap(
@@ -64,12 +64,13 @@ data class DirectLocation(val location: NamedGlobalVec3) : LocationGetter, Toolt
         val byteCodec: ByteCodec<DirectLocation> = NamedGlobalVec3.BYTE_CODEC.map(::DirectLocation) { it.location }
     }
 
-    override fun get(upgrades: UpgradeHandler, energy: ChrononHandler): NamedGlobalVec3 = location
+    override fun get(upgrades: UpgradeHandler?, energy: EnergyHandler?): NamedGlobalVec3 = location
 
     override fun addToTooltip(
         context: Item.TooltipContext,
-        tooltipAdder: Consumer<Component?>,
+        tooltipAdder: Consumer<Component>,
         tooltipFlag: TooltipFlag,
+        getter: DataComponentGetter
     ) {
         tooltipAdder.accept(MutableComponent.create(location.name.contents).withColor(Tempad.ORANGE.value))
         tooltipAdder.accept(location.dimensionText.withStyle(ChatFormatting.GRAY))
@@ -82,7 +83,7 @@ data class DirectLocation(val location: NamedGlobalVec3) : LocationGetter, Toolt
 data class IndirectLocation(val accessor: GameProfile, val info: Component, val provider: Identifier, val id: UUID) : LocationGetter, TooltipProvider {
     companion object {
         val codec: Codec<IndirectLocation> = RecordCodecBuilder.create { it.group(
-            ExtraCodecs.GAME_PROFILE.fieldOf("accessor").forGetter(IndirectLocation::accessor),
+            ExtraCodecs.AUTHLIB_GAME_PROFILE.fieldOf("accessor").forGetter(IndirectLocation::accessor),
             ComponentSerialization.CODEC.fieldOf("info").forGetter(IndirectLocation::info),
             Identifier.CODEC.fieldOf("provider").forGetter(IndirectLocation::provider),
             UUIDUtil.CODEC.fieldOf("id").forGetter(IndirectLocation::id),
@@ -91,20 +92,21 @@ data class IndirectLocation(val accessor: GameProfile, val info: Component, val 
         val byteCodec: ByteCodec<IndirectLocation> = ObjectByteCodec.create(
             GAME_PROFILE_BYTE_CODEC.fieldOf { it.accessor },
             ExtraByteCodecs.COMPONENT.fieldOf { it.info },
-            ExtraByteCodecs.RESOURCE_LOCATION.fieldOf { it.provider },
+            ExtraByteCodecs.IDENTIFIER.fieldOf { it.provider },
             ByteCodec.UUID.fieldOf { it.id },
             ::IndirectLocation,
         )
     }
 
-    override fun get(upgrades: UpgradeHandler, energy: ChrononHandler): NamedGlobalVec3? {
+    override fun get(upgrades: UpgradeHandler?, energy: EnergyHandler?): NamedGlobalVec3? {
         return TempadLocations[provider]?.invoke(accessor, upgrades, energy)?.get(id)
     }
 
     override fun addToTooltip(
         context: Item.TooltipContext,
-        tooltipAdder: Consumer<Component?>,
+        tooltipAdder: Consumer<Component>,
         tooltipFlag: TooltipFlag,
+        getter: DataComponentGetter,
     ) {
         tooltipAdder.accept(info)
         tooltipAdder.accept(Component.translatable("item.tempad.location_card.created_by", Component.literal(accessor.name).withStyle(

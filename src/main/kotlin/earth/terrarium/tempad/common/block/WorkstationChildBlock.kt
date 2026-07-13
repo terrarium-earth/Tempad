@@ -1,18 +1,20 @@
 package earth.terrarium.tempad.common.block
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.access.ItemAccessAddress
 import earth.terrarium.tempad.api.app.AppRegistry
-import earth.terrarium.tempad.api.context.WorkstationContext
+import earth.terrarium.tempad.api.access.WorkstationItemAccess
 import earth.terrarium.tempad.common.registries.ModApps
 import earth.terrarium.tempad.common.registries.ModBlocks
+import earth.terrarium.tempad.common.registries.ModItemAccess
 import earth.terrarium.tempad.common.registries.defaultApp
 import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.utils.get
+import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionResult
@@ -22,12 +24,14 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.LevelReader
+import net.minecraft.world.level.ScheduledTickAccess
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.redstone.Orientation
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.shapes.CollisionContext
@@ -76,39 +80,41 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         if (level.isClientSide) return InteractionResult.SUCCESS
         val storagePos = getPos(state, pos)
         val storageBE = level.getBlockEntity(storagePos) as? WorkstationBE ?: return InteractionResult.PASS
-        val ctx = WorkstationContext(player, storagePos)
+        val ctx = ItemAccessAddress(ModItemAccess.block, storagePos)
 
-        val stack = storageBE.inventory[0]
+        val stack = storageBE.inventory.stack(0)
         if (stack.isEmpty) return InteractionResult.PASS
 
         if (storageBE.owner == null) {
             storageBE.owner = player.gameProfile
         } else if (stack.locked && storageBE.owner?.id != player.gameProfile.id) {
-            player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
+            player.sendOverlayMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value))
             return InteractionResult.FAIL
         }
 
-        (AppRegistry[stack.defaultApp, ctx, true]
-            ?: AppRegistry[ModApps.portalSetup, ctx, true])!!.openMenu(player as ServerPlayer)
+        (AppRegistry[stack.defaultApp, player, ctx, true]
+            ?: AppRegistry[ModApps.portalSetup, player, ctx, true])!!.openMenu(player as ServerPlayer)
         return InteractionResult.SUCCESS
     }
 
-    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
+    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
         builder.add(BlockStateProperties.HORIZONTAL_FACING).add(BlockStateProperties.TRIGGERED)
     }
 
     override fun updateShape(
         state: BlockState,
-        facing: Direction,
-        facingState: BlockState,
-        level: LevelAccessor,
-        currentPos: BlockPos,
+        level: LevelReader,
+        ticks: ScheduledTickAccess,
         neighborPos: BlockPos,
+        facing: Direction,
+        neighbourPos: BlockPos,
+        facingState: BlockState,
+        random: RandomSource
     ): BlockState {
         return if (facing == relativeDir(state) && facingState.block == Blocks.AIR) {
             Blocks.AIR.defaultBlockState()
         } else {
-            super.updateShape(state, facing, facingState, level, currentPos, neighborPos)
+            super.updateShape(state, level, ticks, neighborPos, facing, neighbourPos, facingState, random)
         }
     }
 
@@ -142,8 +148,8 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
         level: Level,
         pos: BlockPos,
         block: Block,
-        fromPos: BlockPos,
-        isMoving: Boolean,
+        orientation: Orientation?,
+        isMoving: Boolean
     ) {
         val ogBlock = getPos(state, pos)
         val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above()) || level.hasNeighborSignal(ogBlock)
@@ -170,11 +176,11 @@ class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
     }
 
     override fun getCloneItemStack(
-        state: BlockState,
-        target: HitResult,
         level: LevelReader,
         pos: BlockPos,
-        player: Player,
+        state: BlockState,
+        includeData: Boolean,
+        player: Player
     ): ItemStack {
         return ItemStack(ModBlocks.workstation)
     }

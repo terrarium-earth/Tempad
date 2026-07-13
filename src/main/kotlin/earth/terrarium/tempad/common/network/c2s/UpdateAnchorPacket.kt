@@ -19,6 +19,7 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
 
 data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name: String, val access: Boolean, val locked: Boolean): Packet<UpdateAnchorPacket> {
@@ -37,7 +38,7 @@ data class UpdateAnchorPacket(val blockPos: BlockPos, val color: Color, val name
 
         override fun onReceive(packet: UpdateAnchorPacket, player: Player) {
             (player.level().getBlockEntity(packet.blockPos) as? TimedoorMarkerBE)?.let {
-                if(!player.mayInteract(player.level(), packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
+                if(!player.mayInteract(player.level() as ServerLevel, packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
 
                 it.color = packet.color
                 it.posName = Component.literal(packet.name)

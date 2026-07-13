@@ -1,10 +1,10 @@
 package earth.terrarium.tempad.common.block
 
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.api.capabilities.upgrades
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.api.locations.LocationGetter
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.upgrades
+import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.owner
@@ -14,40 +14,42 @@ import earth.terrarium.tempad.common.utils.save
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtOps
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
 import net.minecraft.world.phys.AABB
+import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler
 import java.util.UUID
+import kotlin.jvm.optionals.getOrNull
 
 class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.timedoorProjectorBE, pos, state) {
     var timedoorId: UUID? = null
-    var chrononContent: Int = 0
     var portalTarget: LocationGetter? = null
+    var chronons: SimpleEnergyHandler = SimpleEnergyHandler(CommonConfigCache.RudimentaryTempad.capacity)
 
-    override fun saveAdditional(
-        tag: CompoundTag,
-        registries: HolderLookup.Provider,
-    ) {
-        super.saveAdditional(tag, registries)
-        tag.putInt("Chronons", chrononContent)
-        portalTarget?.let { tag.save(LocationGetter.codec, "PortalTarget", it) } ?: run { tag.remove("PortalTarget") }
+    override fun saveAdditional(output: ValueOutput) {
+        super.saveAdditional(output)
+        output.putInt("Chronons", chronons.amountAsInt)
+        portalTarget?.let { output.store("PortalTarget", LocationGetter.codec, it) } ?: run { output.discard("PortalTarget") }
     }
 
-    override fun loadAdditional(
-        tag: CompoundTag,
-        registries: HolderLookup.Provider,
-    ) {
-        super.loadAdditional(tag, registries)
-        chrononContent = tag.getInt("Chronons")
-        portalTarget = tag.load(LocationGetter.codec, "PortalTarget")
+    override fun loadAdditional(input: ValueInput) {
+        super.loadAdditional(input)
+        chronons.set(input.getIntOr("Chronons", 0))
+        portalTarget = input.read("PortalTarget", LocationGetter.codec).getOrNull()
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
-        return CompoundTag().apply { saveAdditional(this, registries) }
+        return CompoundTag().apply {
+            putInt("Chronons", chronons.capacityAsInt)
+            portalTarget?.let { put("PortalTarget", LocationGetter.codec.encode(it, NbtOps.INSTANCE, CompoundTag()).result().orElse(CompoundTag())) }
+        }
     }
 
     override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
@@ -74,6 +76,6 @@ class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBloc
     }
 
     fun List<ServerPlayer>.error(msg: Component) {
-        forEach { it.displayClientMessage(msg, true) }
+        forEach { it.sendSystemMessage(msg, true) }
     }
 }

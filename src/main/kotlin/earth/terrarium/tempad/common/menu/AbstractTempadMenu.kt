@@ -18,7 +18,7 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
     }
 
     val ctxHolder = appContent.ctx
-    val ctx = ctxHolder.getCtx(inventory.player)
+    val ctx = ctxHolder.getAccess(inventory.player)
 
     constructor(id: Int, inventory: Inventory, type: MenuType<*>?, locations: Optional<T>) : this(id, inventory, type, locations.orElseThrow())
 

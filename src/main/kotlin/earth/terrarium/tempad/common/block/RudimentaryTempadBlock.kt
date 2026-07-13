@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.BlockPlaceContext
@@ -27,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.redstone.Orientation
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
@@ -79,7 +79,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
         return mutableListOf(
             ModItems.timedoorProjector.stack {
                 (params.getParameter(LootContextParams.BLOCK_ENTITY) as? RudimentaryTempadBE)?.let {
-                    chrononContent = it.chrononContent
+                    chrononContent = it.chronons.amountAsInt
                     portalTarget = it.portalTarget
                 }
             }
@@ -94,12 +94,12 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
         player: Player,
         hand: InteractionHand,
         result: BlockHitResult,
-    ): ItemInteractionResult {
+    ): InteractionResult {
         if (stack.item == ModItems.locationCard && stack.portalTarget != null) {
             if (level.isClientSide) {
-                return ItemInteractionResult.SUCCESS
+                return InteractionResult.SUCCESS
             }
-            val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return ItemInteractionResult.FAIL
+            val blockEntity = level.getBlockEntity(pos) as? RudimentaryTempadBE ?: return InteractionResult.FAIL
             if (blockEntity.portalTarget != null) {
                 player.inventory.placeItemBackInInventory(ModItems.locationCard.stack {
                     portalTarget = blockEntity.portalTarget
@@ -108,7 +108,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
             blockEntity.portalTarget = stack.portalTarget
             level.setBlock(pos, state.setValue(hasCardProperty, true), 2)
             stack.shrink(1)
-            return ItemInteractionResult.SUCCESS
+            return InteractionResult.SUCCESS
         }
         return super.useItemOn(stack, state, level, pos, player, hand, result)
     }
@@ -150,8 +150,8 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
         level: Level,
         pos: BlockPos,
         block: Block,
-        fromPos: BlockPos,
-        isMoving: Boolean,
+        orientation: Orientation?,
+        isMoving: Boolean
     ) {
         val neighborPowered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above())
         val currentlyPowered = state.getValue(BlockStateProperties.TRIGGERED)
@@ -171,7 +171,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
 
     override fun codec(): MapCodec<out BaseEntityBlock> = codec
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = RudimentaryTempadBE(pos, state)
-    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
+    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
         builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.TRIGGERED, hasCardProperty)
     }
 

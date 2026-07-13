@@ -1,41 +1,47 @@
 package earth.terrarium.tempad.common.items
 
-import earth.terrarium.tempad.api.ActionType
-import earth.terrarium.tempad.api.context.ContextRegistry
-import earth.terrarium.tempad.api.tva_device.chronons
-import earth.terrarium.tempad.api.tva_device.hasRoom
-import earth.terrarium.tempad.api.tva_device.move
-import earth.terrarium.tempad.common.config.CommonConfig
+import earth.terrarium.tempad.api.capabilities.chronons
+import earth.terrarium.tempad.api.access.ItemAccessRegistry
 import earth.terrarium.tempad.common.registries.ModTags
+import earth.terrarium.tempad.common.utils.access
+import earth.terrarium.tempad.common.utils.commit
 import earth.terrarium.tempad.common.utils.contains
-import earth.terrarium.tempad.common.utils.contents
-import earth.terrarium.tempad.common.utils.safeLet
+import earth.terrarium.tempad.common.utils.hasRoom
+import earth.terrarium.tempad.common.utils.insert
+import earth.terrarium.tempad.common.utils.transfer
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.inventory.ClickAction
-import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.Level
 
 class ChronometerItem(val rate: () -> Int, val amount: () -> Int) : CapacitorItem() {
-    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
-        super.inventoryTick(stack, level, entity, slot, selected)
-        if (level.isClientSide || entity !is Player || entity.tickCount % rate() != 0 || isClashing(entity, stack)) return // 1 mb every 1.2 seconds, 1 bucket per day
-        stack.chronons?.insert(amount(), ActionType.Execute)
-        if (stack.chronons != null) {
-            distribute(entity, stack)
-        } else {
-            ContextRegistry.locate(entity) { isChargable(stack, it) }?.let {
-                it.stack.chronons?.insert(amount(), ActionType.Execute)
+    override fun inventoryTick(
+        stack: ItemStack,
+        level: ServerLevel,
+        entity: Entity,
+        slot: EquipmentSlot?,
+    ) {
+        super.inventoryTick(stack, level, entity, slot)
+        if (level.isClientSide || entity !is Player || entity.tickCount % rate() != 0 || isClashing(entity, stack)) return
+        transfer {
+            stack.access.chronons?.insert(amount())
+            if (stack.access.chronons != null) {
+                distribute(entity, stack)
+            } else {
+                ItemAccessRegistry.locate(entity) { isChargable(stack, it) }?.let {
+                    it.getAccess(entity).chronons?.insert(amount())
+                }
             }
+            commit()
         }
     }
 
     override fun isChargable(source: ItemStack, target: ItemStack): Boolean {
-        return target.chronons?.hasRoom == true && target !== source && target !in ModTags.chargeBlacklist
+        return target.access.chronons?.hasRoom == true && target !== source && target !in ModTags.chargeBlacklist
     }
 
     fun isClashing(player: Player, stack: ItemStack): Boolean {
-        return ContextRegistry.locate(player) { it in ModTags.chrononGens && it !== stack } != null
+        return ItemAccessRegistry.locate(player) { it in ModTags.chrononGens && it !== stack } != null
     }
 }
