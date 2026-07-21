@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.common.utils
 
 import earth.terrarium.tempad.Tempad
+import net.minecraft.core.component.DataComponentGetter
 import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
@@ -69,7 +70,7 @@ class ReadOnlyDelegate<T : Any>(private val key: DataComponentType<T>, private v
     override operator fun getValue(thisRef: DataComponentHolder, property: KProperty<*>): T = thisRef[key] ?: default
 }
 
-operator fun <T : Any> DataComponentType<T>.getValue(thisRef: DataComponentHolder, property: KProperty<*>): T? =
+operator fun <T : Any> DataComponentType<T>.getValue(thisRef: DataComponentGetter, property: KProperty<*>): T? =
     thisRef[this]
 
 operator fun <T : Any> DataComponentType<T>.setValue(

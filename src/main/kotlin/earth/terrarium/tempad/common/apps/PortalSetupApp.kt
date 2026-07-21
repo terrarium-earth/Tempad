@@ -37,21 +37,30 @@ data class PortalSetupApp(val ctx: ItemAccessAddress<*>): TempadApp<PortalSetupD
     override fun createContent(player: ServerPlayer): PortalSetupData {
         val access = ctx.getAccess(player)
         val profile = access.resource.owner ?: player.gameProfile
-        return PortalSetupData(TempadLocations[profile, access.upgrades!!, access.chronons!!], player.pinnedPosition, ctx)
+        return PortalSetupData(
+            TempadLocations[profile, access.upgrades!!, access.chronons!!].mapValues { (id, values) ->
+                val handler = TempadLocations[profile, access.upgrades!!, access.chronons!!, id]
+                return@mapValues values.mapValues { (uuid, position) ->
+                    CostAndLocation((handler?.calculateCost(player.level(), player.blockPosition(), uuid) ?: 0), position)
+                }
+            },
+            player.pinnedPosition,
+            ctx
+        )
     }
 
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class PortalSetupData(val locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ItemAccessAddress<*>): AppContent<PortalSetupData>(ctx, true, codec) {
-    constructor(locations: Map<Identifier, Map<UUID, NamedGlobalVec3>>, fav: Optional<FavoriteLocationAttachment>, ctx: ItemAccessAddress<*>): this(locations, fav.getOrNull(), ctx)
+class PortalSetupData(val locations: Map<Identifier, Map<UUID, CostAndLocation>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ItemAccessAddress<*>): AppContent<PortalSetupData>(ctx, true, codec) {
+    constructor(locations: Map<Identifier, Map<UUID, CostAndLocation>>, fav: Optional<FavoriteLocationAttachment>, ctx: ItemAccessAddress<*>): this(locations, fav.getOrNull(), ctx)
     companion object {
         val codec: ByteCodec<PortalSetupData> = ObjectByteCodec.create(
             ByteCodec.mapOf(
                 ExtraByteCodecs.IDENTIFIER,
                 ByteCodec.mapOf(
                     ByteCodec.UUID,
-                    NamedGlobalVec3.BYTE_CODEC
+                    CostAndLocation.byteCodec
                 )
             ).fieldOf { it.locations },
             ObjectByteCodec.create(

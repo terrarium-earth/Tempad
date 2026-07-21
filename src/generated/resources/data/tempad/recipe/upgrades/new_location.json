@@ -1,8 +1,0 @@
-{
-  "type": "tempad:upgrade",
-  "download_time": 80,
-  "item": {
-    "item": "tempad:new_location_upgrade"
-  },
-  "upgrade": "tempad:new_location"
-}

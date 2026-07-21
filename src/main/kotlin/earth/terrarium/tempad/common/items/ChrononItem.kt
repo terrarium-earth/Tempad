@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.transfer.transaction.Transaction
 import java.util.*
 
-abstract class ChrononItem: Item(Properties().stacksTo(1)) {
+abstract class ChrononItem(props: Properties): Item(props) {
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
         return Optional.ofNullable(stack.access.chronons?.tooltip)
     }

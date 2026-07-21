@@ -1,6 +1,7 @@
 package earth.terrarium.tempad.client.screen.tempad
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.systems.RenderSystem
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.buttons.Button
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
@@ -12,9 +13,11 @@ import earth.terrarium.tempad.api.capabilities.chronons
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.state.MutableState
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import earth.terrarium.tempad.common.network.c2s.RedirectAppPacket
 import earth.terrarium.tempad.common.network.c2s.UpdateTempadLockPacket
 import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.utils.appSprites
+import earth.terrarium.tempad.common.utils.appTitle
 import earth.terrarium.tempad.common.utils.sendToServer
 import earth.terrarium.tempad.tempadId
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -52,22 +55,27 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
         this.localLeft = this.leftPos + 30
 
         val appList = Widgets.list {
-                it.withSize(16, 116)
-                it.withPosition(localLeft - 16, localTop + 1)
-                it.withTexture(TempadUI.element.get(true, false))
-                it.withOverscrollY(2)
-                it.withOverscrollX(2)
-                it.withContentMargin(1)
+            it.withSize(18, 118)
+            it.withPosition(localLeft - 17, localTop)
+            it.withTexture(TempadUI.element.get(true, false))
+            it.withOverscrollY(1)
+            it.withOverscrollX(1)
+            it.withContentMargin(1)
             it.withContents {
+                it.withGap(1)
                 for ((id, app) in AppRegistry.getAll(
                     menu.ctxHolder,
                     menu.appContent.isStationary
                 )) {
                     it.withChild(Widgets.button {
                         it.active = app.isEnabled(minecraft.player!!)
-                        it.withSize(16, 16)
+                        it.withSize(14, 14)
                         it.withTexture(TempadUI.element)
-                        it.withRenderer(WidgetRenderers.sprite<Button>(id.appSprites()))
+                        it.withRenderer(WidgetRenderers.sprite(id.appSprites()))
+                        it.withTooltip(id.appTitle())
+                        it.withCallback {
+                            RedirectAppPacket(id, menu.ctxHolder, menu.appContent.isStationary).sendToServer()
+                        }
                     })
                 }
             }
@@ -91,7 +99,8 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
                 it.withTexture(TempadUI.steelButton)
                 it.withRenderer(
                     locked.withRenderer {
-                        WidgetRenderers.icon<Button>(if(it) TempadUI.lockIcon else TempadUI.unlockIcon).withColor(MinecraftColors.BLACK).withCentered(7, 7)
+                        WidgetRenderers.icon<Button>(if (it) TempadUI.lockIcon else TempadUI.unlockIcon)
+                            .withColor(MinecraftColors.BLACK).withCentered(7, 7)
                     }
                 )
                 it.withCallback {
@@ -103,6 +112,15 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
     }
 
     override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, a)
+        graphics.blitSprite(
+            RenderPipelines.GUI_TEXTURED,
+            background,
+            this.leftPos,
+            this.topPos,
+            this.imageWidth,
+            this.imageHeight
+        )
         appSprite?.let {
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, it, this.leftPos + 30, this.topPos + 20, 198, 118)
         }
@@ -122,12 +140,17 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
             )
 
             if (mouseX >= localLeft + 207 && mouseX <= localLeft + 211 && mouseY >= localTop + 32 && mouseY <= localTop + 86) {
-                graphics.setTooltipForNextFrame(Component.literal("${it.amountAsInt}/${it.capacityAsInt}"), mouseX, mouseY)
+                graphics.setTooltipForNextFrame(
+                    Component.literal("${it.amountAsInt}/${it.capacityAsInt}"),
+                    mouseX,
+                    mouseY
+                )
             }
         }
     }
 
     override fun extractLabels(graphics: GuiGraphicsExtractor, xm: Int, ym: Int) {
+        super.extractLabels(graphics, xm, ym)
         graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, Tempad.ORANGE.value, true)
         minecraft.level?.let { level ->
             val time = level.defaultClockTime % 24000

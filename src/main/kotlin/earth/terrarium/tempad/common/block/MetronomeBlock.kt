@@ -33,7 +33,7 @@ import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
 
-class MetronomeBlock() : BaseEntityBlock(Properties.of().strength(3.0f, 1200f)) {
+class MetronomeBlock(props: Properties) : BaseEntityBlock(props) {
     override fun <T : BlockEntity> getTicker(
         level: Level,
         state: BlockState,
@@ -90,7 +90,7 @@ class MetronomeBlock() : BaseEntityBlock(Properties.of().strength(3.0f, 1200f)) 
         )
     }
 
-    override fun codec(): MapCodec<out BaseEntityBlock?> = simpleCodec { MetronomeBlock() }
+    override fun codec(): MapCodec<out BaseEntityBlock?> = simpleCodec(::MetronomeBlock)
 
     override fun newBlockEntity(pos: BlockPos, state: BlockState, ): BlockEntity = MetronomeBe(pos, state)
 

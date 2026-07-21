@@ -52,7 +52,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.transfer.item.ItemResource
 import kotlin.jvm.optionals.getOrNull
 
-class WorkstationBlock : BaseEntityBlock(Properties.of().noOcclusion().strength(3.0f, 1200f)) {
+class WorkstationBlock(props: Properties) : BaseEntityBlock(props) {
     val codec: MapCodec<out BaseEntityBlock?> = simpleCodec { ModBlocks.workstation }
     companion object {
         val HAS_TAPE: BooleanProperty = BooleanProperty.create("has_tape")

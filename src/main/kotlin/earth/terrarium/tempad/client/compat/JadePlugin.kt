@@ -1,4 +1,4 @@
-package earth.terrarium.tempad.common.compat
+package earth.terrarium.tempad.client.compat
 
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.Tempad
@@ -47,14 +47,14 @@ object TimedoorComponentProvider : IEntityComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: EntityAccessor, config: IPluginConfig) {
         val timedoorEntity = accessor.entity as? TimedoorEntity ?: return
-        if (timedoorEntity.closingTime - TimedoorEntity.ANIMATION_LENGTH > 0) {
+        if (timedoorEntity.maxLifeTime - TimedoorEntity.ANIMATION_LENGTH > 0) {
             tooltip.add(
                 Component.translatable(
                     "jade.tempad.will_close",
-                    ((timedoorEntity.closingTime) / 20f).roundToInt()
+                    ((timedoorEntity.maxLifeTime) / 20f).roundToInt()
                 )
             )
-        } else if (timedoorEntity.closingTime != -1) {
+        } else if (timedoorEntity.maxLifeTime != -1) {
             tooltip.add(Component.translatable("jade.tempad.closing"))
         }
         tooltip.add(
@@ -65,6 +65,12 @@ object TimedoorComponentProvider : IEntityComponentProvider {
                     timedoorEntity.targetPos.y().toInt()
                 }, ${timedoorEntity.targetPos.z().toInt()}"
             )
+        )
+        tooltip.add(
+            Component.translatable(
+                "jade.tempad.instability",
+                timedoorEntity.instability
+            ).append("%")
         )
     }
 }
@@ -229,12 +235,11 @@ object ChrononComponentProvider : IBlockComponentProvider {
 
 class ChrononElement(val chronons: EnergyHandler) : Element() {
     init {
-        size(74, 13)
+        width = 74
+        height = 13
     }
 
-    override fun getNarration(): Component? {
-        TODO("Not yet implemented")
-    }
+    override fun getNarration(): Component = Component.translatable("jade.tempad.chronon", chronons.amountAsInt, chronons.capacityAsInt)
 
     override fun extractRenderState(
         graphics: GuiGraphicsExtractor,
@@ -245,8 +250,8 @@ class ChrononElement(val chronons: EnergyHandler) : Element() {
         TempadUI.renderEnergyBar(
             graphics,
             Minecraft.getInstance().font,
-            x,
-            y,
+            getX(),
+            getY(),
             chronons.amountAsInt,
             chronons.capacityAsInt
         )

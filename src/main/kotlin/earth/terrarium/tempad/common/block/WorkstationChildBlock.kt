@@ -38,7 +38,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class WorkstationChildBlock : Block(Properties.of().strength(3.0f, 1200f)) {
+class WorkstationChildBlock(props: Properties) : Block(props) {
     companion object {
         val NORTH_SHAPE: VoxelShape = Shapes.or(
             box(1.0, 0.0, 0.0, 15.0, 2.0, 16.0),

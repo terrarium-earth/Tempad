@@ -27,7 +27,7 @@ import net.neoforged.neoforge.transfer.item.ItemResource
 import net.neoforged.neoforge.transfer.transaction.Transaction
 import java.util.function.Consumer
 
-class WalletItem() : Item(Properties().stacksTo(1)) {
+class WalletItem(props: Properties) : Item(props) {
 
     override fun use(
         level: Level,

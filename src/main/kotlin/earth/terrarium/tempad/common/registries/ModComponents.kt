@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
+import com.teamresourceful.resourcefullib.common.codecs.CodecExtras
 import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
@@ -20,6 +21,8 @@ import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ItemContainerContents
@@ -47,21 +50,21 @@ object ModComponents {
 
     val chrononContent: DataComponentType<Int> by registry.register("chronon_content") {
         componentType {
-            serialize = Codec.INT
+            serialize = CodecExtras.NON_NEGATIVE_INT
             networkSerialize = ByteCodec.INT
         }
     }
 
     val chrononContentTempad: DataComponentType<Int> by registry.register("chronon_content_tempad") {
         componentType {
-            serialize = Codec.INT
+            serialize = CodecExtras.NON_NEGATIVE_INT
             networkSerialize = ByteCodec.INT
         }
     }
 
     val chrononContentTimeTwister : DataComponentType<Int> by registry.register("chronon_content_time_twister") {
         componentType {
-            serialize = Codec.INT
+            serialize = CodecExtras.NON_NEGATIVE_INT
             networkSerialize = ByteCodec.INT
         }
     }
@@ -156,6 +159,20 @@ object ModComponents {
             networkSerialize = ByteCodec.BOOLEAN
         }
     }
+
+    val serialPrefix: DataComponentType<String> by registry.register("serial_prefix") {
+        componentType {
+            serialize = Codec.STRING
+            networkSerialize = ByteCodec.STRING
+        }
+    }
+
+    val serialNumber: DataComponentType<Component> by registry.register("serial_number") {
+        componentType {
+            serialize = ComponentSerialization.CODEC
+            networkSerialize = ExtraByteCodecs.COMPONENT
+        }
+    }
 }
 
 var MutableDataComponentHolder.defaultApp by ModComponents.defaultApp.withDefault(ModApps.teleport)
@@ -205,3 +222,9 @@ var MutableDataComponentHolder.accessId by ModComponents.accessId
 
 var MutableDataComponentHolder.locked by ModComponents.locked.withDefault(true)
 val DataComponentHolder.locked by ModComponents.locked.readOnly(true)
+
+var MutableDataComponentHolder.serialNumber by ModComponents.serialNumber
+val DataComponentHolder.serialNumber by ModComponents.serialNumber
+
+var MutableDataComponentHolder.serialPrefix by ModComponents.serialPrefix.withDefault("TERRA")
+val DataComponentHolder.serialPrefix by ModComponents.serialPrefix.readOnly("TERRA")

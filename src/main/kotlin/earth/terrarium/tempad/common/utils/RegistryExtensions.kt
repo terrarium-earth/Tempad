@@ -22,6 +22,7 @@ import net.neoforged.neoforge.capabilities.IBlockCapabilityProvider
 import net.neoforged.neoforge.capabilities.ICapabilityProvider
 import net.neoforged.neoforge.capabilities.ItemCapability
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
+import net.neoforged.neoforge.registries.datamaps.DataMapType
 import javax.naming.OperationNotSupportedException
 
 fun <T : Any> attachmentType(supplier: () -> T, builder: AttachmentType.Builder<T>.() -> Unit): AttachmentType<T> {
@@ -49,6 +50,7 @@ var <T : Any> DataComponentType.Builder<T>.networkSerialize: ByteCodec<T>
     set(value) {
         this.networkSynchronized(StreamCodecByteCodec.toRegistry(value))
     }
+
 
 fun creativeModeTab(builder: CreativeModeTab.Builder.() -> Unit): CreativeModeTab {
     return CreativeModeTab.builder().apply(builder).build()

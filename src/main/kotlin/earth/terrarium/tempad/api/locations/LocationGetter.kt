@@ -10,13 +10,18 @@ import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.capabilities.upgrades.UpgradeHandler
 import earth.terrarium.tempad.common.utils.GAME_PROFILE_BYTE_CODEC
+import earth.terrarium.tempad.common.utils.nullableFieldOf
+import earth.terrarium.tempad.common.utils.nullableGetter
 import net.minecraft.ChatFormatting
+import net.minecraft.core.BlockPos
+import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.Identifier
 import net.minecraft.core.component.DataComponentGetter
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.TooltipFlag
@@ -27,6 +32,8 @@ import java.util.function.Consumer
 
 sealed interface LocationGetter {
     fun get(upgrades: UpgradeHandler?, energy: EnergyHandler?): NamedGlobalVec3?
+
+    fun calculateCost(fromLevel: ServerLevel, fromPos: BlockPos, upgrades: UpgradeHandler?, energy: EnergyHandler?): Int
 
     companion object {
         val codec: Codec<LocationGetter> = Codec.either(DirectLocation.codec, IndirectLocation.codec).xmap(
@@ -57,14 +64,27 @@ sealed interface LocationGetter {
     }
 }
 
-data class DirectLocation(val location: NamedGlobalVec3) : LocationGetter, TooltipProvider {
+data class DirectLocation(val location: NamedGlobalVec3, val cost: Int? = null) : LocationGetter, TooltipProvider {
     companion object {
-        val codec: Codec<DirectLocation> = NamedGlobalVec3.CODEC.xmap(::DirectLocation) { it.location }.codec()
+        val codec: Codec<DirectLocation> = RecordCodecBuilder.create { it.group(
+            NamedGlobalVec3.CODEC.fieldOf("location").forGetter(DirectLocation::location),
+            ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("cost").nullableGetter(DirectLocation::cost)
+        ).apply(it, ::DirectLocation) }
 
-        val byteCodec: ByteCodec<DirectLocation> = NamedGlobalVec3.BYTE_CODEC.map(::DirectLocation) { it.location }
+        val byteCodec: ByteCodec<DirectLocation> = ObjectByteCodec.create(
+            NamedGlobalVec3.BYTE_CODEC.fieldOf { it.location },
+            ByteCodec.INT.nullableFieldOf { it.cost },
+            ::DirectLocation
+        )
     }
 
+    constructor(location: NamedGlobalVec3, cost: Optional<Int>) : this(location, cost.orElse(null))
+
     override fun get(upgrades: UpgradeHandler?, energy: EnergyHandler?): NamedGlobalVec3 = location
+
+    override fun calculateCost(fromLevel: ServerLevel, fromPos: BlockPos, upgrades: UpgradeHandler?, energy: EnergyHandler?): Int {
+        return cost ?: calculateTimedoorCost(fromLevel, fromPos, location)
+    }
 
     override fun addToTooltip(
         context: Item.TooltipContext,
@@ -100,6 +120,15 @@ data class IndirectLocation(val accessor: GameProfile, val info: Component, val 
 
     override fun get(upgrades: UpgradeHandler?, energy: EnergyHandler?): NamedGlobalVec3? {
         return TempadLocations[provider]?.invoke(accessor, upgrades, energy)?.get(id)
+    }
+
+    override fun calculateCost(
+        fromLevel: ServerLevel,
+        fromPos: BlockPos,
+        upgrades: UpgradeHandler?,
+        energy: EnergyHandler?,
+    ): Int {
+        return TempadLocations[provider]?.invoke(accessor, upgrades, energy)?.calculateCost(fromLevel, fromPos, id) ?: -1
     }
 
     override fun addToTooltip(

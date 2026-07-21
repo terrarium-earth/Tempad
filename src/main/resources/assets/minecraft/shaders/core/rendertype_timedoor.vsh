@@ -1,4 +1,7 @@
-#version 150
+#version 330
+
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <minecraft:projection.glsl>
 
 in vec3 Position;
 in vec4 Color;
@@ -8,8 +11,6 @@ in ivec2 UV2;
 out vec4 color;
 out vec2 uv;
 out vec2 uv2;
-
-uniform mat4 ModelViewMat, ProjMat;
 
 void main() {
     color = Color;

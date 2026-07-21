@@ -32,6 +32,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.level.TicketType
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.AnimationState
 import net.minecraft.world.entity.Entity
@@ -50,6 +51,7 @@ import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
+import kotlin.math.max
 
 class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
@@ -62,8 +64,9 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
         private val sizingAccessor =
             createDataKey<TimedoorEntity, TimedoorPlacementSettings>(ModEntities.sizingSerializer)
-        private val glitchingAccessor = createDataKey<TimedoorEntity, Boolean>(EntityDataSerializers.BOOLEAN)
+        private val instabilityAccessor = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
         private val offsetAccessor = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
+        private val glitchStackAccessor = createDataKey<TimedoorEntity, List<Int>>(ModEntities.glitchStackSerializer)
 
         //feedback
         val fail = Component.translatable("entity.tempad.timedoor.fail")
@@ -81,6 +84,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             provider: Identifier?,
             locationId: UUID?,
             location: NamedGlobalVec3,
+            cost: Int,
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
             val stack = access.stack
@@ -97,11 +101,11 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             if (event.isCanceled) return event.errorMessage ?: fail
             else logTimedoorOpen(player.name.string, location, timedoor)
 
-            var success = false
+            var success = player.isCreative
             if (!player.isCreative) {
                 transfer {
                     success =
-                        access.chronons?.extract(CommonConfig.TimeDoor.costPerDoor) == CommonConfig.TimeDoor.costPerDoor
+                        access.chronons?.extract(cost) == cost
                     if (success) {
                         player.cooldowns.addCooldown(stack, 40)
                         commit()
@@ -122,6 +126,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             provider: Identifier?,
             locationId: UUID?,
             location: NamedGlobalVec3,
+            cost: Int,
             sizing: TimedoorPlacementSettings = DynamicAngledPlacement(),
             onOpen: (TimedoorEntity) -> Unit = {},
         ): Component? {
@@ -134,7 +139,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             timedoor.sizing.placeTimedoor(
                 DoorType.ENTRY,
                 Vec3.atCenterOf(block.blockPos).add(0.0, -1.5, 0.0),
-                block.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180,
+                block.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot(),
                 timedoor
             )
 
@@ -146,7 +151,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             var success = false
             transfer {
                 success =
-                    block.chronons?.extract(CommonConfig.TimeDoor.costPerDoor) == CommonConfig.TimeDoor.costPerDoor
+                    block.chronons?.extract(cost) == cost
                 if (success) commit()
             }
             if (!success) return noChrononsFail
@@ -206,12 +211,18 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     var targetPos by DataDelegate(targetPosAccessor)
     var targetDimension by DataDelegate(targetDimAccessor)
     var color by DataDelegate(colorAccessor)
-    var closingTime by DataDelegate(closingTimeAccessor)
+    var maxLifeTime by DataDelegate(closingTimeAccessor)
     var owner: UUID? = null
-    var glitching: Boolean by DataDelegate(glitchingAccessor)
+    var instability: Int by DataDelegate(instabilityAccessor)
     var animationOffset: Int by DataDelegate(offsetAccessor)
     var linkedPortalId: UUID? = null
     var original: Boolean = true
+    var glitchStack: List<Int> by DataDelegate(glitchStackAccessor)
+
+    val nextGlitchTime get() = glitchStack.filter { it > tickCount }.maxOrNull() ?: 0
+    val currentGlitchTime get() = glitchStack.filter { it <= tickCount }.maxOrNull() ?: 0
+
+    val lifeTime get() = max(0, tickCount - ANIMATION_LENGTH - IDLE_BEFORE_START)
 
     var sizing: TimedoorPlacementSettings
         get() = entityData.get(sizingAccessor)
@@ -239,8 +250,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     private fun canTeleport(entity: Entity, targetLevel: Level): Boolean {
         with(sizing) {
-            return entity !is TimedoorEntity
-                    && isInside(entity)
+            return entity is TimedoorEntity || isInside(entity)
                     && entity !in ModTags.teleportingNotSupport
                     && entity.canTeleport(level(), targetLevel)
                     && !entity.isPassenger
@@ -254,15 +264,16 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         builder.define(targetPosAccessor, Vec3.ZERO)
         builder.define(targetDimAccessor, Level.OVERWORLD)
         builder.define(sizingAccessor, DynamicAngledPlacement())
-        builder.define(glitchingAccessor, false)
+        builder.define(instabilityAccessor, 0)
         builder.define(offsetAccessor, 0)
+        builder.define(glitchStackAccessor, listOf())
     }
 
     override fun readAdditionalSaveData(input: ValueInput) {
         tickCount = input.getIntOr("Age", 0)
-        closingTime = input.getIntOr("ClosingTime", 0)
+        maxLifeTime = input.getIntOr("ClosingTime", 200)
         targetAngle = input.getFloatOr("TargetAngle", 0.0f)
-        glitching = input.getBooleanOr("IsGlitching", false)
+        instability = input.getIntOr("Instability", 0)
         original = input.getBooleanOr("IsOriginal", false)
         linkedPortalId =
             input.getString("LinkedPortalId").getOrNull()?.takeUnless { it.isBlank() }?.let { UUID.fromString(it) }
@@ -275,9 +286,9 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     override fun addAdditionalSaveData(output: ValueOutput) {
         output.putInt("Age", tickCount)
-        output.putInt("ClosingTime", closingTime)
+        output.putInt("ClosingTime", maxLifeTime)
         output.putFloat("TargetAngle", targetAngle)
-        output.putBoolean("IsGlitching", glitching)
+        output.putInt("Instability", instability)
         output.putBoolean("IsOriginal", original)
         output.putString("LinkedPortalId", linkedPortalId.toString())
         output.store("Color", Color.CODEC, color)
@@ -313,11 +324,15 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                     0.0,
                 )
             }
-            return
         }
-        closingTime--
+        if (instability > 0 && nextGlitchTime == 0 && (glitchStack.maxOrNull() ?: 0) < lifeTime) {
+            glitchStack += lifeTime + max((100 - instability) / 2, 10)
+        }
+        if (lifeTime < maxLifeTime && currentGlitchTime > 0 && lifeTime > 0 && (lifeTime == currentGlitchTime)) {
+            playSound(SoundEvents.BEACON_POWER_SELECT, 0.25f, 3f)
+        }
         tryClose()
-        if (tickCount < IDLE_BEFORE_START + ANIMATION_LENGTH || closingTime < ANIMATION_LENGTH) {
+        if (lifeTime !in 1..maxLifeTime) {
             return
         }
         val targetLevel = targetLevel ?: return
@@ -328,6 +343,14 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             targetLevel.chunkSource.addTicketAndLoadWithRadius(TicketType.PORTAL, ChunkPos.containing(pos), 3)
         }
         for (entity in entities) {
+            if (entity is TimedoorEntity) {
+                if (entity !== this && tickCount % 3 == 0) {
+                    this.instability++
+                    this.linkedPortalEntity?.instability = this.instability
+                }
+                continue
+            }
+
             val event = TimedoorEvent.Enter(this, entity).post()
             if (event.isCanceled) continue
 
@@ -375,15 +398,15 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     private fun tryInitReceivingPortal() {
-        if ((closingTime <= 0 && closingTime != -1) || !original) return
+        if ((lifeTime >= maxLifeTime && maxLifeTime != -1) || !original) return
         val targetLevel = targetLevel ?: return
         linkedPortalEntity?.let { return }
         val targetPortal = TimedoorEntity(ModEntities.timedoor, targetLevel)
         targetPortal.linkedPortalId = this.uuid
-        targetPortal.closingTime = this.closingTime
+        targetPortal.maxLifeTime = this.maxLifeTime
         targetPortal.setLocation(selfLocation)
         targetPortal.sizing = this.sizing
-        targetPortal.glitching = this.glitching
+        targetPortal.instability = this.instability
         targetPortal.original = false
         sizing.placeTimedoor(DoorType.EXIT, targetPos, targetAngle + 180f, targetPortal)
         linkedPortalId = targetPortal.uuid
@@ -391,7 +414,26 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     private fun tryClose() {
-        if (closingTime <= 0 && closingTime != -1) {
+        if (instability >= 100 || (lifeTime >= maxLifeTime + ANIMATION_LENGTH + IDLE_BEFORE_START && maxLifeTime != -1)) {
+            if (instability >= 100) {
+                this.playSound(ModSounds.timedoorEnterStereo, 1.0f, 0.5f)
+                this.playSound(SoundEvents.GLASS_BREAK, 2.0f, 1f)
+                this.playSound(SoundEvents.GLASS_BREAK, 2.0f, 0.75f)
+                this.playSound(SoundEvents.GLASS_BREAK, 2.0f, 0.5f)
+                (this.level() as? ServerLevel)?.sendParticles(
+                    DustParticleOptions(color.value, 1.0f),
+                    true,
+                    true,
+                    x,
+                    y + bbHeight / 2.0,
+                    z,
+                    20,
+                    0.2,
+                    0.6,
+                    0.2,
+                    3.0,
+                )
+            }
             TimedoorEvent.Close(this).post()
             this.linkedPortalEntity?.linkedPortalId = null
             this.discard()

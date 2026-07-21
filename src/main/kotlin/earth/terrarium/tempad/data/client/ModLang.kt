@@ -1015,11 +1015,13 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
     }
 
     override fun addTranslations() {
+        /*
         for ((text, value) in KnowledgeScreen().chapters) {
             for ((name, descGetter) in value) {
                 descGetter.invoke(ClearableGridLayout())
             }
         }
+         */
 
         for ((key, value) in entries) {
             add(key, value)
@@ -1134,6 +1136,13 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             it.addSub("new_location", "Open Tempad New Location App")
             it.addSub("travel_timeline", "Open Tempad Travel Timeline App")
         }
+
+        addRoot("jade.tempad", "") {
+            it.addSub("owner", "Owner: %s")
+            it.addSub("chronons", "Chronons: %s out of %s")
+            it.addSub("macro", "Macro: %s")
+            it.addSub("instability", "Instability: %s")
+        }
     }
 
     val Identifier.formatted
@@ -1151,8 +1160,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         add("$this.$key", value)
     }
 
-    fun addRoot(key: String, value: String, entries: (String) -> Unit = {}): String {
-        add(key, value)
+    fun addRoot(key: String, value: String = "", entries: (String) -> Unit = {}): String {
+        if(value.isNotBlank()) add(key, value)
         entries.invoke(key)
         return key
     }

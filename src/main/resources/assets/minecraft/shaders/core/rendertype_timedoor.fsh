@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 const float pixelsPerUnit = 16.0;
 
@@ -16,5 +16,5 @@ void main() {
     float x = 2 * pixelateduv2.x - 1;
     float y = 2 * pixelateduv2.y - 1;
     float alpha = x * x / 3 + y * y / 3;
-    fragColor = vec4(color.rgb, alpha - mod(alpha, 0.07) + 0.1);
+    fragColor = vec4(color.rgb, alpha * color.a - mod(alpha, 0.07) + 0.1);
 }

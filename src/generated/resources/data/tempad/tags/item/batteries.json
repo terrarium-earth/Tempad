@@ -1,8 +1,0 @@
-{
-  "values": [
-    "tempad:chronometer",
-    "tempad:chronon_generator",
-    "tempad:chronon_cell",
-    "tempad:chronon_battery"
-  ]
-}

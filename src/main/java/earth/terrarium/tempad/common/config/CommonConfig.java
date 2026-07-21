@@ -40,6 +40,10 @@ public final class CommonConfig {
     @Comment("Whether or not locations can be saved to the Tempad.")
     public static boolean allowLocationSaving = true;
 
+    @ConfigEntry(id = "require_location_upgrade")
+    @Comment("Whether or not locations can be saved to the Tempad.")
+    public static boolean requireLocationUpgrade = true;
+
     @ConfigEntry(id = "max_history_size")
     @Comment("The maximum amount of locations that the Time Twister will save location history for.")
     public static int maxHistorySize = 512;

@@ -25,7 +25,18 @@ import net.minecraft.world.item.component.TooltipDisplay
 import net.minecraft.world.level.Level
 import java.util.function.Consumer
 
-class TempadItem : ChrononItem() {
+class TempadItem(props: Properties) : ChrononItem(props) {
+    override fun inventoryTick(
+        itemStack: ItemStack,
+        level: ServerLevel,
+        owner: Entity,
+        slot: EquipmentSlot?,
+    ) {
+        super.inventoryTick(itemStack, level, owner, slot)
+        if (itemStack.serialNumber == null) {
+            itemStack.serialNumber = Component.literal("${itemStack.serialPrefix}-${owner.random.nextInt(1000, 10_000)}-${owner.plainTextName.take(4).uppercase()}")
+        }
+    }
 
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         val stack = player.getItemInHand(hand)

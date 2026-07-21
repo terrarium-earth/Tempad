@@ -12,6 +12,7 @@ import earth.terrarium.tempad.api.locations.TempadLocations
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.tempadId
 import net.minecraft.resources.Identifier
+import net.minecraft.server.level.ServerLevel
 import java.util.*
 
 data class OpenTimedoorPacket(val providerId: Identifier, val locationId: UUID, val ctx: ItemAccessAddress<*>) :
@@ -28,9 +29,11 @@ data class OpenTimedoorPacket(val providerId: Identifier, val locationId: UUID, 
                 val (provider, id, ctxHolder) = message
                 if (TempadLocations[provider] == null) return@handle
                 val ctx = message.ctx.getAccess(player)
-                val location = TempadLocations[player, ctx, provider]?.let { it[id] }
+                val handler = TempadLocations[player, ctx, provider]
+                val location = handler?.let { it[id] }
+                val cost = handler?.calculateCost(player.level() as ServerLevel, player.blockPosition(), id) ?: return@handle
                 location?.let {
-                    TimedoorEntity.openTimedoor(player, ctx, provider, id, it)?.let { msg -> player.sendSystemMessage(msg) }
+                    TimedoorEntity.openTimedoor(player, ctx, provider, id, it, cost)?.let { msg -> player.sendSystemMessage(msg) }
                 }
             })
     }

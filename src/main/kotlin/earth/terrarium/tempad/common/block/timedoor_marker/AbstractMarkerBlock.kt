@@ -2,9 +2,11 @@ package earth.terrarium.tempad.common.block.timedoor_marker
 
 import com.teamresourceful.resourcefullib.common.color.ConstantColors
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.location_handlers.AnchorPointsHandler
+import earth.terrarium.tempad.common.location_handlers.DoorPointsHandler
+import earth.terrarium.tempad.common.location_handlers.DoorPointsData
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contains
+import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -20,6 +22,7 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -29,9 +32,10 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.common.Tags
 
-abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
+abstract class AbstractMarkerBlock(props: Properties, val doorPoints: () -> AttachmentType<DoorPointsData>) : BaseEntityBlock(props) {
     companion object {
         val upShape = Shapes.or(
             box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
@@ -84,7 +88,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         if (stack.item === ModItems.locationCard) {
             if (level.isClientSide) return InteractionResult.SUCCESS
             val blockEntity = level.getBlockEntity(pos) as AbstractMarkerBe
-            stack.portalTarget = AnchorPointsHandler(player.gameProfile).getSerializable(blockEntity.id!!)
+            stack.portalTarget = DoorPointsHandler(player.gameProfile).getSerializable(blockEntity.id!!)
             return InteractionResult.SUCCESS_SERVER
         }
 
@@ -151,7 +155,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
 
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, moved: Boolean) {
         if (!level.isClientSide) {
-            safeLet(level.getBlockEntity(pos) as? AbstractMarkerBe, anchorPoints) { blockEntity, points ->
+            safeLet(level.getBlockEntity(pos) as? AbstractMarkerBe, Tempad.server?.overworld()?.get(doorPoints())) { blockEntity, points ->
                 points += blockEntity
             }
         }
@@ -176,4 +180,6 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
     ): VoxelShape {
         return if(state.getValue(BlockStateProperties.UP)) upShape else downShape
     }
+
+    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
 }

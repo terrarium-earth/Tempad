@@ -18,6 +18,7 @@ import earth.terrarium.tempad.client.TempadUI.colored
 import earth.terrarium.tempad.client.screen.tempad.TeleportScreen.Companion.sectionVisibility
 import earth.terrarium.tempad.client.screen.tempad.TeleportScreen.Companion.sortMode
 import earth.terrarium.tempad.client.state.MutableState
+import earth.terrarium.tempad.common.apps.CostAndLocation
 import earth.terrarium.tempad.common.network.c2s.SyncPortalSettingsPacket
 import earth.terrarium.tempad.common.registries.ModMenus
 import earth.terrarium.tempad.common.registries.locked
@@ -48,7 +49,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
 
     private lateinit var locationList: LayoutWidget<ClearableGridLayout>
 
-    private val locations: Map<Identifier, MutableMap<UUID, NamedGlobalVec3>> =
+    private val locations: Map<Identifier, MutableMap<UUID, CostAndLocation>> =
         menu.appContent.locations.mapValues { (_, value) ->
             value.toMutableMap()
         }
@@ -155,8 +156,8 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
 
         for ((category, locations) in sortMode.get().reorganize(locations)) {
             val filtered = locations.filter { (_, _, display) ->
-                display.name.string.contains(search.get(), ignoreCase = true)
-            }.sortedBy { it.third.name.string.lowercase(Locale.ROOT) }
+                display.location.name.string.contains(search.get(), ignoreCase = true)
+            }.sortedBy { it.third.location.name.string.lowercase(Locale.ROOT) }
 
             if (filtered.isEmpty()) continue
 
@@ -193,7 +194,7 @@ class PortalSetupScreen(menu: ModMenus.PortalSetupMenu, inv: Inventory, title: C
                             graphics.fill(ctx.x, ctx.y, ctx.x + ctx.width, ctx.y + ctx.height, 0x3aff6f00.toInt())
                         }
 
-                        WidgetRenderers.text<Button>(display.name)
+                        WidgetRenderers.text<Button>(display.location.name)
                             .withColor(if (isSelected) ConstantColors.black else if (isHovered) Tempad.HIGHLIGHTED_ORANGE else Tempad.ORANGE)
                             .withLeftAlignment()
                             .withPadding(0, 0, 0, 2)

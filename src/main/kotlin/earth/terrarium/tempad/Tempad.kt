@@ -85,8 +85,6 @@ class Tempad(bus: IEventBus) {
 
         val ticketController = TicketController("timedoor".tempadId, null)
 
-        val flag: FeatureFlag = FeatureFlags.REGISTRY.getFlag("required_location_upgrade".tempadId)
-
         val clientRecipes = mutableMapOf<Identifier, NormalCraftingRecipe>()
     }
 
@@ -229,7 +227,8 @@ class Tempad(bus: IEventBus) {
             )
         }
 
-        bus.addListener { event: RecipesReceivedEvent ->
+        // TODO very broken make sure to fix
+        NeoForge.EVENT_BUS.addListener { event: RecipesReceivedEvent ->
             clientRecipes.clear()
             for (recipeHolder in event.recipeMap.byType(RecipeType.CRAFTING)) {
                 val recipe = recipeHolder.value

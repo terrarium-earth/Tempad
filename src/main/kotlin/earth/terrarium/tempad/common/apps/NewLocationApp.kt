@@ -19,7 +19,7 @@ import java.util.*
 data class NewLocationApp(val ctx: ItemAccessAddress<*>, val isStationary: Boolean): TempadApp<NewLocationAppData> {
     override fun isEnabled(player: Player): Boolean {
         val access = ctx.getAccess(player)
-        return CommonConfig.allowLocationSaving && !isStationary && (Tempad.flag !in player.level().enabledFeatures() || access.upgrades?.contains(ModItems.newLocationKey) == true)
+        return CommonConfig.allowLocationSaving && !isStationary && (CommonConfig.requireLocationUpgrade|| access.upgrades?.contains(ModItems.newLocationKey) == true)
     }
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {

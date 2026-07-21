@@ -20,7 +20,7 @@ object ShaderModBridge {
         SHADERS_ENABLED = shadersEnabled
     }
 
-    val shadersEnabled: Boolean
+    val irisEnabled: Boolean
         get() = SHADERS_ENABLED?.let {
             try {
                 it() as Boolean

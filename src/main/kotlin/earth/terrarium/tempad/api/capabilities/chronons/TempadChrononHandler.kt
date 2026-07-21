@@ -6,10 +6,12 @@ import earth.terrarium.tempad.common.registries.chrononContentTimeTwister
 import earth.terrarium.tempad.common.registries.twisterEquipped
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.transfer.access.ItemAccess
+import net.neoforged.neoforge.transfer.energy.ItemAccessEnergyHandler
 import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler
+import net.neoforged.neoforge.transfer.item.ItemResource
 import net.neoforged.neoforge.transfer.transaction.Transaction
 
-class TempadChrononHandler(val access: ItemAccess, val tempadLimit: Int, timeTwisterLimit: Int): SimpleEnergyHandler(tempadLimit + if(access.resource.twisterEquipped) timeTwisterLimit else 0) {
+class TempadChrononHandler(val access: ItemAccess, val tempadLimit: Int, timeTwisterLimit: Int): ItemAccessEnergyHandler(access, ModComponents.chrononContentTempad, tempadLimit + if(access.resource.twisterEquipped) timeTwisterLimit else 0) {
     companion object {
         fun create(stack: ItemAccess, tempadLimit: Int, timeTwisterLimit: Int): TempadChrononHandler? {
             if (tempadLimit + timeTwisterLimit <= 0) return null
@@ -17,25 +19,20 @@ class TempadChrononHandler(val access: ItemAccess, val tempadLimit: Int, timeTwi
         }
     }
 
-    init {
-        this.energy = access.resource.chrononContentTempad + access.resource.chrononContentTimeTwister
+    override fun getAmountFrom(accessResource: ItemResource): Int {
+        return (access.resource.chrononContentTempad + access.resource.chrononContentTimeTwister).coerceIn(0, Int.MAX_VALUE)
     }
 
-    override fun onEnergyChanged(previousAmount: Int) {
+    override fun update(
+        accessResource: ItemResource,
+        newAmount: Int,
+    ): ItemResource {
         // put in tempad first, then time twister
-        val diff = previousAmount - energy
-        if (diff == 0) return
+        val diff = newAmount - amountAsInt
         // get the difference, put it in tempad first
         val tempadDiff = diff.coerceAtMost(tempadLimit - access.resource.chrononContentTempad)
-        Transaction.openRoot().use {
-            access.exchange(
-                access.resource
-                    .with(ModComponents.chrononContentTempad, access.resource.chrononContentTempad + tempadDiff)
-                    .with(ModComponents.chrononContentTimeTwister, access.resource.chrononContentTimeTwister + diff - tempadDiff),
-                1,
-                it
-            )
-            it.commit()
-        }
+        return access.resource
+            .with(ModComponents.chrononContentTempad, access.resource.chrononContentTempad + tempadDiff)
+            .with(ModComponents.chrononContentTimeTwister, access.resource.chrononContentTimeTwister + diff - tempadDiff)
     }
 }

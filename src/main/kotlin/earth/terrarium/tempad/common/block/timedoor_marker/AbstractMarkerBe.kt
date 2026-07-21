@@ -1,9 +1,13 @@
 package earth.terrarium.tempad.common.block.timedoor_marker
 
 import com.mojang.authlib.GameProfile
+import com.teamresourceful.resourcefullib.common.color.Color
+import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.registries.*
+import earth.terrarium.tempad.common.utils.GAME_PROFILE_CODEC
 import earth.terrarium.tempad.common.utils.facingAngle
+import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
@@ -28,6 +32,8 @@ abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state:
         set(value) {
             setData(ModAttachments.name, value)
         }
+    var color: Color = Tempad.ORANGE
+    var owner: GameProfile? = null
 
     open val landingPosition: Vec3 get() {
         val relative = worldPosition.bottomCenter.relative(blockState.getValue(BlockStateProperties.HORIZONTAL_FACING), 1.0)
@@ -46,25 +52,28 @@ abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state:
         state: BlockState,
     ) {
         super.preRemoveSideEffects(pos, state)
-        if (level is ServerLevel) {
-            safeLet(id, anchorPoints) { id, points ->
-                points -= id
-            }
+        val marker = state.block as? AbstractMarkerBlock ?: return
+        safeLet(id, (level as? ServerLevel)?.server?.overworld()?.get(marker.doorPoints())) { id, points ->
+            points -= id
         }
     }
 
     override fun loadAdditional(input: ValueInput) {
         super.loadAdditional(input)
         locked = input.getBooleanOr("Locked", true)
+        color = input.read("Color", Color.CODEC).getOrNull() ?: Tempad.ORANGE
+        owner = input.read("Owner", GAME_PROFILE_CODEC.codec()).getOrNull()
     }
 
     override fun saveAdditional(output: ValueOutput) {
         super.saveAdditional(output)
         output.putBoolean("Locked", locked)
+        output.store("Color", Color.CODEC, color)
+        owner?.let { output.store("Owner", GAME_PROFILE_CODEC.codec(), it) }
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
-        return CompoundTag().apply { putBoolean("Locked", locked) }
+        return saveCustomOnly(registries)
     }
 
     override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {

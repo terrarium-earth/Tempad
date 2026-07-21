@@ -4,6 +4,7 @@ import earth.terrarium.tempad.api.capabilities.chronons
 import earth.terrarium.tempad.api.access.ItemAccessRegistry
 import earth.terrarium.tempad.client.tooltip.ChrononData
 import earth.terrarium.tempad.common.utils.access
+import earth.terrarium.tempad.common.utils.commit
 import earth.terrarium.tempad.common.utils.hasRoom
 import earth.terrarium.tempad.common.utils.insert
 import earth.terrarium.tempad.common.utils.move
@@ -20,7 +21,7 @@ import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 
-class CreativeChronometerItem : Item(Properties().stacksTo(1)) {
+class CreativeChronometerItem(props: Properties) : Item(props) {
     override fun getTooltipImage(stack: ItemStack): Optional<TooltipComponent> {
         return Optional.of(ChrononData.infinite)
     }
@@ -36,9 +37,11 @@ class CreativeChronometerItem : Item(Properties().stacksTo(1)) {
         if (owner !is Player) return
 
         transfer {
-            ItemAccessRegistry.locate(owner) {
+            val access = ItemAccessRegistry.locate(owner) {
                 it.access.chronons?.hasRoom == true && it !== itemStack
-            }?.getAccess(owner)?.chronons?.insert(Int.MAX_VALUE)
+            }?.getAccess(owner)
+            access?.chronons?.insert(Int.MAX_VALUE)
+            commit()
         }
     }
 

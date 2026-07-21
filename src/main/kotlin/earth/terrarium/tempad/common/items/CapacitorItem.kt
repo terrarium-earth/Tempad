@@ -21,7 +21,7 @@ import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.transfer.energy.EnergyHandlerUtil
 import net.neoforged.neoforge.transfer.transaction.Transaction
 
-open class CapacitorItem: ChrononItem() {
+open class CapacitorItem(props: Properties): ChrononItem(props) {
     override fun inventoryTick(
         stack: ItemStack,
         level: ServerLevel,

@@ -11,6 +11,9 @@ import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.registries.walletContents
 import earth.terrarium.tempad.tempadId
+import net.minecraft.core.BlockPos
+import net.minecraft.core.GlobalPos
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.transfer.energy.EnergyHandler
 import java.util.*
@@ -64,6 +67,26 @@ class WalletLocationHandler(
             return values
         }
 
+    override fun calculateCost(
+        fromLevel: ServerLevel,
+        from: BlockPos,
+        to: UUID,
+    ): Int {
+        val player = player ?: return -1
+        val wallet = ItemAccessRegistry.locate(player) {
+            it.`is`(ModItems.cardWallet) && it.walletContents.nonEmptyItems().count() > 0
+        } ?: return -1
+        val access = wallet.getAccess(player)
+
+        val walletContents = access.resource.walletContents
+        for (i in 0 until walletContents.slots) {
+            if (ids[i] == to) {
+                return walletContents.getStackInSlot(i).portalTarget?.calculateCost(fromLevel, from, upgrades, chronons)
+                    ?: -1
+            }
+        }
+        return -1
+    }
 
     override fun minusAssign(locationId: UUID) {
     }

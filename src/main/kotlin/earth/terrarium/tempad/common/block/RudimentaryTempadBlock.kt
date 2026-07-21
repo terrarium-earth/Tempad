@@ -1,7 +1,6 @@
 package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
-import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.chrononContent
 import earth.terrarium.tempad.common.registries.portalTarget
@@ -34,29 +33,29 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.0f)) {
+class RudimentaryTempadBlock(props: Properties) : BaseEntityBlock(props) {
     companion object {
-        val codec: MapCodec<out BaseEntityBlock> = simpleCodec { ModBlocks.timedoorProjector }
+        val codec: MapCodec<out BaseEntityBlock> = simpleCodec(::RudimentaryTempadBlock)
         val hasCardProperty = BooleanProperty.create("has_card")
 
         val base = box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0)
 
-        val west = Shapes.or(
+        val east = Shapes.or(
             base,
             box(0.0, 2.0, 0.0, 8.0, 4.0, 8.0),
         )
 
-        val east = Shapes.or(
+        val west = Shapes.or(
             base,
             box(8.0, 2.0, 8.0, 16.0, 4.0, 16.0),
         )
 
-        val south = Shapes.or(
+        val north = Shapes.or(
             base,
             box(0.0, 2.0, 8.0, 8.0, 4.0, 16.0),
         )
 
-        val north = Shapes.or(
+        val south = Shapes.or(
             base,
             box(8.0, 2.0, 0.0, 16.0, 4.0, 8.0),
         )
@@ -72,18 +71,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
         val hasCard = context.itemInHand.portalTarget != null
-        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection).setValue(hasCardProperty, hasCard)
-    }
-
-    override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
-        return mutableListOf(
-            ModItems.timedoorProjector.stack {
-                (params.getParameter(LootContextParams.BLOCK_ENTITY) as? RudimentaryTempadBE)?.let {
-                    chrononContent = it.chronons.amountAsInt
-                    portalTarget = it.portalTarget
-                }
-            }
-        )
+        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite).setValue(hasCardProperty, hasCard)
     }
 
     override fun useItemOn(
@@ -106,6 +94,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
                 })
             }
             blockEntity.portalTarget = stack.portalTarget
+            blockEntity.setChanged()
             level.setBlock(pos, state.setValue(hasCardProperty, true), 2)
             stack.shrink(1)
             return InteractionResult.SUCCESS
@@ -139,6 +128,7 @@ class RudimentaryTempadBlock : BaseEntityBlock(Properties.of().strength(3.0f, 6.
                 portalTarget = blockEntity.portalTarget
             })
             blockEntity.portalTarget = null
+            blockEntity.setChanged()
             level.setBlock(pos, state.setValue(hasCardProperty, false), 2)
             return InteractionResult.SUCCESS
         }

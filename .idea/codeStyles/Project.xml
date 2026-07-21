@@ -6,6 +6,9 @@
     <JetCodeStyleSettings>
       <option name="ALLOW_TRAILING_COMMA" value="true" />
     </JetCodeStyleSettings>
+    <codeStyleSettings language="Glsl">
+      <option name="SPACE_BEFORE_COLON" value="false" />
+    </codeStyleSettings>
     <codeStyleSettings language="JAVA">
       <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
       <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />

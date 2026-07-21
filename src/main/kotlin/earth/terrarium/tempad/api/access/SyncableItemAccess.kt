@@ -84,7 +84,7 @@ object ItemAccessRegistry {
 
     fun locate(player: Player, predicate: (ItemStack) -> Boolean): ItemAccessAddress<*>? {
         for ((_, locator) in locatorRegistry) {
-            val context = locator(player, predicate)
+            val context = locator(player) { !it.isEmpty && predicate(it) }
             if(context != null) {
                 return context
             }

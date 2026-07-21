@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import java.util.Optional
 
-class MetronomeItem() : BlockItem(ModBlocks.metronome, Properties().stacksTo(1)) {
+class MetronomeItem(props: Properties) : BlockItem(ModBlocks.metronome, props) {
     override fun updateCustomBlockEntityTag(
         pos: BlockPos,
         level: Level,

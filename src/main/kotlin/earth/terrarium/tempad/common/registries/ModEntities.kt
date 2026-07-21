@@ -14,6 +14,7 @@ import earth.terrarium.tempad.common.utils.VEC3_BYTE_CODEC
 import earth.terrarium.tempad.common.utils.entityType
 import earth.terrarium.tempad.common.utils.register
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.syncher.EntityDataSerializer
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
@@ -27,6 +28,7 @@ object ModEntities {
     val vec3Serializer by serializers.register("vec3") { createSerializer(VEC3_BYTE_CODEC) }
     val dimensionKeySerializer by serializers.register("dimension_key") { createSerializer(ExtraByteCodecs.DIMENSION) }
     val sizingSerializer by serializers.register("sizing") { createSerializer(TimedoorPlacementSettings.byteCodec) }
+    val glitchStackSerializer by serializers.register("glitch_stack") { createSerializer<List<Int>>(ByteCodec.INT.listOf()) }
 
     private fun <T : Any> createSerializer(codec: ByteCodec<T>): EntityDataSerializer<T> {
         return EntityDataSerializer.forValueType(StreamCodecByteCodec.to(codec))

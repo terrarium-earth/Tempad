@@ -8,21 +8,24 @@ import earth.terrarium.tempad.api.locations.LocationGetter
 import earth.terrarium.tempad.api.locations.LocationHandler
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
-import earth.terrarium.tempad.common.registries.anchorPoints
+import earth.terrarium.tempad.common.registries.basicDoorPoints
 import earth.terrarium.tempad.common.registries.id
+import earth.terrarium.tempad.common.registries.steelDoorPoints
 import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.tempadId
 import net.minecraft.ChatFormatting
+import net.minecraft.core.BlockPos
 import net.minecraft.core.GlobalPos
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
+import net.minecraft.server.level.ServerLevel
 import java.util.*
 
-class AnchorPointsData(anchors: Map<UUID, GlobalPos>) {
+class DoorPointsData(anchors: Map<UUID, GlobalPos>) {
     companion object {
-        val codec = Codec.unboundedMap(UUIDUtil.STRING_CODEC, GlobalPos.CODEC).xmap<AnchorPointsData>(::AnchorPointsData, AnchorPointsData::anchors)
+        val codec = Codec.unboundedMap(UUIDUtil.STRING_CODEC, GlobalPos.CODEC).xmap<DoorPointsData>(::DoorPointsData, DoorPointsData::anchors)
     }
 
     val anchors = mutableMapOf<UUID, GlobalPos>()
@@ -52,14 +55,25 @@ fun getBlockEntity(pos: GlobalPos): AbstractMarkerBe? {
     return level?.getBlockEntity(pos.pos)?.let { it as? AbstractMarkerBe }
 }
 
-class AnchorPointsHandler(val gameProfile: GameProfile): LocationHandler {
-    override val locations: Map<UUID, NamedGlobalVec3> get() = anchorPoints?.getPostions(gameProfile) ?: mutableMapOf()
+class DoorPointsHandler(val gameProfile: GameProfile): LocationHandler {
+    override val locations: Map<UUID, NamedGlobalVec3> get() = (basicDoorPoints?.getPostions(gameProfile) ?: mutableMapOf()) + (steelDoorPoints?.getPostions(gameProfile) ?: mutableMapOf())
     override fun minusAssign(locationId: UUID) {}
 
     override fun getSerializable(locationId: UUID): LocationGetter? {
         val pos = locations[locationId] ?: return null
         return IndirectLocation(gameProfile, Component.translatable("locations.tempad.anchor_point", MutableComponent.create(pos.name.contents).withStyle(
             ChatFormatting.AQUA)).withStyle(ChatFormatting.GRAY), ID, locationId)
+    }
+
+    override fun calculateCost(
+        fromLevel: ServerLevel,
+        from: BlockPos,
+        to: UUID,
+    ): Int {
+        if (to in (steelDoorPoints?.getPostions(gameProfile) ?: mutableMapOf())) {
+            return (0.75 * super.calculateCost(fromLevel, from, to)).toInt()
+        }
+        return super.calculateCost(fromLevel, from, to)
     }
 
     companion object {

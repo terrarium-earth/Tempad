@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.block
 
+import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.api.capabilities.chronons
 import earth.terrarium.tempad.api.capabilities.upgrades
 import earth.terrarium.tempad.api.sizing.FloorPlacementSettings
@@ -9,12 +10,11 @@ import earth.terrarium.tempad.common.block.WorkstationBlock.Companion.HAS_TAPE
 import earth.terrarium.tempad.common.config.CommonConfig
 import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.ModBlocks
-import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.portalOffset
 import earth.terrarium.tempad.common.registries.selectedPos
+import earth.terrarium.tempad.common.utils.GAME_PROFILE_CODEC
 import earth.terrarium.tempad.common.utils.access
 import earth.terrarium.tempad.common.utils.extract
-import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.stack
 import earth.terrarium.tempad.common.utils.transfer
@@ -33,7 +33,6 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block.UPDATE_ALL
 import net.minecraft.world.level.block.Block.popResource
-import net.minecraft.world.level.block.ShelfBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -46,6 +45,7 @@ import org.joml.component1
 import org.joml.component2
 import org.joml.component3
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.workstationBE, pos, state), ItemOwner {
     val inventory = ItemStacksResourceHandler(1)
@@ -57,6 +57,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
     var activeLeft = false
     var activeRight = false
     var age = 0
+    var owner: GameProfile? = null
 
     val direction: Direction get() = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
 
@@ -79,6 +80,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         tag.putBoolean(RIGHT, activeRight)
         recipe?.let { tag.putString(RECIPE, it.toString()) }
         timedoorId?.let { tag.putString(TIMEDOOR, it.toString()) }
+        owner?.let { tag.store("Owner", GAME_PROFILE_CODEC.codec(), it) }
     }
 
     override fun loadAdditional(tag: ValueInput) {
@@ -90,14 +92,11 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         activeRight = tag.getBooleanOr(RIGHT, false)
         recipe = Identifier.tryParse(tag.getStringOr(RECIPE, ""))
         timedoorId = tag.getStringOr(TIMEDOOR, "").takeUnless { it.isEmpty() }?.let { UUID.fromString(it) }
+        owner = tag.read("Owner", GAME_PROFILE_CODEC.codec()).getOrNull()
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
-        val tag = super.getUpdateTag(registries)
-        // tag.put(INVENTORY, inventory.serialize(registries))
-        tag.putInt(DOWNLOAD_TIME, downloadTime)
-        tag.putInt(MAX_DOWNLOAD_TIME, maxDownloadTime)
-        return tag
+        return saveCustomOnly(registries)
     }
 
     fun activateLeft() {
@@ -143,8 +142,8 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
             else if(timedoor != null && (age) % 20 == 0) {
                 transfer {
                     if (chronons?.extract(CommonConfig.TimeDoor.costToPersist) == CommonConfig.TimeDoor.costToPersist) {
-                        timedoor.closingTime += 20
-                        timedoor.linkedPortalEntity?.let { it.closingTime += 20 }
+                        timedoor.maxLifeTime += 20
+                        timedoor.linkedPortalEntity?.let { it.maxLifeTime += 20 }
                     }
                 }
             }
@@ -158,7 +157,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         safeLet(inventory.getResource(0).selectedPos, upgrades, chronons, owner) { pos, upgrades, chronons, player ->
             pos.get(upgrades, chronons)?.let {
                 val (_, _, provider, id) = pos
-                TimedoorEntity.openTimedoor(player, this, provider, id, it, getSizing()) {
+                TimedoorEntity.openTimedoor(player, this, provider, id, it, pos.calculateCost(level, blockPos, upgrades, chronons), getSizing()) {
                     this.timedoorId = it.uuid
                     it.yRot = inventory.getResource(0).portalOffset.angle.toFloat() + direction.toYRot() + 180
                 }?.let { msg ->

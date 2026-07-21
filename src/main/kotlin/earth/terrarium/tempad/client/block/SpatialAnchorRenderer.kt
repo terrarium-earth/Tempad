@@ -12,12 +12,18 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer
 import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.client.renderer.texture.OverlayTexture
+import net.minecraft.util.ARGB
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
 
-data class SpatialAnchorRenderState(var blockState: BlockState? = null, var colorValue: Int = 0xFFFFFF) : BlockEntityRenderState()
+class SpatialAnchorRenderState : BlockEntityRenderState() {
+    var modelState = BlockModelRenderState()
+}
 
 class SpatialAnchorRenderer(val blockModelResolver: BlockModelResolver) : BlockEntityRenderer<AbstractMarkerBe, SpatialAnchorRenderState> {
+    companion object {
+        val ctx = BlockDisplayContext.create()
+    }
 
     override fun createRenderState(): SpatialAnchorRenderState = SpatialAnchorRenderState()
 
@@ -29,8 +35,12 @@ class SpatialAnchorRenderer(val blockModelResolver: BlockModelResolver) : BlockE
         crumbling: ModelFeatureRenderer.CrumblingOverlay?,
     ) {
         BlockEntityRenderState.extractBase(blockEntity, state, crumbling)
-        state.blockState = blockEntity.blockState
-        state.colorValue = blockEntity.color.value
+        blockModelResolver.update(state.modelState, blockEntity.blockState, ctx)
+        if (state.modelState.tintLayers().size > 0) {
+            state.modelState.tintLayers().set(0, blockEntity.color.value)
+        } else {
+            state.modelState.tintLayers().add(blockEntity.color.value)
+        }
     }
 
     override fun submit(
@@ -39,10 +49,6 @@ class SpatialAnchorRenderer(val blockModelResolver: BlockModelResolver) : BlockE
         collector: SubmitNodeCollector,
         cameraState: CameraRenderState,
     ) {
-        val blockState = state.blockState ?: return
-        val modelState = BlockModelRenderState()
-        blockModelResolver.update(modelState, blockState, BlockDisplayContext.create())
-        modelState.tintLayers().add(state.colorValue)
-        modelState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, -1)
+        state.modelState.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0)
     }
 }

@@ -8,8 +8,9 @@ import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import kotlin.jvm.optionals.getOrNull
 
-class WorkstationItem: BlockItem(ModBlocks.workstation, Properties()) {
+class WorkstationItem(props: Properties): BlockItem(ModBlocks.workstation, props) {
 
     override fun updateCustomBlockEntityTag(
         pos: BlockPos,
@@ -18,7 +19,7 @@ class WorkstationItem: BlockItem(ModBlocks.workstation, Properties()) {
         stack: ItemStack,
         state: BlockState,
     ): Boolean {
-        level.getBlockEntity(pos)?.let { blockEntity ->
+        level.getBlockEntity(pos, ModBlocks.workstationBE).getOrNull()?.let { blockEntity ->
             player?.let { blockEntity.owner = it.gameProfile }
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state)

@@ -1,7 +1,6 @@
 package earth.terrarium.tempad.client
 
 import com.ibm.icu.text.NumberFormat
-import com.teamresourceful.resourcefullibkt.client.pushPop
 import com.teamresourceful.resourcefullibkt.client.scissor
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.base.renderer.WidgetRenderer
@@ -18,13 +17,11 @@ import earth.terrarium.olympus.client.utils.State
 import earth.terrarium.olympus.client.utils.StateUtils
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.tempadId
-import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.WidgetSprites
-import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import java.util.function.Consumer
@@ -37,8 +34,16 @@ object TempadUI {
     val element = WidgetSprites("element/normal".tempadId, "element/disabled".tempadId, "element/hover".tempadId)
     val modal = "list/modal".tempadId
 
-    val toggleEnabled = WidgetSprites("toggle/enabled/normal".tempadId, "toggle/enabled/disabled".tempadId, "toggle/enabled/hover".tempadId)
-    val toggleDisabled = WidgetSprites("toggle/disabled/normal".tempadId, "toggle/disabled/disabled".tempadId, "toggle/disabled/hover".tempadId)
+    val toggleEnabled = WidgetSprites(
+        "toggle/enabled/normal".tempadId,
+        "toggle/enabled/disabled".tempadId,
+        "toggle/enabled/hover".tempadId
+    )
+    val toggleDisabled = WidgetSprites(
+        "toggle/disabled/normal".tempadId,
+        "toggle/disabled/disabled".tempadId,
+        "toggle/disabled/hover".tempadId
+    )
 
     val powerBg = "power/background".tempadId
     val powerBar = "power/overlay".tempadId
@@ -52,7 +57,10 @@ object TempadUI {
         WidgetRenderer { graphics, context, partialTick ->
             val widget = context.getWidget();
             val scrollHeight =
-                ((context.height.toFloat() * (context.height.toFloat() / widget.contentHeight)).toInt() + (widget.viewHeight - context.height)).coerceIn(0, context.height)
+                ((context.height.toFloat() * (context.height.toFloat() / widget.contentHeight)).toInt() + (widget.viewHeight - context.height)).coerceIn(
+                    0,
+                    context.height
+                )
             val scrollY =
                 ((widget.yScroll.toFloat() + widget.overscrollY) / widget.contentHeight.toFloat() * context.height.toFloat()).toInt()
             graphics.fill(
@@ -80,22 +88,23 @@ object TempadUI {
         }
 
 
-    fun <T: AbstractWidget, W> W.colored(): WidgetRenderer<T> where W: WidgetRenderer<T>, W: ColorableWidget  {
+    fun <T : AbstractWidget, W> W.colored(): WidgetRenderer<T> where W : WidgetRenderer<T>, W : ColorableWidget {
         return WidgetRenderers.withColors(this, Tempad.DARK_ORANGE, Tempad.ORANGE, Tempad.HIGHLIGHTED_ORANGE)
     }
 
-    fun <T: AbstractWidget, W> W.selectableColored(selected: () -> Boolean): WidgetRenderer<T> where W: WidgetRenderer<T>, W: ColorableWidget {
+    fun <T : AbstractWidget, W> W.selectableColored(selected: () -> Boolean): WidgetRenderer<T> where W : WidgetRenderer<T>, W : ColorableWidget {
         return WidgetRenderer { graphics, ctx, partialTick ->
             if (selected()) {
                 this.withColor(MinecraftColors.BLACK)
                 this.render(graphics, ctx, partialTick)
             } else {
-                WidgetRenderers.withColors(this, Tempad.DARK_ORANGE, Tempad.ORANGE, Tempad.HIGHLIGHTED_ORANGE).render(graphics, ctx, partialTick)
+                WidgetRenderers.withColors(this, Tempad.DARK_ORANGE, Tempad.ORANGE, Tempad.HIGHLIGHTED_ORANGE)
+                    .render(graphics, ctx, partialTick)
             }
         }
     }
 
-    fun <T: AbstractWidget> selectionBg(selected: () -> Boolean): WidgetRenderer<T> {
+    fun <T : AbstractWidget> selectionBg(selected: () -> Boolean): WidgetRenderer<T> {
         return WidgetRenderer { graphics, ctx, partialTick ->
             if (selected()) {
                 WidgetRenderers.solid<T>().withColor(Tempad.ORANGE).render(graphics, ctx, partialTick)
@@ -147,6 +156,10 @@ object TempadUI {
     // borrowed from stack overflow cuz im tired https://stackoverflow.com/questions/4753251/how-to-go-about-formatting-1200-to-1-2k-in-java
     val c = arrayOf("kC", "mC", "bC", "tC")
 
+    fun formatChronons(amount: Int): String {
+        return coolFormat(amount.toDouble(), 0)
+    }
+
     private fun coolFormat(n: Double, iteration: Int): String {
         if (iteration == 0 && n < 1000) return n.toInt().toString() + "C"
         val d = (n.toLong() / 100) / 10.0
@@ -161,10 +174,10 @@ object TempadUI {
 
     fun renderEnergyBar(graphics: GuiGraphicsExtractor, font: Font, x: Int, y: Int, power: Int, maxPower: Int) {
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, powerBg, x, y, 74, 13)
-        val uWidth = if(maxPower == 0) 0 else ((power.toFloat() / maxPower).coerceIn(0f, 1f) * 72).roundToInt()
+        val uWidth = if (maxPower == 0) 0 else ((power.toFloat() / maxPower).coerceIn(0f, 1f) * 72).roundToInt()
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, powerBar, 72, 11, 0, 0, x + 1, y + 1, uWidth, 11)
 
-        val text = if(power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else {
+        val text = if (power == -1) Component.translatable("item.tempad.creative_chronometer.infinite") else {
             if (Minecraft.getInstance().hasShiftDown()) {
                 Component.literal(NumberFormat.getInstance().format(power) + "C")
             } else {
@@ -177,8 +190,8 @@ object TempadUI {
             graphics.text(font, text, x + xOffset, y + 3, 0xFF000000.toInt(), false)
         }
 
-        graphics.scissor( x + 1 + uWidth, y + 1, 72 - uWidth, 11) {
-            graphics.text(font, text, x + xOffset, y + 3, ChatFormatting.GOLD.color ?: 0, false)
+        graphics.scissor(x + 1 + uWidth, y + 1, 72 - uWidth, 11) {
+            graphics.text(font, text, x + xOffset, y + 3, Tempad.HIGHLIGHTED_ORANGE.value ?: 0, false)
         }
     }
 }

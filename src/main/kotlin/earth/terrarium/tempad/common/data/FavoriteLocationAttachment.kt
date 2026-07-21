@@ -11,8 +11,6 @@ import net.minecraft.world.entity.player.Player
 import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 
-fun Player.getPinnedLocation(ctx: ItemAccess) = this.pinnedPosition?.let { id -> TempadLocations[this, ctx, id.providerId]?.let { it[id.locationId] } }
-
 data class FavoriteLocationAttachment(val providerId: Identifier, val locationId: UUID) {
     companion object {
         val CODEC = RecordCodecBuilder.create { instance ->

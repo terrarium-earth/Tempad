@@ -8,7 +8,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-class HandbookItem: Item(Properties()) {
+class HandbookItem(props: Properties): Item(props) {
     override fun use(
         level: Level,
         player: Player,

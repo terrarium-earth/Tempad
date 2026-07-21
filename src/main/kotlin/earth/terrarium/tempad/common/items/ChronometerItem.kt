@@ -15,7 +15,7 @@ import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 
-class ChronometerItem(val rate: () -> Int, val amount: () -> Int) : CapacitorItem() {
+class ChronometerItem(props: Properties, val rate: () -> Int, val amount: () -> Int) : CapacitorItem(props) {
     override fun inventoryTick(
         stack: ItemStack,
         level: ServerLevel,

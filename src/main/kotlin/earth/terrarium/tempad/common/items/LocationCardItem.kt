@@ -21,7 +21,7 @@ import net.neoforged.neoforge.transfer.access.ItemAccess
 import net.neoforged.neoforge.transfer.item.ItemResource
 import java.util.*
 
-class LocationCardItem: Item(Properties().stacksTo(16)) {
+class LocationCardItem(props: Properties): Item(props) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResult {
         val cardStack = player.getItemInHand(usedHand)
         if (!level.isClientSide) {

@@ -1,9 +1,6 @@
 package earth.terrarium.tempad.common.registries
 
-import com.mojang.authlib.GameProfile
 import com.mojang.serialization.Codec
-import com.teamresourceful.resourcefullib.common.bytecodecs.StreamCodecByteCodec
-import com.teamresourceful.resourcefullib.common.color.Color
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry
 import com.teamresourceful.resourcefullibkt.common.getValue
@@ -12,7 +9,7 @@ import earth.terrarium.tempad.api.capabilities.player_access.PlayerAccessApi
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.data.MetronomeData
 import earth.terrarium.tempad.common.data.TravelHistoryAttachment
-import earth.terrarium.tempad.common.location_handlers.AnchorPointsData
+import earth.terrarium.tempad.common.location_handlers.DoorPointsData
 import earth.terrarium.tempad.common.location_handlers.PlayerPointsData
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.UUIDUtil
@@ -45,19 +42,6 @@ object ModAttachments {
         attachmentType({0}) {}
     }
 
-    val owner: AttachmentType<GameProfile> by registry.register("owner") {
-        attachmentType({GameProfile(null, "null")}) {
-            codec = GAME_PROFILE_CODEC.codec()
-        }
-    }
-
-    val color: AttachmentType<Color> by registry.register("color") {
-        attachmentType({ Tempad.ORANGE.withAlpha(0) }) {
-            codec = Color.CODEC
-
-        }
-    }
-
     val access: AttachmentType<Identifier> by registry.register("access") {
         attachmentType({ PlayerAccessApi.noAccess }) {
             codec = Identifier.CODEC
@@ -82,9 +66,15 @@ object ModAttachments {
         }
     }
 
-    val anchorPoints: AttachmentType<AnchorPointsData> by registry.register("anchor_points") {
-        attachmentType({ AnchorPointsData(mutableMapOf()) }) {
-            codec = AnchorPointsData.codec
+    val basicDoorpoints: AttachmentType<DoorPointsData> by registry.register("door_points") {
+        attachmentType({ DoorPointsData(mutableMapOf()) }) {
+            codec = DoorPointsData.codec
+        }
+    }
+
+    val steelDoorPoints: AttachmentType<DoorPointsData> by registry.register("steel_door_points") {
+        attachmentType({ DoorPointsData(mutableMapOf()) }) {
+            codec = DoorPointsData.codec
         }
     }
 
@@ -117,8 +107,6 @@ var AttachmentHolder.pinnedPosition by ModAttachments.pinnedLocation.optional()
 var AttachmentHolder.travelHistory by ModAttachments.travelHistory
 var AttachmentHolder.ageUntilAllowedThroughTimedoor by ModAttachments.ageSinceLastTimedoor.optional()
 
-var AttachmentHolder.owner by ModAttachments.owner.optional()
-var AttachmentHolder.color by ModAttachments.color
 var AttachmentHolder.id by ModAttachments.id.optional()
 var AttachmentHolder.accessId by ModAttachments.access
 var AttachmentHolder.canAccess by ModAttachments.boolAccess
@@ -126,6 +114,7 @@ var AttachmentHolder.yOffset by ModAttachments.yOffset
 // var AttachmentHolder.name by ModAttachments.name.optional()
 var AttachmentHolder.angle by ModAttachments.angle
 
-val anchorPoints by ModAttachments.anchorPoints.serverData
+val basicDoorPoints by ModAttachments.basicDoorpoints.serverData
+val steelDoorPoints by ModAttachments.steelDoorPoints.serverData
 val playerPoints by ModAttachments.playerPoints.serverData
 val metronomeEnergy by ServerDataDelegate(ModAttachments.metronomeEnergy)

@@ -57,7 +57,7 @@ class WorkstationRenderer(val itemModelResolver: ItemModelResolver) : BlockEntit
         poseStack.translate((-1.5).px, (-1).px, (-2.5).px)
         poseStack.mulPose(Axis.ZN.rotationDegrees(90f))
         poseStack.scale(12.px, 12.px, 12.px)
-        state.item.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, -1)
+        state.item.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0)
         poseStack.popPose()
     }
 }

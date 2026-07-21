@@ -52,12 +52,12 @@ object ModKeybinds {
         TEMPAD_CATEGORY
     )
 
-    @SubscribeEvent @JvmStatic
+    @SubscribeEvent
     fun init(event: FMLClientSetupEvent) {
         NeoForge.EVENT_BUS.addListener(::onClientTick);
     }
 
-    @SubscribeEvent @JvmStatic
+    @SubscribeEvent
     fun registerKeyBinding(event: RegisterKeyMappingsEvent) {
         event.registerCategory(TEMPAD_CATEGORY)
         event.register(openDefaultApp)

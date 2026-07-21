@@ -22,6 +22,7 @@ import earth.terrarium.tempad.client.TempadUI.colored
 import earth.terrarium.tempad.client.TempadUI.style
 import earth.terrarium.tempad.client.state.AppearanceState
 import earth.terrarium.tempad.client.state.MutableState
+import earth.terrarium.tempad.common.apps.CostAndLocation
 import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.FavoriteLocationAttachment
 import earth.terrarium.tempad.common.network.c2s.DeleteLocationPacket
@@ -59,7 +60,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
         )
     }
 
-    var selected: Triple<Identifier, UUID, NamedGlobalVec3>? = null
+    var selected: Triple<Identifier, UUID, CostAndLocation>? = null
         set(value) {
             field = value
             teleportBtn.active = value != null
@@ -74,7 +75,7 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
     }
 
     // make map of ids to locations from menu.appContent.locations mutable
-    private val locations: Map<Identifier, MutableMap<UUID, NamedGlobalVec3>> =
+    private val locations: Map<Identifier, MutableMap<UUID, CostAndLocation>> =
         menu.appContent.locations.mapValues { (_, value) ->
             value.toMutableMap()
         }
@@ -109,8 +110,8 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
 
         for ((category, locations) in sortMode.get().reorganize(locations)) {
             val filtered = locations.filter { (_, _, display) ->
-                display.name.string.contains(search.get(), ignoreCase = true)
-            }.sortedBy { it.third.name.string.lowercase(Locale.ROOT) }.sortedBy { (provider, id, _) ->
+                display.location.name.string.contains(search.get(), ignoreCase = true)
+            }.sortedBy { it.third.location.name.string.lowercase(Locale.ROOT) }.sortedBy { (provider, id, _) ->
                 // sort by favorite
                 favorite?.matches(provider, id) == false
             }
@@ -152,13 +153,13 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                         }
 
                         if (isFavorite) {
-                            WidgetRenderers.textWithIcon<Button>(display.name, "icons/mini/pin".tempadId)
+                            WidgetRenderers.textWithIcon<Button>(display.location.name, "icons/mini/pin".tempadId)
                                 .withColor(if (isSelected) ConstantColors.black else if (isHovered) Tempad.HIGHLIGHTED_ORANGE else Tempad.ORANGE)
                                 .withIconSize(7)
                                 .withTextLeftIconLeft()
                                 .render(graphics, ctx, 0f)
                         } else {
-                            WidgetRenderers.text<Button>(display.name)
+                            WidgetRenderers.text<Button>(display.location.name)
                                 .withColor(if (isSelected) ConstantColors.black else if (isHovered) Tempad.HIGHLIGHTED_ORANGE else Tempad.ORANGE)
                                 .withLeftAlignment()
                                 .withPadding(0, 0, 0, 2)
@@ -186,10 +187,11 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
                 alignLeft()
             }
         } else {
-            list.addChild(Widgets.text(selected.third.dimensionText) { it.withColor(Tempad.ORANGE) })
-            list.addChild(Widgets.text(Component.literal("X: ${selected.third.x}")) { it.withColor(Tempad.ORANGE) })
-            list.addChild(Widgets.text(Component.literal("Y: ${selected.third.y}")) { it.withColor(Tempad.ORANGE) })
-            list.addChild(Widgets.text(Component.literal("Z: ${selected.third.z}")) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(selected.third.location.dimensionText) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(Component.literal("X: ${selected.third.location.x}")) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(Component.literal("Y: ${selected.third.location.y}")) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(Component.literal("Z: ${selected.third.location.z}")) { it.withColor(Tempad.ORANGE) })
+            list.addChild(Widgets.text(Component.literal("Cost: ${TempadUI.formatChronons(selected.third.cost)}")) { it.withColor(Tempad.ORANGE) })
         }
     }
 
@@ -351,19 +353,19 @@ class TeleportScreen(menu: TeleportMenu, inv: Inventory, title: Component) :
 }
 
 enum class Sorting : Translatable {
-    Dimension, Alphabetical, Type;
+    Dimension, Alphabetical, Type, Cost;
 
     override fun getTranslationKey(): String? {
         return "button.tempad.${this.toString().lowercase()}"
     }
 
-    fun reorganize(values: Map<Identifier, Map<UUID, NamedGlobalVec3>>): Map<Component, List<Triple<Identifier, UUID, NamedGlobalVec3>>> {
+    fun reorganize(values: Map<Identifier, Map<UUID, CostAndLocation>>): Map<Component, List<Triple<Identifier, UUID, CostAndLocation>>> {
         when (this) {
             Dimension -> {
                 // provider to map of id to pos -> dimension to list of provider to id to pos
                 val dimensionMap = values.flatMap { (provider, locations) ->
                     locations.map { (id, pos) -> Triple(provider, id, pos) }
-                }.groupBy { (_, _, pos) -> Component.translatable(pos.dimension.identifier().toLanguageKey("dimension")) }
+                }.groupBy { (_, _, pos) -> Component.translatable(pos.location.dimension.identifier().toLanguageKey("dimension")) }
                 return dimensionMap.mapValues { (_, value) -> value.sortedBy { it.third.toString() } }
             }
 
@@ -371,12 +373,12 @@ enum class Sorting : Translatable {
                 // provider to map of id to pos -> alphabetical letter to list of provider to id to pos
                 val alphabetMap = values.flatMap { (provider, locations) ->
                     locations.map { (id, pos) -> Triple(provider, id, pos) }
-                }.sortedBy { it.third.name.string }
+                }.sortedBy { it.third.location.name.string }
                     .groupBy {
-                        if (it.third.name.string.isEmpty()) CommonComponents.EMPTY
-                        else Component.literal(it.third.name.string.first().uppercaseChar().toString())
+                        if (it.third.location.name.string.isEmpty()) CommonComponents.EMPTY
+                        else Component.literal(it.third.location.name.string.first().uppercaseChar().toString())
                     }
-                return alphabetMap.mapValues { (_, value) -> value.sortedBy { it.third.name.string } }
+                return alphabetMap.mapValues { (_, value) -> value.sortedBy { it.third.location.name.string } }
             }
 
             Type -> {
@@ -385,6 +387,14 @@ enum class Sorting : Translatable {
                     locations.map { (id, pos) -> Triple(provider, id, pos) }
                 }.groupBy { Component.translatable(it.first.toLanguageKey("provider")) }
                 return typeMap.mapValues { (_, value) -> value.sortedBy { it.third.toString() } }
+            }
+
+            Cost -> {
+                // provider to map of id to pos -> cost to list of provider to id to pos
+                val costMap = values.flatMap { (provider, locations) ->
+                    locations.map { (id, pos) -> Triple(provider, id, pos) }
+                }.groupBy { Component.literal(it.third.cost.toString()) }
+                return costMap.mapValues { (_, value) -> value.sortedBy { it.third.cost } }
             }
         }
     }

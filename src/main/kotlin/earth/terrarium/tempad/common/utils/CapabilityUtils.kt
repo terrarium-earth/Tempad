@@ -134,7 +134,7 @@ context(ctx: TransactionContext)
 fun EnergyHandler.insert(amount: Int): Int = this.insert(amount, ctx)
 
 context(ctx: TransactionContext)
-fun EnergyHandler.extract(amount: Int): Int = this.insert(amount, ctx)
+fun EnergyHandler.extract(amount: Int): Int = this.extract(amount, ctx)
 
 context(ctx: TransactionContext)
 fun <T: Resource> ResourceHandler<T>.insert(index: Int, resource: T, amount: Int): Int = this.insert(index, resource, amount, ctx)

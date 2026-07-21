@@ -10,7 +10,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 
 @EventBusSubscriber(modid = Tempad.MOD_ID, value = [Dist.CLIENT])
 object DarkModeEverywhereCompat {
-    @JvmStatic @SubscribeEvent
+    @SubscribeEvent
     fun sendIMC(event: FMLClientSetupEvent) {
         val blacklist = listOf(
             { "tempad" },

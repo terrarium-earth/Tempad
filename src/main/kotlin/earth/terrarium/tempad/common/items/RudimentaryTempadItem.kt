@@ -1,7 +1,6 @@
 package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.capabilities.chronons
-import earth.terrarium.tempad.api.capabilities.upgrades
 import earth.terrarium.tempad.api.locations.IndirectLocation
 import earth.terrarium.tempad.client.tooltip.tooltip
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
@@ -9,6 +8,7 @@ import earth.terrarium.tempad.common.entity.TimedoorEntity
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.*
 import net.minecraft.core.BlockPos
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.SlotAccess
@@ -25,7 +25,7 @@ import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 import kotlin.to
 
-class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties().stacksTo(1)) {
+class RudimentaryTempadItem(props: Properties) : BlockItem(ModBlocks.timedoorProjector, props) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResult {
         if (level.isClientSide) return InteractionResult.SUCCESS
         player.ctx(usedHand.getSlot(player)).openTimedoor(player)
@@ -41,11 +41,14 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties(
 
     fun ItemAccess.openTimedoor(player: Player) {
         val portalTarget = resource.portalTarget
-        portalTarget?.get(upgrades!!, chronons!!)?.let { pos ->
+        portalTarget?.get(null, chronons)?.let { pos ->
             if (!player.level().isClientSide) {
-                val (provider, id) = (portalTarget as? IndirectLocation).let { it?.provider to it?.id }
-                TimedoorEntity.openTimedoor(player, this, provider, id, pos) {
-                    it.glitching = true
+                val (provider, id) = (portalTarget as? IndirectLocation).let {
+                    it?.provider to it?.id
+                }
+                val cost = portalTarget.calculateCost(player.level() as ServerLevel, player.blockPosition(), null, chronons)
+                TimedoorEntity.openTimedoor(player, this, provider, id, pos, cost) {
+                    it.instability = 15
                 }
             }
         } ?: {
@@ -79,9 +82,7 @@ class RudimentaryTempadItem : BlockItem(ModBlocks.timedoorProjector, Properties(
     ): Boolean {
         level.getBlockEntity(pos)?.let { blockEntity ->
             if (blockEntity !is RudimentaryTempadBE) return@let
-            stack.portalTarget?.let { blockEntity.portalTarget = it }
             player?.let { blockEntity.owner = it.gameProfile }
-            blockEntity.chronons.set(stack.chrononContent)
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state)
     }

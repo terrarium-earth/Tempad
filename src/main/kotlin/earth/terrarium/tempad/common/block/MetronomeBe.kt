@@ -135,12 +135,7 @@ class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metr
     }
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag {
-        return CompoundTag().apply {
-            safeLet(metronomeEnergy, this@MetronomeBe.owner) { energy, owner ->
-                this.putInt("LocalChronons", energy.getStored(owner.id))
-                this.putInt("LocalCapacity", energy.getCapacity(owner.id))
-            }
-        }
+        return saveCustomOnly(registries)
     }
 
     override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {

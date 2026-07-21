@@ -9,22 +9,20 @@ import earth.terrarium.tempad.data.server.ModEntityTags
 import earth.terrarium.tempad.data.server.ModItemTags
 import earth.terrarium.tempad.data.server.ModLootTables
 import earth.terrarium.tempad.data.server.ModRecipeData
-import net.neoforged.bus.api.IEventBus
 import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.data.event.GatherDataEvent
 
 @Mod(Tempad.MOD_ID)
-class TempadData(bus: IEventBus) {
-    init {
-        bus.addListener(::gatherClientData)
-        bus.addListener(::gatherServerData)
-    }
+@EventBusSubscriber(modid = Tempad.MOD_ID)
+object TempadData {
 
     @SubscribeEvent
     fun gatherClientData(event: GatherDataEvent.Client) {
         val generator = event.generator
         val output = generator.packOutput
+        print("CLIENT DATA RUNNING")
 
         generator.addProvider(true, ModBlockStateData(output))
         generator.addProvider(true, ModItemModelData(output))
@@ -36,6 +34,7 @@ class TempadData(bus: IEventBus) {
         val generator = event.generator
         val output = generator.packOutput
         val lookupProvider = event.lookupProvider
+        print("SERVER DATA RUNNING")
 
         generator.addProvider(true, ModRecipeData(output, lookupProvider))
         generator.addProvider(true, ModLootTables(output, lookupProvider))

@@ -15,7 +15,7 @@ import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 
-class TimeTwisterItem : ChrononItem() {
+class TimeTwisterItem(props: Properties) : ChrononItem(props) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResult {
         if (!level.isClientSide) {
             val ctx = player.ctx(usedHand.getSlot(player))
