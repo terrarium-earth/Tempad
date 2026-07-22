@@ -12,6 +12,7 @@ object ModNetworking {
         channel.register(BackTrackLocation.type)
         channel.register(CreateLocationPacket.type)
         channel.register(DeleteLocationPacket.type)
+        channel.register(LiftActionPacket.type)
         channel.register(RedirectAppPacket.type)
         channel.register(OpenAppPacket)
         channel.register(OpenTempadPacket)

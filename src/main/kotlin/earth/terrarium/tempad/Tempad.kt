@@ -30,8 +30,6 @@ import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.repository.Pack
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.flag.FeatureFlag
-import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.item.crafting.NormalCraftingRecipe
 import net.minecraft.world.item.crafting.RecipeType
@@ -196,7 +194,7 @@ class Tempad(bus: IEventBus) {
                 (it as? WorkstationBE)?.inventory?.access(0)?.upgrades
             }
 
-            blockItems[ModBlocks.metronomeBe] = { it, _ ->
+            blockItems[ModBlocks.metronomeBE] = { it, _ ->
                 (it as? MetronomeBe)?.inventory
             }
 

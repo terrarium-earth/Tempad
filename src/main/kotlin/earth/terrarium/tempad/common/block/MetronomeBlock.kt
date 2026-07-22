@@ -1,16 +1,11 @@
 package earth.terrarium.tempad.common.block
 
 import com.mojang.serialization.MapCodec
-import com.teamresourceful.resourcefullib.common.menu.ContentMenuProvider
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.common.menu.MetronomeMenuData
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.chrononContent
-import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.metronomeEnergy
-import earth.terrarium.tempad.common.registries.owner
-import earth.terrarium.tempad.common.registries.portalTarget
 import earth.terrarium.tempad.common.utils.safeLet
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
@@ -18,9 +13,7 @@ import net.minecraft.core.GlobalPos
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
@@ -39,7 +32,7 @@ class MetronomeBlock(props: Properties) : BaseEntityBlock(props) {
         state: BlockState,
         type: BlockEntityType<T>
     ): BlockEntityTicker<T>? {
-        return createTickerHelper(type, ModBlocks.metronomeBe) { _, _, _, block -> block.tick() }
+        return createTickerHelper(type, ModBlocks.metronomeBE) { _, _, _, block -> block.tick() }
     }
 
     override fun onPlace(

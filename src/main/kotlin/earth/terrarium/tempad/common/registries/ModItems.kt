@@ -12,6 +12,7 @@ import earth.terrarium.tempad.common.utils.stack
 import earth.terrarium.tempad.tempadId
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import java.util.UUID
@@ -67,6 +68,7 @@ object ModItems {
     val workstation: Item by registry.registerItem("workstation", ::WorkstationItem) { it.stacksTo(1) }
     val metronome: Item by registry.registerItem("metronome", ::MetronomeItem) { it.stacksTo(1) }
     val screeningDevice: Item by registry.registerItem("screening_device", ::ScreeningDeviceItem) { it.stacksTo(1) }
+    val liftway: Item by registry.registerItem("liftway", { BlockItem(ModBlocks.liftway, it) }) { it.stacksTo(1) }
 
     // Creative
     val creativeChronometer: Item by registry.registerItem("creative_chronometer", ::CreativeChronometerItem) { it.stacksTo(1) }

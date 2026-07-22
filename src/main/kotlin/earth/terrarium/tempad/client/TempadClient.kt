@@ -13,6 +13,7 @@ import com.mojang.datafixers.util.Either
 import com.teamresourceful.resourcefullib.client.fluid.data.ClientFluidProperties
 import com.teamresourceful.resourcefullib.client.fluid.registry.ResourcefulClientFluidRegistry
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.client.block.LiftwayRenderer
 import earth.terrarium.tempad.client.block.SpatialAnchorRenderer
 import earth.terrarium.tempad.client.block.WorkstationRenderer
 import earth.terrarium.tempad.client.compat.initCuriosCompat
@@ -150,10 +151,10 @@ object TempadClient {
     @SubscribeEvent
     fun init(event: FMLClientSetupEvent) {
         EntityRenderers.register(ModEntities.timedoor, ::TimedoorRenderer)
+        BlockEntityRenderers.register(ModBlocks.liftwayBE) { LiftwayRenderer(it.blockModelResolver()) }
         BlockEntityRenderers.register(ModBlocks.timedoorMarkerBE) { SpatialAnchorRenderer(it.blockModelResolver()) }
         BlockEntityRenderers.register(ModBlocks.chronomarkBE) { SpatialAnchorRenderer(it.blockModelResolver()) }
         BlockEntityRenderers.register(ModBlocks.workstationBE) { WorkstationRenderer(it.itemModelResolver()) }
-
 
         /*
         if (ModList.get().isLoaded("ars_nouveau")) {

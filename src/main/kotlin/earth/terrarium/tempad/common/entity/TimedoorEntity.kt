@@ -329,7 +329,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             glitchStack += lifeTime + max((100 - instability) / 2, 10)
         }
         if (lifeTime < maxLifeTime && currentGlitchTime > 0 && lifeTime > 0 && (lifeTime == currentGlitchTime)) {
-            playSound(SoundEvents.BEACON_POWER_SELECT, 0.25f, 3f)
+            playSound(SoundEvents.BELL_BLOCK, 0.1f, 2f)
         }
         tryClose()
         if (lifeTime !in 1..maxLifeTime) {

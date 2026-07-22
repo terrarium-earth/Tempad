@@ -3,6 +3,8 @@ package earth.terrarium.tempad.common.registries
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries
 import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
+import earth.terrarium.tempad.common.block.LiftwayBe
+import earth.terrarium.tempad.common.block.LiftwayBlock
 import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.MetronomeBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
@@ -50,7 +52,13 @@ object ModBlocks {
 
     val metronome by blocks.register("metronome", ::MetronomeBlock) { Properties.of().strength(3.0f, 1200f) }
 
-    val metronomeBe by blockEntities.register("metronome") {
+    val metronomeBE by blockEntities.register("metronome") {
         BlockEntityType(::MetronomeBe, metronome)
+    }
+
+    val liftway by blocks.register("liftway", ::LiftwayBlock) { Properties.of().strength(3.0f, 6.0f) }
+
+    val liftwayBE by blockEntities.register("liftway") {
+        BlockEntityType(::LiftwayBe, liftway)
     }
 }

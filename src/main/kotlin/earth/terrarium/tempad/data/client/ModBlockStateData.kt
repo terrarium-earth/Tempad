@@ -14,6 +14,7 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator
 import net.minecraft.client.data.models.blockstates.PropertyDispatch
 import net.minecraft.client.data.models.model.ModelTemplates
 import net.minecraft.client.data.models.model.TexturedModel
+import net.minecraft.client.renderer.block.dispatch.SingleVariant
 import net.minecraft.client.renderer.block.dispatch.Variant
 import net.minecraft.client.renderer.block.dispatch.VariantMutator
 import net.minecraft.core.Holder
@@ -67,6 +68,7 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
         // metronome: no properties
         blockModels.createTrivialBlock(ModBlocks.metronome, TexturedModel.COLUMN)
 
+        // chronomark: UP
         val chronomarkModel = BlockModelGenerators.variant(Variant("block/chronomark".tempadId))
         blockModels.blockStateOutput.accept(
             MultiVariantGenerator.dispatch(ModBlocks.chronomark)
@@ -77,6 +79,7 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
                 )
         )
 
+        // timedoor_marker: UP
         val markerModel = BlockModelGenerators.variant(Variant("block/timedoor_marker".tempadId))
         blockModels.blockStateOutput.accept(
             MultiVariantGenerator.dispatch(ModBlocks.timedoorMarker)
@@ -86,5 +89,8 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
                         .select(false, markerModel.with(VariantMutator.X_ROT.withValue(Quadrant.R180))),
                 )
         )
+
+        // liftway: 
+        blockModels.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(ModBlocks.liftway, chronomarkModel))
     }
 }

@@ -47,6 +47,7 @@ class ModItemModelData(output: PackOutput) : ModelProvider(output, Tempad.MOD_ID
         blockModels.registerSimpleItemModel(ModBlocks.chronomark, "block/chronomark".tempadId)
         blockModels.registerSimpleItemModel(ModBlocks.metronome, "block/metronome".tempadId)
         blockModels.registerSimpleItemModel(ModBlocks.workstation, "block/workstation_full".tempadId)
+        blockModels.registerSimpleItemModel(ModBlocks.liftway, "block/chronomark".tempadId)
 
         // timedoor_projector: conditional on has_card (portalTarget component present)
         itemModels.itemModelOutput.accept(

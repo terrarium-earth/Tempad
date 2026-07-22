@@ -28,7 +28,7 @@ import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
 import kotlin.jvm.optionals.getOrNull
 
-class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metronomeBe, pos, state),
+class MetronomeBe(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.metronomeBE, pos, state),
     ContentMenuProvider<MetronomeMenuData> {
     var owner: GameProfile? = null
     var locked = true

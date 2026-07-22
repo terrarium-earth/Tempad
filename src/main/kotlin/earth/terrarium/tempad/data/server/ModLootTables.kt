@@ -45,6 +45,7 @@ class ModLootTables(packOutput: PackOutput, provider: CompletableFuture<HolderLo
             )
             dropSelf(ModBlocks.workstation)
             dropSelf(ModBlocks.metronome)
+            dropSelf(ModBlocks.liftway)
         }
     }
 }
