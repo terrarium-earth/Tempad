@@ -60,6 +60,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
     var owner: GameProfile? = null
 
     val direction: Direction get() = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+    val timedoor: TimedoorEntity? get() = safeLet(timedoorId, level as? ServerLevel) { id, lvl -> lvl.entities.get(id) } as? TimedoorEntity
 
     companion object {
         const val DOWNLOAD_TIME = "DownloadTime"
@@ -166,8 +167,6 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
             }
         }
     }
-
-    val timedoor: TimedoorEntity? get() = safeLet(timedoorId, level as? ServerLevel) { id, lvl -> lvl.entities.get(id) } as? TimedoorEntity
 
     fun getSizing(): TimedoorPlacementSettings {
         val offset = inventory.getResource(0).portalOffset

@@ -34,6 +34,7 @@ import earth.terrarium.tempad.client.tooltip.*
 import earth.terrarium.tempad.client.model.ChrononChargeProperty
 import earth.terrarium.tempad.client.model.TempadInUseProperty
 import earth.terrarium.tempad.client.model.WalletFullProperty
+import earth.terrarium.tempad.client.screen.temputer.AbstractTemputerScreen
 import earth.terrarium.tempad.common.block.timedoor_marker.AbstractMarkerBe
 import earth.terrarium.tempad.common.config.ClientConfig
 import earth.terrarium.tempad.common.data.InstalledUpgradesComponent
@@ -152,8 +153,8 @@ object TempadClient {
     fun init(event: FMLClientSetupEvent) {
         EntityRenderers.register(ModEntities.timedoor, ::TimedoorRenderer)
         BlockEntityRenderers.register(ModBlocks.liftwayBE) { LiftwayRenderer(it.blockModelResolver()) }
-        BlockEntityRenderers.register(ModBlocks.timedoorMarkerBE) { SpatialAnchorRenderer(it.blockModelResolver()) }
-        BlockEntityRenderers.register(ModBlocks.chronomarkBE) { SpatialAnchorRenderer(it.blockModelResolver()) }
+        BlockEntityRenderers.register(ModBlocks.doorpointIronBE) { SpatialAnchorRenderer(it.blockModelResolver()) }
+        BlockEntityRenderers.register(ModBlocks.doorpointTimeSteelBE) { SpatialAnchorRenderer(it.blockModelResolver()) }
         BlockEntityRenderers.register(ModBlocks.workstationBE) { WorkstationRenderer(it.itemModelResolver()) }
 
         /*
@@ -177,6 +178,7 @@ object TempadClient {
         event.register(ModMenus.guide, ::KnowledgeAppScreen)
         event.register(ModMenus.metronome, ::MetronomeScreen)
         event.register(ModMenus.wallet, ::WalletScreen)
+        event.register(ModMenus.temputerTest, ::AbstractTemputerScreen)
     }
 
     @SubscribeEvent
@@ -193,7 +195,7 @@ object TempadClient {
 
     @SubscribeEvent
     fun registerBlockColors(event: RegisterColorHandlersEvent.BlockTintSources) {
-        event.register(listOf(blockTintSource), ModBlocks.timedoorMarker)
+        event.register(listOf(blockTintSource), ModBlocks.doorpointIron)
     }
 
     @SubscribeEvent
@@ -226,7 +228,7 @@ object TempadClient {
 
     @SubscribeEvent
     fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
-        event.registerItem(RudimentaryTempadClient, ModItems.timedoorProjector)
+        event.registerItem(RudimentaryTempadClient, ModItems.temputerIron)
     }
 
     @SubscribeEvent

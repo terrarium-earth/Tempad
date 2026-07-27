@@ -15,28 +15,27 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 
-data class SettingsApp(val ctx: ItemAccessAddress<*>, val isStationary: Boolean) : TempadApp<SettingsData> {
+data class SettingsApp(val ctx: ItemAccessAddress<*>) : TempadApp<SettingsData> {
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
         return ModMenus.SettingsMenu(
             pContainerId,
             pPlayerInventory,
-            Optional.of(SettingsData(TempadLocations.registry.keys, isStationary, ctx))
+            Optional.of(SettingsData(TempadLocations.registry.keys, ctx))
         )
     }
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.settings")
 
     override fun createContent(player: ServerPlayer): SettingsData =
-        SettingsData(TempadLocations.registry.keys, isStationary, ctx)
+        SettingsData(TempadLocations.registry.keys, ctx)
 
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class SettingsData(val providers: Set<Identifier>, isStationary: Boolean, ctx: ItemAccessAddress<*>) : AppContent<SettingsData>(ctx, isStationary, codec) {
+class SettingsData(val providers: Set<Identifier>, ctx: ItemAccessAddress<*>) : AppContent<SettingsData>(ctx, codec) {
     companion object {
         val codec: ByteCodec<SettingsData> = ObjectByteCodec.create(
             ExtraByteCodecs.IDENTIFIER.setOf().fieldOf { it.providers },
-            ByteCodec.BOOLEAN.fieldOf { it.isStationary },
             ItemAccessAddress.codec.fieldOf { it.ctx },
             ::SettingsData
         )

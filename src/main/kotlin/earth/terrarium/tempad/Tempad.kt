@@ -121,7 +121,7 @@ class Tempad(bus: IEventBus) {
             val blockItems = event.register(Capabilities.Item.BLOCK)
             val itemItems = event.register(Capabilities.Item.ITEM)
 
-            chrononBlocks[ModBlocks.timedoorProjectorBE] = { it, _ ->
+            chrononBlocks[ModBlocks.temputerIronBE] = { it, _ ->
                 (it as? RudimentaryTempadBE)?.chronons
             }
 
@@ -142,7 +142,7 @@ class Tempad(bus: IEventBus) {
             }
              */
 
-            chrononItems[ModItems.timedoorProjector] = { stack, access ->
+            chrononItems[ModItems.temputerIron] = { stack, access ->
                 ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.RudimentaryTempad.capacity)
             }
 
@@ -154,19 +154,19 @@ class Tempad(bus: IEventBus) {
                 TempadChrononHandler.create(access, CommonConfigCache.Tempad.capacity, CommonConfigCache.TimeTwister.capacity)
             }
 
-            chrononItems[ModItems.chrononCell] = { stack, access ->
+            chrononItems[ModItems.capacitorIron] = { stack, access ->
                 ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.ChrononCell.capacity)
             }
 
-            chrononItems[ModItems.chrononBattery] = { stack, access ->
+            chrononItems[ModItems.capacitorTimeSteel] = { stack, access ->
                 ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.Battery.capacity)
             }
 
-            chrononItems[ModItems.chronometer] = { stack, access ->
+            chrononItems[ModItems.chrononGenTimeSteel] = { stack, access ->
                 ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.Chronometer.capacity)
             }
 
-            chrononItems[ModItems.chrononGenerator] = { stack, access ->
+            chrononItems[ModItems.chrononGenIron] = { stack, access ->
                 ItemAccessEnergyHandler(access, ModComponents.chrononContent, CommonConfigCache.ChrononGenerator.capacity)
             }
 
@@ -182,11 +182,11 @@ class Tempad(bus: IEventBus) {
                 ItemUpgradeHandler(it)
             }
 
-            accessItems[ModItems.locationBroadcaster] = { it, _ ->
+            accessItems[ModItems.waymitterIron] = { it, _ ->
                 if(it.enabled) DefaultLocationAccess.Public else null
             }
 
-            accessItems[ModItems.screeningDevice] = { it, _ ->
+            accessItems[ModItems.waymitterTimeSteel] = { it, _ ->
                 ScreeningDeviceLocationAccess.create(it)
             }
 

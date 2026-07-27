@@ -7,7 +7,7 @@ import earth.terrarium.olympus.client.components.dropdown.DropdownState
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.api.app.TempadAppRegistry
 import earth.terrarium.tempad.api.macro.MacroRegistry
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.TempadUI.style
@@ -54,7 +54,7 @@ class SettingsScreen(menu: ModMenus.SettingsMenu, inv: Inventory, title: Compone
 
         settings.add(Widgets.labelled(font, "settings.default_app".toLanguageKey("app"), Tempad.ORANGE, Widgets.dropdown(
             defaultApp,
-            AppRegistry.getIds().toList(),
+            TempadAppRegistry.getIds().toList(),
             { Component.translatable(it.toLanguageKey("app")) },
             {
                 it.withTexture(TempadUI.button)

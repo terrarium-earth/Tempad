@@ -16,7 +16,7 @@ import net.minecraft.world.item.component.TooltipDisplay
 import net.minecraft.world.level.Level
 import java.util.function.Consumer
 
-class ScreeningDeviceItem(props: Properties) : Item(props) {
+class WaymitterTimeSteel(props: Properties) : Item(props) {
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         if (!level.isClientSide) {
             val stack = player.getItemInHand(hand)

@@ -21,8 +21,8 @@ import net.minecraft.world.entity.MobCategory
 import net.neoforged.neoforge.registries.NeoForgeRegistries
 
 object ModEntities {
-    val serializers: ResourcefulRegistry<EntityDataSerializer<*>> = ResourcefulRegistries.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, Tempad.MOD_ID)
-    val entities: ResourcefulRegistry<EntityType<*>> = ResourcefulRegistries.create(BuiltInRegistries.ENTITY_TYPE, Tempad.MOD_ID)
+    val serializers = ResourcefulRegistries.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, Tempad.MOD_ID)
+    val entities = ResourcefulRegistries.create(BuiltInRegistries.ENTITY_TYPE, Tempad.MOD_ID)
 
     val colorSerializer by serializers.register("color") { createSerializer(Color.BYTE_CODEC) }
     val vec3Serializer by serializers.register("vec3") { createSerializer(VEC3_BYTE_CODEC) }

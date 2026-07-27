@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 
-class TimelineApp(val ctx: ItemAccessAddress<*>, val isStationary: Boolean): TempadApp<TimelineData> {
+class TimelineApp(val ctx: ItemAccessAddress<*>): TempadApp<TimelineData> {
     override fun isEnabled(player: Player): Boolean {
         return ctx.getAccess(player).resource.twisterEquipped
     }
@@ -27,14 +27,13 @@ class TimelineApp(val ctx: ItemAccessAddress<*>, val isStationary: Boolean): Tem
 
     override fun getDisplayName(): Component = Component.translatable("app.tempad.timeline")
 
-    override fun createContent(player: ServerPlayer): TimelineData = TimelineData(player.travelHistory, isStationary, ctx)
+    override fun createContent(player: ServerPlayer): TimelineData = TimelineData(player.travelHistory, ctx)
 }
 
-class TimelineData(val history: Map<Date, HistoricalLocation>, isStationary: Boolean, ctx: ItemAccessAddress<*>): AppContent<TimelineData>(ctx, isStationary, codec) {
+class TimelineData(val history: Map<Date, HistoricalLocation>, ctx: ItemAccessAddress<*>): AppContent<TimelineData>(ctx, codec) {
     companion object {
         val codec = ObjectByteCodec.create(
             ByteCodec.mapOf(DATE_BYTE_CODEC, HistoricalLocation.BYTE_CODEC).fieldOf { it.history },
-            ByteCodec.BOOLEAN.fieldOf { it.isStationary },
             ItemAccessAddress.codec.fieldOf { it.ctx },
             ::TimelineData
         )

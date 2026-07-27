@@ -4,7 +4,7 @@ import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
-import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.api.app.TempadAppRegistry
 import earth.terrarium.tempad.api.access.ItemAccessRegistry
 import earth.terrarium.tempad.common.network.ServerPacketCompanion
 import earth.terrarium.tempad.common.registries.ModItems
@@ -20,7 +20,7 @@ data class OpenAppPacket(val id: Identifier): Packet<OpenAppPacket> {
 
         override fun onReceive(packet: OpenAppPacket, player: Player) {
             val ctx = ItemAccessRegistry.locate(player) { it.`is`(ModItems.tempad) } ?: return
-            AppRegistry[packet.id, player, ctx, false]?.openMenu(player as ServerPlayer)
+            TempadAppRegistry[packet.id, player, ctx]?.openMenu(player as ServerPlayer)
         }
     }
 

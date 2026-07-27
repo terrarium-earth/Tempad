@@ -9,18 +9,14 @@ import earth.terrarium.tempad.tempadId
 import net.minecraft.client.data.models.BlockModelGenerators
 import net.minecraft.client.data.models.ItemModelGenerators
 import net.minecraft.client.data.models.ModelProvider
-import net.minecraft.client.data.models.MultiVariant
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator
 import net.minecraft.client.data.models.blockstates.PropertyDispatch
-import net.minecraft.client.data.models.model.ModelTemplates
 import net.minecraft.client.data.models.model.TexturedModel
-import net.minecraft.client.renderer.block.dispatch.SingleVariant
 import net.minecraft.client.renderer.block.dispatch.Variant
 import net.minecraft.client.renderer.block.dispatch.VariantMutator
 import net.minecraft.core.Holder
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.Item
-import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import java.util.stream.Stream
 
@@ -32,7 +28,7 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
     override fun registerModels(blockModels: BlockModelGenerators, itemModels: ItemModelGenerators) {
         // timedoor_projector: HORIZONTAL_FACING × TRIGGERED × has_card
         blockModels.blockStateOutput.accept(
-            MultiVariantGenerator.dispatch(ModBlocks.timedoorProjector)
+            MultiVariantGenerator.dispatch(ModBlocks.temputerIron)
                 .with(
                     PropertyDispatch.initial(
                         BlockStateProperties.TRIGGERED,
@@ -59,7 +55,7 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
         // workstationChild: HORIZONTAL_FACING only (TRIGGERED ignored)
         blockModels.blockStateOutput.accept(
             MultiVariantGenerator.dispatch(
-                ModBlocks.workstationChild,
+                ModBlocks.temputerTimeSteel,
                 BlockModelGenerators.variant(Variant("block/workstation_terminal".tempadId)),
             )
                 .with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING),
@@ -71,7 +67,7 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
         // chronomark: UP
         val chronomarkModel = BlockModelGenerators.variant(Variant("block/chronomark".tempadId))
         blockModels.blockStateOutput.accept(
-            MultiVariantGenerator.dispatch(ModBlocks.chronomark)
+            MultiVariantGenerator.dispatch(ModBlocks.doorpointTimeSteel)
                 .with(
                     PropertyDispatch.initial(BlockStateProperties.UP)
                         .select(true, chronomarkModel)
@@ -82,7 +78,7 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
         // timedoor_marker: UP
         val markerModel = BlockModelGenerators.variant(Variant("block/timedoor_marker".tempadId))
         blockModels.blockStateOutput.accept(
-            MultiVariantGenerator.dispatch(ModBlocks.timedoorMarker)
+            MultiVariantGenerator.dispatch(ModBlocks.doorpointIron)
                 .with(
                     PropertyDispatch.initial(BlockStateProperties.UP)
                         .select(true, markerModel)
@@ -90,7 +86,7 @@ class ModBlockStateData(output: PackOutput) : ModelProvider(output, Tempad.MOD_I
                 )
         )
 
-        // liftway: 
+        // liftway:
         blockModels.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(ModBlocks.liftway, chronomarkModel))
     }
 }

@@ -28,7 +28,7 @@ import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler
 import java.util.UUID
 import kotlin.jvm.optionals.getOrNull
 
-class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.timedoorProjectorBE, pos, state) {
+class RudimentaryTempadBE(pos: BlockPos, state: BlockState): BlockEntity(ModBlocks.temputerIronBE, pos, state) {
     var timedoorId: UUID? = null
     var portalTarget: LocationGetter? = null
     var chronons: SimpleEnergyHandler = SimpleEnergyHandler(CommonConfigCache.RudimentaryTempad.capacity)

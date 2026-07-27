@@ -7,17 +7,14 @@ import earth.terrarium.tempad.common.registries.ModItems
 import net.minecraft.client.Minecraft
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.model.HumanoidModel
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.RenderLayerParent
 import net.minecraft.client.renderer.entity.player.AvatarRenderer
-import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState
 import net.minecraft.world.entity.Display
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.HumanoidArm
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import top.theillusivec4.curios.api.SlotContext
@@ -27,15 +24,15 @@ fun initCuriosCompat() {
     ICurioRenderer.register(ModItems.tempad) { CuriosRenderer }
     ICurioRenderer.register(ModItems.cardWallet) { CuriosRenderer }
 
-    ICurioRenderer.register(ModItems.chrononBattery) { CuriosRenderer }
-    ICurioRenderer.register(ModItems.chrononCell) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.capacitorTimeSteel) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.capacitorIron) { CuriosRenderer }
 
-    ICurioRenderer.register(ModItems.chronometer) { CuriosRenderer }
-    ICurioRenderer.register(ModItems.chrononGenerator) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.chrononGenTimeSteel) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.chrononGenIron) { CuriosRenderer }
     ICurioRenderer.register(ModItems.creativeChronometer) { CuriosRenderer }
 
-    ICurioRenderer.register(ModItems.screeningDevice) { CuriosRenderer }
-    ICurioRenderer.register(ModItems.locationBroadcaster) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.waymitterTimeSteel) { CuriosRenderer }
+    ICurioRenderer.register(ModItems.waymitterIron) { CuriosRenderer }
 }
 
 object CuriosRenderer : ICurioRenderer {

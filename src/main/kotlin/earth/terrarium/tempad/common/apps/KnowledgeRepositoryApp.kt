@@ -14,12 +14,12 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.Optional
 
-data class KnowledgeRepositoryApp(val ctx: ItemAccessAddress<*>, val isStationary: Boolean) : TempadApp<BasicAppContent> {
+data class KnowledgeRepositoryApp(val ctx: ItemAccessAddress<*>) : TempadApp<BasicAppContent> {
     override fun isEnabled(player: Player): Boolean {
         return ctx.getAccess(player).upgrades?.contains(ModItems.guideKey) == true
     }
 
-    override fun createContent(player: ServerPlayer?): BasicAppContent = BasicAppContent(ctx, isStationary)
+    override fun createContent(player: ServerPlayer?): BasicAppContent = BasicAppContent(ctx)
 
     override fun getDisplayName(): Component = ModApps.guide.toLanguageKey("app").translatable
 
@@ -28,6 +28,6 @@ data class KnowledgeRepositoryApp(val ctx: ItemAccessAddress<*>, val isStationar
         playerInventory: Inventory,
         player: Player,
     ): AbstractContainerMenu? {
-        return ModMenus.KnowledgeMenu(containerId, playerInventory, Optional.of(BasicAppContent(ctx, isStationary)))
+        return ModMenus.KnowledgeMenu(containerId, playerInventory, Optional.of(BasicAppContent(ctx)))
     }
 }

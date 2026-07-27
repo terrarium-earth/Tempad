@@ -1,14 +1,13 @@
 package earth.terrarium.tempad.client.screen.tempad
 
 import com.mojang.blaze3d.platform.InputConstants
-import com.mojang.blaze3d.systems.RenderSystem
 import earth.terrarium.olympus.client.components.Widgets
 import earth.terrarium.olympus.client.components.buttons.Button
 import earth.terrarium.olympus.client.components.renderers.WidgetRenderers
 import earth.terrarium.olympus.client.components.textbox.TextBox
 import earth.terrarium.olympus.client.constants.MinecraftColors
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.api.app.TempadAppRegistry
 import earth.terrarium.tempad.api.capabilities.chronons
 import earth.terrarium.tempad.client.TempadUI
 import earth.terrarium.tempad.client.state.MutableState
@@ -63,9 +62,8 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
             it.withContentMargin(1)
             it.withContents {
                 it.withGap(1)
-                for ((id, app) in AppRegistry.getAll(
-                    menu.ctxHolder,
-                    menu.appContent.isStationary
+                for ((id, app) in TempadAppRegistry.getAll(
+                    menu.ctxHolder
                 )) {
                     it.withChild(Widgets.button {
                         it.active = app.isEnabled(minecraft.player!!)
@@ -74,7 +72,7 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
                         it.withRenderer(WidgetRenderers.sprite(id.appSprites()))
                         it.withTooltip(id.appTitle())
                         it.withCallback {
-                            RedirectAppPacket(id, menu.ctxHolder, menu.appContent.isStationary).sendToServer()
+                            RedirectAppPacket(id, menu.ctxHolder).sendToServer()
                         }
                     })
                 }
@@ -92,23 +90,6 @@ abstract class AbstractTempadScreen<T : AbstractTempadMenu<*>>(
             )
             it.withCallback(::onClose)
         })
-        if (menu.appContent.isStationary) {
-            addRenderableWidget(Widgets.button {
-                it.withSize(11)
-                it.withPosition(leftPos + 233, topPos + 25)
-                it.withTexture(TempadUI.steelButton)
-                it.withRenderer(
-                    locked.withRenderer {
-                        WidgetRenderers.icon<Button>(if (it) TempadUI.lockIcon else TempadUI.unlockIcon)
-                            .withColor(MinecraftColors.BLACK).withCentered(7, 7)
-                    }
-                )
-                it.withCallback {
-                    locked.value = !locked.value
-                    UpdateTempadLockPacket(locked.value, menu.ctxHolder).sendToServer()
-                }
-            })
-        }
     }
 
     override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {

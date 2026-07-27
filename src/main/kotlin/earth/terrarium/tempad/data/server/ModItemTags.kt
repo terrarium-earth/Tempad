@@ -11,7 +11,6 @@ import net.minecraft.data.tags.IntrinsicHolderTagsProvider
 import net.minecraft.resources.Identifier
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
-import net.neoforged.neoforge.common.Tags
 import java.util.concurrent.CompletableFuture
 
 class ModItemTags(output: PackOutput,
@@ -23,8 +22,8 @@ class ModItemTags(output: PackOutput,
     override fun addTags(provider: HolderLookup.Provider) {
         tag("bracelet".curios)
             .add(ModItems.tempad)
-            .add(ModItems.chrononGenerator)
-            .add(ModItems.chronometer)
+            .add(ModItems.chrononGenIron)
+            .add(ModItems.chrononGenTimeSteel)
             .add(ModItems.creativeChronometer)
 
         tag("belt".curios)
@@ -32,29 +31,29 @@ class ModItemTags(output: PackOutput,
             .add(ModItems.cardWallet)
 
         tag("charm".curios)
-            .add(ModItems.chrononBattery)
-            .add(ModItems.chrononCell)
-            .add(ModItems.chrononGenerator)
-            .add(ModItems.chronometer)
+            .add(ModItems.capacitorTimeSteel)
+            .add(ModItems.capacitorIron)
+            .add(ModItems.chrononGenIron)
+            .add(ModItems.chrononGenTimeSteel)
             .add(ModItems.creativeChronometer)
-            .add(ModItems.locationBroadcaster)
-            .add(ModItems.screeningDevice)
+            .add(ModItems.waymitterIron)
+            .add(ModItems.waymitterTimeSteel)
             .add(ModItems.cardWallet)
             .add(ModItems.creativeChronometer)
 
         tag(ModTags.chargeBlacklist)
             .add(ModItems.metronome)
-            .add(ModItems.chronometer)
-            .add(ModItems.chrononGenerator)
+            .add(ModItems.chrononGenTimeSteel)
+            .add(ModItems.chrononGenIron)
 
         tag(ModTags.batteries)
-            .add(ModItems.chronometer)
-            .add(ModItems.chrononGenerator)
-            .add(ModItems.chrononCell)
-            .add(ModItems.chrononBattery)
+            .add(ModItems.chrononGenTimeSteel)
+            .add(ModItems.chrononGenIron)
+            .add(ModItems.capacitorIron)
+            .add(ModItems.capacitorTimeSteel)
 
         tag(ModTags.chrononGens)
-            .add(ModItems.chronometer)
-            .add(ModItems.chrononGenerator)
+            .add(ModItems.chrononGenTimeSteel)
+            .add(ModItems.chrononGenIron)
     }
 }

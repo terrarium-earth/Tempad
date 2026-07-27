@@ -1,7 +1,7 @@
 package earth.terrarium.tempad.common.items
 
 import earth.terrarium.tempad.api.access.ItemAccessAddress
-import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.api.app.TempadAppRegistry
 import earth.terrarium.tempad.api.macro.MacroRegistry
 import earth.terrarium.tempad.common.registries.*
 import earth.terrarium.tempad.common.utils.contents
@@ -20,10 +20,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ClickAction
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.TooltipFlag
-import net.minecraft.world.item.component.TooltipDisplay
 import net.minecraft.world.level.Level
-import java.util.function.Consumer
 
 class TempadItem(props: Properties) : ChrononItem(props) {
     override fun inventoryTick(
@@ -49,7 +46,7 @@ class TempadItem(props: Properties) : ChrononItem(props) {
         if (player.isShiftKeyDown) {
             MacroRegistry[stack.defaultMacro]?.run(player, access)
         } else {
-            (AppRegistry[stack.defaultApp, player, accessAddress, false]?: AppRegistry[ModApps.teleport, player, accessAddress, false])!!.openMenu(player as ServerPlayer)
+            (TempadAppRegistry[stack.defaultApp, player, accessAddress]?: TempadAppRegistry[ModApps.teleport, player, accessAddress])!!.openMenu(player as ServerPlayer)
         }
 
         return InteractionResult.SUCCESS

@@ -9,9 +9,10 @@ import earth.terrarium.tempad.common.block.MetronomeBe
 import earth.terrarium.tempad.common.block.MetronomeBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBlock
 import earth.terrarium.tempad.common.block.RudimentaryTempadBE
+import earth.terrarium.tempad.common.block.TemputerTimeSteelBE
 import earth.terrarium.tempad.common.block.WorkstationBE
 import earth.terrarium.tempad.common.block.WorkstationBlock
-import earth.terrarium.tempad.common.block.WorkstationChildBlock
+import earth.terrarium.tempad.common.block.TemputerTimeSteelBlock
 import earth.terrarium.tempad.common.block.timedoor_marker.ChronomarkBE
 import earth.terrarium.tempad.common.block.timedoor_marker.ChronomarkBlock
 import earth.terrarium.tempad.common.block.timedoor_marker.TimedoorMarkerBE
@@ -24,22 +25,22 @@ object ModBlocks {
     val blocks = ResourcefulRegistries.createForBlocks(Tempad.MOD_ID)
     val blockEntities = ResourcefulRegistries.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Tempad.MOD_ID)
 
-    val timedoorProjector by blocks.register("timedoor_projector", ::RudimentaryTempadBlock) { Properties.of().strength(3.0f, 6.0f) }
+    val temputerIron by blocks.register("temputer_iron", ::RudimentaryTempadBlock) { Properties.of().strength(3.0f, 6.0f) }
 
-    val timedoorProjectorBE by blockEntities.register("timedoor_projector") {
-        BlockEntityType(::RudimentaryTempadBE, timedoorProjector)
+    val temputerIronBE by blockEntities.register("temputer_iron") {
+        BlockEntityType(::RudimentaryTempadBE, temputerIron)
     }
 
-    val timedoorMarker by blocks.register("timedoor_marker", ::TimedoorMarkerBlock) { Properties.of().strength(3.0f, 6.0f) }
+    val doorpointIron by blocks.register("doorpoint_iron", ::TimedoorMarkerBlock) { Properties.of().strength(3.0f, 6.0f) }
 
-    val timedoorMarkerBE by blockEntities.register("timedoor_marker") {
-        BlockEntityType(::TimedoorMarkerBE, timedoorMarker)
+    val doorpointIronBE by blockEntities.register("doorpoint_iron") {
+        BlockEntityType(::TimedoorMarkerBE, doorpointIron)
     }
 
-    val chronomark by blocks.register("chronomark", ::ChronomarkBlock) { Properties.of().strength(3.0f, 6.0f) }
+    val doorpointTimeSteel by blocks.register("doorpoint_time_steel", ::ChronomarkBlock) { Properties.of().strength(3.0f, 6.0f) }
 
-    val chronomarkBE by blockEntities.register("chronomark") {
-        BlockEntityType(::ChronomarkBE, chronomark)
+    val doorpointTimeSteelBE by blockEntities.register("doorpoint_time_steel") {
+        BlockEntityType(::ChronomarkBE, doorpointTimeSteel)
     }
 
     val workstation by blocks.register("workstation", ::WorkstationBlock) { Properties.of().noOcclusion().strength(3.0f, 1200f) }
@@ -48,7 +49,11 @@ object ModBlocks {
         BlockEntityType(::WorkstationBE, workstation)
     }
 
-    val workstationChild by blocks.register("workstation_child", ::WorkstationChildBlock) { Properties.of().strength(3.0f, 1200f) }
+    val temputerTimeSteel by blocks.register("temputer_time_steel", ::TemputerTimeSteelBlock) { Properties.of().strength(3.0f, 1200f) }
+
+    val temputerTimeSteelBE by blockEntities.register("temputer_time_steel") {
+        BlockEntityType(::TemputerTimeSteelBE, temputerTimeSteel)
+    }
 
     val metronome by blocks.register("metronome", ::MetronomeBlock) { Properties.of().strength(3.0f, 1200f) }
 

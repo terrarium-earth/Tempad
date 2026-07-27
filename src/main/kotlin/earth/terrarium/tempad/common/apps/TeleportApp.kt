@@ -70,7 +70,7 @@ class CostAndLocation(val cost: Int, val location: NamedGlobalVec3) {
     }
 }
 
-class TeleportData(val locations: Map<Identifier, Map<UUID, CostAndLocation>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ItemAccessAddress<*>): AppContent<TeleportData>(ctx, false, codec) {
+class TeleportData(val locations: Map<Identifier, Map<UUID, CostAndLocation>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ItemAccessAddress<*>): AppContent<TeleportData>(ctx, codec) {
     constructor(locations: Map<Identifier, Map<UUID, CostAndLocation>>, fav: Optional<FavoriteLocationAttachment>, ctx: ItemAccessAddress<*>): this(locations, fav.getOrNull(), ctx)
     companion object {
         val codec: ByteCodec<TeleportData> = ObjectByteCodec.create(

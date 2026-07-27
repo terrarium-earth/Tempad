@@ -18,7 +18,6 @@ import net.minecraft.client.data.models.model.ModelTemplates
 import net.minecraft.client.data.models.model.TextureMapping
 import net.minecraft.client.renderer.item.ItemModel
 import net.minecraft.client.renderer.item.properties.conditional.HasComponent
-import net.minecraft.client.renderer.item.properties.conditional.IsUsingItem
 import net.minecraft.core.Holder
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
@@ -43,15 +42,15 @@ class ModItemModelData(output: PackOutput) : ModelProvider(output, Tempad.MOD_ID
         itemModels.generateFlatItem(ModItems.knowledgeProjector, ModelTemplates.FLAT_ITEM)
 
         // Block items — reference existing block model files
-        blockModels.registerSimpleItemModel(ModBlocks.timedoorMarker, "block/timedoor_marker".tempadId)
-        blockModels.registerSimpleItemModel(ModBlocks.chronomark, "block/chronomark".tempadId)
+        blockModels.registerSimpleItemModel(ModBlocks.doorpointIron, "block/timedoor_marker".tempadId)
+        blockModels.registerSimpleItemModel(ModBlocks.doorpointTimeSteel, "block/chronomark".tempadId)
         blockModels.registerSimpleItemModel(ModBlocks.metronome, "block/metronome".tempadId)
         blockModels.registerSimpleItemModel(ModBlocks.workstation, "block/workstation_full".tempadId)
         blockModels.registerSimpleItemModel(ModBlocks.liftway, "block/chronomark".tempadId)
 
         // timedoor_projector: conditional on has_card (portalTarget component present)
         itemModels.itemModelOutput.accept(
-            ModItems.timedoorProjector,
+            ModItems.temputerIron,
             ItemModelUtils.conditional(
                 HasComponent(ModComponents.portalTarget, false),
                 ItemModelUtils.plainModel("block/timedoor_projector_with_card".tempadId),
@@ -83,19 +82,19 @@ class ModItemModelData(output: PackOutput) : ModelProvider(output, Tempad.MOD_ID
 
         // location_broadcaster: conditional on enabled (default=true)
         itemModels.itemModelOutput.accept(
-            ModItems.locationBroadcaster,
+            ModItems.waymitterIron,
             ItemModelUtils.conditional(
                 BooleanComponentProperty.of(ModComponents.enabled, true),
                 ItemModelUtils.plainModel(
                     itemModels.createFlatItemModel(
-                        ModItems.locationBroadcaster,
+                        ModItems.waymitterIron,
                         "_enabled",
                         ModelTemplates.FLAT_ITEM
                     )
                 ),
                 ItemModelUtils.plainModel(
                     itemModels.createFlatItemModel(
-                        ModItems.locationBroadcaster,
+                        ModItems.waymitterIron,
                         ModelTemplates.FLAT_ITEM
                     )
                 ),
@@ -104,19 +103,19 @@ class ModItemModelData(output: PackOutput) : ModelProvider(output, Tempad.MOD_ID
 
         // screening_device: conditional on enabled (default=true)
         itemModels.itemModelOutput.accept(
-            ModItems.screeningDevice,
+            ModItems.waymitterTimeSteel,
             ItemModelUtils.conditional(
                 BooleanComponentProperty.of(ModComponents.enabled, true),
                 ItemModelUtils.plainModel(
                     itemModels.createFlatItemModel(
-                        ModItems.screeningDevice,
+                        ModItems.waymitterTimeSteel,
                         "_enabled",
                         ModelTemplates.FLAT_ITEM
                     )
                 ),
                 ItemModelUtils.plainModel(
                     itemModels.createFlatItemModel(
-                        ModItems.screeningDevice,
+                        ModItems.waymitterTimeSteel,
                         ModelTemplates.FLAT_ITEM
                     )
                 ),
@@ -145,10 +144,10 @@ class ModItemModelData(output: PackOutput) : ModelProvider(output, Tempad.MOD_ID
         )
 
         // Charge-based items (range dispatch by ChrononChargeProperty)
-        itemModels.itemModelOutput.accept(ModItems.chrononCell, chargeModel(ModItems.chrononCell, itemModels))
-        itemModels.itemModelOutput.accept(ModItems.chrononBattery, chargeModel(ModItems.chrononBattery, itemModels))
-        itemModels.itemModelOutput.accept(ModItems.chronometer, chargeModel(ModItems.chronometer, itemModels))
-        itemModels.itemModelOutput.accept(ModItems.chrononGenerator, chargeModel(ModItems.chrononGenerator, itemModels))
+        itemModels.itemModelOutput.accept(ModItems.capacitorIron, chargeModel(ModItems.capacitorIron, itemModels))
+        itemModels.itemModelOutput.accept(ModItems.capacitorTimeSteel, chargeModel(ModItems.capacitorTimeSteel, itemModels))
+        itemModels.itemModelOutput.accept(ModItems.chrononGenTimeSteel, chargeModel(ModItems.chrononGenTimeSteel, itemModels))
+        itemModels.itemModelOutput.accept(ModItems.chrononGenIron, chargeModel(ModItems.chrononGenIron, itemModels))
 
         // tempad: nested conditional (twisterEquipped × isUsingItem × charge)
         itemModels.itemModelOutput.accept(

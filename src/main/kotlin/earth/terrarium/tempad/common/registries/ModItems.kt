@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
-import java.util.UUID
 
 object ModItems {
     val registry = ResourcefulRegistries.createForItems(Tempad.MOD_ID)
@@ -47,27 +46,31 @@ object ModItems {
     val guideUpgrade: Item by registry.registerSimple("knowledge_repository_upgrade")
     val guideKey = "knowledge_repository".tempadId
 
-    // Rudi Tier
-    val timedoorProjector: Item by registry.registerItem("timedoor_projector", ::RudimentaryTempadItem)
-    val timedoorMarker: Item by registry.registerItem("timedoor_marker", { it -> SpatialAnchorItem(ModBlocks.timedoorMarker, it) })
-    val chrononCell: CapacitorItem by registry.registerItem("chronon_cell", ::CapacitorItem) { it.stacksTo(1) }
-    val chrononGenerator: ChronometerItem by registry.registerItem("chronon_generator", { ChronometerItem(it, CommonConfig.ChrononGenerator::generationRate, CommonConfig.ChrononGenerator::generationAmount) } ) {
+    val temputerIron: Item by registry.registerItem("temputer_iron", ::TemputerIron) { it.stacksTo(1) }
+    val temputerTimeSteel: Item by registry.registerItem("temputer_time_steel", { BlockItem(ModBlocks.temputerTimeSteel, it) }) { it.stacksTo(1) }
+
+    val doorpointIron: Item by registry.registerItem("doorpoint_iron", { DoorpointItem(ModBlocks.doorpointIron, it) })
+    val doorpointTimeSteel: Item by registry.registerItem("doorpoint_time_steel", { DoorpointItem(ModBlocks.doorpointTimeSteel, it) })
+
+    val capacitorIron: Item by registry.registerItem("chronon_capacitor_iron", ::ChrononCapacitorItem) { it.stacksTo(1) }
+    val capacitorTimeSteel: Item by registry.registerItem("chronon_capacitor_time_steel", ::ChrononCapacitorItem) { it.stacksTo(1) }
+
+    val chrononGenIron: ChrononGeneratorItem by registry.registerItem("chronon_generator_iron", { ChrononGeneratorItem(it, CommonConfig.ChrononGenerator::generationRate, CommonConfig.ChrononGenerator::generationAmount) } ) {
         it.stacksTo(1)
     }
-    val locationBroadcaster: Item by registry.registerItem("location_broadcaster", ::LocationBroadcasterItem) { it.stacksTo(1) }
+    val chrononGenTimeSteel: ChrononGeneratorItem by registry.registerItem("chronon_generator_time_steel", { ChrononGeneratorItem(it, CommonConfig.Chronometer::generationRate, CommonConfig.Chronometer::generationAmount) } ) { it.stacksTo(1) }
 
-    // TVA Tier
+    val waymitterIron: Item by registry.registerItem("waymitter_iron", ::WaymitterIron) { it.stacksTo(1) }
+    val waymitterTimeSteel: Item by registry.registerItem("waymitter_time_steel", ::WaymitterTimeSteel) { it.stacksTo(1) }
+
     val tempad: TempadItem by registry.registerItem("tempad", ::TempadItem) {
         it.stacksTo(1)
         it.component(ModComponents.serialPrefix, "TERRA")
     }
-    val chronomark: Item by registry.registerItem("chronomark", { SpatialAnchorItem(ModBlocks.chronomark, it) })
-    val chrononBattery: Item by registry.registerItem("chronon_battery", ::CapacitorItem) { it.stacksTo(1) }
-    val chronometer: ChronometerItem by registry.registerItem("chronometer", { ChronometerItem(it, CommonConfig.Chronometer::generationRate, CommonConfig.Chronometer::generationAmount) } ) { it.stacksTo(1) }
+
     val timeTwister: Item by registry.registerItem("time_twister", ::TimeTwisterItem) { it.stacksTo(1) }
     val workstation: Item by registry.registerItem("workstation", ::WorkstationItem) { it.stacksTo(1) }
     val metronome: Item by registry.registerItem("metronome", ::MetronomeItem) { it.stacksTo(1) }
-    val screeningDevice: Item by registry.registerItem("screening_device", ::ScreeningDeviceItem) { it.stacksTo(1) }
     val liftway: Item by registry.registerItem("liftway", { BlockItem(ModBlocks.liftway, it) }) { it.stacksTo(1) }
 
     // Creative

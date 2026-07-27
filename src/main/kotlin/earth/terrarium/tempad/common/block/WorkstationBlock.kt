@@ -10,9 +10,7 @@ import earth.terrarium.tempad.common.registries.ModRecipes
 import earth.terrarium.tempad.common.registries.ModSounds
 import earth.terrarium.tempad.common.registries.locked
 import earth.terrarium.tempad.common.registries.owner
-import earth.terrarium.tempad.common.utils.get
 import earth.terrarium.tempad.common.utils.isEmpty
-import earth.terrarium.tempad.common.utils.set
 import earth.terrarium.tempad.common.utils.stack
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -31,7 +29,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.ScheduledTickAccess
 import net.minecraft.world.level.block.*
@@ -178,25 +175,7 @@ class WorkstationBlock(props: Properties) : BaseEntityBlock(props) {
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState? {
-        val direction: Direction = context.horizontalDirection
-        val childPos: BlockPos = getPos(direction, context.clickedPos);
-        val level: Level = context.level
-        return if (level.getBlockState(childPos).canBeReplaced(context) && level.worldBorder.isWithinBounds(childPos))
-            this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, direction)
-        else
-            null
-    }
-
-    override fun setPlacedBy(level: Level, pos: BlockPos, state: BlockState, placer: LivingEntity?, stack: ItemStack) {
-        super.setPlacedBy(level, pos, state, placer, stack)
-        if (!level.isClientSide) {
-            val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
-            val newState = ModBlocks.workstationChild.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, dir)
-            val blockpos = getPos(dir, pos)
-            level.setBlock(blockpos, newState, UPDATE_ALL)
-            // level.blockUpdated(pos, Blocks.AIR)
-            newState.updateNeighbourShapes(level, pos, UPDATE_ALL)
-        }
+        return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection)
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
@@ -221,39 +200,6 @@ class WorkstationBlock(props: Properties) : BaseEntityBlock(props) {
             Direction.WEST -> WEST_SHAPE
             Direction.EAST -> EAST_SHAPE
             else -> NORTH_SHAPE
-        }
-    }
-
-    override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
-        if (!level.isClientSide && player.isCreative) {
-            val dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING)
-
-            val blockpos = getPos(dir, pos)
-
-            val blockstate = level.getBlockState(blockpos)
-            if (blockstate.`is`(ModBlocks.workstationChild) && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir) {
-                level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35)
-                level.levelEvent(player, 2001, blockpos, getId(blockstate))
-            }
-        }
-
-        return super.playerWillDestroy(level, pos, state, player)
-    }
-
-    override fun updateShape(
-        state: BlockState,
-        level: LevelReader,
-        ticks: ScheduledTickAccess,
-        neighborPos: BlockPos,
-        facing: Direction,
-        neighbourPos: BlockPos,
-        facingState: BlockState,
-        random: RandomSource
-    ): BlockState {
-        return if (facing == relativeDir(state) && facingState.block == Blocks.AIR) {
-            Blocks.AIR.defaultBlockState()
-        } else {
-            super.updateShape(state, level, ticks, neighborPos, facing, neighbourPos, facingState, random)
         }
     }
 

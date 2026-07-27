@@ -7,6 +7,7 @@ import com.teamresourceful.resourcefullibkt.common.getValue
 import earth.terrarium.tempad.Tempad
 import earth.terrarium.tempad.common.apps.*
 import earth.terrarium.tempad.common.menu.AbstractTempadMenu
+import earth.terrarium.tempad.common.menu.AbstractTemputerMenu
 import earth.terrarium.tempad.common.menu.MetronomeMenu
 import earth.terrarium.tempad.common.menu.MetronomeMenuData
 import earth.terrarium.tempad.common.menu.WalletMenu
@@ -84,6 +85,15 @@ object ModMenus {
     val wallet: MenuType<WalletMenu> by registry.register("wallet") {
         MenuType(
             ::WalletMenu,
+            FeatureFlags.VANILLA_SET
+        )
+    }
+
+    class TemputerMenu(id: Int, inv: Inventory): AbstractTemputerMenu(temputerTest, id)
+
+    val temputerTest: MenuType<TemputerMenu> by registry.register("temputer_test") {
+        MenuType(
+            ::TemputerMenu,
             FeatureFlags.VANILLA_SET
         )
     }

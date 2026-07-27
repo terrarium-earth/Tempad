@@ -31,7 +31,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.layouts.SpacerElement
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.ClickEvent
@@ -69,7 +68,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
         fun <T> T.createChapters() where T : Screen, T : ExtendedWikiScreen =
             mutableMapOf<Component, MutableMap<Identifier, (ClearableGridLayout) -> Unit>>().apply {
                 put(ModLang.iron, mutableMapOf<Identifier, (ClearableGridLayout) -> Unit>().apply {
-                    put(ModItems.chrononCell.id) {
+                    put(ModItems.capacitorIron.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.cellOverview))
                         list.addChild(title(ModLang.crafting))
@@ -78,7 +77,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                         list.addChild(title(ModLang.usage))
                         list.addChild(paragraph(ModLang.cellUsage))
                     }
-                    put(ModItems.chrononGenerator.id) {
+                    put(ModItems.chrononGenIron.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.chrononGenOverview))
                         list.addChild(title(ModLang.crafting))
@@ -112,7 +111,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                         list.addChild(paragraph(ModLang.walletUsage2))
                         list.addChild(paragraph(ModLang.walletUsage3))
                     }
-                    put(ModItems.timedoorMarker.id) {
+                    put(ModItems.doorpointIron.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.markerOverview))
                         list.addChild(title(ModLang.crafting))
@@ -122,7 +121,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                         list.addChild(paragraph(ModLang.markerUsage))
                         list.addChild(paragraph(ModLang.markerUsage2))
                     }
-                    put(ModItems.timedoorProjector.id) {
+                    put(ModItems.temputerIron.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.projectorOverview))
                         list.addChild(title(ModLang.crafting))
@@ -135,7 +134,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                         list.addChild(paragraph(ModLang.projectorTimedoors))
                         list.addChild(paragraph(ModLang.projectorTimedoors2))
                     }
-                    put(ModItems.locationBroadcaster.id) {
+                    put(ModItems.waymitterIron.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.locationBroadcastersOverview))
                         list.addChild(title(ModLang.crafting))
@@ -156,7 +155,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                             ?: recipe("time_steel_shapeless".tempadId))?.let(list::addChild)
                         list.addChild(paragraph(ModLang.timeSteelCrafting2))
                     }
-                    put(ModItems.chrononBattery.id) {
+                    put(ModItems.capacitorTimeSteel.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.chrononBatteryOverview))
                         list.addChild(title(ModLang.crafting))
@@ -165,7 +164,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                         list.addChild(title(ModLang.usage))
                         list.addChild(paragraph(ModLang.chrononBatteryUsage))
                     }
-                    put(ModItems.chronometer.id) {
+                    put(ModItems.chrononGenTimeSteel.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.chronometerOverview))
                         list.addChild(title(ModLang.crafting))
@@ -177,7 +176,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                             list.addChild(paragraph(ModLang.chronometerInternalStorage))
                         }
                     }
-                    put(ModItems.chronomark.id) {
+                    put(ModItems.doorpointTimeSteel.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.chronomarkOverview))
                         list.addChild(title(ModLang.crafting))
@@ -236,7 +235,7 @@ class KnowledgeScreen() : Screen(ModItems.knowledgeProjector.descriptionId.trans
                         list.addChild(paragraph(ModLang.timeTwisterUsage2))
                         list.addChild(paragraph(ModLang.timeTwisterUsage3))
                     }
-                    put(ModItems.screeningDevice.id) {
+                    put(ModItems.waymitterTimeSteel.id) {
                         val list = it.rowSpacing(4).rows(0, 1)
                         list.addChild(paragraph(ModLang.screeningDeviceOverview))
                         list.addChild(title(ModLang.crafting))

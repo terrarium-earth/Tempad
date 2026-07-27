@@ -16,10 +16,10 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import java.util.*
 
-data class NewLocationApp(val ctx: ItemAccessAddress<*>, val isStationary: Boolean): TempadApp<NewLocationAppData> {
+data class NewLocationApp(val ctx: ItemAccessAddress<*>): TempadApp<NewLocationAppData> {
     override fun isEnabled(player: Player): Boolean {
         val access = ctx.getAccess(player)
-        return CommonConfig.allowLocationSaving && !isStationary && (CommonConfig.requireLocationUpgrade|| access.upgrades?.contains(ModItems.newLocationKey) == true)
+        return CommonConfig.allowLocationSaving && (CommonConfig.requireLocationUpgrade|| access.upgrades?.contains(ModItems.newLocationKey) == true)
     }
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
@@ -31,7 +31,7 @@ data class NewLocationApp(val ctx: ItemAccessAddress<*>, val isStationary: Boole
     override fun createContent(player: ServerPlayer?) = NewLocationAppData(CommonConfig.allowLocationSaving, ctx)
 }
 
-class NewLocationAppData(val allowLocationSaving: Boolean, ctx: ItemAccessAddress<*>) : AppContent<NewLocationAppData>(ctx, false, codec) {
+class NewLocationAppData(val allowLocationSaving: Boolean, ctx: ItemAccessAddress<*>) : AppContent<NewLocationAppData>(ctx, codec) {
     companion object {
         val codec: ByteCodec<NewLocationAppData> = ObjectByteCodec.create(
             ByteCodec.BOOLEAN.fieldOf { it.allowLocationSaving },

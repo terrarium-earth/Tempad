@@ -52,7 +52,7 @@ data class PortalSetupApp(val ctx: ItemAccessAddress<*>): TempadApp<PortalSetupD
     override fun isEnabled(player: Player): Boolean = true
 }
 
-class PortalSetupData(val locations: Map<Identifier, Map<UUID, CostAndLocation>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ItemAccessAddress<*>): AppContent<PortalSetupData>(ctx, true, codec) {
+class PortalSetupData(val locations: Map<Identifier, Map<UUID, CostAndLocation>>, val favoriteLocation: FavoriteLocationAttachment?, ctx: ItemAccessAddress<*>): AppContent<PortalSetupData>(ctx, codec) {
     constructor(locations: Map<Identifier, Map<UUID, CostAndLocation>>, fav: Optional<FavoriteLocationAttachment>, ctx: ItemAccessAddress<*>): this(locations, fav.getOrNull(), ctx)
     companion object {
         val codec: ByteCodec<PortalSetupData> = ObjectByteCodec.create(

@@ -1,8 +1,6 @@
 package earth.terrarium.tempad.data.client
 
-import earth.terrarium.olympus.client.ui.ClearableGridLayout
 import earth.terrarium.tempad.Tempad
-import earth.terrarium.tempad.client.screen.guide.KnowledgeScreen
 import earth.terrarium.tempad.common.config.CommonConfigCache
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.ModItems
@@ -69,8 +67,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "Empty Chronon Cells can be charged slowly over time if carried alongside a %s or a %s, " +
                         "or they can be placed inside a %s. Charged Chronon Cells will transfer their stored Chronons to all carried " +
                         "devices automatically, so long as they are all present in the main inventory or curio slots. Chronon Cells hold {X} Chronons.",
-                ModItems.chrononGenerator,
-                ModItems.chronometer,
+                ModItems.chrononGenIron,
+                ModItems.chrononGenTimeSteel,
                 ModItems.metronome,
                 CommonConfigCache.ChrononCell.capacity.format()
             )
@@ -107,7 +105,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "chronongen_crafting",
                 "Chronon Generators can be created from any basic Clock, along with a block of Glass, Iron Ingots, and a %s",
-                ModItems.chrononCell
+                ModItems.capacitorIron
             )
 
         val chrononGenUsage
@@ -116,7 +114,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "Kept in the main inventory or a curio slot, a Chronon Generator or %s will invert the temporal decay " +
                         "of local background radiation to synthesize Chronons, which are then distributed to all carried devices " +
                         "or storage cells automatically, so long as they are all present in the main inventory or curio slots.",
-                ModItems.chronometer,
+                ModItems.chrononGenTimeSteel,
             )
 
         val chrononGenStorage
@@ -173,11 +171,11 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                         "standard issue %s with the coordinates already saved inside. Right-clicking the card onto a %s " +
                         "or %s will link the card to the device. Right-clicking the card onto the information panel for a location " +
                         "saved inside the %s will write the location data to the card.",
-                ModItems.timedoorMarker,
-                ModItems.chronomark,
+                ModItems.doorpointIron,
+                ModItems.doorpointTimeSteel,
                 ModItems.tempad,
-                ModItems.timedoorMarker,
-                ModItems.chronomark,
+                ModItems.doorpointIron,
+                ModItems.doorpointTimeSteel,
                 ModItems.tempad
             )
 
@@ -187,11 +185,11 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "Written cards can be used to supply location data to a %s or a %s. Cards obtained from other " +
                         "players only function with the %s if placed into a carried %s, however all cards can be freely " +
                         "used with the %s.",
-                ModItems.timedoorProjector,
+                ModItems.temputerIron,
                 ModItems.tempad,
                 ModItems.tempad,
                 ModItems.cardWallet,
-                ModItems.timedoorProjector,
+                ModItems.temputerIron,
             )
 
         val cardUsage3 = bookLang(
@@ -248,7 +246,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                         "list if they are placed inside a carried wallet. Note that this is unnecessary for a %s or a %s " +
                         "owned by the user, as these devices are already added to the user’s %s. What this does enable, however, is the " +
                         "continued sharing of location cards between users, and being able to access these shared cards via the %s’s interface.",
-                ModItems.tempad, ModItems.tempad, ModItems.timedoorMarker, ModItems.chronomark, ModItems.tempad,
+                ModItems.tempad, ModItems.tempad, ModItems.doorpointIron, ModItems.doorpointTimeSteel, ModItems.tempad,
                 ModItems.tempad
             )
 
@@ -294,8 +292,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "marker_usage",
                 "To write data to a %s, place the Timedoor Marker and right-click it with a %s. The card will then be written and can be used with the %s. " +
                         "The %s displays Timedoor Markers and %ss owned by the user automatically, but %ss linked to devices can be shared with others.",
-                ModItems.locationCard, ModItems.locationCard, ModItems.timedoorProjector,
-                ModItems.tempad, ModItems.chronomark, ModItems.locationCard
+                ModItems.locationCard, ModItems.locationCard, ModItems.temputerIron,
+                ModItems.tempad, ModItems.doorpointTimeSteel, ModItems.locationCard
             )
 
         val markerUsage2 = bookLang(
@@ -340,7 +338,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         val projectorCrafting get() = bookLang(
             "projector_crafting",
             "Timedoor Projectors are crafted from Copper Ingots, a Glass block, an Ender Pearl, a %s and Blocks of Iron.",
-            ModItems.chrononCell
+            ModItems.capacitorIron
         )
 
         val projectorUsage get() = bookLang(
@@ -462,7 +460,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "chronon_battery_overview",
                 "Chronon Batteries are devices for storing Chronons made from smaller cells. They hold more Chronons than individual %ss.",
-                ModItems.chrononCell
+                ModItems.capacitorIron
             )
 
         val chrononBatteryCrafting
@@ -470,7 +468,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "chronon_battery_crafting",
                 "Chronon Batteries can be created with %s, Iron Ingots, %ss, and Amethyst Shards, to power multiversal devices, " +
                         "and are the ideal way to carry Chronons on the go.",
-                ModItems.timeSteel, ModItems.chrononCell
+                ModItems.timeSteel, ModItems.capacitorIron
             )
 
         val chrononBatteryUsage
@@ -479,8 +477,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "Empty Chronon Batteries can be charged slowly over time if carried alongside a %s or a %s, or they can be placed inside a %s. " +
                         "Charged Chronon Batteries will transfer their stored Chronons to all carried devices automatically, so long as they are all present in the main inventory or curio slots. " +
                         "Chronon Batteries hold %s Chronons.",
-                ModItems.chrononGenerator,
-                ModItems.chronometer,
+                ModItems.chrononGenIron,
+                ModItems.chrononGenTimeSteel,
                 ModItems.metronome,
                 CommonConfigCache.Battery.capacity.format()
             )
@@ -516,7 +514,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "chronometer_crafting",
                 "Chronometers can be created from any basic Clock, along with a few extra components. Also required will be a block of Tinted Glass, ingots of %s, and a %s.",
-                ModItems.timeSteel, ModItems.chrononBattery
+                ModItems.timeSteel, ModItems.capacitorTimeSteel
             )
 
         val chronometerUsage
@@ -524,7 +522,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "chronometer_usage",
                 "Kept in the main inventory or a curio slot, a Chronometer or %s will invert the temporal decay of local background radiation to synthesize Chronons, " +
                         "which are then distributed to all carried devices or storage cells automatically, so long as they are all present in the main inventory or curio slots.",
-                ModItems.chrononGenerator
+                ModItems.chrononGenIron
             )
 
         val chronometerInternalStorage
@@ -561,7 +559,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "The Chronomark is a stationary block used to generate exact spatial coordinates and provide them to other devices. " +
                         "As an upgrade over %s, Chronomarks allow for an offset of up to %s blocks to be specified in case the user wants to mount the device on a high ceiling or bury the device under the floor. " +
                         "They also allow for more user filtering options.",
-                ModItems.timedoorMarker, CommonConfigCache.Chronomark.maxOffset.format()
+                ModItems.doorpointIron, CommonConfigCache.Chronomark.maxOffset.format()
             )
 
         val chronomarkCrafting
@@ -576,8 +574,8 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "chronomark_usage",
                 "To write data to a %s, place the Chronomark and right-click it with a %s. The card will then be written and can be used with %s. " +
                         "The %s displays Chronomarks and %ss owned by the user automatically, but written %ss can be shared with others.",
-                ModItems.locationCard, ModItems.locationCard, ModItems.timedoorProjector,
-                ModItems.tempad, ModItems.timedoorMarker, ModItems.locationCard
+                ModItems.locationCard, ModItems.locationCard, ModItems.temputerIron,
+                ModItems.tempad, ModItems.doorpointIron, ModItems.locationCard
             )
 
         val chronomarkUsage2 = bookLang(
@@ -642,7 +640,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "tempad_crafting",
                 "The Tempad is crafted with blocks of Tinted Glass, a piece of Nether Quartz, an Ender Pearl, a Redstone Lamp, ingots of %s, and a %s.",
-                ModItems.timeSteel, ModItems.chrononBattery
+                ModItems.timeSteel, ModItems.capacitorTimeSteel
             )
 
         val tempadUsage = bookLang(
@@ -684,7 +682,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "Opening the Teleport app will present the user with a list of locations saved in the device, as well as the %ss or %ss owned by the user. " +
                         "Clicking these entries will populate the info panel to the right of the list, and enable the teleport button. " +
                         "Clicking the Teleport button will consume Chronons and generate a Timedoor to the location specified in the entry.",
-                ModItems.timedoorMarker, ModItems.chronomark
+                ModItems.doorpointIron, ModItems.doorpointTimeSteel
             )
 
         val tempadAppTeleport2
@@ -792,7 +790,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "workstation_usage_2",
                 "When a %s is docked on the docking pad, the terminal to the left is also unlocked, allowing the user to set up a stationary teleportation device. " +
                         "The usage of the Workstation in this way is similar to the %s, in that it accepts a redstone signal from any side and creates a Timedoor for the user.",
-                ModItems.tempad, ModItems.timedoorProjector
+                ModItems.tempad, ModItems.temputerIron
             )
 
         val workstationUsage3
@@ -809,7 +807,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "upgrade_player_teleport",
                 "This upgrade allows the %s to lock on to the temporal aura of other players and open Timedoors directly to their location. " +
                         "This functionality requires that the player is carrying an active %s or a %s set to permit the user to teleport to them.",
-                ModItems.tempad, ModItems.locationBroadcaster, ModItems.screeningDevice
+                ModItems.tempad, ModItems.waymitterIron, ModItems.waymitterTimeSteel
             )
 
         //endregion
@@ -848,7 +846,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "time_twister_crafting",
                 "It is crafted with ingots of %s, blocks of Tinted Glass, a %s, and an Ender Pearl.",
-                ModItems.timeSteel, ModItems.chrononBattery
+                ModItems.timeSteel, ModItems.capacitorTimeSteel
             )
 
         val timeTwisterUsage = bookLang(
@@ -897,7 +895,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
             get() = bookLang(
                 "screening_device_overview",
                 "The Screening Device is an advanced version of the %s that features more advanced filtering capability.",
-                ModItems.locationBroadcaster
+                ModItems.waymitterIron
             )
 
         val screeningDeviceCrafting
@@ -913,7 +911,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                 "On a surface level, the Screening Device provides the same functionality as the %s, allowing users with upgraded %s to open Timedoors directly to their location. " +
                         "Additionally, the Screening Device can also filter who is given this permission based on available and compatible team or guild frameworks. " +
                         "Holding the device and right-click using it will cycle the device through its available modes.",
-                ModItems.locationBroadcaster, ModItems.tempad, ModItems.screeningDevice
+                ModItems.waymitterIron, ModItems.tempad, ModItems.waymitterTimeSteel
             )
 
         //endregion
@@ -960,7 +958,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
                         "is an initial charge of Chronons needed to boot the device and gain access to its functionality" +
                         " after it is placed. This boot charge can be provided from a %s or %s in hand by crouch-right-clicking" +
                         " the Metronome.",
-                ModItems.chrononCell, ModItems.chrononBattery
+                ModItems.capacitorIron, ModItems.capacitorTimeSteel
             )
 
         val metronomesUsage2
@@ -1049,7 +1047,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
         add("error.tempad.owner_mismatch", "This isn't yours. Return to owner or Reset item")
         add("error.tempad.block_locked", "%s is Locked")
 
-        ModItems.screeningDevice.apply {
+        ModItems.waymitterTimeSteel.apply {
             addSub("off", "Off")
             addSub("screening", "Screening: %s")
         }
@@ -1146,7 +1144,7 @@ class ModLang(output: PackOutput) : LanguageProvider(output, Tempad.MOD_ID, "en_
     }
 
     val Identifier.formatted
-        get() = path.split('_').joinToString(" ") { it.replaceFirstChar { it.uppercaseChar() } }
+        get() = path.removeSuffix("_iron").removeSuffix("_time_steel").split('_').joinToString(" ") { it.replaceFirstChar { it.uppercaseChar() } }
 
     fun Block.addSub(key: String, value: String) {
         add("$descriptionId.$key", value)

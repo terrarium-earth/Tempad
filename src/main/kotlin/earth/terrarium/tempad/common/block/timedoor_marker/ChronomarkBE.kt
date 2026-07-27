@@ -6,8 +6,6 @@ import earth.terrarium.tempad.common.network.s2c.OpenChronomark
 import earth.terrarium.tempad.common.registries.ModBlocks
 import earth.terrarium.tempad.common.registries.accessId
 import earth.terrarium.tempad.common.registries.angle
-import earth.terrarium.tempad.common.registries.color
-import earth.terrarium.tempad.common.registries.owner
 import earth.terrarium.tempad.common.registries.yOffset
 import earth.terrarium.tempad.common.utils.sendToClient
 import net.minecraft.core.BlockPos
@@ -18,7 +16,7 @@ import java.lang.Math.toRadians
 import kotlin.math.cos
 import kotlin.math.sin
 
-class ChronomarkBE(pos: BlockPos, state: BlockState) : AbstractMarkerBe(ModBlocks.chronomarkBE, pos, state) {
+class ChronomarkBE(pos: BlockPos, state: BlockState) : AbstractMarkerBe(ModBlocks.doorpointTimeSteelBE, pos, state) {
     override val landingPosition: Vec3 get() {
         val starting = blockPos.bottomCenter.add(0.0, yOffset.toDouble(), 0.0)
         val xOffset = cos(toRadians(landingAngle.toDouble() + 90))

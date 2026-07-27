@@ -26,18 +26,18 @@ class ModLootTables(packOutput: PackOutput, provider: CompletableFuture<HolderLo
     class ModLoot(provider: HolderLookup.Provider) :
         BlockLootSubProvider(emptySet(), FeatureFlags.REGISTRY.allFlags(), provider) {
         override fun getKnownBlocks(): Iterable<Block> {
-            return ModBlocks.blocks.entries.map { it.get() }.filter { it != ModBlocks.workstationChild }
+            return ModBlocks.blocks.entries.map { it.get() }.filter { it != ModBlocks.temputerTimeSteel }
         }
 
         override fun generate() {
-            dropSelf(ModBlocks.timedoorMarker)
-            dropSelf(ModBlocks.chronomark)
+            dropSelf(ModBlocks.doorpointIron)
+            dropSelf(ModBlocks.doorpointTimeSteel)
             add(
-                ModBlocks.timedoorProjector, LootTable.lootTable()
+                ModBlocks.temputerIron, LootTable.lootTable()
                     .withPool(
                         this.applyExplosionCondition(
-                            ModBlocks.timedoorProjector, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(
-                                LootItem.lootTableItem(ModBlocks.timedoorProjector)
+                            ModBlocks.temputerIron, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(
+                                LootItem.lootTableItem(ModBlocks.temputerIron)
                                     .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY))
                             )
                         )

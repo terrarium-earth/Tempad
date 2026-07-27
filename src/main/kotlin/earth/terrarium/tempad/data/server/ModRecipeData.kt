@@ -70,13 +70,13 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
         // modded
         fun ShapedRecipeBuilder.timeSteel() = define(timeSteel, ModItems.timeSteel)
 
-        fun ShapedRecipeBuilder.cell() = define(cell, ModItems.chrononCell)
+        fun ShapedRecipeBuilder.cell() = define(cell, ModItems.capacitorIron)
 
-        fun ShapedRecipeBuilder.battery() = define(battery, ModItems.chrononBattery)
+        fun ShapedRecipeBuilder.battery() = define(battery, ModItems.capacitorTimeSteel)
 
         fun ShapedRecipeBuilder.card() = define(card, ModItems.locationCard)
 
-        fun ShapedRecipeBuilder.locationBroadcaster() = define(locationBroadcaster, ModItems.locationBroadcaster)
+        fun ShapedRecipeBuilder.locationBroadcaster() = define(locationBroadcaster, ModItems.waymitterIron)
 
         fun ShapedRecipeBuilder.knowledgeProjector() = define(knowledgeProjector, ModItems.knowledgeProjector)
 
@@ -189,7 +189,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(timeSteel, battery, timeSteel)
             }
 
-            recipeOutput.shaped(ModItems.timedoorProjector) {
+            recipeOutput.shaped(ModItems.temputerIron) {
                 copper()
                 glass()
                 cell()
@@ -201,7 +201,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(ironBlock, ironBlock, ironBlock)
             }
 
-            recipeOutput.shaped(ModItems.timedoorMarker) {
+            recipeOutput.shaped(ModItems.doorpointIron) {
                 iron()
                 ironBlock()
                 glass()
@@ -212,7 +212,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(iron, ironBlock, iron)
             }
 
-            recipeOutput.shaped(ModItems.locationBroadcaster) {
+            recipeOutput.shaped(ModItems.waymitterIron) {
                 glass()
                 iron()
                 emerald()
@@ -246,7 +246,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(timeSteel, quartz, timeSteel)
             }
 
-            recipeOutput.shaped(ModItems.chronomark) {
+            recipeOutput.shaped(ModItems.doorpointTimeSteel) {
                 iron()
                 timeSteel()
                 tintedGlass()
@@ -258,7 +258,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(iron, ironBlock, iron)
             }
 
-            recipeOutput.shaped(ModItems.chrononCell) {
+            recipeOutput.shaped(ModItems.capacitorIron) {
                 iron()
                 copper()
                 amethyst()
@@ -269,7 +269,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(iron, copper, iron)
             }
 
-            recipeOutput.shaped(ModItems.chrononBattery) {
+            recipeOutput.shaped(ModItems.capacitorTimeSteel) {
                 iron()
                 timeSteel()
                 amethyst()
@@ -280,7 +280,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(iron, timeSteel, iron)
             }
 
-            recipeOutput.shaped(ModItems.chronometer) {
+            recipeOutput.shaped(ModItems.chrononGenTimeSteel) {
                 tintedGlass()
                 timeSteel()
                 clock()
@@ -291,7 +291,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(air, battery, air)
             }
 
-            recipeOutput.shaped(ModItems.chrononGenerator) {
+            recipeOutput.shaped(ModItems.chrononGenIron) {
                 glass()
                 iron()
                 clock()
@@ -302,7 +302,7 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
                 pattern(air, cell, air)
             }
 
-            recipeOutput.shaped(ModItems.screeningDevice) {
+            recipeOutput.shaped(ModItems.waymitterTimeSteel) {
                 tintedGlass()
                 timeSteel()
                 emerald()
@@ -375,8 +375,8 @@ class ModRecipeData(output: PackOutput, registries: CompletableFuture<HolderLook
             }
 
             recipeOutput.clean(ModItems.locationCard)
-            recipeOutput.clean(ModItems.timedoorMarker)
-            recipeOutput.clean(ModItems.chronomark)
+            recipeOutput.clean(ModItems.doorpointIron)
+            recipeOutput.clean(ModItems.doorpointTimeSteel)
 
             recipeOutput.shapeless(ModItems.locationCard, 4, "tempad:card_cheap") {
                 requires(Tags.Items.INGOTS_IRON)

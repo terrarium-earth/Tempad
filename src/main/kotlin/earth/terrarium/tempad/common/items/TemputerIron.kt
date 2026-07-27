@@ -25,7 +25,7 @@ import net.neoforged.neoforge.transfer.access.ItemAccess
 import java.util.*
 import kotlin.to
 
-class RudimentaryTempadItem(props: Properties) : BlockItem(ModBlocks.timedoorProjector, props) {
+class TemputerIron(props: Properties) : BlockItem(ModBlocks.temputerIron, props) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResult {
         if (level.isClientSide) return InteractionResult.SUCCESS
         player.ctx(usedHand.getSlot(player)).openTimedoor(player)
