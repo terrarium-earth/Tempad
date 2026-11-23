@@ -1,5 +1,7 @@
 package earth.terrarium.tempad
 
+import earth.terrarium.tempad.common.location_handlers.migrateLegacyAnchors
+import net.neoforged.neoforge.event.server.ServerStartedEvent
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.api.player_access.DefaultAccess
@@ -266,6 +268,10 @@ class Tempad(bus: IEventBus) {
                     it.tick()
                 }
             }
+        }
+
+        NeoForge.EVENT_BUS.addListener { event: ServerStartedEvent ->
+            migrateLegacyAnchors(event.server)
         }
 
         NeoForge.EVENT_BUS.addListener { event: PlayerLoggedInEvent ->

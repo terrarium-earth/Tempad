@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.block.timedoor_marker
 
+import earth.terrarium.tempad.common.location_handlers.AnchorAccessRule
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.player_access.PlayerAccessApi
@@ -34,7 +35,5 @@ class ChronomarkBE(pos: BlockPos, state: BlockState) : AbstractMarkerBe(ModBlock
         OpenChronomark(blockPos, color, posName.string, PlayerAccessApi.ids, accessId, locked, yOffset, angle).sendToClient(player)
     }
 
-    override fun canAccess(player: GameProfile): Boolean {
-        return owner?.let { PlayerAccessApi[this.accessId]?.canAccess(level!!, it, player) } ?: (player.id == owner?.id)
-    }
+    override fun accessRule() = AnchorAccessRule(accessId, false)
 }

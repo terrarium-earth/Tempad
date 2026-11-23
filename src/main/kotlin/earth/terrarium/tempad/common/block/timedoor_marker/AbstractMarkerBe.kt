@@ -1,5 +1,9 @@
 package earth.terrarium.tempad.common.block.timedoor_marker
 
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.core.GlobalPos
+import earth.terrarium.tempad.common.location_handlers.AnchorSnapshot
+import earth.terrarium.tempad.common.location_handlers.AnchorAccessRule
 import com.mojang.authlib.GameProfile
 import earth.terrarium.tempad.api.locations.NamedGlobalVec3
 import earth.terrarium.tempad.api.player_access.PlayerAccessApi
@@ -36,7 +40,32 @@ abstract class AbstractMarkerBe(block: BlockEntityType<*>, pos: BlockPos, state:
 
     abstract fun openScreen(player: Player)
 
-    abstract fun canAccess(player: GameProfile): Boolean
+    /** Access rule stored in the anchor snapshot; see [AnchorAccessRule]. */
+    abstract fun accessRule(): AnchorAccessRule
+
+    fun canAccess(player: GameProfile): Boolean = accessRule().canAccess(level!!, owner, player)
+
+    fun createSnapshot(): AnchorSnapshot? {
+        val level = level ?: return null
+        return AnchorSnapshot(GlobalPos.of(level.dimension(), blockPos), namedGlobalVec3, owner, accessRule())
+    }
+
+    /** Pushes this marker's current state into the global anchor table (server only, registered markers only). */
+    fun refreshAnchorSnapshot() {
+        if (level !is ServerLevel || id == null || isRemoved) return
+        anchorPoints?.update(this)
+    }
+
+    override fun setChanged() {
+        super.setChanged()
+        refreshAnchorSnapshot()
+    }
+
+    override fun onLoad() {
+        super.onLoad()
+        // Self-heals snapshots that drifted (external world edits, pre-snapshot saves). Never re-keys a foreign id.
+        if (level is ServerLevel && id != null) anchorPoints?.updateIfOwned(this)
+    }
 
     override fun loadAdditional(
         tag: CompoundTag,
