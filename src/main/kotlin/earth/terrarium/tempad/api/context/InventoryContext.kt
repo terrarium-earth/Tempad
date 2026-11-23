@@ -17,5 +17,7 @@ class InventoryContext(val player: Player, override val data: Int): SyncableCont
 
     companion object {
         val type = ContextType("inventory".tempadId, ByteCodec.INT)
+
+        val validator: ContextValidator<Int> = { player, slot -> slot in 0 until player.inventory.containerSize }
     }
 }

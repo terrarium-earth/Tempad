@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -27,7 +28,7 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
             NetworkHandle.handle { message, player ->
                 val (provider, id, ctxHolder) = message
                 if (TempadLocations[provider] == null) return@handle
-                val ctx = message.ctx.getCtx(player)
+                val ctx = message.ctx.resolveTempad(player) ?: return@handle
                 val location = TempadLocations[player, ctx, provider]?.let { it[id] }
                 location?.let {
                     TimedoorEntity.openTimedoor(player, ctx, provider, id, it)?.let { msg -> player.displayClientMessage(msg, true) }

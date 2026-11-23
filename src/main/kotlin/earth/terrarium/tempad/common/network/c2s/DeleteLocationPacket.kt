@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -26,9 +27,9 @@ data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: Resou
                 ::DeleteLocationPacket
             ),
             NetworkHandle.handle { message, player ->
-                val ctx = message.ctx.getCtx(player)
-                if (ctx.stack.item !== ModItems.tempad) return@handle
-                TempadLocations[player, ctx, message.providerId]!! -= message.locationId
+                val ctx = message.ctx.resolveTempad(player) ?: return@handle
+                val handler = TempadLocations[player, ctx, message.providerId] ?: return@handle
+                handler -= message.locationId
             }
         )
     }

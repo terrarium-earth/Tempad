@@ -26,7 +26,8 @@ open class AbstractTempadMenu<T: AppContent<T>>(id: Int, inventory: Inventory, t
         return ItemStack.EMPTY
     }
 
-    override fun stillValid(pPlayer: Player): Boolean = true
+    /** Server-side only. Closes the menu once the Tempad is gone or the workstation is out of reach / locked. */
+    override fun stillValid(pPlayer: Player): Boolean = ctxHolder.resolve(pPlayer) { it.`is`(ModItems.tempad) } != null
 
     private fun addPlayerInvSlots(inventory: Inventory, x: Int = 48, y: Int = 157) {
         for (row in 0..2) {

@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -29,7 +30,7 @@ class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, 
             ),
             NetworkHandle.handle { message, player ->
                 if (TempadLocations[message.providerId] == null) return@handle
-                val ctx = message.ctx.getCtx(player)
+                val ctx = message.ctx.resolveTempad(player) ?: return@handle
                 val menuCtx = player.menuCtx
 
                 if (!menuCtx.stack.`is`(ModItems.locationCard)) return@handle

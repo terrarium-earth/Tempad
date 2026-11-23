@@ -1,5 +1,8 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.clampName
+import earth.terrarium.tempad.common.network.resolveTempad
+import earth.terrarium.tempad.common.config.CommonConfig
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.color.Color
@@ -25,9 +28,10 @@ data class CreateLocationPacket(val name: String, val color: Color, val ctx: Con
                 ::CreateLocationPacket
             ),
             NetworkHandle.handle { message, player ->
-                if ({ message.ctx.getCtx(player).stack.item === ModItems.tempad } !in player.inventory) return@handle
+                if (!CommonConfig.allowLocationSaving) return@handle
+                message.ctx.resolveTempad(player) ?: return@handle
                 DefaultLocationHandler(player.gameProfile) += NamedGlobalVec3(
-                    Component.literal(message.name),
+                    Component.literal(message.name.clampName()),
                     player.position(),
                     player.level().dimension(),
                     player.yRot,

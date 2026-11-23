@@ -12,9 +12,10 @@ import net.neoforged.fml.ModList
 
 object ModContext {
     fun init() {
-        ContextRegistry.register(InventoryContext.type, ::InventoryContext)
-        ContextRegistry.register(CarriedMenuCtx.type) { player, _ -> CarriedMenuCtx(player) }
-        ContextRegistry.register(WorkstationContext.type, ::WorkstationContext)
+        ContextRegistry.register(InventoryContext.type, ::InventoryContext, InventoryContext.validator)
+        // The carried stack always belongs to the sending player; item type is checked by the caller.
+        ContextRegistry.register(CarriedMenuCtx.type, { player, _ -> CarriedMenuCtx(player) }, { _, _ -> true })
+        ContextRegistry.register(WorkstationContext.type, ::WorkstationContext, WorkstationContext.validator)
 
         if (ModList.get().isLoaded("curios")) {
             initCuriosCompat()
