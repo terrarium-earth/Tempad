@@ -29,6 +29,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Block.UPDATE_ALL
+import net.minecraft.world.level.block.Block.UPDATE_CLIENTS
 import net.minecraft.world.level.block.Block.popResource
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -61,6 +62,7 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
         const val TIMEDOOR = "TimedoorId"
         const val LEFT = "Left"
         const val RIGHT = "Right"
+        private const val DOWNLOAD_SYNC_INTERVAL = 10
     }
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
@@ -125,8 +127,12 @@ class WorkstationBE(pos: BlockPos, state: BlockState) : BlockEntity(ModBlocks.wo
                 }
                 level.setBlock(blockPos, blockState.setValue(HAS_TAPE, false), UPDATE_ALL)
             } else {
-                setChanged()
-                level.sendBlockUpdated(blockPos, blockState, blockState, UPDATE_ALL)
+                // Progress is only shown in Jade: persist + sync every DOWNLOAD_SYNC_INTERVAL ticks, not every tick
+                // (each sync carries the full inventory NBT).
+                if (downloadTime % DOWNLOAD_SYNC_INTERVAL == 0) {
+                    setChanged()
+                    level.sendBlockUpdated(blockPos, blockState, blockState, UPDATE_CLIENTS)
+                }
                 level.sendParticles(ParticleTypes.SMOKE, blockPos.x + 0.5, blockPos.y + 0.25, blockPos.z + 0.5, 2, 0.2, 0.2, 0.2, 0.0)
             }
         }

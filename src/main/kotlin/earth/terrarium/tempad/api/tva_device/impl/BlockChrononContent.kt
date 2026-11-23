@@ -33,7 +33,7 @@ class BlockChrononContent(val block: BlockEntity, val setter: (Int) -> Unit, val
 
     override fun extract(amount: Int, action: ActionType): Int {
         val extracted = Mth.clamp(power, 0, amount)
-        if(action == ActionType.Execute) {
+        if(action == ActionType.Execute && extracted > 0) {
             power = Mth.clamp(power - extracted, 0, maxPower)
             block.setChanged()
             block.level?.sendBlockUpdated(block.blockPos, block.blockState, block.blockState, Block.UPDATE_ALL)
@@ -43,7 +43,7 @@ class BlockChrononContent(val block: BlockEntity, val setter: (Int) -> Unit, val
 
     override fun insert(amount: Int, action: ActionType): Int {
         val inserted = Mth.clamp(amount, 0, maxPower - power)
-        if(action == ActionType.Execute) {
+        if(action == ActionType.Execute && inserted > 0) {
             power = Mth.clamp(power + inserted, 0, maxPower)
             block.setChanged()
             block.level?.sendBlockUpdated(block.blockPos, block.blockState, block.blockState, Block.UPDATE_ALL)

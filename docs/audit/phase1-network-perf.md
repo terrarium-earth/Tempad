@@ -229,6 +229,33 @@ fun getBlockEntity(pos: GlobalPos) = Tempad.server?.get(pos.dimension())?.getBlo
   1. 正常连按快捷键、来回切换 App，不应该出现「按了没反应」的情况；
   2. 玩家 A 拿起或放下广播器后，B 打开 Tempad 时 A 应该在 1 秒内出现或消失。
 
+### 4. 同步瘦身（覆盖 #5 #6 #7 #8 #14，以及 #11 的 Metronome 部分）
+
+- **#6 Metronome 未启动时永久刷包**：没充能启动的 Metronome 不再每 tick 同步，只在启动进度被重置（`bootTime` 发生变化）时同步一次。启动倒计时期间改为每 10 tick 同步一次。这个进度只在 Jade 里显示，所以 0.5 秒的粒度够用。
+- **Metronome 能量池显示**：原来每个 `generationRate` 周期，无论数值变没变，每台 Metronome 都会同步一次。现在每 20 tick 检查一次能量池，只有存量或容量真的变了才同步。
+- **#7 零量传输触发同步**：
+  - `move()` 遇到 0 直接返回，不执行 Execute；它的返回值改为实际转移的量。
+  - `BlockChrononContent`、`WorkstationChrononHandler`、`ItemChrononHandler` 都改为只在实际变化量大于 0 时才写入或同步。
+  - Metronome 的能量传输改为每 10 tick 批量执行一次，每次转移 10 倍的量，总吞吐不变，capability 查询和同步次数大约降到原来的 1/10。各台 Metronome 按坐标错开执行的 tick，避免挤在同一个 tick 上。
+  - 查找邻居方块前先检查 `isLoaded`，不会为了找邻居去加载区块。
+  - 跳过同一个 owner 的已启动 Metronome：它们共用一个能量池，在彼此之间转移没有意义。
+  - 物品充放电改的是物品组件，`ItemStackHandler` 感知不到这种变化，所以现在发生转移后会显式调用 `setChanged`，否则充放电结果可能不存档。
+  - Metronome 启动完成时，chronon capability 会换成另一种实现，所以在这时调用 `invalidateCapabilities`。
+- **#5 时间门 closingTime 每 tick 同步**：
+  - 原来同步的是每 tick 递减的倒计时，现在改为同步一个绝对的关闭时刻 `closeAt`（游戏时间）。服务端和客户端都用 `closeAt - gameTime` 算剩余时间。
+  - 只有门的寿命被延长时才会同步（工作台常驻门每 20 tick 一次）。普通门从开到关只同步一次。
+  - 对外的 `closingTime` 属性保持原样，WorkstationBE、Jade、渲染器都不用改。存档格式也不变：保存时仍然写入剩余 tick 数。
+  - `-1` 现在真正表示"永不关闭"。原来 `-1` 会被继续递减到 `-2`，然后立刻关门。
+- **#14 animationOffset**：同步字段改为开门时刻 `openedAt`，各端都用 `gameTime - openedAt` 算动画进度。中途进入视距的玩家看到的动画是一致的，也不会再改动其他人已经在播的动画。删除了 StartTracking 监听。
+- **#8 工作台下载进度**：原来每 tick 同步一次，并且每次都带完整物品栏的 NBT。现在改为每 10 tick 同步一次，进度同样只在 Jade 里显示。
+- **#11**：Metronome 的 `getUpdateTag` 只保留客户端会用到的字段：Owner、BootTime、BootChronons、LocalChronons、LocalCapacity。物品栏不再放进去，菜单会单独同步。Workstation 的渲染器要用到物品栏，所以保持原样；Marker 和投影器的更新标签本来就小，现在同步次数也已经降下来了，不再处理。
+- 验证：`./gradlew compileKotlin` 通过，**还没有进游戏实测**。重点测：
+  1. 时间门的开门、关门动画，后进入视距的玩家看到的动画是否正常；
+  2. Jade 显示的倒计时；
+  3. 工作台常驻门能不能持续续期；
+  4. Metronome 的启动流程，以及给相邻机器和槽位里物品充电的速度；
+  5. 用 spark 或抓包对比，看实体数据包和方块实体数据包的数量。
+
 ## 建议的修复顺序（第一阶段）
 
 1. **统一 C2S 上下文校验**（#2 #3 #16 #12）：把安全漏洞和区块加载 DoS 一次堵上，改动集中在 `api/context` 和各包的 handler 入口。

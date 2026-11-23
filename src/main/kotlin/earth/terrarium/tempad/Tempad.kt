@@ -60,7 +60,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.StartTracking
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.server.ServerLifecycleHooks
@@ -284,13 +283,6 @@ class Tempad(bus: IEventBus) {
 
         NeoForge.EVENT_BUS.addListener { event: PlayerLoggedInEvent ->
             CommonConfigCache.CACHE.syncAll(event.entity)
-        }
-
-        NeoForge.EVENT_BUS.addListener { event: StartTracking ->
-            if (event.entity.level().isClientSide) return@addListener
-            (event.target as? TimedoorEntity)?.let {
-                it.animationOffset = it.tickCount
-            }
         }
     }
 }

@@ -21,13 +21,13 @@ class ItemChrononHandler(val stack: ItemStack, override val maxPower: Int): Chro
 
     override fun extract(amount: Int, action: ActionType): Int {
         val extracted = Mth.clamp(power, 0, amount)
-        if(action == ActionType.Execute) power -= extracted
+        if(action == ActionType.Execute && extracted > 0) power -= extracted
         return extracted
     }
 
     override fun insert(amount: Int, action: ActionType): Int {
         val inserted = Mth.clamp(amount, 0, maxPower - power)
-        if(action == ActionType.Execute) power += inserted
+        if(action == ActionType.Execute && inserted > 0) power += inserted
         return inserted
     }
 }
