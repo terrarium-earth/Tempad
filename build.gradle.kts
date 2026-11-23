@@ -27,11 +27,17 @@ repositories {
     maven(url = "https://maven.neoforged.net/releases")
     maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
     maven(url = "https://maven.twelveiterations.com/repository/maven-public/")
-    maven(url = "https://maven.octo-studios.com/releases")
+    // maven.octo-studios.com has lapsed (redirects to a parked domain); Curios is still published here.
+    maven(url = "https://maven.theillusivec4.top/") {
+        content { includeGroup("top.theillusivec4.curios") }
+    }
     maven(url = "https://modmaven.dev/" )
     maven(url = "https://api.modrinth.com/maven")
     maven(url = "https://maven.blamejared.com" )
-    maven(url = "https://cursemaven.com" )
+    maven(url = "https://cursemaven.com") {
+        // cursemaven currently serves POMs Gradle cannot parse ("Already seen doctype"); resolve jars only.
+        metadataSources { artifact() }
+    }
     mavenLocal()
 
     githubPackage("compactmods/gander") {
