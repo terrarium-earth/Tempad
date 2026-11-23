@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.PacketThrottle
 import earth.terrarium.tempad.common.registries.ModItems
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.network.Packet
@@ -26,6 +27,7 @@ class BackTrackLocation(val time: Date, val ctx: ContextHolder<*>): Packet<BackT
                 ::BackTrackLocation
             ),
             NetworkHandle.handle { packet, player ->
+                if (PacketThrottle.BACKTRACK.isThrottled(player)) return@handle
                 val ctx = packet.ctx.resolve(player) { it.`is`(ModItems.tempad) || it.`is`(ModItems.timeTwister) } ?: return@handle
                 val cost = CommonConfig.TimeTwister.costToBacktrack
                 if (!player.isCreative && ctx.stack.chronons?.extract(cost, ActionType.Simulate) != cost) return@handle

@@ -1,5 +1,8 @@
 package earth.terrarium.tempad
 
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import earth.terrarium.tempad.common.location_handlers.BroadcastAccessCache
+import earth.terrarium.tempad.common.network.PacketThrottle
 import earth.terrarium.tempad.common.location_handlers.migrateLegacyAnchors
 import net.neoforged.neoforge.event.server.ServerStartedEvent
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
@@ -272,6 +275,11 @@ class Tempad(bus: IEventBus) {
 
         NeoForge.EVENT_BUS.addListener { event: ServerStartedEvent ->
             migrateLegacyAnchors(event.server)
+        }
+
+        NeoForge.EVENT_BUS.addListener { event: PlayerEvent.PlayerLoggedOutEvent ->
+            PacketThrottle.forget(event.entity.uuid)
+            BroadcastAccessCache.forget(event.entity.uuid)
         }
 
         NeoForge.EVENT_BUS.addListener { event: PlayerLoggedInEvent ->

@@ -204,6 +204,31 @@ fun getBlockEntity(pos: GlobalPos) = Tempad.server?.get(pos.dimension())?.getBlo
   3. 拆掉锚点再放回去，之前写好的位置卡要仍然有效；
   4. 用 spark 对比打开 Tempad 时的 tick 耗时，看看改动前后差多少。
 
+### 3. C2S 节流 + 位置查询缓存（覆盖 #4、#9，以及 #10 的玩家部分）
+
+- **新增 `PacketThrottle`**：按「玩家 × 桶」计冷却，冷却期内的包直接丢弃。改包客户端每秒发几千个包，现在每个桶每秒最多处理 4~5 个。正常玩家碰不到这个上限。
+
+  | 桶 | 冷却 | 涉及的包 |
+  |---|---|---|
+  | `OPEN_MENU` | 5 tick | OpenTempad、OpenApp、RedirectApp、OpenWallet，共用一个桶，来回交替发也绕不过去 |
+  | `MACRO` | 5 tick | UseMacro |
+  | `OPEN_TIMEDOOR` | 5 tick | OpenTimedoor。原有的 40 tick 物品冷却只在开门成功后才生效，开门失败的路径以前不受限 |
+  | `WRITE_CARD` | 5 tick | WriteToCard |
+  | `EDIT_LOCATION` | 4 tick | CreateLocation、DeleteLocation |
+  | `BACKTRACK` | 5 tick | BackTrackLocation |
+
+- **不做节流的包**：设置类、锁定、标记编辑这几种包在校验之后只写几个值，开销很小。丢掉它们反而会让用户最后一次修改不生效。
+- **新增 `BroadcastAccessCache`**：缓存每个在线玩家身上带的 `PlayerAccess` 设备（广播器、屏蔽器等），每 20 tick 重算一次。
+  - 以前每次打开 Tempad，都要对每个在线玩家遍历整个背包和饰品槽，全服加起来是 O(P²)。
+  - 玩家的位置仍然实时读取，只有「带了哪些设备」这一项最多滞后 1 秒。
+- **`PlayerHandler.get(id)` 改为直查目标玩家**，不再先构建所有在线玩家的列表。这样卡包里的玩家卡、开门、写卡都变成 O(1)。
+- `PlayerHandler.getSerializable` 现在要求目标玩家对当前玩家可见，否则返回 null。以前可以给任意在线玩家写位置卡，不过实际传送时还是会校验权限。
+- 玩家下线时清理该玩家的节流记录和设备缓存。
+- **为什么不缓存整份位置列表**：锚点快照化之后，再加上上面这两处优化，构建位置列表已经没有昂贵的步骤了。缓存整份列表反而会带来过期问题，比如刚新建的位置在列表里看不到。所以这次没有做整表缓存。
+- 验证：`./gradlew compileKotlin` 通过，**还没有进游戏实测**。重点测两点：
+  1. 正常连按快捷键、来回切换 App，不应该出现「按了没反应」的情况；
+  2. 玩家 A 拿起或放下广播器后，B 打开 Tempad 时 A 应该在 1 秒内出现或消失。
+
 ## 建议的修复顺序（第一阶段）
 
 1. **统一 C2S 上下文校验**（#2 #3 #16 #12）：把安全漏洞和区块加载 DoS 一次堵上，改动集中在 `api/context` 和各包的 handler 入口。

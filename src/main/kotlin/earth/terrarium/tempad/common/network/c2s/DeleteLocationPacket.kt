@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.PacketThrottle
 import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
@@ -27,6 +28,7 @@ data class DeleteLocationPacket(val ctx: ContextHolder<*>, val providerId: Resou
                 ::DeleteLocationPacket
             ),
             NetworkHandle.handle { message, player ->
+                if (PacketThrottle.EDIT_LOCATION.isThrottled(player)) return@handle
                 val ctx = message.ctx.resolveTempad(player) ?: return@handle
                 val handler = TempadLocations[player, ctx, message.providerId] ?: return@handle
                 handler -= message.locationId

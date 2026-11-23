@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.PacketThrottle
 import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
@@ -26,6 +27,7 @@ data class OpenTimedoorPacket(val providerId: ResourceLocation, val locationId: 
                 ::OpenTimedoorPacket
             ),
             NetworkHandle.handle { message, player ->
+                if (PacketThrottle.OPEN_TIMEDOOR.isThrottled(player)) return@handle
                 val (provider, id, ctxHolder) = message
                 if (TempadLocations[provider] == null) return@handle
                 val ctx = message.ctx.resolveTempad(player) ?: return@handle
