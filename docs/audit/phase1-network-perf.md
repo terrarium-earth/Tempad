@@ -256,6 +256,17 @@ fun getBlockEntity(pos: GlobalPos) = Tempad.server?.get(pos.dimension())?.getBlo
   4. Metronome 的启动流程，以及给相邻机器和槽位里物品充电的速度；
   5. 用 spark 或抓包对比，看实体数据包和方块实体数据包的数量。
 
+### 5. P2 收尾（覆盖 #12 后半、#13、#15、#16 的卡包部分、#17）
+
+- **#12 ConfigSync 字节流错位**：全量配置同步里，每个条目现在都带长度前缀。遇到本端不认识的 id，会按长度跳过这一段，不会再导致后面所有条目读错位。
+- **#13 配置监听器 NPE**：原来是 `Tempad.server!!`，现在改为 `server?.let`。客户端修改配置、或者配置在服务器启动前加载时，监听器都会被触发，以前这两种情况都会 NPE。
+- **#15 旅行历史记录**：`PlayerTickEvent` 监听器加上了 `isClientSide` 判断，客户端不再执行 `logLocation`。
+- **#16 卡包菜单**：`WalletMenu.stillValid` 现在会检查打开菜单时用的那个卡包物品是否还在玩家身上（按对象引用比较，背包和饰品栏都会查）。卡包被丢掉、放进容器或被清空后，菜单自动关闭，不能再编辑一个已经脱离玩家的物品。
+- **#17 传送门区块票据**：时间门里有实体时，原来每 tick 都会调用一次 `addRegionTicket(PORTAL)`。现在改为每 20 tick 续一次，PORTAL 票据的寿命是 300 tick，足够覆盖。
+- 验证：`./gradlew compileKotlin` 通过，**还没有进游戏实测**。
+
+至此，第一阶段审计列出的 17 项全部处理完毕。#11 只处理了 Metronome，Workstation 的渲染器需要物品栏数据，所以保留原样。
+
 ## 建议的修复顺序（第一阶段）
 
 1. **统一 C2S 上下文校验**（#2 #3 #16 #12）：把安全漏洞和区块加载 DoS 一次堵上，改动集中在 `api/context` 和各包的 handler 入口。

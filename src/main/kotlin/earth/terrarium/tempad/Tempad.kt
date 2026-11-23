@@ -241,7 +241,7 @@ class Tempad(bus: IEventBus) {
         }
 
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->
-            if (event.entity.tickCount % 1200 != 0) return@addListener
+            if (event.entity.level().isClientSide || event.entity.tickCount % 1200 != 0) return@addListener
             event.entity.travelHistory.logLocation(event.entity)
         }
 

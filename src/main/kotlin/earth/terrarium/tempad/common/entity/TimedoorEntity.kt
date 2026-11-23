@@ -56,6 +56,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         /** Game time the door opened; lets every client compute the same animation age, whenever it started tracking. */
         private val openedAtAccessor = createDataKey<TimedoorEntity, Long>(EntityDataSerializers.LONG)
         private const val NEVER = -1L
+        private const val TICKET_RENEW_INTERVAL = 20L
         private val colorAccessor = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
         private val targetPosAccessor = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
         private val targetDimAccessor =
@@ -187,6 +188,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     var beganClosing = 0;
+    private var lastTicketRenewal = Long.MIN_VALUE / 2
     var targetAngle = 0f
     var targetPos by DataDelegate(targetPosAccessor)
     var targetDimension by DataDelegate(targetDimAccessor)
@@ -319,8 +321,13 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
         if (entities.isNotEmpty()) {
             tryInitReceivingPortal()
-            val pos = BlockPos.containing(targetPos)
-            targetLevel.chunkSource.addRegionTicket(TicketType.PORTAL, ChunkPos(pos), 3, pos)
+            // PORTAL tickets live 300 ticks; renewing once a second is plenty (this used to run every tick).
+            val now = level().gameTime
+            if (now - lastTicketRenewal >= TICKET_RENEW_INTERVAL) {
+                lastTicketRenewal = now
+                val pos = BlockPos.containing(targetPos)
+                targetLevel.chunkSource.addRegionTicket(TicketType.PORTAL, ChunkPos(pos), 3, pos)
+            }
         }
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()
