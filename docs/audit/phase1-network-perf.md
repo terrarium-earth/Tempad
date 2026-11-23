@@ -180,6 +180,30 @@ fun getBlockEntity(pos: GlobalPos) = Tempad.server?.get(pos.dimension())?.getBlo
   - cursemaven 返回的 POM Gradle 解析不了，改为只取 jar。
 - 验证：`./gradlew compileKotlin` 通过。**还没有在游戏里实测**。
 
+### 2. 锚点快照化（覆盖 #1、#10 的锚点部分）
+
+- `AnchorPointsData` 原来只存 `UUID → GlobalPos`，现在存 `UUID → AnchorSnapshot`。快照包含：位置、落点 `NamedGlobalVec3`（名字、坐标、维度、朝向、颜色）、owner 和访问规则 `AnchorAccessRule`。
+- **查询只读快照，不再调用 `getBlockEntity`，也就不会加载区块**：
+  - `getPositions` 遍历快照，权限检查只用快照里的 owner 和规则。规则里的 `PlayerAccess` 用目标维度的 `ServerLevel` 对象来计算，这个调用不触发加载。
+  - 新增 `getPosition(id)` 做 O(1) 单点查询。`AnchorPointsHandler.get` 和 `getSerializable` 改用它，卡包里的 `IndirectLocation` 也不再先算全量列表。
+- **刷新时机**：
+  - `AbstractMarkerBe.setChanged()` 会把快照写回表里。所有编辑包都会调用 `setChanged`。
+  - 染色、首次认领 owner、物品放置（`SpatialAnchorItem`）这三处原来不调 `setChanged`，属性改了但不保证存档。现在都补上了。
+  - `onLoad` 时按需自愈：如果表里同一个 id 登记在别的位置（比如结构工具复制出来的方块），不会去抢这个 id。
+- **自清理**：只对已加载区块检查，如果对应位置的方块已经不在了，就删掉这条快照。未加载的区块不做检查。
+- **旧存档迁移**：
+  - 旧格式通过 `Codec.withAlternative` 兼容读取，读进来时快照里没有 `location`。
+  - `ServerStartedEvent` 时做一次性迁移：逐个加载这些锚点的区块并刷新快照，完成后在日志里打印数量和耗时。迁移只跑这一次，之后不会再因为锚点加载区块。
+  - 迁移前还没刷新的条目，查询时会被跳过。
+- **顺带修复的问题**：
+  - **放置带 id 的锚点物品会留下孤儿条目**：`onPlace` 先用随机 id 登记，之后物品自带的 id 才写进方块。结果表里留下一条用随机 id 的孤儿记录，位置卡引用的 id 也查不到。现在刷新快照时会清掉同一位置上的其他 id，迁移时也会把这类条目重新挂到方块自己的 id 下。
+  - **状态变化会误注销**：`onRemove` 在同一方块只改状态时也会触发，原来会把锚点从表里注销。现在只有方块真正变成别的方块时才注销。
+- 验证：`./gradlew compileKotlin` 通过，**还没有进游戏实测**。重点要测：
+  1. 用旧存档开服后，看迁移日志，确认锚点列表完整；
+  2. 改名、改颜色、改访问权限后，Tempad 列表要立刻更新；
+  3. 拆掉锚点再放回去，之前写好的位置卡要仍然有效；
+  4. 用 spark 对比打开 Tempad 时的 tick 耗时，看看改动前后差多少。
+
 ## 建议的修复顺序（第一阶段）
 
 1. **统一 C2S 上下文校验**（#2 #3 #16 #12）：把安全漏洞和区块加载 DoS 一次堵上，改动集中在 `api/context` 和各包的 handler 入口。
