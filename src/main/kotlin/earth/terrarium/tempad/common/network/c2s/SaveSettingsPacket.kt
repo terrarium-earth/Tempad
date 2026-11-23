@@ -1,5 +1,9 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.api.context.modify
+import earth.terrarium.tempad.api.macro.MacroRegistry
+import earth.terrarium.tempad.api.app.AppRegistry
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
 import com.teamresourceful.resourcefullib.common.network.Packet
@@ -29,10 +33,13 @@ class SaveSettingsPacket(
                 ::SaveSettingsPacket
             ),
             NetworkHandle.handle { packet, player ->
-                val ctx = packet.ctxData.getCtx(player)
-                val tempad = ctx.stack
-                tempad.defaultApp = packet.defaultApp
-                tempad.defaultMacro = packet.defaultMacro
+                if (packet.defaultApp !in AppRegistry.getIds() || packet.defaultMacro !in MacroRegistry.getIds()) return@handle
+                val ctx = packet.ctxData.resolveTempad(player) ?: return@handle
+                // modify() writes the stack back through the context, so workstations get marked dirty / synced.
+                ctx.modify {
+                    it.defaultApp = packet.defaultApp
+                    it.defaultMacro = packet.defaultMacro
+                }
             }
         )
     }

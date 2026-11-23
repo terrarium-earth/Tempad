@@ -36,7 +36,7 @@ class TimedoorRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<Tim
         buffer: MultiBufferSource,
         packedLight: Int,
     ) {
-        val tickCount = entity.tickCount + entity.animationOffset
+        val tickCount = entity.age
         if (tickCount < TimedoorEntity.IDLE_BEFORE_START) return
         val tickLength = TimedoorEntity.ANIMATION_LENGTH
         val animation: Float

@@ -1,5 +1,8 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.PacketThrottle
+import earth.terrarium.tempad.api.context.WorkstationContext
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.NetworkHandle
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
@@ -20,10 +23,12 @@ data class RedirectAppPacket(val appHolder: AppHolder) : Packet<RedirectAppPacke
             "redirect_app".tempadId,
             AppRegistry.BYTE_CODEC.map(::RedirectAppPacket, RedirectAppPacket::appHolder),
             NetworkHandle.handle { message, player ->
-                val app = message.appHolder.getApp(player)
-                val stack = message.appHolder.getCtx(player).stack
-                if (!stack.`is`(ModItems.tempad) || (app != null && !app.isEnabled(player))) return@handle
-                app?.openMenu(player as ServerPlayer)
+                if (PacketThrottle.OPEN_MENU.isThrottled(player)) return@handle
+                val ctx = message.appHolder.ctx.resolveTempad(player) ?: return@handle
+                // Derive "stationary" from the validated context instead of trusting the client flag.
+                val app = AppRegistry[message.appHolder.id, ctx, ctx is WorkstationContext] ?: return@handle
+                if (!app.isEnabled(player)) return@handle
+                app.openMenu(player as ServerPlayer)
             }
         )
     }

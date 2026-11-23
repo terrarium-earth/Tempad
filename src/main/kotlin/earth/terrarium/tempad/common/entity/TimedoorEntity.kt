@@ -48,14 +48,21 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     companion object {
         internal const val IDLE_BEFORE_START = 26
         internal const val ANIMATION_LENGTH = 5
-        private val closingTimeAccessor = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
+        /**
+         * Game time at which the door closes ([NEVER] = stays open). Synced instead of a countdown so that the value only
+         * changes when the lifetime is extended, not every tick; clients derive the remaining time from their own clock.
+         */
+        private val closeAtAccessor = createDataKey<TimedoorEntity, Long>(EntityDataSerializers.LONG)
+        /** Game time the door opened; lets every client compute the same animation age, whenever it started tracking. */
+        private val openedAtAccessor = createDataKey<TimedoorEntity, Long>(EntityDataSerializers.LONG)
+        private const val NEVER = -1L
+        private const val TICKET_RENEW_INTERVAL = 20L
         private val colorAccessor = createDataKey<TimedoorEntity, Color>(ModEntities.colorSerializer)
         private val targetPosAccessor = createDataKey<TimedoorEntity, Vec3>(ModEntities.vec3Serializer)
         private val targetDimAccessor =
             createDataKey<TimedoorEntity, ResourceKey<Level>>(ModEntities.dimensionKeySerializer)
         private val sizingAccessor = createDataKey<TimedoorEntity, TimedoorPlacementSettings>(ModEntities.sizingSerializer)
         private val glitchingAccessor = createDataKey<TimedoorEntity, Boolean>(EntityDataSerializers.BOOLEAN)
-        private val offsetAccessor = createDataKey<TimedoorEntity, Int>(EntityDataSerializers.INT)
 
         //feedback
         val fail = Component.translatable("entity.tempad.timedoor.fail")
@@ -181,14 +188,25 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     var beganClosing = 0;
+    private var lastTicketRenewal = Long.MIN_VALUE / 2
     var targetAngle = 0f
     var targetPos by DataDelegate(targetPosAccessor)
     var targetDimension by DataDelegate(targetDimAccessor)
     var color by DataDelegate(colorAccessor)
-    var closingTime by DataDelegate(closingTimeAccessor)
+    private var closeAt: Long by DataDelegate(closeAtAccessor)
+    private var openedAt: Long by DataDelegate(openedAtAccessor)
+
+    /** Remaining ticks before the door closes, or -1 if it never closes. Assigning re-syncs once. */
+    var closingTime: Int
+        get() = if (closeAt == NEVER) -1 else (closeAt - level().gameTime).toInt()
+        set(value) {
+            closeAt = if (value == -1) NEVER else level().gameTime + value
+        }
+
+    /** Ticks since the door opened, identical on the server and on every client. */
+    val age: Int get() = (level().gameTime - openedAt).toInt()
     var owner: UUID? = null
     var glitching: Boolean by DataDelegate(glitchingAccessor)
-    var animationOffset: Int by DataDelegate(offsetAccessor)
     var linkedPortalId: UUID? = null
     var original: Boolean = true
 
@@ -227,13 +245,14 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData(builder: SynchedEntityData.Builder) {
-        builder.define(closingTimeAccessor, CommonConfig.TimeDoor.timeInWorld)
+        val now = level().gameTime
+        builder.define(closeAtAccessor, if (CommonConfig.TimeDoor.timeInWorld == -1) NEVER else now + CommonConfig.TimeDoor.timeInWorld)
+        builder.define(openedAtAccessor, now)
         builder.define(colorAccessor, Tempad.ORANGE)
         builder.define(targetPosAccessor, Vec3.ZERO)
         builder.define(targetDimAccessor, Level.OVERWORLD)
         builder.define(sizingAccessor, DynamicAngledPlacement())
         builder.define(glitchingAccessor, false)
-        builder.define(offsetAccessor, 0)
     }
 
     override fun saveWithoutId(compound: CompoundTag): CompoundTag {
@@ -254,6 +273,7 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun load(compound: CompoundTag) {
         super.load(compound)
         tickCount = compound.getInt("Age")
+        openedAt = level().gameTime - tickCount
         closingTime = compound.getInt("ClosingTime")
         targetAngle = compound.getFloat("TargetAngle")
         glitching = compound.getBoolean("IsGlitching")
@@ -293,7 +313,6 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             }
             return
         }
-        closingTime--
         tryClose()
         if (tickCount < IDLE_BEFORE_START + ANIMATION_LENGTH || closingTime < ANIMATION_LENGTH) {
             return
@@ -302,8 +321,13 @@ class TimedoorEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         val entities = level().getEntities<Entity>(boundingBox) { canTeleport(it, targetLevel) }
         if (entities.isNotEmpty()) {
             tryInitReceivingPortal()
-            val pos = BlockPos.containing(targetPos)
-            targetLevel.chunkSource.addRegionTicket(TicketType.PORTAL, ChunkPos(pos), 3, pos)
+            // PORTAL tickets live 300 ticks; renewing once a second is plenty (this used to run every tick).
+            val now = level().gameTime
+            if (now - lastTicketRenewal >= TICKET_RENEW_INTERVAL) {
+                lastTicketRenewal = now
+                val pos = BlockPos.containing(targetPos)
+                targetLevel.chunkSource.addRegionTicket(TicketType.PORTAL, ChunkPos(pos), 3, pos)
+            }
         }
         for (entity in entities) {
             val event = TimedoorEvent.Enter(this, entity).post()

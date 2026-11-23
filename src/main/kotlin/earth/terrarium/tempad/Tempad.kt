@@ -1,5 +1,10 @@
 package earth.terrarium.tempad
 
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import earth.terrarium.tempad.common.location_handlers.BroadcastAccessCache
+import earth.terrarium.tempad.common.network.PacketThrottle
+import earth.terrarium.tempad.common.location_handlers.migrateLegacyAnchors
+import net.neoforged.neoforge.event.server.ServerStartedEvent
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import com.teamresourceful.resourcefullib.common.color.Color
 import earth.terrarium.tempad.api.player_access.DefaultAccess
@@ -55,7 +60,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.StartTracking
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.server.ServerLifecycleHooks
@@ -237,7 +241,7 @@ class Tempad(bus: IEventBus) {
         }
 
         NeoForge.EVENT_BUS.addListener { event: PlayerTickEvent.Post ->
-            if (event.entity.tickCount % 1200 != 0) return@addListener
+            if (event.entity.level().isClientSide || event.entity.tickCount % 1200 != 0) return@addListener
             event.entity.travelHistory.logLocation(event.entity)
         }
 
@@ -268,15 +272,17 @@ class Tempad(bus: IEventBus) {
             }
         }
 
-        NeoForge.EVENT_BUS.addListener { event: PlayerLoggedInEvent ->
-            CommonConfigCache.CACHE.syncAll(event.entity)
+        NeoForge.EVENT_BUS.addListener { event: ServerStartedEvent ->
+            migrateLegacyAnchors(event.server)
         }
 
-        NeoForge.EVENT_BUS.addListener { event: StartTracking ->
-            if (event.entity.level().isClientSide) return@addListener
-            (event.target as? TimedoorEntity)?.let {
-                it.animationOffset = it.tickCount
-            }
+        NeoForge.EVENT_BUS.addListener { event: PlayerEvent.PlayerLoggedOutEvent ->
+            PacketThrottle.forget(event.entity.uuid)
+            BroadcastAccessCache.forget(event.entity.uuid)
+        }
+
+        NeoForge.EVENT_BUS.addListener { event: PlayerLoggedInEvent ->
+            CommonConfigCache.CACHE.syncAll(event.entity)
         }
     }
 }

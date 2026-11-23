@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.PacketThrottle
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
@@ -17,6 +18,7 @@ class UseMacroPacket(): Packet<UseMacroPacket> {
         override val byteCodec: ByteCodec<UseMacroPacket> = ByteCodec.unit(::UseMacroPacket)
 
         override fun onReceive(packet: UseMacroPacket, player: Player) {
+            if (PacketThrottle.MACRO.isThrottled(player)) return
             val ctx = ContextRegistry.locate(player) { it.`is`(ModItems.tempad) } ?: return
             if (player.cooldowns.isOnCooldown(ctx.stack.item)) return
             MacroRegistry[ctx.stack.defaultMacro]?.run(player, ctx)

@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.menu
 
+import earth.terrarium.tempad.api.context.ContextRegistry
 import earth.terrarium.tempad.common.items.WalletInventory
 import earth.terrarium.tempad.common.registries.ModItems
 import earth.terrarium.tempad.common.registries.ModMenus
@@ -12,7 +13,7 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.items.ItemStackHandler
 import net.neoforged.neoforge.items.SlotItemHandler
 
-class WalletMenu(containerId: Int, inventory: Inventory, items: WalletInventory) : AbstractContainerMenu(ModMenus.wallet, containerId) {
+class WalletMenu(containerId: Int, inventory: Inventory, private val items: WalletInventory) : AbstractContainerMenu(ModMenus.wallet, containerId) {
     constructor(containerId: Int, inventory: Inventory) : this(containerId, inventory, WalletInventory(ItemStack.EMPTY))
 
     init {
@@ -46,7 +47,15 @@ class WalletMenu(containerId: Int, inventory: Inventory, items: WalletInventory)
         return newStack
     }
 
-    override fun stillValid(player: Player): Boolean = true
+    /**
+     * Server-side only. The menu edits the wallet stack it was opened with, so close it once that exact stack is no
+     * longer carried by the player (dropped, moved into a container, cleared, ...).
+     */
+    override fun stillValid(player: Player): Boolean {
+        val wallet = items.stack
+        if (wallet.isEmpty) return false
+        return ContextRegistry.locate(player) { it === wallet } != null
+    }
 
     private fun addPlayerInvSlots(inventory: Inventory, x: Int = 8, y: Int = 71) {
         for (row in 0..2) {

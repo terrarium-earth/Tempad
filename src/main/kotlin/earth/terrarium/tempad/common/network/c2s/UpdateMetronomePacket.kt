@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.canEditBlockFromPacket
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -31,8 +32,10 @@ data class UpdateMetronomePacket(val blockPos: BlockPos, val locked: Boolean): P
         )
 
         override fun onReceive(packet: UpdateMetronomePacket, player: Player) {
+            // Validate before getBlockEntity: a forged far-away position must not load chunks.
+            if (!player.canEditBlockFromPacket(packet.blockPos)) return
             (player.level().getBlockEntity(packet.blockPos) as? MetronomeBe)?.let {
-                if(!player.mayInteract(player.level(), packet.blockPos) || (it.locked && it.owner?.id != player.gameProfile.id)) return
+                if ((it.locked && it.owner?.id != player.gameProfile.id)) return
 
                 it.locked = packet.locked && it.owner?.id == player.gameProfile.id
                 it.setChanged()

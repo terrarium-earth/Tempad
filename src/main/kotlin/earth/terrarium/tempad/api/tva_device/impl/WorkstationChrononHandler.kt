@@ -16,7 +16,7 @@ class WorkstationChrononHandler(val block: WorkstationBE): ChrononHandler {
 
     override fun extract(amount: Int, action: ActionType): Int {
         val changed = handler!!.extract(amount, action)
-        if (action == ActionType.Execute) {
+        if (action == ActionType.Execute && changed > 0) {
             block.setChanged()
             block.level!!.sendBlockUpdated(block.blockPos, block.blockState, block.blockState, Block.UPDATE_ALL)
         }
@@ -25,7 +25,7 @@ class WorkstationChrononHandler(val block: WorkstationBE): ChrononHandler {
 
     override fun insert(amount: Int, action: ActionType): Int {
         val changed = handler!!.insert(amount, action)
-        if (action == ActionType.Execute) {
+        if (action == ActionType.Execute && changed > 0) {
             block.setChanged()
             block.level!!.sendBlockUpdated(block.blockPos, block.blockState, block.blockState, Block.UPDATE_ALL)
         }

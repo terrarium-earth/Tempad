@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.network.Packet
@@ -22,7 +23,8 @@ data class UpdateTempadLockPacket(val locked: Boolean, val ctx: ContextHolder<*>
         )
 
         override fun onReceive(message: UpdateTempadLockPacket, player: Player) {
-            message.ctx.getCtx(player).modify {
+            val ctx = message.ctx.resolveTempad(player) ?: return
+            ctx.modify {
                 it.locked = message.locked && player.gameProfile.id == it.owner?.id
             }
         }

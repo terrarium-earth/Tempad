@@ -35,10 +35,17 @@ fun ChrononHandler.drainAndExecute(amount: Int, action: () -> Unit) {
     }
 }
 
-fun move(from: ChrononHandler, to: ChrononHandler, amount: Int) {
+/**
+ * Moves up to [amount] chronons and returns how many moved. Nothing is executed when nothing can move, so handlers
+ * that sync on Execute (blocks) don't send updates for no-op transfers.
+ */
+fun move(from: ChrononHandler, to: ChrononHandler, amount: Int): Int {
+    if (amount <= 0) return 0
     val extracted = from.extract(amount, ActionType.Simulate)
+    if (extracted <= 0) return 0
     val inserted = to.insert(extracted, ActionType.Execute)
-    from.extract(inserted, ActionType.Execute)
+    if (inserted > 0) from.extract(inserted, ActionType.Execute)
+    return inserted
 }
 
 val BlockEntity.chronons get() = level!!.getCapability(ChrononHandler.Capabilities.block, blockPos, Direction.UP)

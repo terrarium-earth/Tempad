@@ -1,5 +1,7 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.PacketThrottle
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -28,8 +30,9 @@ class WriteToCardPacket(val providerId: ResourceLocation, val locationId: UUID, 
                 ::WriteToCardPacket
             ),
             NetworkHandle.handle { message, player ->
+                if (PacketThrottle.WRITE_CARD.isThrottled(player)) return@handle
                 if (TempadLocations[message.providerId] == null) return@handle
-                val ctx = message.ctx.getCtx(player)
+                val ctx = message.ctx.resolveTempad(player) ?: return@handle
                 val menuCtx = player.menuCtx
 
                 if (!menuCtx.stack.`is`(ModItems.locationCard)) return@handle

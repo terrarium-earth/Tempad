@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.menu
 
+import earth.terrarium.tempad.common.block.MetronomeBe
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -61,7 +62,14 @@ class MetronomeMenu(id: Int, inv: Inventory, items: ItemStackHandler, val energy
         return newStack
     }
 
-    override fun stillValid(player: Player): Boolean = true
+    override fun stillValid(player: Player): Boolean {
+        val pos = data?.pos ?: return true
+        val level = player.level()
+        return pos.dimension() == level.dimension()
+            && level.isLoaded(pos.pos())
+            && player.canInteractWithBlock(pos.pos(), 4.0)
+            && level.getBlockEntity(pos.pos()) is MetronomeBe
+    }
 
     private fun addPlayerInvSlots(inventory: Inventory, x: Int = 25, y: Int = 85) {
         for (row in 0..2) {

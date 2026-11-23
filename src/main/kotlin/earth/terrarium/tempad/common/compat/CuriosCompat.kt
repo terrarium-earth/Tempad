@@ -43,7 +43,11 @@ class CuriosContext(val player: Player, override val data: CuriosSlotInfo) : Syn
 }
 
 fun initCuriosCompat() {
-    ContextRegistry.register(CuriosContext.type, ::CuriosContext)
+    ContextRegistry.register(CuriosContext.type, ::CuriosContext) { player, info ->
+        CuriosApi.getCuriosInventory(player)
+            .map { inv -> inv.curios[info.identifier]?.let { info.index in 0 until it.stacks.slots } == true }
+            .orElse(false)
+    }
     ContextRegistry.registerLocator(PriorityId(CuriosContext.id, Priority.HIGH)) { player, filter ->
         val inventory = CuriosApi.getCuriosInventory(player).orElseThrow().curios
         for ((identifier, handler) in inventory) {

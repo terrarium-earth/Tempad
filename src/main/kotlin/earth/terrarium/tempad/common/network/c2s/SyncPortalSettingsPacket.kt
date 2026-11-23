@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.resolveTempad
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.bytecodecs.base.`object`.ObjectByteCodec
 import com.teamresourceful.resourcefullib.common.bytecodecs.ExtraByteCodecs
@@ -69,7 +70,9 @@ data class SyncPortalSettingsPacket(
         )
 
         override fun onReceive(message: SyncPortalSettingsPacket, player: Player) {
-            message.ctx.getCtx(player).modify {
+            if (!message.xOffset.isFinite() || !message.yOffset.isFinite() || !message.zOffset.isFinite()) return
+            val ctx = message.ctx.resolveTempad(player) ?: return
+            ctx.modify {
                 it.portalOffset = PortalPlacementComponent(
                     Math.clamp(message.xOffset, -5f, 5f),
                     Math.clamp(message.yOffset, -5f, 5f),
@@ -78,8 +81,8 @@ data class SyncPortalSettingsPacket(
                     message.isVertical,
                 )
                 safeLet(message.providerId, message.id) { provider, id ->
-                    val ctx = message.ctx.getCtx(player) as? WorkstationContext ?: return@safeLet
-                    it.selectedPos = IndirectLocation(ctx.workstation!!.owner!!, Component.empty(), provider, id)
+                    val owner = (ctx as? WorkstationContext)?.workstation?.owner ?: return@safeLet
+                    it.selectedPos = IndirectLocation(owner, Component.empty(), provider, id)
                 }
             }
         }

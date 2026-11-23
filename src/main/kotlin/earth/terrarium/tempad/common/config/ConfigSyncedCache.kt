@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.config
 
+import io.netty.buffer.Unpooled
 import com.google.common.base.CaseFormat
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefulconfig.api.types.entries.Observable
@@ -38,10 +39,19 @@ class ConfigSyncedCache(val modId: String, val network: Network) {
 
         override fun decode(buffer: RegistryFriendlyByteBuf): ConfigSync {
             val decodedEntries = mutableMapOf<ResourceLocation, Data<*>>()
-            var size = buffer.readVarInt()
-            (0 until size).forEach { _ ->
+            val size = buffer.readVarInt()
+            repeat(size) {
                 val id = buffer.readResourceLocation()
-                entries[id]?.syncType?.decode(buffer)?.let { entry -> decodedEntries.put(id, entry) }
+                // Each entry is length-prefixed so an id this side doesn't know can be skipped without
+                // misreading every entry after it.
+                val payload = buffer.readByteArray()
+                val entry = entries[id] ?: return@repeat
+                val entryBuf = RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(payload), buffer.registryAccess(), buffer.connectionType)
+                try {
+                    decodedEntries[id] = entry.syncType.decode(entryBuf)
+                } finally {
+                    entryBuf.release()
+                }
             }
             return ConfigSync(decodedEntries)
         }
@@ -54,7 +64,15 @@ class ConfigSyncedCache(val modId: String, val network: Network) {
             buffer.writeVarInt(message.entries.size)
             message.entries.forEach { id, entry ->
                 buffer.writeResourceLocation(id)
-                entry.encode(buffer)
+                val entryBuf = RegistryFriendlyByteBuf(Unpooled.buffer(), buffer.registryAccess(), buffer.connectionType)
+                try {
+                    entry.encode(entryBuf)
+                    val payload = ByteArray(entryBuf.readableBytes())
+                    entryBuf.readBytes(payload)
+                    buffer.writeByteArray(payload)
+                } finally {
+                    entryBuf.release()
+                }
             }
         }
     }
@@ -78,7 +96,8 @@ class ConfigSyncedCache(val modId: String, val network: Network) {
             network.register(syncType)
             observable.getter.call().addListener { _, newValue ->
                 this.value = newValue
-                network.sendToAllPlayers(ConfigSyncData(newValue), Tempad.server!!)
+                // Listeners also fire on the client and before a server exists (initial config load).
+                Tempad.server?.let { network.sendToAllPlayers(ConfigSyncData(newValue), it) }
             }
         }
 

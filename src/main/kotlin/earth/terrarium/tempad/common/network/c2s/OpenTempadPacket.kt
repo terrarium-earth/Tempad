@@ -1,5 +1,6 @@
 package earth.terrarium.tempad.common.network.c2s
 
+import earth.terrarium.tempad.common.network.PacketThrottle
 import com.teamresourceful.bytecodecs.base.ByteCodec
 import com.teamresourceful.resourcefullib.common.network.Packet
 import com.teamresourceful.resourcefullib.common.network.base.PacketType
@@ -21,6 +22,7 @@ class OpenTempadPacket(): Packet<OpenTempadPacket> {
         override val byteCodec: ByteCodec<OpenTempadPacket> = ByteCodec.unit(::OpenTempadPacket)
 
         override fun onReceive(packet: OpenTempadPacket, player: Player) {
+            if (PacketThrottle.OPEN_MENU.isThrottled(player)) return
             val ctx = ContextRegistry.locate(player) { it.`is`(ModItems.tempad) } ?: return
             (AppRegistry[ctx.stack.defaultApp, ctx, false]?: AppRegistry[ModApps.teleport, ctx, false])!!.openMenu(player as ServerPlayer)
         }

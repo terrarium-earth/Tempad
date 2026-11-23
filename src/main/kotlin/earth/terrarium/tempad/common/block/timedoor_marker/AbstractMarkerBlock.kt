@@ -114,6 +114,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         (level as? ServerLevel)?.getBlockEntity(pos)?.let {
             it as AbstractMarkerBe
             it.color = color
+            it.setChanged() // persist + refresh anchor snapshot
             level.setBlockAndUpdate(pos, state)
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide)
@@ -130,6 +131,7 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
         (level.getBlockEntity(pos) as? AbstractMarkerBe)?.let {
             if (it.owner == null) {
                 it.owner = player.gameProfile
+                it.setChanged() // persist + refresh anchor snapshot
             } else if (it.locked && it.owner?.id != player.gameProfile.id) {
                 player.displayClientMessage(Component.translatable("error.tempad.block_locked", name).withColor(Tempad.ORANGE.value), true)
                 return InteractionResult.FAIL
@@ -163,7 +165,8 @@ abstract class AbstractMarkerBlock : BaseEntityBlock(Properties.of().strength(3.
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, moved: Boolean) {
-        if (level is ServerLevel) {
+        // onRemove also fires for state-only changes of the same block; only unregister when the marker is really gone.
+        if (level is ServerLevel && !state.`is`(newState.block)) {
             safeLet((level.getBlockEntity(pos) as? AbstractMarkerBe)?.id, anchorPoints) { blockEntity, points ->
                 points -= blockEntity
             }

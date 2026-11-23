@@ -33,6 +33,9 @@ class SpatialAnchorItem(block: Block): BlockItem(block, Properties()) {
             blockEntity.angle = blockEntity.facingAngle.toInt()
             blockEntity.yOffset = if(state.getValue(BlockStateProperties.UP)) 0.5f else -2f
             player?.let { blockEntity.owner = it.gameProfile }
+            // onPlace registered the marker before these values were applied; refresh so the snapshot (and the id,
+            // if the item carried one) are current.
+            blockEntity.setChanged()
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state)
     }
